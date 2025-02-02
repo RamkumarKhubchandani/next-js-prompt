@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
-import Image from 'next/image';
+import Link from "next/link";
+import Image from "next/image";
 import WhatsAppImg from "./images/whatsapp.jpg";
 import "./App.css";
 import AppContainer from "./AppContainer";
 import Footer from "./Footer";
 import { Button } from "@mui/material";
 import ContactUsDialog from "./contactus";
-import JSPromptLogo from './JSPromptLogo';
+import JSPromptLogo from "./JSPromptLogo";
 
 function App() {
   const [open, setOpen] = React.useState(false);
@@ -22,10 +23,44 @@ function App() {
         <div style={styles.navBar} className="w-full fixed z-10">
           <JSPromptLogo />
           <div style={styles.rightSection}>
-            <p style={styles.contact} className="flex contact-details"><span><a href="https://wa.me/917709330265" target="_blank" rel="noopener noreferrer"><Image src={WhatsAppImg} alt='whatsapp' height='50' width='50' /></a></span><span className="m-2 cnumber"> +917709330265</span></p>
-            <Button variant="contained" onClick={handleContactUsClick} className="rounded-full" sx={{ borderRadius: '50px', bgcolor: '#14b8a6 !important' }}>
-              contact Us 
+            <p style={styles.contact} className="flex contact-details">
+              <span>
+                <a
+                  href="https://wa.me/917709330265"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src={WhatsAppImg}
+                    alt="whatsapp"
+                    height="50"
+                    width="50"
+                  />
+                </a>
+              </span>
+              <span className="m-2 cnumber"> +917709330265</span>
+            </p>
+            <Button
+              variant="contained"
+              onClick={handleContactUsClick}
+              className="rounded-full"
+              sx={{ borderRadius: "50px", bgcolor: "#14b8a6 !important" }}
+            >
+              contact Us
             </Button>
+            <Link href="/javascript-tutorials">
+              <Button
+                variant="contained"
+                className="rounded-full"
+                sx={{
+                  marginLeft: "10px",
+                  borderRadius: "50px",
+                  bgcolor: "#14b8a6 !important",
+                }}
+              >
+                JavaScript Store
+              </Button>
+            </Link>
           </div>
         </div>
         <AppContainer setOpen={setOpen} />

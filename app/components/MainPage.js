@@ -217,6 +217,7 @@ const MainPage = () => {
             <CardContent sx={styles.sliderCardContent}>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Image
+                  alt="article image"
                   src={image}                  
                   style={{ marginRight: "10px", width: "50px", height: "50px" }}
                 />
