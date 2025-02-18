@@ -1,42 +1,64 @@
 "use client";
-import React from 'react';
-import { Card, CardContent } from '@mui/material';
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import { Card, CardContent } from "@mui/material";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { darcula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 const TutorialDisplay = ({ tutorial }) => {
   const renderSection = (section, index) => {
     switch (section.type) {
-      case 'text':
+      case "text":
         return (
           <div key={index} className="prose lg:prose-lg mb-6">
-            {section.content.split('\n').map((paragraph, i) => (
-              <p key={i} className="text-gray-700 leading-relaxed">
-                {paragraph}
-              </p>
+            {section.content.split("\n").map((paragraph, i) => (
+              // <p key={i} className="text-gray-700 leading-relaxed">
+              //   {paragraph}
+              // </p>
+              <div key={index} className="prose lg:prose-lg mb-6">
+                <ReactMarkdown>{paragraph}</ReactMarkdown>
+              </div>
             ))}
           </div>
         );
-      
-      case 'code':
+
+      case "code":
         return (
           <div key={index} className="bg-gray-900 rounded-lg p-4 my-6">
-            <pre className="text-gray-100 font-mono text-sm overflow-x-auto">
+            <SyntaxHighlighter language="javascript" style={darcula}>
               {section.content}
-            </pre>
+            </SyntaxHighlighter>
+            {/* <pre className="text-gray-100 font-mono text-sm overflow-x-auto">
+              {section.content}
+            </pre> */}
           </div>
         );
-      
-      case 'tip':
+
+      case "tip":
         return (
-          <div key={index} className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
+          <div
+            key={index}
+            className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6"
+          >
             <p className="text-blue-700">💡 {section.content}</p>
           </div>
         );
-      
+      case "image":
+        return (
+          <div key={index} className="my-6">
+            <img
+              src={section.imageUrl}
+              alt="Tutorial content"
+              className="max-w-full h-auto rounded-lg shadow-md"
+            />
+          </div>
+        );
+
       default:
         return null;
     }
   };
- console.log(tutorial, "tutorial");
+  console.log(tutorial, "tutorial");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
@@ -52,7 +74,7 @@ const TutorialDisplay = ({ tutorial }) => {
             <CardContent className="p-6">
               <h1 className="text-3xl font-bold mb-6">{tutorial?.title}</h1>
               <div className="space-y-6">
-                {tutorial?.content?.map((section, index) => 
+                {tutorial?.content?.map((section, index) =>
                   renderSection(section, index)
                 )}
               </div>

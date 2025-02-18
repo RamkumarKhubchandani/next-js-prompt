@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -17,15 +17,17 @@ import {
   IconButton,
   Paper,
   Divider,
-  Grid
-} from '@mui/material';
+  Grid,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Code as CodeIcon,
   Image as ImageIcon,
   Delete as DeleteIcon,
-  Save as SaveIcon
-} from '@mui/icons-material';
+  Save as SaveIcon,
+  Note as NoteIcon
+} from "@mui/icons-material";
+import ReactMarkdown from "react-markdown"; // Import react-markdown
 
 // TabPanel component for tab content
 function TabPanel({ children, value, index, ...other }) {
@@ -44,19 +46,19 @@ function TabPanel({ children, value, index, ...other }) {
 const TutorialAdmin = () => {
   const [tabValue, setTabValue] = useState(0);
   const [formData, setFormData] = useState({
-    title: '',
-    leftMenu: '',
-    slug: '',
-    category: '',
-    status: 'draft',
+    title: "",
+    leftMenu: "",
+    slug: "",
+    category: "",
+    status: "draft",
     content: [],
     seo: {
-      title: '',
-      description: '',
-      keywords: '',
-      ogImage: '',
+      title: "",
+      description: "",
+      keywords: "",
+      ogImage: "",
     },
-    tags: '',
+    tags: "",
     featuredImage: null,
   });
 
@@ -64,34 +66,34 @@ const TutorialAdmin = () => {
     setTabValue(newValue);
   };
 
-  const handleImageUpload = async (file, type = 'content') => {
+  const handleImageUpload = async (file, type = "content") => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
       });
       const data = await response.json();
       return data.url;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       return null;
     }
   };
 
   const addSection = (type) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      content: [...prev.content, { type, content: '' }]
+      content: [...prev.content, { type, content: "" }],
     }));
   };
 
   const updateSection = async (index, content, file = null) => {
     const newContent = [...formData.content];
-    
-    if (file && newContent[index].type === 'image') {
+
+    if (file && newContent[index].type === "image") {
       const imageUrl = await handleImageUpload(file);
       if (imageUrl) {
         newContent[index].imageUrl = imageUrl;
@@ -100,39 +102,60 @@ const TutorialAdmin = () => {
       newContent[index].content = content;
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      content: newContent
+      content: newContent,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Prepare the data to be sent to the backend
     const tutorialData = {
       ...formData,
-      tags: formData.tags.split(',').map(tag => tag.trim()),
-      // slug: formData.title.toLowerCase().replace(/\s+/g, '-'),
+      tags: formData.tags.split(",").map((tag) => tag.trim()), // Convert tags string to array
     };
 
     try {
-      const response = await fetch('/api/tutorials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tutorials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(tutorialData),
       });
-      
+
       if (response.ok) {
-        alert('Tutorial saved successfully!');
+        alert("Tutorial saved successfully!");
+        // Optionally, reset the form after successful submission
+        setFormData({
+          title: "",
+          leftMenu: "",
+          slug: "",
+          category: "",
+          status: "draft",
+          content: [],
+          seo: {
+            title: "",
+            description: "",
+            keywords: "",
+            ogImage: "",
+          },
+          tags: "",
+          featuredImage: null,
+        });
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
       }
     } catch (error) {
-      console.error('Error saving tutorial:', error);
+      console.error("Error saving tutorial:", error);
+      alert("An error occurred while saving the tutorial.");
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 1200, margin: '0 auto', p: 3 }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ maxWidth: 1200, margin: "0 auto", p: 3 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange} centered>
           <Tab label="Edit" />
           <Tab label="Preview" />
@@ -146,15 +169,18 @@ const TutorialAdmin = () => {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
+                {/* Existing fields (title, slug, etc.) */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
                     label="Tutorial Title"
                     value={formData.title}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      title: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -162,10 +188,12 @@ const TutorialAdmin = () => {
                     fullWidth
                     label="Left Menu Name"
                     value={formData.leftMenu}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      leftMenu: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        leftMenu: e.target.value,
+                      }))
+                    }
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -173,64 +201,69 @@ const TutorialAdmin = () => {
                     fullWidth
                     label="Slug"
                     value={formData.slug}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      slug: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        slug: e.target.value,
+                      }))
+                    }
                   />
                 </Grid>
-
                 <Grid item xs={6}>
                   <FormControl fullWidth>
                     <InputLabel>Category</InputLabel>
                     <Select
                       value={formData.category}
                       label="Category"
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        category: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
+                      }
                     >
                       <MenuItem value="javascript">JavaScript</MenuItem>
                       <MenuItem value="react">React</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
-
                 <Grid item xs={6}>
                   <FormControl fullWidth>
                     <InputLabel>Status</InputLabel>
                     <Select
                       value={formData.status}
                       label="Status"
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        status: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          status: e.target.value,
+                        }))
+                      }
                     >
                       <MenuItem value="draft">Draft</MenuItem>
                       <MenuItem value="published">Published</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
-
                 <Grid item xs={12}>
                   <Divider sx={{ my: 2 }}>Content Sections</Divider>
                   {formData.content.map((section, index) => (
                     <Box key={index} sx={{ mb: 3 }}>
-                      {section.type === 'image' ? (
+                      {section.type === "image" ? (
                         <Paper variant="outlined" sx={{ p: 2 }}>
                           <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => updateSection(index, '', e.target.files[0])}
+                            onChange={(e) =>
+                              updateSection(index, "", e.target.files[0])
+                            }
                             style={{ marginBottom: 16 }}
                           />
                           {section.imageUrl && (
-                            <img 
-                              src={section.imageUrl} 
+                            <img
+                              src={section.imageUrl}
                               alt="Uploaded content"
-                              style={{ maxHeight: 200, objectFit: 'contain' }} 
+                              style={{ maxHeight: 200, objectFit: "contain" }}
                             />
                           )}
                         </Paper>
@@ -241,17 +274,23 @@ const TutorialAdmin = () => {
                           rows={6}
                           value={section.content}
                           onChange={(e) => updateSection(index, e.target.value)}
-                          sx={section.type === 'code' ? {
-                            fontFamily: 'monospace'
-                          } : {}}
+                          helperText="Use Markdown for formatting: **bold**, *italic*, - lists, etc."
+                          sx={
+                            section.type === "code"
+                              ? { fontFamily: "monospace" }
+                              : {}
+                          }
                         />
                       )}
-                      <IconButton 
-                        color="error" 
+                      <IconButton
+                        color="error"
                         onClick={() => {
                           const newContent = [...formData.content];
                           newContent.splice(index, 1);
-                          setFormData(prev => ({ ...prev, content: newContent }));
+                          setFormData((prev) => ({
+                            ...prev,
+                            content: newContent,
+                          }));
                         }}
                       >
                         <DeleteIcon />
@@ -259,33 +298,38 @@ const TutorialAdmin = () => {
                     </Box>
                   ))}
                 </Grid>
-
                 <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box sx={{ display: "flex", gap: 1 }}>
                     <Button
                       variant="outlined"
                       startIcon={<AddIcon />}
-                      onClick={() => addSection('text')}
+                      onClick={() => addSection("text")}
                     >
                       Add Text
                     </Button>
                     <Button
                       variant="outlined"
                       startIcon={<CodeIcon />}
-                      onClick={() => addSection('code')}
+                      onClick={() => addSection("code")}
                     >
                       Add Code
                     </Button>
                     <Button
                       variant="outlined"
                       startIcon={<ImageIcon />}
-                      onClick={() => addSection('image')}
+                      onClick={() => addSection("image")}
                     >
                       Add Image
                     </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<NoteIcon />}
+                      onClick={() => addSection("note")}
+                    >
+                      Add Note
+                    </Button>
                   </Box>
                 </Grid>
-
                 <Grid item xs={12}>
                   <Button
                     type="submit"
@@ -310,107 +354,29 @@ const TutorialAdmin = () => {
             </Typography>
             {formData.content.map((section, index) => (
               <Box key={index} sx={{ mb: 3 }}>
-                {section.type === 'image' ? (
-                  <img 
-                    src={section.imageUrl} 
+                {section.type === "image" ? (
+                  <img
+                    src={section.imageUrl}
                     alt="Tutorial content"
-                    style={{ maxWidth: '100%', marginBottom: 16 }} 
+                    style={{ maxWidth: "100%", marginBottom: 16 }}
                   />
-                ) : section.type === 'code' ? (
-                  <Paper 
-                    sx={{ 
-                      bgcolor: 'grey.900', 
-                      color: 'common.white',
+                ) : section.type === "code" ? (
+                  <Paper
+                    sx={{
+                      bgcolor: "grey.900",
+                      color: "common.white",
                       p: 2,
                       mb: 2,
-                      fontFamily: 'monospace'
+                      fontFamily: "monospace",
                     }}
                   >
                     <pre style={{ margin: 0 }}>{section.content}</pre>
                   </Paper>
                 ) : (
-                  <Typography paragraph>{section.content}</Typography>
+                  <ReactMarkdown>{section.content}</ReactMarkdown>
                 )}
               </Box>
             ))}
-          </CardContent>
-        </Card>
-      </TabPanel>
-
-      <TabPanel value={tabValue} index={2}>
-        <Card>
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="SEO Title"
-                  value={formData.seo.title}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    seo: { ...prev.seo, title: e.target.value }
-                  }))}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  label="SEO Description"
-                  value={formData.seo.description}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    seo: { ...prev.seo, description: e.target.value }
-                  }))}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Keywords (comma-separated)"
-                  value={formData.seo.keywords}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    seo: { ...prev.seo, keywords: e.target.value }
-                  }))}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Paper variant="outlined" sx={{ p: 2 }}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    OG Image
-                  </Typography>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={async (e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        const imageUrl = await handleImageUpload(file, 'og');
-                        if (imageUrl) {
-                          setFormData(prev => ({
-                            ...prev,
-                            seo: { ...prev.seo, ogImage: imageUrl }
-                          }));
-                        }
-                      }
-                    }}
-                  />
-                  {formData.seo.ogImage && (
-                    <img 
-                      src={formData.seo.ogImage} 
-                      alt="OG Image"
-                      style={{ 
-                        marginTop: 16,
-                        maxHeight: 200,
-                        objectFit: 'contain'
-                      }} 
-                    />
-                  )}
-                </Paper>
-              </Grid>
-            </Grid>
           </CardContent>
         </Card>
       </TabPanel>
