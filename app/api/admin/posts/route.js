@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import connectDB from '../../../../lib/mongodb';
-import Post from '../../../../models/Post';
-import User from '../../../../models/User';
+import connectDB from '../../../lib/mongodb';
+import Post from '../../../models/Post';
+import User from '../../../models/User';
 import { authOptions } from '../../auth/[...nextauth]/route';
 
 // Function to generate a URL-friendly slug

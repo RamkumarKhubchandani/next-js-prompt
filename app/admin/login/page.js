@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Input } from "../../components/ui/Input";
 import { Logo } from "../../components/Logo";
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -19,6 +19,7 @@ export default function LoginPage() {
                 email,
                 password,
                 redirect: false,
+                callbackUrl: "/admin", // Ensure redirection to admin dashboard
             });
 
             if (res.error) {
