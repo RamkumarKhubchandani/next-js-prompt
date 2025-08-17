@@ -8,9 +8,11 @@ import { Menu, X } from "lucide-react";
 import { cn } from "../lib/utils"; // We will create this utility file
 
 const navigation = [
-  { name: "Features", href: "#features" },
-  { name: "How It Works", href: "#how-it-works" },
-  { name: "Pricing", href: "#pricing" },
+  { name: "Features", href: "/#features" },
+  { name: "How It Works", href: "/#how-it-works" },
+  { name: "Pricing", href: "/#pricing" },
+  { name: "Testimonials", href: "/#testimonials" },
+  { name: "AI Assessment", href: "/ai-quiz" },
   { name: "Tutorials", href: "/javascript-tutorials" },
 ];
 

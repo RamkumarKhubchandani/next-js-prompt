@@ -2,6 +2,8 @@ import { Features } from "./components/landing-page/Features";
 import { Hero } from "./components/landing-page/Hero";
 import { Pricing } from "./components/landing-page/Pricing";
 import { HowItWorks } from "./components/landing-page/HowItWorks";
+import { Testimonials } from "./components/landing-page/Testimonials";
+import { AiQuizCta } from "./components/landing-page/AiQuizCta";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 
@@ -12,8 +14,10 @@ export default function Home() {
       <main>
         <Hero />
         <Features />
+        <AiQuizCta />
         <HowItWorks />
         <Pricing />
+        <Testimonials />
       </main>
       <Footer />
     </div>

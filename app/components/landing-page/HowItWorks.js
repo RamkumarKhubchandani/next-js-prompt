@@ -1,23 +1,33 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Zap, Award } from "lucide-react";
+import { CheckCircle, Zap, Award, Bot, Rocket } from "lucide-react";
 
 const steps = [
   {
-    name: "Step 1: Consultation",
-    description: "We start with a free consultation to understand your goals and assess your current skill level.",
+    name: "Step 1: Deep Dive Consultation",
+    description: "We start with a free, in-depth consultation to map your goals, strengths, and career ambitions.",
     icon: <CheckCircle />,
   },
   {
-    name: "Step 2: Personalized Plan",
-    description: "We create a custom learning roadmap tailored specifically to you, focusing on the areas you need most.",
+    name: "Step 2: Hyper-Personalized Roadmap",
+    description: "Forget generic courses. We craft a unique learning roadmap tailored precisely to your goals and learning style.",
     icon: <Zap />,
   },
   {
-    name: "Step 3: Master & Achieve",
-    description: "Through 1-on-1 mentorship and interactive projects, you'll master the skills needed to achieve your career goals.",
+    name: "Step 3: Elite Mentorship & Mastery",
+    description: "Master core concepts through intensive 1-on-1 mentorship, real-world projects, and collaborative sessions.",
     icon: <Award />,
+  },
+  {
+    name: "Step 4: The Agentic Workflow",
+    description: "This is the final leap. We train you to leverage AI and agentic workflows, transforming you into a hyper-productive, future-proof developer.",
+    icon: <Bot />,
+  },
+  {
+    name: "Step 5: Deploy & Dominate",
+    description: "It's time to launch. We arm you with a killer portfolio, elite interview skills, and the career strategy to not just land a job, but to dominate in your new role.",
+    icon: <Rocket />,
   },
 ];
 
@@ -49,16 +59,15 @@ export const HowItWorks = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                className={`relative mb-12 flex items-center ${
-                  index % 2 === 0 ? "justify-start" : "justify-end"
-                }`}
+                className="relative mb-12 flex items-center w-full"
               >
-                <div className="w-1/2 px-4">
-                  <div className={`text-${index % 2 === 0 ? 'right' : 'left'}`}>
+                {/* Left Side Content */}
+                <div className={`w-1/2 pr-8 ${index % 2 !== 0 ? 'ml-auto text-left pl-16' : 'text-right'}`}>
                     <h3 className="text-xl font-bold text-light-100">{step.name}</h3>
                     <p className="mt-2 text-light-200">{step.description}</p>
-                  </div>
                 </div>
+                
+                {/* Center Icon */}
                 <div className="absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-dark-900 border-2 border-brand-primary rounded-full flex items-center justify-center text-brand-primary">
                   {step.icon}
                 </div>
