@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
@@ -50,7 +50,9 @@ export default function TutorialsPage() {
             try {
                 const res = await fetch('/api/posts');
                 const data = await res.json();
-                setPosts(data);
+                // Filter out posts that are missing required data for links
+                const validPosts = data.filter(p => p.category && p.slug);
+                setPosts(validPosts);
                 setSelectedPost(data[0]);
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
@@ -69,8 +71,8 @@ export default function TutorialsPage() {
 
     return (
         <div className="min-h-screen bg-dark-900 text-light-100">
-            <div className="grid grid-cols-12 h-screen">
-                <aside className="col-span-3 bg-dark-800 p-6 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 h-screen">
+                <aside className="col-span-1 bg-dark-800 p-6 overflow-y-auto">
                     <h2 className="text-2xl font-bold mb-6 text-light-100">Categories</h2>
                     <div className="space-y-2">
                         {categories.map(cat => (
@@ -85,65 +87,35 @@ export default function TutorialsPage() {
                     </div>
                 </aside>
 
-                <nav className="col-span-3 border-l border-r border-dark-700 p-6 overflow-y-auto">
+                <nav className="col-span-3 border-l border-dark-700 p-6 overflow-y-auto">
                     <h2 className="text-2xl font-bold mb-6 text-light-100 flex items-center">
                         <BookOpen className="mr-3" />
                         Posts
                     </h2>
                     <div className="space-y-4">
                         {filteredPosts.map(post => (
-                            <motion.div
-                                key={post._id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.3 }}
-                                onClick={() => setSelectedPost(post)}
-                                className={`p-4 rounded-lg cursor-pointer border ${selectedPost?._id === post._id ? 'bg-dark-700 border-brand-primary' : 'border-transparent hover:bg-dark-700'}`}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <h3 className="font-bold text-light-100">{post.title}</h3>
-                                    {post.isPremium && <Lock size={14} className="text-brand-primary flex-shrink-0" />}
-                                </div>
-                                <div className="flex items-center text-xs text-light-300 mt-2">
-                                    <Tag size={14} className="mr-2" />
-                                    <span>{post.category}</span>
-                                </div>
-                            </motion.div>
+                            <Link key={post._id} href={`/tutorials/${post.category}/${post.slug}`}>
+                                <motion.div
+                                    key={post._id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    onClick={() => setSelectedPost(post)}
+                                    className="p-4 rounded-lg cursor-pointer border border-transparent hover:bg-dark-700"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-bold text-light-100">{post.title}</h3>
+                                        {post.isPremium && <Lock size={14} className="text-brand-primary flex-shrink-0" />}
+                                    </div>
+                                    <div className="flex items-center text-xs text-light-300 mt-2">
+                                        <Tag size={14} className="mr-2" />
+                                        <span>{post.category}</span>
+                                    </div>
+                                </motion.div>
+                            </Link>
                         ))}
                     </div>
                 </nav>
-
-                <main className="col-span-6 p-10 overflow-y-auto">
-                    <AnimatePresence mode="wait">
-                        {selectedPost ? (
-                            <motion.div
-                                key={selectedPost._id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.5 }}
-                                className="h-full"
-                            >
-                                <h1 className="text-5xl font-bold mb-4">{selectedPost.title}</h1>
-                                <p className="text-light-200 mb-8">
-                                    By {selectedPost.author?.name || 'Admin'} in <span className="text-brand-primary">{selectedPost.category}</span>
-                                </p>
-                                
-                                {isPremiumAndLocked ? (
-                                    <PremiumContentOverlay />
-                                ) : (
-                                    <TiptapView content={selectedPost.content} />
-                                )}
-                            </motion.div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full">
-                                <p className="text-light-200">
-                                    {loading ? 'Loading posts...' : 'Select a post to read or create your first one!'}
-                                </p>
-                            </div>
-                        )}
-                    </AnimatePresence>
-                </main>
             </div>
         </div>
     );

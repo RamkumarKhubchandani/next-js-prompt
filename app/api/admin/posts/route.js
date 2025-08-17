@@ -42,6 +42,7 @@ export async function POST(request) {
         }
 
         const newPostData = {
+            postID: `post-${Date.now()}`,
             title,
             content,
             category,
