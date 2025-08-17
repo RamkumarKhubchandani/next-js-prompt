@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,10 +8,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        brand: {
+          primary: '#00f5a0', // A vibrant, energetic teal
+          secondary: '#00b8d4', // A deeper cyan for accents
+        },
+        dark: {
+          900: '#121212', // Near-black for main background
+          800: '#1e1e1e', // Slightly lighter for cards/sections
+          700: '#2a2a2a', // For borders and dividers
+        },
+        light: {
+          100: '#f5f5f5', // Off-white for text
+          200: '#e0e0e0', // Lighter text
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
+
+export default config;

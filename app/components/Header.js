@@ -1,26 +1,87 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Logo } from "./Logo"; // Replaced JSPromptLogo
+import ContactUsDialog from "./contactus";
+import { Menu, X } from "lucide-react";
+import { cn } from "../lib/utils"; // We will create this utility file
 
-function Header({
-    setOpen
-}) {
+const navigation = [
+  { name: "Features", href: "#features" },
+  { name: "How It Works", href: "#how-it-works" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "Tutorials", href: "/javascript-tutorials" },
+];
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center bg-blend-color-burn bg-teal-500 bg-cover bg-contain w-full h-[80vh]">
-      <div className="text-7xl text-cyan-50 mt-40 opacity-0 animate-fade-in-up duration-500 delay-[1000ms]">
-        Any one can do the code
-      </div>
-      <div className="text-3xl text-cyan-50 mt-5 opacity-0 animate-fade-in-up duration-500 delay-[2000ms]">
-        Code is not the magic, code is art
-      </div>
-      <div className="text-3xl text-cyan-50 mt-5 opacity-0 animate-fade-in-up duration-500 delay-[3000ms]">
-        Do you want to become a independent Front end coder?
-      </div>
-      <button aria-label="Connect one-on-one for free" onClick={() => setOpen(true)} className="bg-cyan-50 text-teal-500 px-5 py-2 rounded-lg text-4xl mt-20 opacity-0 animate-fade-in-up duration-500 delay-[4000ms]">
-        Connect 1-on-1 for Free
-      </button>
-    </div>
-    </div>
+    <>
+      <ContactUsDialog open={open} setOpen={setOpen} />
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+          scrolled ? "bg-dark-900/80 backdrop-blur-lg" : "bg-transparent"
+        )}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <nav
+            className="flex items-center justify-between h-20"
+            aria-label="Global"
+          >
+            <div className="flex lg:flex-1">
+              <Link href="/" className="-m-1.5 p-1.5">
+                <Logo />
+              </Link>
+            </div>
+            <div className="flex lg:hidden">
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                className="inline-flex items-center justify-center rounded-md p-2.5 text-light-200"
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="hidden lg:flex lg:gap-x-12">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+              <button
+                onClick={() => setOpen(true)}
+                className="rounded-full bg-brand-primary px-5 py-2.5 text-sm font-semibold text-dark-900 shadow-sm hover:bg-brand-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary transition-all duration-300 transform hover:scale-105"
+              >
+                Contact Us
+              </button>
+            </div>
+          </nav>
+        </div>
+        {/* Mobile menu */}
+        <div className={`lg:hidden ${mobileMenuOpen ? 'block' : 'hidden'}`}>
+            {/* Mobile menu content */}
+        </div>
+      </header>
+    </>
   );
 }
 

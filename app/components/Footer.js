@@ -1,52 +1,50 @@
 "use client";
 import React from "react";
-import { Typography, Box, Container } from "@mui/material";
+import { Github, Linkedin, Twitter } from "lucide-react";
+import Link from "next/link";
+import { Logo } from "./Logo";
+
+const social = [
+  {
+    name: "Twitter",
+    href: "#",
+    icon: (props) => <Twitter {...props} />,
+  },
+  {
+    name: "GitHub",
+    href: "#",
+    icon: (props) => <Github {...props} />,
+  },
+  {
+    name: "LinkedIn",
+    href: "#",
+    icon: (props) => <Linkedin {...props} />,
+  },
+];
 
 function Footer() {
   return (
-    <div style={styles.footer}>
-      <Container>
-        <Box display="flex" justifyContent="space-between">
-          <div style={styles.footerColumn}>
-            <Typography variant="h6">Contact Us</Typography>
-            <Typography>Email: infojsprompt@gmail.com</Typography>
-            <Typography>Phone: +917709330265</Typography>
-          </div>
-          
-          <div style={styles.footerColumn}>
-            <Typography variant="h6">Copyright © 2024 JSLife</Typography>
-            <Typography>All rights reserved.</Typography>
-          </div>
-        </Box>
-      </Container>
-    </div>
+    <footer className="bg-dark-900 border-t border-dark-700">
+      <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
+        <div className="flex justify-center md:order-1">
+          <Logo />
+        </div>
+        <div className="flex justify-center space-x-6 md:order-2">
+          {social.map((item) => (
+            <a key={item.name} href={item.href} className="text-light-200 hover:text-brand-primary transition-colors">
+              <span className="sr-only">{item.name}</span>
+              <item.icon className="h-6 w-6" aria-hidden="true" />
+            </a>
+          ))}
+        </div>
+        <div className="mt-8 md:order-3 md:mt-0">
+          <p className="text-center text-xs leading-5 text-light-200">
+            &copy; {new Date().getFullYear()} JSPrompt. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
   );
 }
-
-const styles = {
-  footer: {
-    backgroundColor: "#14b8a6",
-    color: "white",
-    borderTop: "2px solid #00A791",
-    padding: "20px 0",
-  },
-  footerColumn: {
-    flex: 1,
-    padding: "10px",
-    textAlign: "center",
-  },
-  newsletterForm: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginTop: "10px",
-    padding: "20px",
-    borderRadius: "5px",
-  },
-  formField: {
-    display: "flex",
-    justifyContent: "center",
-  },
-};
 
 export default Footer;
