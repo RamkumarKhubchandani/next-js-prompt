@@ -7,6 +7,14 @@ export async function POST(request) {
   try {
     await connectDB();
     const data = await request.json();
+
+    // Basic validation
+    if (!data.title || !data.leftMenu || !data.slug || !data.category) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
     
     const tutorial = await Tutorial.create(data);
     return NextResponse.json(tutorial);
