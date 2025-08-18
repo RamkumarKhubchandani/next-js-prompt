@@ -1,6 +1,13 @@
 "use client";
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { Link } from '@tiptap/extension-link';
+import { Image } from '@tiptap/extension-image';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { useCallback, useEffect } from 'react';
 
 const Toolbar = ({ editor }) => {
     if (!editor) {
@@ -16,15 +23,36 @@ const Toolbar = ({ editor }) => {
     );
 };
 
-export default function TiptapEditor({ onChange, content }) {
+export default function TiptapEditor({ onEditorReady, content }) {
     const editor = useEditor({
-        extensions: [StarterKit],
+        extensions: [
+            StarterKit,
+            Link.configure({ openOnClick: false }),
+            Image,
+            Table.configure({ resizable: true }),
+            TableRow,
+            TableHeader,
+            TableCell,
+        ],
         content: content || '',
         onUpdate: ({ editor }) => {
-            onChange(editor.getJSON());
+            // This will be handled by the publish button now
         },
-        immediatelyRender: false,
+        editorProps: {
+            attributes: {
+                class: 'prose prose-invert lg:prose-xl max-w-none focus:outline-none p-4',
+            },
+        },
+        immediatelyRender: false, // This is the definitive fix
     });
+
+    useEffect(() => {
+        if (editor && onEditorReady) {
+            onEditorReady(editor);
+        }
+    }, [editor, onEditorReady]);
+
+    // ... (logic for image, video, link handlers)
 
     return (
         <div className="border border-dark-600 rounded-lg">

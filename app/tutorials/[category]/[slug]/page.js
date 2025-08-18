@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import connectDB from '../../../lib/mongodb';
 import Post from '../../../models/Post';
-import TiptapView from '../../../components/public/TiptapView';
+import SafeTiptapView from '../../../components/public/SafeTiptapView';
 
 async function getPost(category, slug) {
     await connectDB();
@@ -35,7 +35,7 @@ export default async function PostPage({ params }) {
                         By {post.author?.name || 'Admin'} in <span className="text-brand-primary">{post.category}</span>
                     </p>
                 </header>
-                <TiptapView content={post.content} />
+                <SafeTiptapView content={post.content} />
             </article>
         </div>
     );

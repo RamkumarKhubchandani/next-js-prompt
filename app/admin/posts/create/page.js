@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
-const TiptapEditor = dynamic(() => import('../../../components/admin/TiptapEditor'), { ssr: false });
+const SafeTiptapEditor = dynamic(() => import('../../../components/admin/SafeTiptapEditor'), { ssr: false });
 
 const categories = ["JavaScript", "React", "Angular", "Vue", "Node.js", "MongoDB", "Python", "TypeScript", "HTML", "CSS", "Redux"];
 
@@ -19,6 +19,7 @@ export default function CreatePostPage() {
     const [keywords, setKeywords] = useState('');
     const [isPremium, setIsPremium] = useState(false);
     const [content, setContent] = useState('');
+    const editorRef = useRef(null); // Ref to access editor instance
 
     const router = useRouter();
 
@@ -31,27 +32,30 @@ export default function CreatePostPage() {
             return;
         }
 
-        const seo = {
-            metaTitle,
-            metaDescription,
-            keywords: keywords.split(',').map(k => k.trim()),
-        };
+        if (editorRef.current) {
+            const content = editorRef.current.getJSON();
+            const seo = {
+                metaTitle,
+                metaDescription,
+                keywords: keywords.split(',').map(k => k.trim()),
+            };
 
-        try {
-            const res = await fetch('/api/admin/posts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content, category, seo, isPremium }),
-            });
+            try {
+                const res = await fetch('/api/admin/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, category, seo, isPremium }),
+                });
 
-            if (res.ok) {
-                router.push('/admin');
-            } else {
-                const data = await res.json();
-                setError(data.message || 'Failed to create post.');
+                if (res.ok) {
+                    router.push('/admin');
+                } else {
+                    const data = await res.json();
+                    setError(data.message || 'Failed to create post.');
+                }
+            } catch (err) {
+                setError('An unexpected error occurred.');
             }
-        } catch (err) {
-            setError('An unexpected error occurred.');
         }
     };
 
@@ -97,9 +101,8 @@ export default function CreatePostPage() {
                             Content
                         </label>
                         <div className="bg-dark-800 p-4 rounded-lg">
-                            <TiptapEditor
-                                content={content}
-                                onChange={(newContent) => setContent(newContent)}
+                            <SafeTiptapEditor
+                                onEditorReady={(instance) => editorRef.current = instance}
                             />
                         </div>
                     </div>
