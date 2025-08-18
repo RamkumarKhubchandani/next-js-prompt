@@ -7,18 +7,43 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
 import { useCallback, useEffect } from 'react';
+import { Bold, Italic, Strikethrough, Link as LinkIcon, List, ListOrdered, Heading1, Heading2, Heading3, Image as ImageIcon, Table as TableIcon, Code, Quote } from 'lucide-react';
 
 const Toolbar = ({ editor }) => {
     if (!editor) {
         return null;
     }
-    // Simple toolbar component - we will expand this later
+
+    const setLink = useCallback(() => {
+        // ... link logic
+    }, [editor]);
+
+    const addImage = useCallback(() => {
+        const url = window.prompt('URL');
+
+        if (url && editor) {
+            editor.chain().focus().setImage({ src: url }).run();
+        }
+    }, [editor]);
+
     return (
-        <div className="p-2 bg-dark-700 rounded-t-lg border-b border-dark-600 flex items-center gap-2">
-            <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>Bold</button>
-            <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>Italic</button>
-            <button onClick={() => editor.chain().focus().toggleCodeBlock().run()} className={editor.isActive('codeBlock') ? 'is-active' : ''}>Code</button>
+        <div className="p-2 bg-dark-700 rounded-t-lg border-b border-dark-600 flex items-center gap-2 flex-wrap">
+            <button onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough size={18} /></button>
+            <button onClick={setLink}><LinkIcon size={18} /></button>
+            <button onClick={addImage}><ImageIcon size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleBulletList().run()}><List size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote size={18} /></button>
+            <button onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code size={18} /></button>
+            <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><TableIcon size={18} /></button>
         </div>
     );
 };
@@ -30,9 +55,8 @@ export default function TiptapEditor({ onEditorReady, content }) {
             Link.configure({ openOnClick: false }),
             Image,
             Table.configure({ resizable: true }),
-            TableRow,
-            TableHeader,
-            TableCell,
+            TableRow, TableHeader, TableCell,
+            TextStyle, Color,
         ],
         content: content || '',
         onUpdate: ({ editor }) => {
