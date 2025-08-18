@@ -70,8 +70,8 @@ export default function TutorialsPage() {
     const isPremiumAndLocked = selectedPost?.isPremium && !session;
 
     return (
-        <div className="min-h-screen bg-dark-900 text-light-100">
-            <div className="grid grid-cols-1 md:grid-cols-4 h-screen">
+        <div className="min-h-screen bg-dark-900 text-light-100 pt-20">
+            <div className="grid grid-cols-1 md:grid-cols-4 h-[calc(100vh-5rem)]">
                 <aside className="col-span-1 bg-dark-800 p-6 overflow-y-auto">
                     <h2 className="text-2xl font-bold mb-6 text-light-100">Categories</h2>
                     <div className="space-y-2">
