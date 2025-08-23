@@ -70,16 +70,16 @@ export default function TutorialsPage() {
     const isPremiumAndLocked = selectedPost?.isPremium && !session;
 
     return (
-        <div className="min-h-screen bg-dark-900 text-light-100 pt-20">
+        <div className="min-h-screen pt-20">
             <div className="grid grid-cols-1 md:grid-cols-4 h-[calc(100vh-5rem)]">
-                <aside className="col-span-1 bg-dark-800 p-6 overflow-y-auto">
-                    <h2 className="text-2xl font-bold mb-6 text-light-100">Categories</h2>
+                <aside className="col-span-1 bg-light-100 dark:bg-dark-800 p-6 overflow-y-auto">
+                    <h2 className="text-2xl font-bold mb-6">Categories</h2>
                     <div className="space-y-2">
                         {categories.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${selectedCategory === cat ? 'bg-brand-primary text-dark-900' : 'hover:bg-dark-700'}`}
+                                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${selectedCategory === cat ? 'bg-brand-primary text-dark-900' : 'hover:bg-gray-200 dark:hover:bg-dark-700'}`}
                             >
                                 {cat}
                             </button>
@@ -87,8 +87,8 @@ export default function TutorialsPage() {
                     </div>
                 </aside>
 
-                <nav className="col-span-3 border-l border-dark-700 p-6 overflow-y-auto">
-                    <h2 className="text-2xl font-bold mb-6 text-light-100 flex items-center">
+                <nav className="col-span-3 border-l border-gray-200 dark:border-dark-700 p-6 overflow-y-auto">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center">
                         <BookOpen className="mr-3" />
                         Posts
                     </h2>
@@ -101,10 +101,10 @@ export default function TutorialsPage() {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.3 }}
                                     onClick={() => setSelectedPost(post)}
-                                    className="p-4 rounded-lg cursor-pointer border border-transparent hover:bg-dark-700"
+                                    className="p-4 rounded-lg cursor-pointer border border-transparent hover:bg-gray-200 dark:hover:bg-dark-700"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <h3 className="font-bold text-light-100">{post.title}</h3>
+                                        <h3 className="font-bold">{post.title}</h3>
                                         {post.isPremium && <Lock size={14} className="text-brand-primary flex-shrink-0" />}
                                     </div>
                                     <div className="flex items-center text-xs text-light-300 mt-2">

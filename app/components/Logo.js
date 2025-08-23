@@ -44,7 +44,7 @@ export const Logo = ({ className }) => (
         </path>
       </g>
     </svg>
-    <span className="ml-2 text-2xl font-bold text-light-100 tracking-wider">
+    <span className="ml-2 text-2xl font-bold text-dark-900 dark:text-light-100 tracking-wider">
       JSPrompt
     </span>
   </div>

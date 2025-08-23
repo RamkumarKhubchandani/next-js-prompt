@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "../components/ui/Input";
 import { getQuestionsForTech } from "../lib/ai";

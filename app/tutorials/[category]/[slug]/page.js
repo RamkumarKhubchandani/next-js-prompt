@@ -27,11 +27,11 @@ export default async function PostPage({ params }) {
     const post = await getPost(category, slug);
 
     return (
-        <div className="min-h-screen bg-dark-900 text-light-100 flex justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <article className="prose prose-invert lg:prose-xl max-w-4xl">
+        <div className="min-h-screen flex justify-center py-28 px-4 sm:px-6 lg:px-8">
+            <article className="prose dark:prose-invert lg:prose-xl max-w-4xl">
                 <header className="mb-12 text-center">
-                    <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-light-100 mb-4">{post.title}</h1>
-                    <p className="text-lg text-light-200">
+                    <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">{post.title}</h1>
+                    <p className="text-lg">
                         By {post.author?.name || 'Admin'} in <span className="text-brand-primary">{post.category}</span>
                     </p>
                 </header>

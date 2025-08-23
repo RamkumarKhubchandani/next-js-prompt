@@ -6,6 +6,7 @@ import { Logo } from "./Logo"; // Replaced JSPromptLogo
 import ContactUsDialog from "./contactus";
 import { Menu, X } from "lucide-react";
 import { cn } from "../lib/utils"; // We will create this utility file
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const navigation = [
   { name: "Features", href: "/#features" },
@@ -29,7 +30,10 @@ export function Header({ showNav = true }) {
     }, []);
 
     return (
-        <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-dark-800/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
+        <header className={cn(
+            "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+            isScrolled ? 'bg-light-100/80 dark:bg-dark-800/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+        )}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-20 items-center justify-between">
                     <div className="flex items-center">
@@ -50,16 +54,19 @@ export function Header({ showNav = true }) {
                             ))}
                         </nav>
                     )}
-                    {showNav && (
-                        <div className="hidden md:flex items-center gap-x-4">
-                            <Link href="/login" className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary">
-                                Log in
-                            </Link>
-                            <Link href="/register" className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-dark-900">
-                                Sign up
-                            </Link>
-                        </div>
-                    )}
+                    <div className="flex items-center gap-x-4">
+                        <ThemeSwitcher />
+                        {showNav && (
+                            <div className="hidden md:flex items-center gap-x-4">
+                                <Link href="/login" className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary">
+                                    Log in
+                                </Link>
+                                <Link href="/register" className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-dark-900">
+                                    Sign up
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                     {showNav && (
                         <div className="md:hidden">
                             <button
