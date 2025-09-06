@@ -12,7 +12,8 @@ async function getPost(category, slug) {
     return post;
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params: paramsPromise }) {
+    const params = await paramsPromise;
     const { category, slug } = params;
     const post = await getPost(category, slug);
     return {
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }) {
     };
 }
 
-export default async function PostPage({ params }) {
+export default async function PostPage({ params: paramsPromise }) {
+    const params = await paramsPromise;
     const { category, slug } = params;
     const post = await getPost(category, slug);
 
