@@ -28,6 +28,7 @@ export const authOptions = {
                     return user;
                 } catch (error) {
                     console.log("Error: ", error);
+                    return null;
                 }
             },
         }),
@@ -37,7 +38,7 @@ export const authOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        signIn: "/login",
+        signIn: "/admin/login",
     },
 };
 

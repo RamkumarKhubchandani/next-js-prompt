@@ -6,7 +6,7 @@ import { LayoutDashboard, Newspaper, PlusCircle } from "lucide-react";
 const adminNav = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Manage Posts", href: "/admin/posts", icon: Newspaper },
-  { name: "Add New Post", href: "/admin/posts/new", icon: PlusCircle },
+  { name: "Add New Post", href: "/admin/posts/create", icon: PlusCircle },
 ];
 
 export default function AdminLayout({ children }) {

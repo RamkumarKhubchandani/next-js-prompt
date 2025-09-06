@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth/next';
 import connectDB from '../../../lib/mongodb';
 import Post from '../../../models/Post';
 import User from '../../../models/User';
-import { authOptions } from '../../auth/[...nextauth]/route';
 
 // Function to generate a URL-friendly slug
 const generateSlug = (title) => {
@@ -15,7 +14,10 @@ const generateSlug = (title) => {
 
 
 export async function POST(request) {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+    });
 
     if (!session) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
