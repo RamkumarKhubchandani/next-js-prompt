@@ -2,7 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings } from 'lucide-react';
+import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -70,6 +70,37 @@ export default function DashboardPage() {
                             Manage Profile
                         </button>
                     </Link>
+                </motion.div>
+
+                {/* NEW FEATURE: Career Simulator */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="mb-12 p-[1px] rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600"
+                >
+                    <div className="bg-dark-800 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-bold uppercase rounded tracking-wider border border-blue-500/20">Beta Access</span>
+                                <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs font-bold uppercase rounded tracking-wider border border-purple-500/20">New</span>
+                            </div>
+                            <h2 className="text-3xl font-bold text-white mb-3">DevSim: The Career Simulator</h2>
+                            <p className="text-light-300 max-w-xl text-lg leading-relaxed">
+                                Experience the life of a junior developer at a top tech startup. Fix bugs, push code to production, and earn massive XP rewards. Are you ready for your first day?
+                            </p>
+                        </div>
+                        <Link href="/career">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-8 py-4 rounded-xl bg-white text-dark-900 font-bold text-lg shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 transition-all flex items-center gap-3 whitespace-nowrap"
+                            >
+                                <Briefcase size={24} className="text-purple-600" />
+                                Start Internship
+                            </motion.button>
+                        </Link>
+                    </div>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

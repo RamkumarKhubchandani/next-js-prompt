@@ -13,6 +13,7 @@ const navigation = [
   { name: "How It Works", href: "/#how-it-works" },
   { name: "Pricing", href: "/#pricing" },
   { name: "Testimonials", href: "/#testimonials" },
+  { name: "Community", href: "/showcase" },
   { name: "Shop", href: "/shop" },
   { name: "AI Assessment", href: "/ai-quiz" },
   { name: "Tutorials", href: "/tutorials" },
