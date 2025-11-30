@@ -61,7 +61,7 @@ export async function GET(request) {
     try {
         await connectDB();
         const user = await User.findOne({ email: session.user.email })
-            .select('completedTutorials xp streak')
+            .select('completedTutorials xp streak learningPath plan subscriptionEndDate')
             .lean();
 
         if (!user) {

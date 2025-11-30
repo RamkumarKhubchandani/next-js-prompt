@@ -81,12 +81,12 @@ export function Header({ showNav = true }) {
                     
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
-                        <nav className="hidden md:flex md:gap-x-12">
+                        <nav className="hidden lg:flex lg:gap-x-6 xl:gap-x-8">
                             {navigation.map((item) => (
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary transition-colors"
+                                    className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
                                 >
                                     {item.name}
                                 </Link>
@@ -167,7 +167,7 @@ export function Header({ showNav = true }) {
                     </div>
 
                     {/* Mobile Menu Trigger - Always shown */}
-                    <div className="md:hidden">
+                    <div className="lg:hidden">
                         <button
                             type="button"
                             onClick={() => setMobileMenuOpen(true)}
@@ -187,7 +187,7 @@ export function Header({ showNav = true }) {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: "100%" }}
                         transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-                        className="fixed inset-0 z-50 bg-dark-900 md:hidden"
+                        className="fixed inset-0 z-50 bg-dark-900 lg:hidden"
                     >
                         <div className="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
                             <div className="flex h-20 items-center justify-between">
