@@ -3,7 +3,7 @@ import "./globals.css";
 import { AuthProvider } from './Providers';
 import { ThemeProvider } from "./components/ThemeProvider";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "./lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import connectDB from '../../../../lib/mongodb';
-import Post from '../../../../models/Post';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../../lib/auth';
+import connectDB from '../../../lib/mongodb';
+import Post from '../../../models/Post';
 
 export async function DELETE(request) {
     const session = await getServerSession(authOptions);

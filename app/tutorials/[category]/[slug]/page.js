@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 import connectDB from '../../../lib/mongodb';
 import Post from '../../../models/Post';
+import User from '../../../models/User'; // Import User model
 import SafeTiptapView from '../../../components/public/SafeTiptapView';
+import CompleteButton from '../../../components/public/CompleteButton'; // Import CompleteButton
+import { getServerSession } from 'next-auth'; // Import Session
+import { authOptions } from '../../../lib/auth'; // Import Auth Options
 
 async function getPost(category, slug) {
     await connectDB();
@@ -27,6 +31,17 @@ export default async function PostPage({ params: paramsPromise }) {
     const params = await paramsPromise;
     const { category, slug } = params;
     const post = await getPost(category, slug);
+    
+    // Check user progress
+    const session = await getServerSession(authOptions);
+    let isCompleted = false;
+
+    if (session?.user?.email) {
+        const user = await User.findOne({ email: session.user.email });
+        if (user && user.completedTutorials) {
+            isCompleted = user.completedTutorials.some(id => id.toString() === post._id.toString());
+        }
+    }
 
     return (
         <div className="min-h-screen flex justify-center py-28 px-4 sm:px-6 lg:px-8">
@@ -38,6 +53,10 @@ export default async function PostPage({ params: paramsPromise }) {
                     </p>
                 </header>
                 <SafeTiptapView content={post.content} />
+                
+                <hr className="my-12 border-gray-700" />
+                
+                <CompleteButton postId={post._id.toString()} initialCompleted={isCompleted} />
             </article>
         </div>
     );

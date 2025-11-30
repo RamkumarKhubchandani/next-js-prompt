@@ -1,30 +1,200 @@
 "use client";
 import { useSession, signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
     const { data: session } = useSession();
+    const [stats, setStats] = useState({ xp: 0, completedTutorials: [], streak: { count: 0 } });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (session) {
+            fetch('/api/user/progress')
+                .then(res => res.json())
+                .then(data => {
+                    setStats(data);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error(err);
+                    setLoading(false);
+                });
+        }
+    }, [session]);
+
+    // Listen for XP updates from the CompleteButton
+    useEffect(() => {
+        const handleXpUpdate = () => {
+             fetch('/api/user/progress')
+                .then(res => res.json())
+                .then(data => setStats(data));
+        };
+        window.addEventListener('xp-updated', handleXpUpdate);
+        return () => window.removeEventListener('xp-updated', handleXpUpdate);
+    }, []);
+
+    const StatCard = ({ icon: Icon, label, value, color }) => (
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-dark-800 p-6 rounded-2xl border border-dark-700 flex items-center gap-4"
+        >
+            <div className={`p-3 rounded-xl ${color} bg-opacity-20`}>
+                <Icon className={`w-8 h-8 ${color.replace('bg-', 'text-')}`} />
+            </div>
+            <div>
+                <p className="text-light-300 text-sm font-medium">{label}</p>
+                <p className="text-2xl font-bold text-light-100">{value}</p>
+            </div>
+        </motion.div>
+    );
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-dark-900 text-light-100">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center p-8"
-            >
-                <h1 className="text-4xl font-bold mb-4">Welcome to Your Dashboard</h1>
-                <p className="text-xl text-light-200 mb-8">
-                    Hello, {session?.user?.name || 'Student'}!
-                </p>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="rounded-full bg-brand-primary px-8 py-3 text-base font-semibold text-dark-900"
+        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-dark-900 text-light-100">
+            <div className="max-w-5xl mx-auto">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-4"
                 >
-                    Sign Out
-                </motion.button>
-            </motion.div>
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2">Welcome back, {session?.user?.name || 'Student'}!</h1>
+                        <p className="text-xl text-light-200">Ready to continue your learning journey?</p>
+                    </div>
+                    <Link href="/dashboard/settings">
+                        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-dark-800 border border-dark-700 hover:bg-dark-700 hover:text-white transition-colors text-light-300">
+                            <Settings size={18} />
+                            Manage Profile
+                        </button>
+                    </Link>
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <StatCard 
+                        icon={Trophy} 
+                        label="Total XP" 
+                        value={loading ? '...' : stats.xp} 
+                        color="bg-yellow-500 text-yellow-500" 
+                    />
+                    <StatCard 
+                        icon={BookOpen} 
+                        label="Tutorials Completed" 
+                        value={loading ? '...' : stats.completedTutorials?.length || 0} 
+                        color="bg-blue-500 text-blue-500" 
+                    />
+                    <StatCard 
+                        icon={Flame} 
+                        label="Day Streak" 
+                        value={loading ? '...' : stats.streak?.count || 0} 
+                        color="bg-orange-500 text-orange-500" 
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-dark-800 rounded-2xl p-8 border border-dark-700"
+                    >
+                        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <Award className="text-brand-primary" />
+                            Next Milestones
+                        </h2>
+                        <div className="space-y-6">
+                            <div className="relative pt-1">
+                                <div className="flex mb-2 items-center justify-between">
+                                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-brand-primary bg-brand-primary/20">
+                                        Frontend Novice
+                                    </span>
+                                    <span className="text-xs font-semibold inline-block text-brand-primary">
+                                        {(stats.xp / 500 * 100).toFixed(0)}%
+                                    </span>
+                                </div>
+                                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-dark-700">
+                                    <div style={{ width: `${Math.min(100, stats.xp / 500 * 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-brand-primary transition-all duration-500"></div>
+                                </div>
+                                <p className="text-sm text-light-300">Reach 500 XP to unlock the "Frontend Novice" badge.</p>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="bg-dark-800 rounded-2xl p-8 border border-dark-700 flex flex-col justify-center items-center text-center"
+                    >
+                        <h2 className="text-2xl font-bold mb-4">Continue Learning</h2>
+                        <p className="text-light-200 mb-8">Jump back into the tutorials and keep your streak alive!</p>
+                        <div className="flex gap-4">
+                            <Link href="/tutorials">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="rounded-full bg-brand-primary px-6 py-3 text-base font-semibold text-dark-900"
+                                >
+                                    Browse Tutorials
+                                </motion.button>
+                            </Link>
+                            <Link href="/shop">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="rounded-full bg-dark-700 border border-dark-600 px-6 py-3 text-base font-semibold text-white hover:bg-dark-600"
+                                >
+                                    Visit Shop
+                                </motion.button>
+                            </Link>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* XP Guide */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-dark-800 rounded-2xl p-8 border border-dark-700"
+                >
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <Zap className="text-yellow-500" />
+                        How to Earn XP
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-dark-900 p-4 rounded-xl border border-dark-700 flex items-center gap-3">
+                            <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
+                                <BookOpen className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-white">Read Tutorial</p>
+                                <p className="text-sm text-brand-primary">+50 XP</p>
+                            </div>
+                        </div>
+                        <div className="bg-dark-900 p-4 rounded-xl border border-dark-700 flex items-center gap-3">
+                            <div className="p-2 bg-green-500/20 rounded-lg text-green-400">
+                                <CheckCircle className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-white">Complete Quiz</p>
+                                <p className="text-sm text-brand-primary">+100 XP</p>
+                            </div>
+                        </div>
+                        <div className="bg-dark-900 p-4 rounded-xl border border-dark-700 flex items-center gap-3">
+                            <div className="p-2 bg-orange-500/20 rounded-lg text-orange-400">
+                                <Flame className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-white">Daily Login</p>
+                                <p className="text-sm text-brand-primary">+10 XP</p>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
         </div>
     );
 }
