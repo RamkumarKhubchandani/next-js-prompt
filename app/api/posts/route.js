@@ -6,8 +6,10 @@ export async function GET(request) {
     try {
         await connectDB();
         const posts = await Post.find({})
+            .select('-content') // Exclude content to reduce payload size
             .populate('author', 'name')
-            .sort({ createdAt: -1 }); // Sort by newest first
+            .sort({ createdAt: -1 })
+            .lean(); // Return plain JavaScript objects
 
         return NextResponse.json(posts, { status: 200 });
     } catch (error) {

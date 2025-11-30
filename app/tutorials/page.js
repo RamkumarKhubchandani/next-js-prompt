@@ -8,7 +8,7 @@ import { BookOpen, Tag, Lock } from 'lucide-react';
 
 const TiptapView = dynamic(() => import('../components/public/TiptapView'), { ssr: false });
 
-const categories = ["All", "JavaScript", "React", "Angular", "Vue", "Node.js", "MongoDB", "Python", "TypeScript", "HTML", "CSS", "Redux"];
+const categories = ["All", "Webpack", "JavaScript", "React", "Angular", "Vue", "Node.js", "MongoDB", "Python", "TypeScript", "HTML", "CSS", "Redux"];
 
 function PremiumContentOverlay() {
     return (
@@ -49,13 +49,17 @@ export default function TutorialsPage() {
         const fetchPosts = async () => {
             try {
                 const res = await fetch('/api/posts');
+                if (!res.ok) throw new Error('Failed to fetch posts');
                 const data = await res.json();
                 // Filter out posts that are missing required data for links
-                const validPosts = data.filter(p => p.category && p.slug);
+                const validPosts = Array.isArray(data) ? data.filter(p => p.category && p.slug) : [];
                 setPosts(validPosts);
-                setSelectedPost(data[0]);
+                if (validPosts.length > 0) {
+                    setSelectedPost(validPosts[0]);
+                }
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
+                setPosts([]);
             } finally {
                 setLoading(false);
             }
