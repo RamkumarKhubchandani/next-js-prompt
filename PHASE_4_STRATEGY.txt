@@ -53,3 +53,5 @@ I recommend we start with **Priority A: Public Profiles**.
 2.  Build the `ActivityHeatmap` component.
 3.  Add "View Public Profile" link to the User Dropdown.
 
+
+

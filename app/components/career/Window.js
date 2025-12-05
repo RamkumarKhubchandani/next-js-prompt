@@ -40,3 +40,5 @@ export default function Window({ id, title, children, isActive, onClose, onFocus
     );
 }
 
+
+

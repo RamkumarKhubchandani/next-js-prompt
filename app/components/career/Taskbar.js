@@ -38,3 +38,5 @@ export default function Taskbar({ openApps, activeApp, onAppClick }) {
     );
 }
 
+
+
