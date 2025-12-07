@@ -1,40 +1,83 @@
+"use client";
 import Link from 'next/link';
+import { Users, FileText, PlusCircle, BarChart, Settings, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-export default function AdminPage() {
+export default function AdminDashboard() {
+    const cards = [
+        {
+            title: "Manage Users",
+            desc: "View users, grant pro status, and manage roles.",
+            icon: <Users size={32} />,
+            href: "/admin/users",
+            color: "bg-blue-500"
+        },
+        {
+            title: "Create Tutorial",
+            desc: "Write a new blog post or tutorial.",
+            icon: <PlusCircle size={32} />,
+            href: "/admin/posts/create",
+            color: "bg-green-500"
+        },
+        {
+            title: "Manage Content",
+            desc: "Edit or delete existing tutorials.",
+            icon: <FileText size={32} />,
+            href: "/admin/posts", // Ensure this route exists or link to a listing
+            color: "bg-purple-500"
+        },
+        {
+            title: "Platform Settings",
+            desc: "Configure site-wide settings (Coming Soon).",
+            icon: <Settings size={32} />,
+            href: "/admin/settings",
+            color: "bg-orange-500"
+        }
+    ];
+
     return (
-        <div className="p-8">
+        <div className="min-h-screen bg-dark-900 text-white p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-center mb-12">
-                    <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-                    <Link href="/">
-                        <button className="text-sm hover:text-brand-primary">
-                            View Main Site
-                        </button>
-                    </Link>
+                <div className="mb-12">
+                    <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                        <Shield size={40} className="text-brand-primary" /> 
+                        Admin Console
+                    </h1>
+                    <p className="text-light-400">Welcome back, Admin. What would you like to do today?</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <Link href="/admin/posts/create">
-                        <div className="bg-light-100 dark:bg-dark-800 p-6 rounded-2xl border border-gray-200 dark:border-dark-700 hover:border-brand-primary transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
-                            <h2 className="text-2xl font-bold mb-2">Create New Post</h2>
-                            <p>
-                                Write a new blog post, tutorial, or puzzle.
-                            </p>
-                        </div>
-                    </Link>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {cards.map((card, idx) => (
+                        <Link href={card.href} key={idx}>
+                            <motion.div 
+                                whileHover={{ y: -5 }}
+                                className="bg-dark-800 p-8 rounded-2xl border border-dark-700 hover:border-brand-primary/50 transition-all h-full group"
+                            >
+                                <div className={`w-14 h-14 rounded-xl ${card.color} bg-opacity-20 flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform`}>
+                                    {card.icon}
+                                </div>
+                                <h2 className="text-2xl font-bold mb-3 text-white">{card.title}</h2>
+                                <p className="text-light-400">{card.desc}</p>
+                            </motion.div>
+                        </Link>
+                    ))}
+                </div>
 
-                    {/* Future dashboard cards can be added here */}
-                    <div className="bg-light-100 dark:bg-dark-800 p-6 rounded-2xl border border-gray-200 dark:border-dark-700">
-                        <h2 className="text-2xl font-bold mb-2">View Posts</h2>
-                        <p>
-                            (Coming Soon)
-                        </p>
+                {/* Quick Stats (Mock for now, can be real) */}
+                <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="bg-dark-800 p-6 rounded-xl border border-dark-700 flex items-center gap-4">
+                        <BarChart className="text-gray-500" />
+                        <div>
+                            <p className="text-2xl font-bold">12.5k</p>
+                            <p className="text-xs text-gray-500">Total Views</p>
+                        </div>
                     </div>
-                    <div className="bg-light-100 dark:bg-dark-800 p-6 rounded-2xl border border-gray-200 dark:border-dark-700">
-                        <h2 className="text-2xl font-bold mb-2">Manage Users</h2>
-                        <p>
-                            (Coming Soon)
-                        </p>
+                    <div className="bg-dark-800 p-6 rounded-xl border border-dark-700 flex items-center gap-4">
+                        <Users className="text-gray-500" />
+                        <div>
+                            <p className="text-2xl font-bold">1,204</p>
+                            <p className="text-xs text-gray-500">Active Learners</p>
+                        </div>
                     </div>
                 </div>
             </div>

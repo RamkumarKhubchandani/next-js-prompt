@@ -31,7 +31,7 @@ export default function CompleteButton({ postId, initialCompleted = false }) {
             if (res.ok) {
                 setCompleted(true);
                 // Dispatch a custom event so the navbar/dashboard can update XP immediately if they are listening
-                window.dispatchEvent(new Event('xp-updated'));
+                window.dispatchEvent(new CustomEvent('xp-updated', { detail: { amount: 50, message: 'Tutorial Completed' } }));
             }
         } catch (error) {
             console.error('Failed to complete tutorial:', error);

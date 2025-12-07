@@ -4,6 +4,7 @@ import { AuthProvider } from './Providers';
 import { ThemeProvider } from "./components/ThemeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/auth";
+import XPNotification from "./components/public/XPNotification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default async function RootLayout({ children }) {
         <AuthProvider session={session}>
           <ThemeProvider>
             {children}
+            <XPNotification />
           </ThemeProvider>
         </AuthProvider>
       </body>

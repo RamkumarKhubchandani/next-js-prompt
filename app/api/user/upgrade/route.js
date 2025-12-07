@@ -1,56 +1,38 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../../lib/auth';
 import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../lib/auth';
 
 export async function POST(request) {
     const session = await getServerSession(authOptions);
     
     if (!session) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    await connectDB();
+    const { plan } = await request.json();
+    const planType = plan || 'pro_monthly';
 
     try {
-        const { planId } = await request.json();
+        await connectDB();
         const user = await User.findById(session.user.id);
 
-        if (!user) {
-            return NextResponse.json({ message: 'User not found' }, { status: 404 });
-        }
-
-        // Calculate Expiry
-        const startDate = new Date();
-        let endDate = new Date();
-
-        if (planId === 'pro_weekly') {
-            endDate.setDate(startDate.getDate() + 7);
-        } else if (planId === 'pro_monthly') {
-            endDate.setMonth(startDate.getMonth() + 1);
-        } else if (planId === 'pro_yearly') {
-            endDate.setFullYear(startDate.getFullYear() + 1);
-        }
-
-        user.plan = planId;
-        user.role = 'pro'; // Upgrade role
-        user.subscriptionStartDate = startDate;
-        user.subscriptionEndDate = endDate;
+        user.role = 'pro';
+        user.plan = planType;
+        user.subscriptionStartDate = new Date();
+        
+        const expiry = new Date();
+        if (planType === 'pro_weekly') expiry.setDate(expiry.getDate() + 7);
+        if (planType === 'pro_monthly') expiry.setMonth(expiry.getMonth() + 1);
+        if (planType === 'pro_yearly') expiry.setFullYear(expiry.getFullYear() + 1);
+        user.subscriptionEndDate = expiry;
 
         await user.save();
 
-        return NextResponse.json({ 
-            message: 'Upgrade successful', 
-            plan: user.plan,
-            expiry: user.subscriptionEndDate
-        });
-
+        return NextResponse.json({ message: "Upgrade successful", user });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ message: 'Server error' }, { status: 500 });
+        console.error("Upgrade error:", error);
+        return NextResponse.json({ message: "Server error" }, { status: 500 });
     }
 }
-
-
-

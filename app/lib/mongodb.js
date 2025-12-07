@@ -18,8 +18,9 @@ async function connectDB() {
   if (!cachedConnection.promise) {
     const opts = {
       bufferCommands: false,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+      family: 4 // Use IPv4, skip IPv6
     };
 
     cachedConnection.promise = mongoose.connect(process.env.MONGODB_URI, opts)
@@ -34,6 +35,8 @@ async function connectDB() {
   } catch (e) {
     cachedConnection.promise = null;
     console.error('Failed to connect to MongoDB:', e);
+    // Don't throw immediately, let the caller handle it or retry
+    // But for now, we throw to inform the API
     throw e;
   }
 

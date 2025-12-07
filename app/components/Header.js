@@ -15,6 +15,8 @@ const navigation = [
   { name: "Testimonials", href: "/#testimonials" },
   { name: "Community", href: "/showcase" },
   { name: "Shop", href: "/shop" },
+  { name: "DevRooms", href: "/pair" },
+  { name: "Jobs", href: "/jobs" },
   { name: "AI Assessment", href: "/ai-quiz" },
   { name: "Tutorials", href: "/tutorials" },
 ];
@@ -50,8 +52,7 @@ export function Header({ showNav = true }) {
     if (status === "loading") {
         return (
             <header className={cn(
-                "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-                isScrolled ? 'bg-light-100/80 dark:bg-dark-800/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+                "fixed inset-x-0 top-0 z-50 transition-all duration-300 bg-transparent"
             )}>
                  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
