@@ -94,6 +94,36 @@ function trap() {
     let x = 20;
 }
 trap();`,
+                comparison: {
+                    junior: `// ❌ The "Old Way" (Hoisting Bugs)
+console.log(name); // undefined (Confusing!)
+var name = "John";
+
+function loop() {
+  // var leaks out of the for loop!
+  for(var i=0; i<5; i++) {
+    setTimeout(function() {
+      // By the time this runs, i is 5
+      console.log(i); // 5, 5, 5, 5, 5
+    }, 100);
+  }
+}
+loop();`,
+                    senior: `// ✅ The "Architect Way" (Safe)
+// 1. const/let prevent usage before declaration
+const name = "John";
+
+const loop = () => {
+  // 2. let creates a new binding for each iteration
+  for(let i=0; i<5; i++) {
+    setTimeout(() => {
+      // Closure captures the correct block-scoped i
+      console.log(i); // 0, 1, 2, 3, 4
+    }, 100);
+  }
+};
+loop();`
+                },
                 interview: {
                     questions: [
                         { q: "Explain the difference between Ignition and TurboFan in V8.", a: "Ignition is the interpreter that turns AST into Bytecode quickly. TurboFan is the optimizing compiler that takes hot code (run often) and converts it to highly optimized machine code based on assumptions (like types)." },
@@ -159,6 +189,24 @@ function hacker() {
     console.log(getSecret()); 
 }
 hacker(); // Prints "12345" (Lexical!)`,
+                comparison: {
+                    junior: `// ❌ Global Pollution
+// script.js
+var config = { theme: 'dark' }; // Attached to window.config
+
+function init() {
+  // Might accidentally overwrite window.config
+  config = { theme: 'light' }; 
+}`,
+                    senior: `// ✅ Module Scope
+// config.js
+export const config = { theme: 'dark' }; 
+// Not on window. Encapsulated.
+
+// main.js
+import { config } from './config.js';
+// We know exactly where it came from.`
+                },
                 interview: {
                     questions: [
                         { q: "What is Lexical Scoping?", a: "It means variable access is determined by the physical nesting of functions in the source code. Inner functions can access outer variables." },
@@ -218,6 +266,29 @@ const heavy = (x) => x * 2;
 const memoHeavy = memoize(heavy);
 memoHeavy(10); // Calculating... 20
 memoHeavy(10); // 20 (Instant)`,
+                comparison: {
+                    junior: `// ❌ Dirty Global State
+let count = 0; // Anyone can mess this up
+
+function increment() {
+  count++;
+  return count;
+}
+
+count = 100; // Bug caused by another script`,
+                    senior: `// ✅ Encapsulated Closure
+const createCounter = () => {
+  let count = 0; // Private
+  return {
+    increment: () => ++count,
+    get: () => count
+  };
+};
+
+const counter = createCounter();
+counter.increment(); // 1
+// counter.count is undefined (Safe)`
+                },
                 interview: {
                     questions: [
                         { q: "Can a closure modify the outer variable?", a: "Yes. Closures hold a *reference* to the variable, not a copy. So if the outer variable changes, the closure sees the change." },
@@ -284,6 +355,28 @@ const other = { name: "Bob" };
 
 person.say(); // Alice (Implicit)
 person.say.call(other); // Bob (Explicit)`,
+                comparison: {
+                    junior: `// ❌ The "Self" Hack
+function Timer() {
+  this.seconds = 0;
+  var self = this; // Caching 'this' manually
+  
+  setInterval(function() {
+    self.seconds++; // Uses closure
+    console.log(self.seconds);
+  }, 1000);
+}`,
+                    senior: `// ✅ Arrow Functions
+function Timer() {
+  this.seconds = 0;
+  
+  // Arrow function inherits 'this' from Timer
+  setInterval(() => {
+    this.seconds++;
+    console.log(this.seconds);
+  }, 1000);
+}`
+                },
                 interview: {
                     questions: [
                         { q: "What is the difference between `call` and `apply`?", a: "`call` takes arguments separately (`fn.call(ctx, 1, 2)`). `apply` takes arguments as an array (`fn.apply(ctx, [1, 2])`)." },
@@ -331,6 +424,26 @@ const dog = Object.create(animal);
 dog.barks = true;
 
 console.log(dog.eats); // true (found in parent)`,
+                comparison: {
+                    junior: `// ❌ Direct Mutation (Slow & Dangerous)
+const cat = {};
+cat.__proto__ = { meow: true };
+
+// Or worse, modifying built-ins
+Array.prototype.last = function() {
+  return this[this.length - 1];
+};`,
+                    senior: `// ✅ Proper Inheritance
+class Animal {
+  constructor(name) { this.name = name; }
+}
+
+class Cat extends Animal {
+  meow() { return true; }
+}
+
+// Optimized by engine. Safer.`
+                },
                 interview: {
                     questions: [
                         { q: "What is the Prototype Chain?", a: "It is the mechanism of inheritance. Objects delegate failed property lookups to their prototype." },
@@ -383,6 +496,28 @@ setTimeout(() => console.log(2), 0);
 Promise.resolve().then(() => console.log(3));
 console.log(4);
 // Output: 1, 4, 3, 2`,
+                comparison: {
+                    junior: `// ❌ Blocking the Thread
+function processHugeList(list) {
+  // Freezes UI for 5 seconds
+  for (let item of list) {
+    heavyCalc(item);
+  }
+}`,
+                    senior: `// ✅ Chunking (Yielding to Loop)
+function processHugeList(list) {
+  if (list.length === 0) return;
+
+  // Process 100 items, then yield
+  const chunk = list.splice(0, 100);
+  chunk.forEach(heavyCalc);
+
+  // Schedule next chunk after paint
+  setTimeout(() => {
+    processHugeList(list);
+  }, 0);
+}`
+                },
                 interview: {
                     questions: [
                         { q: "Difference between Task and Microtask?", a: "Tasks (Macro) are IO/Timers. Microtasks are Promises/MutationObservers. Microtasks run immediately after the current stack, before rendering." },
@@ -434,6 +569,22 @@ const p1 = new Promise(r => setTimeout(r, 100, 'Fast'));
 const p2 = new Promise(r => setTimeout(r, 500, 'Slow'));
 
 Promise.all([p1, p2]).then(console.log); // ['Fast', 'Slow'] after 500ms`,
+                comparison: {
+                    junior: `// ❌ Callback Hell
+getUser(id, function(user) {
+  getPosts(user.id, function(posts) {
+    getComments(posts[0], function(comments) {
+      console.log(comments);
+    });
+  });
+});`,
+                    senior: `// ✅ Promise Chaining
+getUser(id)
+  .then(user => getPosts(user.id))
+  .then(posts => getComments(posts[0]))
+  .then(comments => console.log(comments))
+  .catch(handleError); // One catch for all`
+                },
                 interview: {
                     questions: [
                         { q: "What happens if you don't catch a Promise error?", a: "It causes an 'Unhandled Promise Rejection', which typically logs a warning but doesn't crash the main thread (Node.js might exit)." },
@@ -477,6 +628,25 @@ async function fetchData() {
         console.log("Network Error");
     }
 }`,
+                comparison: {
+                    junior: `// ❌ Mixing Styles
+function getData() {
+  // Returns a promise but doesn't await it properly
+  return fetch('/api')
+    .then(r => r.json())
+    .then(data => {
+       // Logic buried inside .then
+       return process(data);
+    });
+}`,
+                    senior: `// ✅ Flat Async/Await
+async function getData() {
+  const res = await fetch('/api');
+  const data = await res.json();
+  // Linear logic, easy to read
+  return process(data);
+}`
+                },
                 interview: {
                     questions: [
                         { q: "Is `await` blocking?", a: "No. It suspends the *async function*, but yields control back to the event loop, allowing other events to process." },
@@ -521,6 +691,23 @@ function setup() {
         console.log(hugeString.length);
     });
 }`,
+                comparison: {
+                    junior: `// ❌ Dangling Listeners
+useEffect(() => {
+  // Attaches a NEW listener every render
+  window.addEventListener('resize', handleResize);
+  // Forget to clean up! Leak!
+});`,
+                    senior: `// ✅ Cleanup Function
+useEffect(() => {
+  window.addEventListener('resize', handleResize);
+  
+  // React runs this when component unmounts
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);`
+                },
                 interview: {
                     questions: [
                         { q: "How does Garbage Collection work in JS?", a: "Mark and Sweep algorithm. It starts from roots (Global/Stack) and marks all reachable objects. Anything not marked is swept (deleted)." },
@@ -565,6 +752,25 @@ self.onmessage = (e) => {
     const result = fibonacci(e.data);
     self.postMessage(result);
 };`,
+                comparison: {
+                    junior: `// ❌ Freezing the UI
+button.onclick = () => {
+  // This blocks the UI for 3 seconds
+  const result = calculatePrimes(10000000);
+  show(result);
+};`,
+                    senior: `// ✅ Offloading to Worker
+button.onclick = () => {
+  // UI stays responsive immediately
+  showLoading();
+  worker.postMessage({ action: 'primes', num: 10000000 });
+};
+
+worker.onmessage = (e) => {
+  hideLoading();
+  show(e.data);
+};`
+                },
                 interview: {
                     questions: [
                         { q: "Can Web Workers modify the DOM?", a: "No. They run in a separate thread without `window` or `document` access. They must message the main thread to update UI." },
@@ -573,382 +779,567 @@ self.onmessage = (e) => {
                     ]
                 }
             },
-            // --- WEEK 3: FUNCTIONAL & MODERN PATTERNS ---
+            // --- WEEK 3: ADVANCED PATTERNS ---
             {
                 day: 11,
-                title: 'Functional Programming: Currying & Composition',
-                intro: "FP isn't just for Haskell. It makes JS code cleaner and more testable. We learn to treat functions as LEGO blocks.",
+                title: 'Functional Programming: Composition & Purity',
+                intro: "OOP is about Objects. FP is about Actions (Verbs). Learning FP makes your code predictable and testable.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Currying Pipeline</h3>
-<p class="mb-4">Transforming <code>f(a, b, c)</code> into <code>f(a)(b)(c)</code> allows you to bake in arguments early.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Pure Functions</h3>
+<p class="mb-4">A pure function always returns the same output for the same input and has <strong>No Side Effects</strong>.</p>
 
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-purple-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ add(5) ] ──▶ (Returns Function waiting for 'b')
-    │
-    └──▶ [ Call with 10 ] ──▶ 15
-    │
-    └──▶ [ Call with 20 ] ──▶ 25
-</pre>
+<div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+        <span class="text-red-400 font-bold block mb-2">Impure</span>
+        Modifies global variables, DOM, or API calls.
+    </div>
+    <div class="bg-green-900/20 p-4 rounded-lg border border-green-500/30">
+        <span class="text-green-400 font-bold block mb-2">Pure</span>
+        Input ➔ Output. No surprises.
+    </div>
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Composition</h3>
-<p class="mb-4">Piping data through multiple functions: <code>f(g(x))</code>.</p>
-<div class="bg-dark-800 p-4 rounded-lg border-l-4 border-brand-primary">
-    <code>const enhance = compose(trim, lowercase, bold);</code>
+<p>Building complex logic by gluing simple functions together. <code class="text-brand-primary">f(g(x))</code>.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+<pre>
+const toUpper = str => str.toUpperCase();
+const exclaim = str => str + "!";
+const shout = compose(exclaim, toUpper);
+
+shout("hello"); // "HELLO!"
+</pre>
 </div>
                 `,
-                code: `// Example 1: Currying
-const add = (a) => (b) => a + b;
-const add5 = add(5); // Partial Application
-console.log(add5(10)); // 15
+                code: `// Example 1: Immutability
+const user = { name: "John", score: 10 };
 
-// Example 2: Composition (Right to Left)
-const compose = (...fns) => (x) => fns.reduceRight((y, f) => f(y), x);`,
+// Bad (Mutation)
+// user.score = 20; 
+
+// Good (Copy)
+const updatedUser = { ...user, score: 20 };`,
+                comparison: {
+                    junior: `// ❌ Side Effects (Hard to Test)
+let total = 0;
+function addToTotal(amount) {
+  total += amount; // Modifies external state
+  updateUI(total); // Modifies DOM
+}`,
+                    senior: `// ✅ Pure Function (Predictable)
+const add = (a, b) => a + b;
+
+// Logic is separated from Side Effects
+const newTotal = add(total, amount);
+updateUI(newTotal);`
+                },
                 interview: {
                     questions: [
-                        { q: "What is a Higher-Order Function?", a: "A function that takes another function as an argument OR returns a function." },
-                        { q: "Why use Composition over Inheritance?", a: "Composition is more flexible. You combine small behaviors to make complex objects, avoiding the 'Gorilla/Banana' problem of rigid class hierarchies." },
-                        { q: "What makes a function 'Pure'?", a: "1. Deterministic (Same input always gives same output). 2. No Side Effects (Does not modify external state or DOM)." }
+                        { q: "What is a Higher Order Function?", a: "A function that takes a function as an argument OR returns a function. Example: `.map()`, `.filter()`." },
+                        { q: "Why is Immutability important in React?", a: "React uses shallow comparison to detect changes. If you mutate an object, the reference stays the same, so React won't re-render." },
+                        { q: "What is Currying?", a: "Transforming a function with multiple args `f(a,b)` into a sequence of functions `f(a)(b)`." }
                     ]
                 }
             },
             {
                 day: 12,
-                title: 'Meta-Programming: Proxy & Reflect',
-                intro: "This is 2025 magic. Proxies allow you to intercept fundamental language operations (read, write, delete). This is how Vue 3 reactivity works.",
+                title: 'Currying & Partial Application',
+                intro: "Currying sounds academic, but it's practical. It lets you create specialized functions from generic ones.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Interceptor</h3>
-<p class="mb-4">A Proxy wraps an object and 'traps' actions.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. The Concept</h3>
+<p class="mb-4">Instead of <code class="bg-dark-800 px-1 rounded">add(1, 2)</code>, we write <code class="bg-dark-800 px-1 rounded">add(1)(2)</code>.</p>
 
-<div class="overflow-hidden rounded-xl border border-dark-600 mb-6">
-    <table class="w-full text-sm text-left">
-        <thead class="bg-dark-800 text-light-300">
-            <tr><th class="p-3">Trap</th><th class="p-3">Intercepts</th></tr>
-        </thead>
-        <tbody class="divide-y divide-dark-700 bg-dark-900">
-            <tr><td class="p-3 text-blue-300">get</td><td class="p-3">Reading a property (<code>obj.prop</code>)</td></tr>
-            <tr><td class="p-3 text-green-300">set</td><td class="p-3">Writing a property (<code>obj.prop = val</code>)</td></tr>
-            <tr><td class="p-3 text-red-300">deleteProperty</td><td class="p-3">The <code>delete</code> operator</td></tr>
-        </tbody>
-    </table>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-purple-300 mb-6 overflow-x-auto shadow-inner">
+<pre>
+   [ Generic ]         [ Specific ]
+   add(x) ────▶  add(10)  ────▶  add10(y)
+    │
+    └────▶ Returns a Function waiting for 'y'
+</pre>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">2. Reflect API</h3>
-<p>Standard way to perform the original behavior inside a trap. Instead of <code>target[prop] = val</code>, use <code>Reflect.set(...)</code>.</p>
+<h3 class="text-xl font-bold text-white mb-4">2. Real World Use Case</h3>
+<p>Event Handlers and Configuration.</p>
                 `,
-                code: `// Example 1: Validation Proxy
-const user = { age: 10 };
+                code: `// Example 1: Simple Curry
+const multiply = (a) => (b) => a * b;
+const double = multiply(2);
+console.log(double(10)); // 20
 
-const validator = new Proxy(user, {
-    set(target, prop, value) {
-        if (prop === 'age' && value < 0) {
-            throw new Error("Age cannot be negative");
-        }
-        target[prop] = value;
-        return true;
-    }
-});`,
+// Example 2: React Handler
+const handleChange = (field) => (e) => {
+   setState({ [field]: e.target.value });
+};
+// usage: onChange={handleChange('email')}`,
+                comparison: {
+                    junior: `// ❌ Repetitive Code
+const filterDogs = (items) => items.filter(i => i.type === 'dog');
+const filterCats = (items) => items.filter(i => i.type === 'cat');
+const filterBirds = (items) => items.filter(i => i.type === 'bird');`,
+                    senior: `// ✅ Curried Factory
+const filterBy = (type) => (items) => 
+  items.filter(i => i.type === type);
+
+const dogs = filterBy('dog')(items);
+const cats = filterBy('cat')(items);`
+                },
                 interview: {
                     questions: [
-                        { q: "What is the difference between Proxy and Object.defineProperty?", a: "Object.defineProperty intercepts property access on *existing* properties. Proxy intercepts *everything*, even properties that don't exist yet, and array modifications." },
-                        { q: "Can you revoke a Proxy?", a: "Yes, if created with `Proxy.revocable()`. This is useful for security (giving temporary access to an object)." },
-                        { q: "What is the Reflect API for?", a: "It provides a standardized way to call the default behavior. Instead of `delete obj[prop]`, you use `Reflect.deleteProperty(obj, prop)`." }
+                        { q: "Difference between Currying and Partial Application?", a: "Currying breaks a function into N unary functions (1 arg each). Partial application fixes some arguments and produces a function with smaller arity." },
+                        { q: "Why use Currying in functional composition?", a: "It makes functions unary (single argument), which makes them easily chainable in a pipeline `compose(f, g, h)`." },
+                        { q: "Write a `sum(2)(3)` function.", a: "`const sum = a => b => a + b;`" }
                     ]
                 }
             },
             {
                 day: 13,
-                title: 'Iterators & Symbols',
-                intro: "How does `for...of` work? It looks for a specific Symbol method `[Symbol.iterator]`. You can make your own objects iterable.",
+                title: 'The Proxy & Reflect API',
+                intro: "Proxies allow you to intercept fundamental operations (reading/writing properties). It's meta-programming.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Iterator Protocol</h3>
-<p class="mb-4">An object is iterable if it implements the <code>@@iterator</code> method.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. The Middleman</h3>
+<p class="mb-4">A Proxy sits between you and the Object. It can lie, validate, or log every interaction.</p>
 
-<div class="bg-dark-900 p-4 rounded-lg border border-dark-600 font-mono text-xs mb-6">
-{
-  [Symbol.iterator]() {
-    return {
-      next() {
-        return { value: 1, done: false };
-      }
-    }
-  }
-}
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
+<pre>
+       [ User ] ──▶ [ Proxy ] ──▶ [ Target Object ]
+                       │
+                  [ Trap: get ]
+                  "You accessed property 'x'"
+</pre>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">2. Well-Known Symbols</h3>
-<p>Symbols are unique identifiers. They are used for "hidden" language hooks.</p>
+<h3 class="text-xl font-bold text-white mb-4">2. Use Cases</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
+    <li><strong>Validation:</strong> Reject invalid types on assignment.</li>
+    <li><strong>Data Binding:</strong> Vue 3 uses Proxies for reactivity.</li>
+    <li><strong>Logging:</strong> Debug property access.</li>
+</ul>
                 `,
-                code: `// Example 1: Unique Keys
-const id = Symbol('id');
-const user = { [id]: 123 };
-console.log(user[id]); // 123`,
+                code: `// Example 1: Validation Proxy
+const validator = {
+  set: (obj, prop, value) => {
+    if (prop === 'age' && value < 0) {
+      throw new Error("Age must be positive");
+    }
+    obj[prop] = value;
+    return true;
+  }
+};
+
+const person = new Proxy({}, validator);
+person.age = 25; // OK
+// person.age = -5; // Error`,
+                comparison: {
+                    junior: `// ❌ Manual Getters/Setters everywhere
+class User {
+  setAge(age) {
+    if (age < 0) throw new Error();
+    this.age = age;
+  }
+  setName(name) {
+    if (!name) throw new Error();
+    this.name = name;
+  }
+}`,
+                    senior: `// ✅ Generic Proxy Validator
+const safeObj = new Proxy({}, {
+  set(target, prop, val) {
+    if (prop === 'age' && val < 0) throw 'Invalid';
+    target[prop] = val;
+    return true;
+  }
+});
+// Works for any property dynamically`
+                },
                 interview: {
                     questions: [
-                        { q: "Are Symbols private?", a: "Not truly. You can access them with `Object.getOwnPropertySymbols()`. But they don't show up in `for...in` loops or `JSON.stringify`." },
-                        { q: "What is a Well-Known Symbol?", a: "Built-in symbols like `Symbol.iterator`, `Symbol.toStringTag` that allow you to hook into native language behaviors." },
-                        { q: "How to make an object work with `for...of`?", a: "Implement the `[Symbol.iterator]` method." }
+                        { q: "What is the `Reflect` API?", a: "It provides methods corresponding to Proxy traps (e.g., `Reflect.set`). It allows you to forward operations to the original object cleanly." },
+                        { q: "Can you proxy a function?", a: "Yes. You can use the `apply` trap to intercept function calls." },
+                        { q: "Why use Proxy over `Object.defineProperty`?", a: "Proxy can intercept dynamic properties that don't exist yet. `defineProperty` only works on specific, known keys." }
                     ]
                 }
             },
             {
                 day: 14,
-                title: 'Modules: ESM vs CommonJS',
-                intro: "Node.js uses CommonJS (`require`). Browsers use ESM (`import`). The world is moving to ESM. Know the difference.",
+                title: 'Iterators & Generators',
+                intro: "Make your own objects compatible with `for...of`. Iterators provide a standard way to produce a sequence of values.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Static vs Dynamic</h3>
-<div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-green-400 font-bold mb-2">ES Modules</h4>
-        <ul class="text-sm text-light-400 list-disc list-inside">
-            <li>Static (Compile Time)</li>
-            <li>Async Loading</li>
-            <li>Tree Shaking ✅</li>
-        </ul>
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-yellow-400 font-bold mb-2">CommonJS</h4>
-        <ul class="text-sm text-light-400 list-disc list-inside">
-            <li>Dynamic (Runtime)</li>
-            <li>Sync Loading</li>
-            <li>Tree Shaking ❌</li>
-        </ul>
-    </div>
+<h3 class="text-xl font-bold text-white mb-4">1. Symbol.iterator</h3>
+<p class="mb-4">Any object with this symbol can be looped over.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+<pre>
+const range = {
+  from: 1,
+  to: 5,
+  [Symbol.iterator]() { ... }
+};
+
+for(let num of range) { ... }
+</pre>
 </div>
                 `,
-                code: `// Example 1: CommonJS (Node.js legacy)
-// lib.js
-// module.exports = { add: (a,b) => a+b };
-// main.js
-// const { add } = require('./lib');
+                code: `// Example 1: Custom Iterator
+const myCollection = {
+  items: [10, 20, 30],
+  *[Symbol.iterator]() {
+    for (let item of this.items) {
+      yield item;
+    }
+  }
+};
 
-// Example 2: ESM (Modern)
-// lib.js
-export const add = (a,b) => a+b;
-// main.js
-import { add } from './lib.js';`,
+console.log([...myCollection]); // [10, 20, 30]`,
+                comparison: {
+                    junior: `// ❌ Exposed Internal Array
+class Deck {
+  constructor() { this.cards = [/*...*/]; }
+}
+
+const deck = new Deck();
+// Client has to know 'cards' exists
+for(let card of deck.cards) {}`,
+                    senior: `// ✅ Iterator Protocol
+class Deck {
+  constructor() { this.cards = [/*...*/]; }
+  
+  // Make the Deck itself iterable
+  *[Symbol.iterator]() {
+     for(let c of this.cards) yield c;
+  }
+}
+
+// Cleaner API
+for(let card of new Deck()) {}`
+                },
                 interview: {
                     questions: [
-                        { q: "Why is ESM better for Tree Shaking?", a: "Because `import` statements are static (at top level), bundlers like Webpack can determine *at compile time* exactly which functions are used and remove the rest." },
-                        { q: "Can you mix require and import?", a: "In modern Node.js, yes, but it's messy. Avoid it. `import` works in `.mjs` files or if `package.json` has `type: module`." },
-                        { q: "What is a Circular Dependency?", a: "Module A imports B, B imports A. ESM handles this better than CJS by using references, but it's still a bad architectural pattern." }
+                        { q: "What is a Generator function?", a: "A function declared with `function*` that returns a Generator object. It can pause execution with `yield`." },
+                        { q: "Difference between `for...in` and `for...of`?", a: "`for...in` iterates keys (enumerable properties). `for...of` iterates values (using the iterator protocol)." },
+                        { q: "How does `async` await relate to generators?", a: "Async/await is syntactic sugar for a Generator that yields Promises, driven by a runner function." }
                     ]
                 }
             },
             {
                 day: 15,
-                title: 'Sets & Maps: High Performance Data Structures',
-                intro: "Stop using Objects for everything. Maps allow any key type. Sets enforce uniqueness. They are optimized for frequent additions/removals.",
+                title: 'ES Modules vs CommonJS',
+                intro: "The battle of `require` vs `import`. Understanding the difference is crucial for configuring Node.js and Bundlers.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">1. CommonJS (Node.js Legacy)</h3>
+<p class="mb-4">Dynamic. Synchronous. Object-based.</p>
+<code class="block bg-dark-900 p-2 rounded mb-4">const fs = require('fs');</code>
+
+<h3 class="text-xl font-bold text-white mb-4">2. ES Modules (Standard)</h3>
+<p class="mb-4">Static. Asynchronous. Keyword-based.</p>
+<code class="block bg-dark-900 p-2 rounded mb-6">import fs from 'node:fs';</code>
+
+<h3 class="text-xl font-bold text-white mb-4">3. Tree Shaking</h3>
+<p>Only ESM supports Tree Shaking because imports are static (analyzable at compile time).</p>
+                `,
+                code: `// Example: Named vs Default Exports
+// lib.js
+export const add = (a, b) => a + b;
+export default function log() { ... }
+
+// main.js
+import log, { add } from './lib.js';`,
+                comparison: {
+                    junior: `// ❌ Loading Everything (CommonJS)
+// Creates a huge bundle
+const _ = require('lodash');
+_.map([1,2], n => n*2);`,
+                    senior: `// ✅ Tree Shaking (ESM)
+// Bundler can remove unused code
+import { map } from 'lodash-es';
+map([1,2], n => n*2);`
+                },
+                interview: {
+                    questions: [
+                        { q: "Why is ESM better for bundlers?", a: "Because the import structure is static, bundlers can build a dependency graph without running the code, enabling Tree Shaking (dead code elimination)." },
+                        { q: "Can you use `require` and `import` in the same file?", a: "Usually no. Node.js treats files as either CJS or ESM based on extension (.mjs vs .cjs) or package.json type." },
+                        { q: "How to use Top-Level Await?", a: "It is only available in ES Modules. It allows `await` outside of async functions at the root of the module." }
+                    ]
+                }
+            },
+            {
+                day: 16,
+                title: 'Sets, Maps vs Objects, Arrays',
+                intro: "Stop using Objects for everything. Maps are faster for frequent additions/removals and allow keys of any type.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Map vs Object</h3>
-<div class="bg-dark-900 p-4 rounded-lg border border-dark-600 mb-6 overflow-x-auto">
-    <table class="w-full text-sm">
-        <thead><tr><th class="text-left p-2 text-light-300">Feature</th><th class="text-left p-2 text-light-300">Map</th><th class="text-left p-2 text-light-300">Object</th></tr></thead>
-        <tbody class="text-light-400">
-            <tr><td class="p-2 border-t border-dark-700">Keys</td><td class="p-2 border-t border-dark-700 text-green-400">Any Type</td><td class="p-2 border-t border-dark-700 text-yellow-400">String/Symbol</td></tr>
-            <tr><td class="p-2 border-t border-dark-700">Order</td><td class="p-2 border-t border-dark-700 text-green-400">Insertion</td><td class="p-2 border-t border-dark-700 text-yellow-400">Unreliable</td></tr>
-            <tr><td class="p-2 border-t border-dark-700">Performance</td><td class="p-2 border-t border-dark-700 text-green-400">Fast (Hash)</td><td class="p-2 border-t border-dark-700 text-yellow-400">Slow (Proto)</td></tr>
+<div class="overflow-hidden rounded-xl border border-dark-600 mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-800 text-light-300">
+            <tr>
+                <th class="p-3">Feature</th>
+                <th class="p-3">Object</th>
+                <th class="p-3">Map</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-dark-700 bg-dark-900">
+            <tr>
+                <td class="p-3">Key Types</td>
+                <td class="p-3">Strings/Symbols</td>
+                <td class="p-3">Any (Objects, Funcs)</td>
+            </tr>
+            <tr>
+                <td class="p-3">Order</td>
+                <td class="p-3">Unreliable</td>
+                <td class="p-3">Insertion Order</td>
+            </tr>
+             <tr>
+                <td class="p-3">Size</td>
+                <td class="p-3">Manual Count</td>
+                <td class="p-3">.size</td>
+            </tr>
         </tbody>
     </table>
 </div>
                 `,
-                code: `// Example 1: Unique Array
+                code: `// Example 1: Set (Unique Values)
 const arr = [1, 2, 2, 3, 3, 3];
-const unique = [...new Set(arr)]; // [1, 2, 3]`,
+const unique = [...new Set(arr)]; // [1, 2, 3]
+
+// Example 2: Map (Object Keys)
+const userMap = new Map();
+const user1 = { id: 1 };
+userMap.set(user1, "Metadata"); // Key is object reference`,
+                comparison: {
+                    junior: `// ❌ Object as Map
+const cache = {};
+// Keys are converted to strings!
+cache[1] = "A"; 
+cache["1"] = "B"; 
+// cache[1] is now "B" (Collision)`,
+                    senior: `// ✅ Real Map
+const cache = new Map();
+cache.set(1, "A");
+cache.set("1", "B");
+// cache.get(1) is "A" (Preserves Type)`
+                },
                 interview: {
                     questions: [
-                        { q: "Difference between Map and Object?", a: "Map keys can be anything. Object keys are always Strings/Symbols. Map tracks size (`.size`). Map preserves order." },
-                        { q: "When to use a Set?", a: "When you need to ensure uniqueness or need fast `has()` checks." },
-                        { q: "How to iterate a Map?", a: "`for (const [key, val] of map)`. It is iterable by default." }
-                    ]
-                }
-            },
-            // --- WEEK 4: ARCHITECTURE & SECURITY ---
-            {
-                day: 16,
-                title: 'Design Patterns: Singleton & Factory',
-                intro: "Patterns are proven solutions to common problems. Don't reinvent the wheel.",
-                content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Singleton Pattern</h3>
-<p class="mb-4">Ensures only ONE instance exists. (e.g., Database Connection).</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ Client A ] ──┐
-               │
-               ▼
-        [ DB Instance ]
-               ▲
-               │
-[ Client B ] ──┘
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Factory Pattern</h3>
-<p>Create objects without specifying the exact class. "I need a User", not "new AdminUser()".</p>
-                `,
-                code: `// Example 1: Singleton (ES6 Module is naturally a singleton)
-// db.js
-class Database {
-    constructor() {
-        if (Database.instance) return Database.instance;
-        this.conn = "Connected";
-        Database.instance = this;
-    }
-}
-export const db = new Database();`,
-                interview: {
-                    questions: [
-                        { q: "Are Singletons bad?", a: "They can be. They introduce global state, making testing difficult. Dependency Injection is often preferred." },
-                        { q: "What is the Observer Pattern?", a: "A subscription mechanism. One object (Subject) notifies multiple Observers about events (like `addEventListener` or Redux)." },
-                        { q: "What is the Module Pattern?", a: "Using closures (IIFE) to create private scope and expose a public API. Superseded by ES Modules." }
+                        { q: "When to use Set?", a: "When you need a list of unique values or need fast lookup `has()` (O(1)) compared to Array `includes()` (O(n))." },
+                        { q: "Are Map keys garbage collected?", a: "Standard Maps hold strong references. Use `WeakMap` if you want keys to be garbage collected when no longer used elsewhere." },
+                        { q: "How to iterate a Map?", a: "`for (let [key, val] of map) { ... }`" }
                     ]
                 }
             },
             {
                 day: 17,
-                title: 'SOLID Principles in JavaScript',
-                intro: "Write code that is easy to maintain and extend.",
+                title: 'Design Patterns: Singleton, Factory, Observer',
+                intro: "Patterns are proven solutions to common problems. Don't reinvent the wheel.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Five Principles</h3>
-<ul class="space-y-3">
-    <li class="bg-dark-800 p-3 rounded border-l-4 border-brand-primary">
-        <strong>S - Single Responsibility:</strong> Do one thing.
-    </li>
-    <li class="bg-dark-800 p-3 rounded border-l-4 border-blue-500">
-        <strong>O - Open/Closed:</strong> Open for extension, closed for modification.
-    </li>
-    <li class="bg-dark-800 p-3 rounded border-l-4 border-green-500">
-        <strong>L - Liskov Substitution:</strong> Subtypes must be swappable.
-    </li>
-    <li class="bg-dark-800 p-3 rounded border-l-4 border-yellow-500">
-        <strong>I - Interface Segregation:</strong> Small, specific interfaces.
-    </li>
-    <li class="bg-dark-800 p-3 rounded border-l-4 border-purple-500">
-        <strong>D - Dependency Inversion:</strong> Depend on abstractions.
-    </li>
-</ul>
-                `,
-                code: `// Example 1: Bad (Violates SRP)
-function saveUser(user) {
-    // Validates AND Saves
-    if (user.name.length < 3) throw Error;
-    db.save(user);
-}
+<h3 class="text-xl font-bold text-white mb-4">1. Singleton</h3>
+<p class="mb-4">Ensure a class has only one instance (e.g., Database Connection).</p>
 
-// Example 2: Good (SRP)
-function validate(user) {
-    if (user.name.length < 3) throw Error;
+<h3 class="text-xl font-bold text-white mb-4">2. Observer (Pub/Sub)</h3>
+<p class="mb-4">One object changes state, notifies all subscribers. (Redux, Event Listeners).</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-yellow-300 mb-6 overflow-x-auto shadow-inner">
+<pre>
+   [ Subject ] 
+       │
+    Notify() ──┬──▶ [ Observer A ]
+               ├──▶ [ Observer B ]
+               └──▶ [ Observer C ]
+</pre>
+</div>
+                `,
+                code: `// Example: Singleton
+class Database {
+  constructor() {
+    if (Database.instance) return Database.instance;
+    Database.instance = this;
+    this.conn = "Connected";
+  }
 }
-function save(user) {
-    db.save(user);
+const db1 = new Database();
+const db2 = new Database();
+console.log(db1 === db2); // true`,
+                comparison: {
+                    junior: `// ❌ Tight Coupling
+class Button {
+  click() {
+    // Button knows too much about other classes
+    header.update();
+    analytics.track();
+    sound.play();
+  }
 }`,
+                    senior: `// ✅ Observer Pattern
+class Button {
+  constructor() { this.observers = []; }
+  subscribe(fn) { this.observers.push(fn); }
+  click() {
+    this.observers.forEach(fn => fn());
+  }
+}
+// Decoupled
+btn.subscribe(header.update);
+btn.subscribe(analytics.track);`
+                },
                 interview: {
                     questions: [
-                        { q: "Explain the Liskov Substitution Principle.", a: "Subtypes must be substitutable for their base types. If Class B extends Class A, B should not break A's behavior." },
-                        { q: "How does Dependency Injection help testing?", a: "It allows you to inject 'Mock' dependencies (like a fake database) instead of real ones, making unit tests fast and isolated." },
-                        { q: "Why is 'Clean Code' important?", a: "Code is read 10x more than it is written. Clean code reduces technical debt." }
+                        { q: "What is the Module Pattern?", a: "Using Closures/IIFE to create private scope and return a public API." },
+                        { q: "Explain the Factory Pattern.", a: "A function that creates objects without calling `new`. Useful for complex creation logic." },
+                        { q: "What pattern does React use?", a: "Observer (State changes -> UI updates) and Composition (Components)." }
                     ]
                 }
             },
+            // --- WEEK 4: ARCHITECTURE & SECURITY ---
             {
                 day: 18,
-                title: 'Testing: Unit vs Integration',
-                intro: "If it's not tested, it's broken. Learn the pyramid: Unit > Integration > E2E.",
+                title: 'SOLID Principles in JavaScript',
+                intro: "Code that is easy to maintain follows SOLID. S: Single Responsibility is the most important.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Testing Pyramid</h3>
-<div class="flex flex-col items-center font-mono text-sm mb-6 space-y-1">
-    <div class="w-24 bg-red-500/20 text-red-200 py-1 text-center border border-red-500/50">E2E (Slow)</div>
-    <div class="w-48 bg-yellow-500/20 text-yellow-200 py-1 text-center border border-yellow-500/50">Integration</div>
-    <div class="w-64 bg-green-500/20 text-green-200 py-1 text-center border border-green-500/50">Unit (Fast)</div>
+<h3 class="text-xl font-bold text-white mb-4">1. Single Responsibility (SRP)</h3>
+<p class="mb-4">A function/class should have <strong>one reason to change</strong>.</p>
+
+<h3 class="text-xl font-bold text-white mb-4">2. Open/Closed (OCP)</h3>
+<p class="mb-4">Open for extension, closed for modification. Use configuration/plugins instead of changing code.</p>
+
+<div class="overflow-hidden rounded-xl border border-dark-600 mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-800 text-light-300">
+            <tr>
+                <th class="p-3">Principle</th>
+                <th class="p-3">Meaning</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-dark-700 bg-dark-900">
+            <tr><td class="p-3">S</td><td class="p-3">Single Responsibility</td></tr>
+            <tr><td class="p-3">O</td><td class="p-3">Open/Closed</td></tr>
+            <tr><td class="p-3">L</td><td class="p-3">Liskov Substitution</td></tr>
+            <tr><td class="p-3">I</td><td class="p-3">Interface Segregation</td></tr>
+            <tr><td class="p-3">D</td><td class="p-3">Dependency Inversion</td></tr>
+        </tbody>
+    </table>
 </div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. TDD (Test Driven Development)</h3>
-<p><strong>Red</strong> (Fail) ➞ <strong>Green</strong> (Pass) ➞ <strong>Refactor</strong> (Clean).</p>
                 `,
-                code: `// Example 1: Simple Unit Test (Jest-style)
-function add(a, b) { return a + b; }
+                code: `// Example: OCP (Open/Closed)
+class Validator {
+    constructor() {
+        this.rules = [];
+    }
+    addRule(rule) { this.rules.push(rule); }
+    validate(val) { return this.rules.every(r => r(val)); }
+}
 
-// test('adds 1 + 2 to equal 3', () => {
-//   expect(add(1, 2)).toBe(3);
-// });`,
+// We extend functionality without changing the class
+const v = new Validator();
+v.addRule(x => x > 0);
+v.addRule(x => x < 100);`,
+                comparison: {
+                    junior: `// ❌ God Function (Violates SRP)
+function registerUser(user) {
+  // 1. Validate
+  if (!user.email) throw Error();
+  // 2. Save DB
+  db.save(user);
+  // 3. Send Email
+  email.send(user.email);
+  // 4. Update UI
+  dom.render(user);
+}`,
+                    senior: `// ✅ SRP
+function registerUser(user) {
+  validate(user);
+  repo.save(user);
+  notifier.notify(user);
+}
+// Each function does ONE thing.`
+                },
                 interview: {
                     questions: [
-                        { q: "What is TDD?", a: "Test Driven Development. 1. Write a failing test. 2. Write code to pass it. 3. Refactor. (Red-Green-Refactor)." },
-                        { q: "What is a Flaky Test?", a: "A test that sometimes passes and sometimes fails (e.g., depends on network or timing). They destroy trust in CI/CD." },
-                        { q: "What is Code Coverage?", a: "The percentage of code lines executed during tests. 100% coverage doesn't mean bug-free, but low coverage is risky." }
+                        { q: "Why is Dependency Inversion important?", a: "It decouples high-level logic from low-level details. Instead of 'App depends on SQL', 'App depends on Database Interface', and SQL implements that." },
+                        { q: "What is Liskov Substitution?", a: "Subclasses should be substitutable for their base classes without breaking the app." },
+                        { q: "How to apply SRP to React Components?", a: "Split components: One for Logic (Container/Hook) and one for UI (Presentational)." }
                     ]
                 }
             },
             {
                 day: 19,
-                title: 'Security: XSS, CSRF, & Storage',
-                intro: "The most important topic for a Senior Dev. How to not get hacked.",
+                title: 'Testing Strategies (Unit vs Integration)',
+                intro: "If it's not tested, it's broken. Learn the Pyramid of Testing.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. XSS (Cross Site Scripting)</h3>
-<div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30 mb-6">
-    <p class="text-red-200 mb-2"><strong>Attack:</strong> Injecting Malicious Scripts.</p>
-    <code class="block bg-dark-900 p-2 rounded text-xs">&lt;img src=x onerror=alert(1)&gt;</code>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Secure Storage</h3>
-<p class="mb-4">Where do you store the JWT?</p>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li><span class="text-red-400 font-bold">LocalStorage:</span> BAD. Accessible by JS (XSS).</li>
-    <li><span class="text-green-400 font-bold">HttpOnly Cookie:</span> GOOD. Inaccessible by JS.</li>
+<h3 class="text-xl font-bold text-white mb-4">1. The Testing Pyramid</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
+    <li><strong>E2E (Top 10%):</strong> Click buttons in browser (Cypress). Slow.</li>
+    <li><strong>Integration (Middle 30%):</strong> Test module interactions.</li>
+    <li><strong>Unit (Bottom 60%):</strong> Test single functions (Jest/Vitest). Fast.</li>
 </ul>
                 `,
-                code: `// Example 1: XSS Vulnerability
-// const name = "<img src=x onerror=alert(1)>";
-// document.body.innerHTML = name; // BAD! Executes script.
+                code: `// Example: Jest Unit Test
+// math.js
+export const add = (a, b) => a + b;
 
-// Fix:
-// document.body.innerText = name; // Safe.`,
+// math.test.js
+test('adds 1 + 2 to equal 3', () => {
+  expect(add(1, 2)).toBe(3);
+});`,
+                comparison: {
+                    junior: `// ❌ Console Log Testing
+function add(a, b) { return a + b; }
+
+console.log(add(1, 2)); // Look at terminal
+console.log(add(-1, 5)); // Hope it's right`,
+                    senior: `// ✅ Automated Tests
+describe('add', () => {
+  it('handles negative numbers', () => {
+    expect(add(-1, 5)).toBe(4);
+  });
+  
+  it('throws on string input', () => {
+    expect(() => add("1", 2)).toThrow();
+  });
+});`
+                },
                 interview: {
                     questions: [
-                        { q: "Why is LocalStorage bad for JWTs?", a: "Any JS code on your page (including 3rd party ads/analytics) can read LocalStorage. If you have an XSS vuln, your token is stolen. HttpOnly cookies cannot be read by JS." },
-                        { q: "What is CORS?", a: "Cross-Origin Resource Sharing. A browser security feature that blocks API calls to a different domain unless the server explicitly allows it." },
-                        { q: "What is SQL Injection?", a: "Inserting SQL commands into input fields. In JS/Node, use ORMs or Parameterized Queries to prevent it." }
+                        { q: "What is TDD?", a: "Test Driven Development. 1. Write fail test. 2. Write code to pass. 3. Refactor." },
+                        { q: "Mock vs Stub?", a: "Stub provides canned answers. Mock verifies behavior (was this function called?)." },
+                        { q: "What is Code Coverage?", a: "The percentage of lines of code executed during tests." }
                     ]
                 }
             },
             {
                 day: 20,
-                title: 'Architecture & Scalability',
-                intro: "The Final Frontier. How to design systems that handle millions of users.",
+                title: 'Security: XSS, CSRF & Architecture',
+                intro: "The final boss. You can't be an architect if your app gets hacked on day 1.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Scaling Pyramid</h3>
-<div class="space-y-4">
-    <div class="bg-dark-800 p-4 rounded-lg border-l-4 border-blue-500">
-        <h4 class="font-bold">1. Vertical (Scale Up)</h4>
-        <p class="text-sm text-light-400">Buy a bigger server. Easiest, but has a limit.</p>
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg border-l-4 border-purple-500">
-        <h4 class="font-bold">2. Horizontal (Scale Out)</h4>
-        <p class="text-sm text-light-400">Buy more servers. Requires Load Balancer.</p>
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg border-l-4 border-green-500">
-        <h4 class="font-bold">3. Caching</h4>
-        <p class="text-sm text-light-400">Redis / CDN. Don't hit the DB.</p>
-    </div>
+<h3 class="text-xl font-bold text-white mb-4">1. XSS (Cross Site Scripting)</h3>
+<p class="mb-4">Injecting malicious scripts into your site.</p>
+<div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30 mb-6">
+    <code class="text-red-400">INPUT: &lt;img src=x onerror=stealCookies()&gt;</code>
 </div>
-                `,
-                code: `// Example 1: Simple Caching Pattern
-const cache = new Map();
 
-async function getData(id) {
-    if (cache.has(id)) return cache.get(id);
-    
-    const result = await fetch('/api/' + id);
-    cache.set(id, result);
-    return result;
-}`,
+<h3 class="text-xl font-bold text-white mb-4">2. CSRF (Cross Site Request Forgery)</h3>
+<p class="mb-4">Tricking a logged-in user to click a link that performs an action (e.g., delete account).</p>
+                `,
+                code: `// Example: Sanitization
+import DOMPurify from 'dompurify';
+
+const userContent = "<script>alert('Hack')</script>Hello";
+const clean = DOMPurify.sanitize(userContent);
+// Result: "Hello"`,
+                comparison: {
+                    junior: `// ❌ Vulnerable to XSS
+div.innerHTML = userComment; 
+// If comment has <script>, it runs!`,
+                    senior: `// ✅ Safe Rendering
+div.textContent = userComment;
+// Browsers treats it as text, not code.
+
+// Or in React:
+// {userComment} (Auto-escaped)`
+                },
                 interview: {
                     questions: [
-                        { q: "How do you handle a sudden spike in traffic?", a: "Auto-scaling groups (spin up more servers), CDN for static assets, rate limiting APIs, and aggressive caching." },
-                        { q: "What is Sharding?", a: "Splitting a database into smaller chunks (shards) across multiple machines to handle massive data." },
-                        { q: "Explain Event Sourcing.", a: "Storing the *sequence of events* (changes) rather than just the current state. Allows time-travel debugging and audit logs." }
+                        { q: "How to prevent XSS?", a: "Never use `innerHTML` with user input. Use libraries like DOMPurify. Use Content Security Policy (CSP) headers." },
+                        { q: "What is an HttpOnly cookie?", a: "A cookie that cannot be accessed by JavaScript (document.cookie). It prevents XSS attacks from stealing session tokens." },
+                        { q: "What is CORS?", a: "Cross-Origin Resource Sharing. Browser mechanism to allow/block requests from different domains." }
                     ]
                 }
             }
@@ -956,586 +1347,634 @@ async function getData(id) {
     },
     react: {
         id: 'react',
-        title: 'React Internals: Under the Hood',
-        description: 'Move beyond "How to use Hooks". Learn how React Fiber works, concurrent rendering, and Server Components.',
+        title: 'React: The Professional Guide',
+        description: 'Master the internals of React 19. Fiber, Concurrent Mode, Suspense, and Server Components.',
         totalDays: 15,
         days: [
-            // --- WEEK 0: ENVIRONMENT SETUP ---
             {
                 day: 0,
-                title: 'Day 0: The Professional Setup (Vite & Tools)',
+                title: 'Day 0: The Professional Setup',
                 intro: "Stop using Create-React-App. Learn the professional toolchain: Vite, ESLint, Prettier, and VS Code extensions.",
-                video: "SqcY0GlETPk", // React in 100 Seconds
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Why Vite? (vs CRA)</h3>
-<p class="mb-4">CRA (Webpack) bundles the *entire* app before starting dev server. Slow. Vite uses ES Modules to serve files instantly.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ Webpack (CRA) ]       [ Vite ]
-Build Bundle...         Start Server!
-(Wait 10s...)           (Instant)
-Serve bundle.js         Serve index.html
-                        (Browser requests modules)
-</pre>
+<h3 class="text-xl font-bold text-white mb-4">1. Why Not Create-React-App?</h3>
+<p class="mb-4 text-light-300">CRA is great for beginners, but it's slow and opinionated. Modern development uses faster bundlers like Vite.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+    <pre><code>
+┌───────────────────────────┐     ┌───────────────────────────┐
+│       Webpack (CRA)       │     │         Vite (ESBuild)    │
+│───────────────────────────│     │───────────────────────────│
+│ 1. Bundles ALL JS/CSS     │     │ 1. Serves NATIVE ESM      │
+│    into a single file.    │     │    (no bundling in dev).  │
+│ 2. Slow Dev Server Start  │     │ 2. Instant Dev Server     │
+│    (Bundles everything).  │     │    (Browser handles imports).
+│ 3. HMR is slower.         │     │ 3. HMR is lightning fast. │
+│ 4. Complex config.        │     │ 4. Simple config.         │
+└───────────────────────────┘     └───────────────────────────┘
+    </code></pre>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">2. The Golden Stack</h3>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li><strong>Vite:</strong> Build Tool.</li>
-    <li><strong>ESLint:</strong> Catch bugs (logic).</li>
-    <li><strong>Prettier:</strong> Fix style (formatting).</li>
-    <li><strong>Husky:</strong> Git hooks (prevent bad commits).</li>
-</ul>
-                `,
-                code: `// Terminal Commands to Setup a Pro Project
-// 1. Create Project
-npm create vite@latest my-app -- --template react
+<h3 class="text-xl font-bold text-white mb-4">2. Setup with Vite</h3>
+<p class="mb-4 text-light-300">Let's create a new React project with Vite.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+    <pre><code>
+# Create a new Vite + React project
+npm create vite@latest my-react-app -- --template react-ts
 
-// 2. Install Dependencies
-cd my-app
+# Navigate into your project
+cd my-react-app
+
+# Install dependencies
 npm install
 
-// 3. Add Prettier
-npm install -D prettier eslint-config-prettier`,
+# Start the development server
+npm run dev
+    </code></pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">3. Essential VS Code Extensions</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>**ESLint:** For code quality and catching errors early.</li>
+    <li>**Prettier:** For consistent code formatting.</li>
+    <li>**Tailwind CSS IntelliSense:** For auto-completion and linting Tailwind classes.</li>
+    <li>**GitLens:** For powerful Git insights.</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">4. Code Formatting & Linting</h3>
+<p class="mb-4 text-light-300">Configure ESLint and Prettier for a professional workflow.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+    <pre><code>
+# Install ESLint and Prettier packages
+npm install -D eslint prettier eslint-plugin-react @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier
+
+# Create .eslintrc.cjs (example config)
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
+    'prettier' // Must be last
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+  plugins: ['react-refresh'],
+  rules: {
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+  },
+}
+
+# Create .prettierrc.json
+{
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2
+}
+    </code></pre>
+</div>
+                    `,
+                code: `// No interactive code for setup, focus on terminal commands.
+// You can try running 'npm run dev' in your terminal!`,
+                video: 'SqcY0GlETPk', 
+                comparison: {
+                    junior: `// ❌ Manual Setup (CRA)
+// npx create-react-app my-app
+// Wait 5 minutes...
+// Eject config to customize...
+// Regret life choices...`,
+                    senior: `// ✅ Vite + TS
+// npm create vite@latest
+// Instant start.
+// Built-in TypeScript support.
+// Optimized Build.`
+                },
                 interview: {
                     questions: [
-                        { q: "Why is Vite faster than Webpack?", a: "Vite serves source code over native ESM (ES Modules). It lets the browser do the bundler's job during development. Webpack bundles everything before serving." },
-                        { q: "What is the difference between ESLint and Prettier?", a: "ESLint looks for logical errors (unused vars, infinite loops). Prettier looks for stylistic issues (indentation, quotes). Use them together." }
+                        { q: "Why choose Vite over Webpack for a new React project?", a: "Vite offers significantly faster development server startup and HMR (Hot Module Replacement) due to its use of native ES Modules and ESBuild for bundling, leading to a much smoother developer experience compared to Webpack's traditional bundling approach." },
+                        { q: "What is the role of ESLint and Prettier in a professional React workflow?", a: "ESLint enforces code quality and catches potential errors or anti-patterns, while Prettier ensures consistent code formatting across the entire team. Together, they reduce cognitive load, improve readability, and prevent debates over style." },
+                        { q: "How do you manage Node.js versions in a professional environment?", a: "Tools like `nvm` (Node Version Manager) are essential. They allow developers to easily switch between different Node.js versions required by various projects, preventing compatibility issues and ensuring a consistent development environment." }
                     ]
                 }
             },
-            // --- WEEK 1: CORE INTERNALS ---
             {
                 day: 1,
-                title: 'The Virtual DOM & Reconciliation',
-                intro: "React is not just a UI library; it's a state-to-view engine. The core algorithm is 'Reconciliation'.",
+                title: 'Virtual DOM & Reconciliation',
+                intro: "React is fast because it doesn't touch the DOM. It touches the Virtual DOM.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Diffing Algorithm</h3>
-<p class="mb-4">React compares the new VDOM tree with the old one.</p>
+<p class="mb-4">When state changes, React creates a new VDOM tree and compares it to the old one.</p>
 
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
-[ Old Tree ]        [ New Tree ]
-    div                 div
-     │                   │
-     ├── h1              ├── h1 (Same? Keep.)
-     │                   │
-     └── ul              └── p  (Different Type?)
-         │                      (DESTROY UL, BUILD P)
-       li, li
+[ New VDOM ]      [ Old VDOM ]
+     │                 │
+     ▼                 ▼
+  Compare (Diff) ──▶ [ Updates ]
+                         │
+                         ▼
+                    [ Real DOM ]
+                    (Minimal Paints)
 </pre>
 </div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The "Key" Prop</h3>
-<p>Without keys, React can't tell if an item moved or was replaced. It destroys performance.</p>
                 `,
-                code: `// Example 1: The VDOM Object
-const element = React.createElement('div', { id: 'foo' }, 'Hello');
-// Returns:
-// {
-//   type: 'div',
-//   props: { id: 'foo', children: 'Hello' },
-//   key: null,
-//   $$typeof: Symbol.for('react.element')
-// }`,
+                code: `// Example: How JSX becomes JS
+const element = <h1>Hello</h1>;
+// Becomes:
+// React.createElement('h1', null, 'Hello')`,
+                comparison: {
+                    junior: `// ❌ Direct DOM Manipulation
+function updateCount(n) {
+  // Slow! Triggers repaint immediately
+  document.getElementById('count').innerText = n;
+  document.getElementById('msg').innerHTML = 'Updated';
+}`,
+                    senior: `// ✅ Declarative State
+const [count, setCount] = useState(0);
+
+// React batches updates and touches DOM once
+return (
+  <div>
+    <span id="count">{count}</span>
+    <span>Updated</span>
+  </div>
+);`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Reconciliation?", a: "The process of comparing the current tree with the new tree to determine the minimum number of operations to apply to the real DOM." },
-                        { q: "Why is direct DOM manipulation bad in React?", a: "Because React's VDOM will be out of sync with the real DOM. The next render might overwrite your manual changes." },
-                        { q: "What is the `key` prop used for?", a: "To identify which items in a list have changed, are added, or are removed. It helps React preserve state (like input values) of moving elements." }
+                        { q: "What is the Virtual DOM?", a: "A lightweight JavaScript representation of the UI. React uses it to calculate the minimum number of changes needed for the real DOM." },
+                        { q: "What is Reconciliation?", a: "The process of syncing the VDOM with the Real DOM." },
+                        { q: "Why is `key` important in lists?", a: "Keys help React identify which items have changed, added, or removed. Without keys, React might re-render the entire list." }
                     ]
                 }
             },
             {
                 day: 2,
-                title: 'React Fiber Architecture',
-                intro: "Before React 16, rendering was synchronous (Stack Reconciler). Fiber made it asynchronous and interruptible.",
+                title: 'JSX & React.createElement',
+                intro: "JSX is not HTML. It's JavaScript XML. It compiles down to function calls.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Stack vs Fiber</h3>
-<div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-red-400 font-bold mb-2">Stack (Old)</h4>
-        <p class="text-sm text-light-400">Recursive. Blocks main thread until done. Like a generic function call.</p>
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-green-400 font-bold mb-2">Fiber (New)</h4>
-        <p class="text-sm text-light-400">Linked List. Can pause, abort, and prioritize work. Like a Virtual CPU.</p>
-    </div>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Fiber Node</h3>
-<p>Each component becomes a "Fiber" node (a unit of work).</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Babel's Job</h3>
+<p>Babel transpiles JSX into <code>React.createElement()</code>.</p>
                 `,
-                code: `// Example 1: Fiber Structure (Simplified)
-// {
-//   type: 'div',
-//   stateNode: [DOM Element],
-//   child: [FiberNode],
-//   sibling: [FiberNode],
-//   return: [FiberNode], (Parent)
-// }`,
+                code: `// JSX
+const el = <div className="box">Hi</div>;
+
+// Compiled
+const el2 = React.createElement('div', { className: 'box' }, 'Hi');`,
+                comparison: {
+                    junior: `// ❌ Confusing Logic in JSX
+return (
+  <div>
+    {user ? (
+       admin ? <Admin /> : <User />
+    ) : <Login />}
+  </div>
+); // Nested ternaries are hard to read`,
+                    senior: `// ✅ Early Returns
+if (!user) return <Login />;
+if (admin) return <Admin />;
+return <User />;`
+                },
                 interview: {
                     questions: [
-                        { q: "What is the main goal of React Fiber?", a: "To enable incremental rendering. To split rendering work into chunks and spread it out over multiple frames to avoid blocking the main thread." },
-                        { q: "What is 'Time Slicing'?", a: "The ability to execute React updates in small time slots (5ms) and yield back to the browser to handle events." },
-                        { q: "Does Fiber make React faster?", a: "Not necessarily faster in total CPU time, but *perceived* performance is better because it stays responsive to user input." }
+                         { q: "Can browsers read JSX?", a: "No. It must be transpiled by Babel/SWC into standard JavaScript." },
+                         { q: "Why is `class` becomes `className`?", a: "`class` is a reserved keyword in JavaScript." }
                     ]
                 }
             },
             {
                 day: 3,
-                title: 'Render Phase vs Commit Phase',
-                intro: "React updates happen in two distinct phases. Understanding this explains why `useEffect` runs when it does.",
+                title: 'Props vs State',
+                intro: "Props are arguments passed to functions. State is memory inside the function.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Two Phases</h3>
-<div class="space-y-4 mb-6">
-    <div class="bg-dark-900 p-4 rounded-lg border-l-4 border-blue-500">
-        <h4 class="font-bold text-blue-300">Phase 1: Render (Calculation)</h4>
-        <p class="text-sm text-light-400">React calls your component. Compares children. <strong class="text-white">Interruptible.</strong> No Side Effects allowed!</p>
-    </div>
-    <div class="bg-dark-900 p-4 rounded-lg border-l-4 border-green-500">
-        <h4 class="font-bold text-green-300">Phase 2: Commit (Action)</h4>
-        <p class="text-sm text-light-400">React touches the DOM. Runs <code>useEffect</code>. <strong class="text-white">Synchronous.</strong></p>
-    </div>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. One-Way Data Flow</h3>
+<p>Data flows DOWN. Actions flow UP.</p>
                 `,
-                code: `// Example 1: Where Side Effects Go
-function Component() {
-    // Render Phase: Runs multiple times!
-    console.log("Rendering..."); 
-    // BAD: Don't do API calls here.
-
-    useEffect(() => {
-        // Commit Phase (After Paint):
-        console.log("Mounted / Updated");
-        // GOOD: Side effects here.
-    });
-}`,
+                code: `const Child = ({ name }) => <div>{name}</div>;
+const Parent = () => <Child name="Alice" />;`,
+                comparison: {
+                    junior: `// ❌ Mutating Props
+const Child = (props) => {
+  props.name = "Bob"; // ERROR: Read-only
+  return <div>{props.name}</div>;
+};`,
+                    senior: `// ✅ Local State
+const Child = ({ name }) => {
+  const [localName, setLocalName] = useState(name);
+  return <div onClick={() => setLocalName("Bob")}>{localName}</div>;
+};`
+                },
                 interview: {
                     questions: [
-                        { q: "Can Render Phase run without Commit Phase?", a: "Yes. In Concurrent Mode, React might start rendering, be interrupted by high-priority work, and throw away the partial work without ever committing to the DOM." },
-                        { q: "Why shouldn't you mutate variables in the Render Phase?", a: "Because the Render Phase can run multiple times or be restarted. Mutations would lead to unpredictable state." },
-                        { q: "Difference between useEffect and useLayoutEffect?", a: "`useLayoutEffect` blocks the browser paint. `useEffect` runs after the paint. Use Layout for measurements to prevent visual flickering." }
+                        { q: "Can a child modify parent state?", a: "Not directly. The parent must pass a callback function (updater) to the child." }
                     ]
                 }
             },
             {
                 day: 4,
-                title: 'State Batching & Automatic Batching',
-                intro: "React doesn't re-render every time you call `setState`. It groups them for performance.",
+                title: 'State Management & Batching',
+                intro: "React 18 batches state updates automatically to prevent unnecessary renders.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Automatic Batching (React 18)</h3>
-<p class="mb-4">React groups multiple state updates into a <strong>single re-render</strong>.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-yellow-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-Click Handler
-  │
-  ├── setCount(1)  (Pending)
-  ├── setFlag(true) (Pending)
-  │
-  ▼
-[ End of Event Loop ] ──▶ Re-render ONCE!
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Opting Out</h3>
-<p>Use <code>flushSync</code> if you need the DOM to update <strong>immediately</strong> (rare).</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Automatic Batching</h3>
+<p>Multiple <code>setState</code> calls are grouped into one render.</p>
                 `,
-                code: `// Example 1: Automatic Batching
-function handleClick() {
-    setCount(c => c + 1);
-    setFlag(f => !f);
-    // React 18: ONE re-render only.
-    // Even inside setTimeout or fetch!
-}`,
+                code: `const handleClick = () => {
+  setCount(c => c + 1);
+  setFlag(f => !f);
+  // Re-renders ONCE, not twice.
+};`,
+                comparison: {
+                    junior: `// ❌ Stale State
+const inc = () => {
+  setCount(count + 1);
+  setCount(count + 1);
+  setCount(count + 1);
+};
+// Result: count + 1 (Not +3)`,
+                    senior: `// ✅ Functional Updates
+const inc = () => {
+  setCount(c => c + 1);
+  setCount(c => c + 1);
+  setCount(c => c + 1);
+};
+// Result: count + 3`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Batching?", a: "Grouping multiple state updates into a single re-render to avoid unnecessary layout thrashing." },
-                        { q: "Does `setState` always trigger a re-render?", a: "No. If you set the state to the exact same value (referential equality), React bails out." },
-                        { q: "Why is `setState` asynchronous?", a: "It's not truly 'async' like a Promise, but it is 'scheduled'. React waits to see if other updates are coming before processing." }
+                        { q: "Is setState synchronous?", a: "No. It is asynchronous to allow batching." }
                     ]
                 }
             },
             {
                 day: 5,
-                title: 'Synthetic Events',
-                intro: "React doesn't attach listeners to every button. It uses one global listener. This is Event Delegation.",
+                title: 'Effects & Lifecycle',
+                intro: "`useEffect` allows you to sync your component with external systems (API, DOM, Subscriptions).",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Event Delegation</h3>
-<p class="mb-4">Instead of 1000 listeners on 1000 buttons, React puts <strong>ONE listener</strong> on the <code>#root</code> div.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-teal-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-   [ #root ]  <-- One Listener here
-      ▲
-      │ (Bubbles Up)
-   [ div ]
-      ▲
-      │
-   [ button ] (User clicks here)
-</pre>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. The Dependency Array</h3>
+<p>Controls when the effect runs.</p>
                 `,
-                code: `// Example 1: Stop Propagation
-function handleClick(e) {
-    e.stopPropagation(); // Stops React event bubbling
-    // Does NOT stop native event bubbling up to document!
-}`,
+                code: `useEffect(() => {
+  console.log("Runs on Mount + Update");
+}); // No array
+
+useEffect(() => {
+  console.log("Runs on Mount Only");
+}, []); // Empty array`,
+                comparison: {
+                    junior: `// ❌ Missing Dependency
+useEffect(() => {
+  console.log(count);
+}, []); // Warning: count is stale!`,
+                    senior: `// ✅ Correct Dependency
+useEffect(() => {
+  console.log(count);
+}, [count]); // Runs when count changes`
+                },
                 interview: {
                     questions: [
-                        { q: "Why does React use Synthetic Events?", a: "1. Cross-browser consistency. 2. Performance (fewer event listeners on the DOM via delegation)." },
-                        { q: "Where does React attach the event listener?", a: "React 16: `document`. React 17+: The root DOM container (`#root`). This helps with Micro-frontends." }
+                        { q: "What does the return function of useEffect do?", a: "It is the cleanup function. Runs before the component unmounts or before the effect re-runs." }
                     ]
                 }
             },
             {
                 day: 6,
-                title: 'Advanced Hooks: useRef & useImperativeHandle',
-                intro: "`useRef` is not just for DOM elements. It's a mutable container that doesn't trigger re-renders.",
+                title: 'Refs & The DOM',
+                intro: "Need to focus an input or measure a div? Use `useRef`. It persists values without re-rendering.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The "Box" Metaphor</h3>
-<p class="mb-4"><code>useRef</code> is like a box you can put things in. Changing the contents of the box doesn't alert React.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. useImperativeHandle</h3>
-<p>Normally, data flows Down. This hook lets parents reach "In" and call methods on children.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Persistent Storage</h3>
+<p>Like a class instance variable.</p>
                 `,
-                code: `// Example 1: Previous Value Hook
-function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
+                code: `const inputRef = useRef(null);
+const focus = () => inputRef.current.focus();`,
+                comparison: {
+                    junior: `// ❌ DOM Query
+function focus() {
+  document.getElementById('my-input').focus();
 }`,
+                    senior: `// ✅ React Ref
+const ref = useRef();
+<input ref={ref} />
+// ref.current.focus();`
+                },
                 interview: {
                     questions: [
-                        { q: "When does useRef update trigger a re-render?", a: "Never. Changing `ref.current` is a side effect and does not notify React's render cycle." },
-                        { q: "Why use `forwardRef`?", a: "Functional components don't accept a `ref` prop by default. `forwardRef` allows you to pass a ref down to a child DOM element." }
+                        { q: "Does changing a ref cause a re-render?", a: "No. That's the main difference between Ref and State." }
                     ]
                 }
             },
             {
                 day: 7,
-                title: 'Memoization: useMemo & useCallback',
-                intro: "Don't optimize prematurely. But when you do, know Referential Equality.",
+                title: 'Memoization (useMemo & useCallback)',
+                intro: "Don't optimize prematurely. But when you do, use Memoization to skip expensive calculations.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Referential Equality</h3>
-<p class="mb-4"><code>{} === {}</code> is <strong>FALSE</strong>.</p>
-<p class="mb-4">Every render, function components create <strong>new</strong> function instances. This breaks <code>React.memo</code> unless you use <code>useCallback</code>.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. When to Memoize?</h3>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li>Passing props to a <code>React.memo</code> child.</li>
-    <li>Expensive calculations (filtering 10k items).</li>
-    <li>Dependency for <code>useEffect</code>.</li>
-</ul>
+<p><code>{'{} === {}'}</code> is false. Objects are compared by reference.</p>
                 `,
-                code: `// Example 1: Breaking Memo
-const Child = React.memo(({ onClick }) => {
-    console.log("Child Render");
-    return <button onClick={onClick}>Click</button>;
-});
+                code: `const memoizedValue = useMemo(() => compute(a, b), [a, b]);
+const memoizedFn = useCallback(() => doSomething(a), [a]);`,
+                comparison: {
+                    junior: `// ❌ Breaking Memoization
+const Child = React.memo(C);
 
 function Parent() {
-    // This creates a NEW function every render
-    // causing Child to re-render despite React.memo
-    const handleClick = () => console.log("Hi"); 
-    
-    // Fix:
-    const memoClick = useCallback(() => console.log("Hi"), []);
-
-    return <Child onClick={memoClick} />;
+  // New function created EVERY render
+  const onClick = () => {};
+  return <Child onClick={onClick} />;
+  // Child re-renders anyway
 }`,
+                    senior: `// ✅ Stable Reference
+const Child = React.memo(C);
+
+function Parent() {
+  // Stable function reference
+  const onClick = useCallback(() => {}, []);
+  return <Child onClick={onClick} />;
+  // Child skips render
+}`
+                },
                 interview: {
                     questions: [
-                        { q: "Should you wrap everything in useCallback?", a: "No. It has a cost (memory allocation + dependency checking). Only use it when passing props to memoized children or as dependencies to useEffect." },
-                        { q: "What is `React.memo`?", a: "A Higher Order Component that shallowly compares props. If props haven't changed, it skips re-rendering the component." },
-                        { q: "Difference between useMemo and React.memo?", a: "`useMemo` caches a value *inside* a component. `React.memo` caches the *entire component* based on props." }
+                        { q: "When should you NOT use useMemo?", a: "For primitive values or cheap calculations. The overhead of checking dependencies can be higher than the calculation itself." }
                     ]
                 }
             },
-            // --- WEEK 2: PATTERNS & ARCHITECTURE ---
             {
                 day: 8,
-                title: 'Context API: Performance Pitfalls',
-                intro: "Context is great for global state, but it triggers re-renders for ALL consumers. Learn how to optimize it.",
+                title: 'Context API',
+                intro: "Avoid Prop Drilling. Share global data like User Auth or Theme.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Blast Radius</h3>
-<p class="mb-4">If the Context Value changes (even a new object reference), <strong>EVERY</strong> component using <code>useContext</code> re-renders.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Solution: Split Context</h3>
-<p>Don't put everything in one God Context. Split "User" from "Theme" from "Settings".</p>
+<h3 class="text-xl font-bold text-white mb-4">1. The Provider Pattern</h3>
+<p>Wrap your app in a Provider.</p>
                 `,
-                code: `// Example 1: The Fix
-const StateCtx = createContext();
-const DispatchCtx = createContext();
-
-function Provider({ children }) {
-    const [state, dispatch] = useReducer(reducer, init);
-    
-    return (
-        <DispatchCtx.Provider value={dispatch}>
-            <StateCtx.Provider value={state}>
-                {children}
-            </StateCtx.Provider>
-        </DispatchCtx.Provider>
-    );
-}`,
+                code: `const ThemeCtx = createContext('light');
+const App = () => (
+  <ThemeCtx.Provider value="dark">
+    <Child />
+  </ThemeCtx.Provider>
+);
+const Child = () => useContext(ThemeCtx);`,
+                comparison: {
+                    junior: `// ❌ Prop Drilling
+<GrandParent theme={theme} />
+// ... inside GrandParent
+<Parent theme={theme} />
+// ... inside Parent
+<Child theme={theme} />`,
+                    senior: `// ✅ Context Consumer
+// In Child:
+const theme = useContext(ThemeContext);
+// No intermediate props needed`
+                },
                 interview: {
                     questions: [
-                        { q: "Why does Context cause re-renders?", a: "Because when the Provider's `value` prop changes (referentially), React forces an update on every component consuming that context." },
-                        { q: "Is Context a replacement for Redux?", a: "Context is a Dependency Injection mechanism. Redux is a State Management library (with middleware, devtools, etc.). Context + useReducer is *like* Redux, but lacks the performance optimizations of Redux selectors." }
+                        { q: "Does Context replace Redux?", a: "For simple global state (Theme, User), yes. For complex high-frequency updates, Redux/Zustand is better due to selectors and preventing unnecessary re-renders." }
                     ]
                 }
             },
             {
                 day: 9,
-                title: 'Custom Hooks: The Power of Composition',
-                intro: "Custom hooks are just functions that can use other hooks. They allow logic reuse without component hierarchy nesting.",
+                title: 'Custom Hooks',
+                intro: "Reuse logic, not UI. If you find yourself copying `useEffect`, make a hook.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Logic Extraction</h3>
-<p class="mb-4">UI belongs in Components. Logic belongs in Hooks.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Rules</h3>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li>Must start with "use" (e.g., <code>useWindowSize</code>).</li>
-    <li>Must be called at top level (no loops/ifs).</li>
-</ul>
+<h3 class="text-xl font-bold text-white mb-4">1. Rules of Hooks</h3>
+<p>Must start with <code>use</code>. Must call at top level.</p>
                 `,
-                code: `// Example 1: useWindowSize
-function useWindowSize() {
-    const [size, setSize] = useState({ width: 0, height: 0 });
-    
-    useEffect(() => {
-        const handle = () => setSize({ 
-            width: window.innerWidth, 
-            height: window.innerHeight 
-        });
-        window.addEventListener('resize', handle);
-        return () => window.removeEventListener('resize', handle);
-    }, []);
-    
-    return size;
+                code: `function useWindowSize() {
+  const [size, setSize] = useState(window.innerWidth);
+  useEffect(() => {
+     window.onresize = () => setSize(window.innerWidth);
+  }, []);
+  return size;
 }`,
+                comparison: {
+                    junior: `// ❌ Duplicate Logic
+// Component A
+useEffect(() => { fetch('/a').then(...) }, []);
+
+// Component B
+useEffect(() => { fetch('/b').then(...) }, []);`,
+                    senior: `// ✅ Custom Hook
+const useFetch = (url) => {
+  const [data, setData] = useState(null);
+  useEffect(() => { fetch(url).then(d => setData(d)) }, [url]);
+  return data;
+}
+// Component A
+const data = useFetch('/a');`
+                },
                 interview: {
                     questions: [
-                        { q: "Do two components using the same custom hook share state?", a: "No. Each time you call a hook, it creates a fully isolated state for *that* component instance. To share state, use Context." },
-                        { q: "Why must hooks be at the top level?", a: "React relies on the *order* of hook calls to track state. If you put a hook in an `if`, the order changes, and React loses track of which state belongs to which hook." }
+                         { q: "Why must hooks be at the top level?", a: "React relies on the order of execution to track state. Conditional hooks break the order." }
                     ]
                 }
             },
             {
                 day: 10,
-                title: 'HOCs vs Render Props vs Hooks',
-                intro: "React has evolved. Understand the history to maintain legacy code and appreciate Hooks.",
+                title: 'Patterns: HOCs vs Render Props',
+                intro: "Historical patterns are still useful, but Hooks have replaced most of them.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Evolution of Reuse</h3>
-<div class="space-y-4 mb-6">
-    <div class="bg-dark-800 p-3 rounded">
-        <strong>2015: Mixins</strong> (Dead).
-    </div>
-    <div class="bg-dark-800 p-3 rounded">
-        <strong>2016: HOCs</strong> (Wrapper Hell).
-    </div>
-    <div class="bg-dark-800 p-3 rounded">
-        <strong>2017: Render Props</strong> (Callback Hell).
-    </div>
-    <div class="bg-brand-primary/20 border border-brand-primary p-3 rounded">
-        <strong>2019: Hooks</strong> (The Solution).
-    </div>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. HOC (Higher Order Component)</h3>
+<p>A function that takes a component and returns a new component.</p>
                 `,
-                code: `// Example 1: HOC
-function withAuth(Component) {
-    return function Wrapped(props) {
-        if (!props.isLoggedIn) return <Login />;
-        return <Component {...props} />;
-    }
-}
-
-// Example 2: Hooks (Better)
-function Profile() {
-    const { isLoggedIn } = useAuth(); // Clean!
-    if (!isLoggedIn) return <Login />;
-    return <Dashboard />;
-}`,
+                code: `const withAuth = (Component) => (props) => {
+  return isAuth ? <Component {...props} /> : <Login />;
+};`,
+                comparison: {
+                    junior: `// ❌ Wrapper Hell
+<WithAuth>
+  <WithRouter>
+    <WithTheme>
+       <Component />
+    </WithTheme>
+  </WithRouter>
+</WithAuth>`,
+                    senior: `// ✅ Hooks Composition
+const MyComponent = () => {
+  const auth = useAuth();
+  const router = useRouter();
+  const theme = useTheme();
+  
+  if (!auth) return <Login />;
+  return <div />;
+}`
+                },
                 interview: {
                     questions: [
-                        { q: "What problem do Hooks solve that HOCs couldn't?", a: "Hooks solve 'Wrapper Hell' (deeply nested component trees just to share logic) and allow splitting unrelated logic in lifecycle methods." },
-                        { q: "Are Class Components deprecated?", a: "Not officially, but new features (Server Components, Concurrent features) work best with functional components." }
+                        { q: "What is a Render Prop?", a: "A prop whose value is a function that returns a React element. `<List renderItem={(item) => <Item item={item} />} />`" }
                     ]
                 }
             },
             {
                 day: 11,
-                title: 'Error Boundaries & Portals',
-                intro: "Handling errors gracefully and rendering outside the DOM hierarchy.",
+                title: 'Portals & Error Boundaries',
+                intro: "Render outside the parent hierarchy (Modals) and catch crashes gracefully.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Error Boundaries</h3>
-<p class="mb-4">The "Catch Block" for components. Must be a Class Component.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Portals</h3>
-<p>Teleporting a child to <code>body</code> (for Modals) while keeping the React event bubble chain intact.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Portals</h3>
+<p>Teleport a child into <code>document.body</code>.</p>
                 `,
-                code: `// Example 1: Error Boundary
-class ErrorBoundary extends React.Component {
-    state = { hasError: false };
-    static getDerivedStateFromError(error) {
-        return { hasError: true };
-    }
-    render() {
-        if (this.state.hasError) return <h1>Something went wrong.</h1>;
-        return this.props.children;
-    }
-}`,
+                code: `createPortal(<div>Modal</div>, document.body);`,
+                comparison: {
+                    junior: `// ❌ Z-Index Wars
+<div style={{ zIndex: 9999, position: 'fixed' }}>
+  Modal (Might be clipped by parent overflow: hidden)
+</div>`,
+                    senior: `// ✅ Portal
+createPortal(
+  <div className="modal">Modal (True Top Layer)</div>,
+  document.body
+);`
+                },
                 interview: {
                     questions: [
-                        { q: "Can `try/catch` handle React rendering errors?", a: "No. `try/catch` only works for imperative code. React rendering is declarative. You must use Error Boundaries." },
-                        { q: "Does Event Bubbling work through Portals?", a: "Yes! Even if the portal is rendered in `<body>`, a click inside it will bubble up to the React parent component, because the React Tree persists." }
+                        { q: "Can Error Boundaries catch errors in Event Handlers?", a: "No. They only catch errors during rendering, lifecycle methods, and constructors. Use `try/catch` for handlers." }
                     ]
                 }
             },
-            // --- WEEK 3: THE FUTURE ---
             {
                 day: 12,
-                title: 'Concurrent Mode & Suspense',
-                intro: "The biggest architectural shift. Rendering is no longer blocking. React can 'pause' to load data.",
+                title: 'Suspense & Concurrent Mode',
+                intro: "Tell React to 'wait' for data before showing the UI. No more `isLoading` booleans.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Suspense</h3>
-<p class="mb-4">Declarative loading states. "Show this skeleton while this component is loading."</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Transitions</h3>
-<p>Marking an update as "Non-Urgent". Keeps the UI responsive.</p>
+<p>Declarative loading states.</p>
                 `,
-                code: `// Example 1: Suspense
+                code: `<Suspense fallback={<Spinner />}>
+  <AsyncComponent />
+</Suspense>`,
+                comparison: {
+                    junior: `// ❌ Imperative Loading
+if (loading) return <Spinner />;
+if (error) return <Error />;
+return <Data />;`,
+                    senior: `// ✅ Declarative Suspense
+// Parent
 <Suspense fallback={<Spinner />}>
-    <LazyComponent />
+  <DataComponent />
 </Suspense>
 
-// Example 2: Transitions
-const [isPending, startTransition] = useTransition();
-
-function handleChange(e) {
-    setQuery(e.target.value); // Urgent
-    startTransition(() => {
-        setList(filter(e.target.value)); // Low Priority
-    });
-}`,
+// Component just reads data. 
+// If data missing, it suspends.`
+                },
                 interview: {
                     questions: [
-                        { q: "What does 'Interruptible Rendering' mean?", a: "React can start rendering a large tree, pause after 5ms to handle a button click, and then resume (or restart) the render." },
-                        { q: "How does Suspense know a component is loading?", a: "The component 'throws' a Promise (like an Error). React catches it, sees it's a Promise, and renders the Fallback until the Promise resolves." }
+                        { q: "What is Concurrent Mode?", a: "It allows React to interrupt rendering to handle high-priority events (like typing) and then resume the background render." }
                     ]
                 }
             },
             {
                 day: 13,
-                title: 'React Server Components (RSC)',
-                intro: "The paradigm shift. Components that run ONLY on the server and send zero JS to the client.",
+                title: 'Compound Components',
+                intro: "Build flexible UI libraries. `Select.Option` instead of `options={[]}`.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Zero Bundle Size</h3>
-<p class="mb-4">RSC code <strong>never</strong> goes to the browser. You can import huge libraries (markdown, heavy date parsers) freely.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Boundary</h3>
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ Server ]
-   │
-   ├── Page.jsx (Fetch DB)
-   │
-   └── [ Client Boundary ]
-           │
-           ▼
-       [ Browser ]
-           InteractiveButton.jsx (onClick)
-</pre>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. Context for Communication</h3>
+<p>Parent communicates with children via hidden context.</p>
                 `,
-                code: `// Example 1: Server Component (app/page.js)
-import db from 'db';
-
-async function Page() {
-    // Direct DB access!
-    const data = await db.query('SELECT * FROM posts');
-    
-    return (
-        <div>
-            {data.map(post => <Post key={post.id} data={post} />)}
-            <ClientButton />
-        </div>
-    );
-}`,
+                code: `<Menu>
+  <Menu.Item>Home</Menu.Item>
+  <Menu.Item>Settings</Menu.Item>
+</Menu>`,
+                comparison: {
+                    junior: `// ❌ Giant Configuration Prop
+<Menu items={[
+  { label: 'Home', icon: 'home' },
+  { label: 'Settings', icon: 'cog' }
+]} />
+// Hard to customize individual items`,
+                    senior: `// ✅ Compound Component
+<Menu>
+  <Menu.Item icon="home">Home</Menu.Item>
+  <Menu.Divider />
+  <Menu.Item icon="cog" style={{ color: 'red' }}>
+     Settings
+  </Menu.Item>
+</Menu>`
+                },
                 interview: {
                     questions: [
-                        { q: "Can Server Components import Client Components?", a: "Yes. This is the main pattern." },
-                        { q: "Can Client Components import Server Components?", a: "No. Because Client components run in the browser, they cannot execute server code." },
-                        { q: "How does RSC differ from SSR?", a: "SSR returns HTML (string) for the initial load. RSC returns a data format (stream) that React merges into the existing tree *without destroying state*." }
+                        { q: "What is a Compound Component?", a: "A pattern where components work together to form a complete UI, usually sharing state via Context (e.g., `<select>` and `<option>`)." }
                     ]
                 }
             },
             {
                 day: 14,
-                title: 'Hydration & SSR',
-                intro: "SSR sends HTML. Hydration makes it interactive. It's the most fragile part of React.",
+                title: 'Performance: Virtualization & Profiler',
+                intro: "Render 100,000 items at 60fps.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Hydration Mismatch</h3>
-<p class="mb-4">If the Server HTML !== Client HTML, React gets confused and may bail out, causing a full re-render.</p>
-
-<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg">
-    <span class="text-red-400 font-bold">Classic Bug:</span> Rendering <code>new Date()</code> or <code>Math.random()</code> directly in the JSX.
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. Windowing</h3>
+<p>Only render what is visible on screen.</p>
                 `,
-                code: `// Example 1: The Date Problem
-function Clock() {
-    // BAD: Server says 10:00, Client says 10:01 -> Mismatch
-    // return <div>{new Date().time}</div>;
-    
-    // GOOD: Use Effect
-    const [time, setTime] = useState(null);
-    useEffect(() => setTime(new Date().time), []);
-    return <div>{time}</div>;
-}`,
+                code: `// react-window example
+<List
+  height={150}
+  itemCount={1000}
+  itemSize={35}
+  width={300}
+>
+  {Row}
+</List>`,
+                comparison: {
+                    junior: `// ❌ Render All
+<ul>
+  {items.map(i => <li>{i}</li>)} 
+</ul>
+// 10,000 DOM nodes created. Page freezes.`,
+                    senior: `// ✅ Virtualize
+<VirtualList 
+  items={items} 
+  rowHeight={50} 
+  renderRow={({ index, style }) => (
+    <li style={style}>{items[index]}</li>
+  )}
+/>
+// Only 10 DOM nodes created.`
+                },
                 interview: {
                     questions: [
-                        { q: "What is 'Streaming SSR'?", a: "Instead of waiting for the *entire* HTML to generate, the server sends chunks as they are ready. React hydrates parts of the page progressively." },
-                        { q: "What is 'Islands Architecture'?", a: "Keeping most of the page static HTML and only 'hydrating' small interactive islands. React Server Components is moving towards this." }
+                        { q: "What tool do you use to debug performance?", a: "React DevTools Profiler tab. It shows which components rendered and why (Flamegraph)." }
                     ]
                 }
             },
             {
                 day: 15,
-                title: 'Testing React Applications',
-                intro: "Stop testing implementation details (state, class names). Test behavior.",
+                title: 'React Server Components (RSC)',
+                intro: "The future. Server Components run on the server, send zero JS to the client, and can access DB directly.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Testing Library Philosophy</h3>
-<p class="mb-4">"The more your tests resemble the way your software is used, the more confidence they can give you."</p>
-
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li>Use <code>getByRole</code>, <code>getByText</code>.</li>
-    <li>Avoid <code>container.querySelector('.my-class')</code>.</li>
-</ul>
+<h3 class="text-xl font-bold text-white mb-4">1. The Waterline</h3>
+<p>Server components can import Client components. Client components CANNOT import Server components.</p>
                 `,
-                code: `// Example 1: Good Test
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+                code: `// app/page.tsx (Server Component)
+import db from 'db';
 
-test('login flow', async () => {
-    render(<Login />);
-    
-    const input = screen.getByLabelText(/username/i);
-    await userEvent.type(input, 'admin');
-    
-    const btn = screen.getByRole('button', { name: /login/i });
-    await userEvent.click(btn);
-    
-    expect(await screen.findByText(/welcome/i)).toBeInTheDocument();
-});`,
+export default async function Page() {
+  const data = await db.query();
+  return <div>{data}</div>;
+}`,
+                comparison: {
+                    junior: `// ❌ Client Fetch (Waterfall)
+function Page() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch('/api/data').then(setData);
+  }, []);
+  
+  if (!data) return <Spinner />;
+  return <div>{data}</div>;
+}`,
+                    senior: `// ✅ Async Server Component
+async function Page() {
+  // Direct DB access. No API. No useEffect.
+  const data = await db.post.findMany();
+  
+  return <div>{data.map(...)}</div>;
+}`
+                },
                 interview: {
                     questions: [
-                        { q: "Why is `shallow` rendering considered bad practice now?", a: "Shallow rendering mocks child components. This makes tests brittle and doesn't test integration. RTL encourages full rendering." },
-                        { q: "How to test Custom Hooks?", a: "Use `renderHook` from `@testing-library/react-hooks`." }
+                         { q: "Can you use hooks in Server Components?", a: "No. `useState` and `useEffect` are client-only concepts. RSCs run once on the server." }
                     ]
                 }
             }
@@ -1543,530 +1982,493 @@ test('login flow', async () => {
     },
     fullstack: {
         id: 'fullstack',
-        title: 'Full Stack Architect: Node.js & Cloud',
-        description: 'From Backend Internals to Microservices. Master the complete stack.',
+        title: 'Full Stack Architecture: Node.js & System Design',
+        description: 'Scale from localhost to production. Microservices, Docker, Kubernetes, and High-Level System Design.',
         totalDays: 20,
         days: [
-            // --- WEEK 0: ENVIRONMENT SETUP ---
             {
                 day: 0,
-                title: 'Day 0: The Server Environment (Node & Docker)',
+                title: 'Day 0: The Server Environment',
                 intro: "Node.js versions matter. Database containers matter. Set up your machine like a Senior Engineer.",
-                video: "TlB_eWDSMt4", // Node.js in 100 Seconds
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Version Management (nvm)</h3>
-<p class="mb-4">Never install Node from the official website installer. You will run into permission issues. Use <code>nvm</code> (Node Version Manager).</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Node Version Manager (nvm)</h3>
+<p class="mb-4 text-light-300">Avoid permission issues and manage multiple Node.js versions easily.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+    <pre><code>
+# Install nvm (macOS/Linux)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
-<h3 class="text-xl font-bold text-white mb-4">2. Docker for Databases</h3>
-<p class="mb-4">Don't install Postgres/Mongo directly on your Mac/PC. It pollutes your OS. Use Docker Containers.</p>
+# Install nvm (Windows - use nvm-windows)
+# https://github.com/coreybutler/nvm-windows
 
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-# The Senior Dev Way to start Mongo:
-docker run -d -p 27017:27017 --name my-mongo mongo:latest
-</pre>
-</div>
-                `,
-                code: `// 1. Install NVM (Mac/Linux)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+# Install latest LTS Node.js
+nvm install --lts
 
-// 2. Use NVM
-nvm install 18
-nvm use 18
+# Use the LTS version
+nvm use --lts
 
-// 3. Check versions
+# Set LTS as default
+nvm alias default lts/*
+
+# Verify installation
 node -v
-npm -v`,
+npm -v
+    </code></pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">2. Docker for Local Databases</h3>
+<p class="mb-4 text-light-300">Run databases (MongoDB, PostgreSQL) in isolated containers. Clean, consistent, and easy to reset.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-light-200 overflow-x-auto">
+    <pre><code>
+# Install Docker Desktop: https://www.docker.com/products/docker-desktop/
+
+# Run a MongoDB container
+docker run --name my-mongo -p 27017:27017 -d mongo:latest
+
+# Run a PostgreSQL container
+docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres:latest
+
+# Stop and remove containers
+docker stop my-mongo
+docker rm my-mongo
+    </code></pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">3. API Testing Tools: Postman / Insomnia</h3>
+<p class="mb-4 text-light-300">Essential for testing your backend APIs.</p>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>**Postman:** Feature-rich, collaborative API platform.</li>
+    <li>**Insomnia:** Lightweight, developer-focused API client.</li>
+</ul>
+                    `,
+                code: `// No interactive code for setup, focus on terminal commands.
+// Try running 'docker ps' in your terminal after starting a container!`,
+                video: 'tlB8487q', 
+                comparison: {
+                    junior: `// ❌ Installing DB on Machine
+// - Brew install mongodb
+// - "It works on my machine"
+// - Versions conflict with other projects`,
+                    senior: `// ✅ Docker Container
+// - docker run mongo
+// - Isolated environment
+// - Exact same version as production`
+                },
                 interview: {
                     questions: [
-                        { q: "Why use Docker for local development?", a: "Isolation. You can run different versions of Postgres for different projects without conflicts. You can spin up/down environments in seconds." },
-                        { q: "What is `package-lock.json`?", a: "It locks down the exact version of every dependency (and sub-dependency) to ensure the project works exactly the same on every machine." }
+                        { q: "Why is `nvm` crucial for Node.js development?", a: "`nvm` allows developers to easily install, manage, and switch between multiple Node.js versions. This is vital for working on different projects that might require specific Node.js environments, preventing conflicts and ensuring compatibility." },
+                        { q: "What are the benefits of using Docker for local database development?", a: "Docker provides isolated, consistent, and reproducible database environments. It prevents 'it works on my machine' issues, makes it easy to spin up and tear down databases, and ensures your local setup mirrors production more closely without polluting your host machine." },
+                        { q: "How do API testing tools like Postman or Insomnia enhance backend development?", a: "These tools allow developers to send HTTP requests to their APIs, inspect responses, and test different endpoints and authentication flows without needing a frontend. They are crucial for debugging, validating API contracts, and ensuring backend functionality." }
                     ]
                 }
             },
-            // --- WEEK 1: NODE.JS & DATABASE ---
             {
                 day: 1,
-                title: 'Node.js Internals: Beyond Express',
-                intro: "Node is not just 'server-side JS'. It's a C++ runtime with Libuv. Understand the Event Loop on the server.",
+                title: 'Node.js Architecture & Event Loop',
+                intro: "Node is Single-Threaded but Non-Blocking. Understand libuv and the thread pool.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Server Event Loop</h3>
-<p class="mb-4">It has phases, unlike the browser loop.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-   ┌───────────────────────────┐
-   │         TIMERS            │ (setTimeout)
-   └─────────────┬─────────────┘
-                 ▼
-   ┌───────────────────────────┐
-   │    PENDING CALLBACKS      │ (OS Ops)
-   └─────────────┬─────────────┘
-                 ▼
-   ┌───────────────────────────┐
-   │      POLL (I/O)           │ (Incoming Request)
-   └─────────────┬─────────────┘
-                 ▼
-   ┌───────────────────────────┐
-   │         CHECK             │ (setImmediate)
-   └───────────────────────────┘
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Worker Pool</h3>
-<p>Heavy tasks (Crypto, Compression, FS) are offloaded to Libuv's C++ Thread Pool. This keeps the Main Thread free.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. The Reactor Pattern</h3>
+<p>Node offloads I/O to the OS kernel.</p>
                 `,
-                code: `// Example 1: Blocking vs Non-Blocking
-const crypto = require('crypto');
-
-// BAD: Sync version blocks all other requests
-// crypto.pbkdf2Sync(...) 
-
-// GOOD: Async version uses the Thread Pool
-crypto.pbkdf2(..., () => console.log('Done'));
-
-// Example 2: setImmediate vs process.nextTick
-// nextTick runs IMMEDIATELY after current operation, before any I/O.
-// setImmediate runs on the next 'Check' phase of the loop.`,
+                code: `const fs = require('fs');
+fs.readFile('file.txt', (err, data) => {
+  console.log(data);
+});`,
+                comparison: {
+                    junior: `// ❌ Blocking I/O (PHP Style)
+const data = fs.readFileSync('large-file.txt');
+// Entire server freezes until file is read
+console.log(data);`,
+                    senior: `// ✅ Non-Blocking I/O
+fs.readFile('large-file.txt', (err, data) => {
+  // Callback runs when data is ready
+  console.log(data);
+});
+// Server continues serving other requests`
+                },
                 interview: {
                     questions: [
-                        { q: "Is Node.js single threaded?", a: "Yes, the JS execution is single-threaded. But I/O operations (file, network) and CPU-heavy tasks (crypto, zlib) run in C++ threads via Libuv." },
-                        { q: "What is `process.nextTick` used for?", a: "To schedule a callback to run *immediately* after the current operation completes, but before the event loop continues. Use with caution (can starve I/O)." },
-                        { q: "Difference between `cluster` module and Worker Threads?", a: "Cluster forks processes (separate memory). Workers share memory/process. Cluster is for scaling across cores; Workers are for CPU tasks." }
+                        { q: "What is Libuv?", a: "The C library that provides the Event Loop and asynchronous I/O support to Node.js." }
                     ]
                 }
             },
             {
                 day: 2,
-                title: 'Streams & Buffers',
-                intro: "How to handle 10GB files with 1GB RAM? Streams. This is the difference between a Junior and a Senior dev.",
+                title: 'Express.js & Middleware',
+                intro: "Express is a chain of middleware functions. `(req, res, next) => ...`",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Piping Data</h3>
-<p class="mb-4">Instead of loading the whole file into RAM, we stream it chunk by chunk.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ File System ] ──Chunk1──▶ [ Gzip ] ──Chunk1──▶ [ Response ]
-       │                       │                     │
-      ...                     ...                   ...
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Buffer</h3>
-<p>Raw binary data (octets). Node's way of handling binary before <code>ArrayBuffer</code> existed.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Middleware Onion</h3>
+<p>Request goes through layers, response comes back out.</p>
                 `,
-                code: `// Example 1: Stream vs ReadFile
-const fs = require('fs');
-
-// BAD: Loads entire file into RAM. Crashes on large files.
-// fs.readFile('big.mp4', (err, data) => res.send(data));
-
-// GOOD: Stream chunks to response. Memory usage constant.
-const stream = fs.createReadStream('big.mp4');
-stream.pipe(res);`,
+                code: `app.use((req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+});`,
+                comparison: {
+                    junior: `// ❌ Giant Route Handler
+app.post('/login', (req, res) => {
+  // Parsing logic
+  // Validation logic
+  // DB logic
+  // Response logic
+});`,
+                    senior: `// ✅ Middleware Chain
+app.post('/login', 
+  bodyParser, 
+  validateInput, 
+  findUser, 
+  sendResponse
+);`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Backpressure?", a: "When the Readable stream is faster than the Writable stream (e.g., reading disk fast, writing to slow network). Node handles this by pausing the readable stream so memory doesn't overflow." },
-                        { q: "Difference between Buffer and ArrayBuffer?", a: "Buffer is Node's implementation (pre-ES6). ArrayBuffer is the standard JS implementation. Node Buffers are a subclass of Uint8Array now." }
+                         { q: "What happens if you don't call `next()`?", a: "The request hangs indefinitely." }
                     ]
                 }
             },
             {
                 day: 3,
-                title: 'Database Design: SQL vs NoSQL',
-                intro: "The most important architectural decision. Relational (Postgres) vs Document (Mongo).",
+                title: 'REST API Design',
+                intro: "Resources, Verbs, and Status Codes. Don't return 200 OK for an error.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Relational (SQL)</h3>
-<p class="mb-4">Strict schema. Data is normalized (spread across tables).</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Document (NoSQL)</h3>
-<p class="mb-4">Flexible schema. Data is denormalized (embedded in one document).</p>
-
-<div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-dark-800 p-4 rounded-lg text-sm">
-        <strong class="text-blue-400">SQL User</strong><br/>
-        ID: 1<br/>
-        Name: Alice
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg text-sm">
-        <strong class="text-green-400">Mongo User</strong><br/>
-        _id: 1<br/>
-        Name: Alice<br/>
-        Address: { city: "NY" }
-    </div>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. Resource Naming</h3>
+<p>Nouns, not verbs.</p>
                 `,
-                code: `// Example 1: SQL Relationship (One-to-Many)
-// Users Table: | id | name |
-// Posts Table: | id | user_id (FK) | content |
-
-// Example 2: NoSQL Embedding (One-to-Few)
-// User Document
-// {
-//   _id: 1,
-//   name: "Alice",
-//   addresses: [ // Embedded array
-//     { street: "Main St", city: "NY" }
-//   ]
-// }`,
+                code: `GET /users/123
+POST /users
+DELETE /users/123`,
+                comparison: {
+                    junior: `// ❌ RPC Style URLs
+POST /createNewUser
+POST /deleteUserById
+GET /getAllUsers`,
+                    senior: `// ✅ RESTful Standard
+POST /users
+DELETE /users/:id
+GET /users`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Normalization?", a: "Organizing data to minimize redundancy (e.g., storing a user's address in a separate table, not repeating it in every order). Improves integrity, hurts read performance (requires Joins)." },
-                        { q: "When should you use NoSQL?", a: "When data is unstructured, when you need high write throughput, or when you need to shard data across many servers easily." },
-                        { q: "Explain ACID.", a: "Atomicity (All or nothing), Consistency (Valid state), Isolation (Concurrent transactions don't interfere), Durability (Saved forever)." }
+                         { q: "Difference between PUT and PATCH?", a: "PUT replaces the entire resource. PATCH updates only specified fields." }
                     ]
                 }
             },
             {
                 day: 4,
-                title: 'Authentication & Security',
-                intro: "Never roll your own crypto. Sessions vs JWTs. OAuth.",
+                title: 'Databases: SQL vs NoSQL',
+                intro: "ACID transactions vs Flexible Schema. Choose the right tool.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. JWT Anatomy</h3>
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm mb-6 overflow-x-auto shadow-inner">
-<pre>
-<span class="text-red-400">eyJhbGciOiJIUzI1NiJ9</span>.<span class="text-purple-400">eyJzdWIiOiIxMjM0NTY3ODkwIn0</span>.<span class="text-blue-400">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
-   (Header)         (Payload)           (Signature)
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Refresh Pattern</h3>
-<p>Access tokens are short-lived (15m). Refresh tokens are long-lived (7d) and kept securely in HttpOnly cookies.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Relational (Postgres)</h3>
+<p>Strict tables. Joins.</p>
                 `,
-                code: `// Example 1: JWT Verification
-// Server receives token from Header
-const token = req.headers.authorization.split(' ')[1];
-try {
-    const decoded = jwt.verify(token, process.env.SECRET);
-    req.user = decoded;
-    next();
-} catch (e) {
-    res.status(401).send("Invalid Token");
+                code: `SELECT * FROM users JOIN posts ON users.id = posts.user_id;`,
+                comparison: {
+                    junior: `// ❌ N+1 Problem
+const users = await User.find();
+for (let user of users) {
+  // Query for every single user loop!
+  user.posts = await Post.find({ userId: user.id });
 }`,
+                    senior: `// ✅ Eager Loading / Aggregation
+// One single optimized query
+const users = await User.aggregate([
+  { $lookup: { from: 'posts', ... } }
+]);`
+                },
                 interview: {
                     questions: [
-                        { q: "Where should you store a JWT?", a: "Ideally HttpOnly Cookie (prevents XSS). If in LocalStorage, it's vulnerable to XSS." },
-                        { q: "What is Salt in hashing?", a: "Random data added to a password before hashing. Prevents Rainbow Table attacks (pre-computed hash lookups)." }
+                         { q: "What is Normalization?", a: "Structuring a database to reduce redundancy and improve data integrity." }
                     ]
                 }
             },
             {
                 day: 5,
-                title: 'API Architecture: REST vs GraphQL',
-                intro: "How do clients talk to servers? Designing scalable interfaces.",
+                title: 'Authentication (JWT vs Session)',
+                intro: "Stateless vs Stateful auth.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. REST vs GraphQL</h3>
-<div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-blue-400 font-bold mb-2">REST</h4>
-        <p class="text-sm text-light-400">Multiple endpoints (/users, /posts). Over-fetching is common.</p>
-    </div>
-    <div class="bg-dark-800 p-4 rounded-lg">
-        <h4 class="text-pink-400 font-bold mb-2">GraphQL</h4>
-        <p class="text-sm text-light-400">One endpoint (/graphql). Ask for exactly what you need.</p>
-    </div>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. JWT</h3>
+<p>Self-contained token. Scalable.</p>
                 `,
-                code: `// Example 1: GraphQL Query
-query {
-  user(id: 1) {
-    name
-    posts {
-      title
-    }
-  }
-}
-// Response: No "friends", no "address", just what I asked for.`,
+                code: `const token = jwt.sign({ id: 1 }, 'secret');`,
+                comparison: {
+                    junior: `// ❌ Storing Token in LocalStorage
+localStorage.setItem('token', jwt);
+// Vulnerable to XSS!`,
+                    senior: `// ✅ HttpOnly Cookie
+res.cookie('token', jwt, { 
+  httpOnly: true, // No JS access
+  secure: true 
+});`
+                },
                 interview: {
                     questions: [
-                        { q: "What is the N+1 problem in GraphQL?", a: "Fetching a list of authors, then for each author fetching their books. This results in 1 query for authors + N queries for books. Solved with DataLoaders (batching)." },
-                        { q: "When to use gRPC?", a: "For internal Microservices communication. It uses Protobuf (binary) and HTTP/2, making it much faster than JSON REST." },
-                        { q: "What is Idempotency?", a: "Making multiple identical requests has the same effect as making a single request. (e.g., retrying a Payment API shouldn't charge twice)." }
+                        { q: "How do you invalidate a JWT?", a: "You can't (it's stateless). You must use a blacklist database or short expiration times." }
                     ]
                 }
             },
-            // --- WEEK 2: SCALE & DEPLOYMENT ---
             {
                 day: 6,
-                title: 'Caching Strategies: Redis',
-                intro: "The fastest request is the one you don't serve from the DB. Redis is key.",
+                title: 'WebSockets & Real-time',
+                intro: "Socket.io allows bidirectional communication.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Cache-Aside Pattern</h3>
-<p class="mb-4">1. Check Cache. 2. Miss? Check DB. 3. Update Cache. 4. Return.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Eviction Policies</h3>
-<p><strong>LRU (Least Recently Used):</strong> "I haven't used this key in a while, delete it to make space."</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Handshake</h3>
+<p>Starts as HTTP, upgrades to TCP socket.</p>
                 `,
-                code: `// Example 1: Redis Cache Middleware
-async function getPost(id) {
-    const cached = await redis.get(\`post:\${id}\`);
-    if (cached) return JSON.parse(cached);
-    
-    const data = await db.findPost(id);
-    await redis.set(\`post:\${id}\`, JSON.stringify(data), 'EX', 3600); // 1h TTL
-    return data;
-}`,
+                code: `io.on('connection', (socket) => {
+  socket.emit('hello', 'world');
+});`,
+                comparison: {
+                    junior: `// ❌ Polling
+setInterval(() => {
+  fetch('/api/messages');
+}, 1000); 
+// Spamming the server`,
+                    senior: `// ✅ WebSocket
+socket.on('message', (msg) => {
+  // Server pushes data when ready
+  display(msg);
+});`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Cache Stampede?", a: "When a popular cache key expires, thousands of requests hit the DB simultaneously. Solved by Locking or Probabilistic Early Expiration." },
-                        { q: "Redis vs Memcached?", a: "Redis supports complex data types (Lists, Sets, Sorted Sets) and persistence. Memcached is simpler, pure Key-Value string store." }
+                        { q: "What is the limitation of WebSockets?", a: "Scalability. Keeping thousands of open TCP connections requires significant server resources (RAM)." }
                     ]
                 }
             },
             {
                 day: 7,
-                title: 'Message Queues & Background Jobs',
-                intro: "Don't send emails or process video in the request handler. Offload it.",
+                title: 'Microservices Architecture',
+                intro: "Breaking the monolith into small, independent services.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Decoupling</h3>
-<p class="mb-4">The Web Server should only accept the request. The Worker Server does the heavy lifting.</p>
-
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-yellow-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-[ User ] ──▶ [ API ] ──▶ [ Redis Queue ] ──▶ [ Worker ]
-           (Fast Resp)                       (Sends Email)
-</pre>
-</div>
+<p>Each service has its own DB.</p>
                 `,
-                code: `// Example 1: Adding a Job (Producer)
-await emailQueue.add('send-welcome', { email: 'user@example.com' });
-res.send('Email queued');
-
-// Example 2: Processing (Worker)
-emailQueue.process(async (job) => {
-    await sendEmail(job.data.email);
-});`,
+                code: `// Order Service -> User Service via HTTP/gRPC`,
+                comparison: {
+                    junior: `// ❌ Distributed Monolith
+// Services share the same Database
+// If one schema changes, everything breaks`,
+                    senior: `// ✅ Database per Service
+// OrderDB is separate from UserDB
+// Communicate via Events/API`
+                },
                 interview: {
                     questions: [
-                        { q: "Why use a Queue instead of just `await sendEmail()`?", a: "To decouple the response time from the processing time. The user gets a fast response, and the server can process the heavy task at its own pace (smoothing traffic spikes)." },
-                        { q: "What is a Dead Letter Queue?", a: "A queue where messages go after they fail to process X times. Allows developers to debug failed jobs without blocking the main queue." }
+                        { q: "What is eventual consistency?", a: "Data is not immediately synced across all nodes, but will be eventually." }
                     ]
                 }
             },
             {
                 day: 8,
                 title: 'Docker & Containerization',
-                intro: "Works on my machine? Docker makes it work everywhere.",
+                intro: "Package your code with its environment.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Layer Cake</h3>
-<p class="mb-4">Docker images are built in layers. Layers are cached.</p>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li>Layer 1: OS (Alpine Linux)</li>
-    <li>Layer 2: Node.js Runtime</li>
-    <li>Layer 3: <code>node_modules</code> (Cached if package.json unchanged)</li>
-    <li>Layer 4: App Code (Changed frequently)</li>
-</ul>
+<h3 class="text-xl font-bold text-white mb-4">1. Dockerfile</h3>
+<p>Recipe for your image.</p>
                 `,
-                code: `// Example 1: Simple Dockerfile
-// FROM node:18-alpine
-// WORKDIR /app
-// COPY package*.json ./
-// RUN npm ci --only=production
-// COPY . .
-// EXPOSE 3000
-// CMD ["node", "server.js"]`,
+                code: `FROM node:18
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["node", "index.js"]`,
+                comparison: {
+                    junior: `// ❌ Manual Deployment
+// SSH into server
+// git pull
+// npm install (Fail because node version diff)
+// pm2 restart`,
+                    senior: `// ✅ CI/CD + Docker
+// git push
+// CI builds Docker Image
+// K8s pulls image and updates pods`
+                },
                 interview: {
                     questions: [
-                        { q: "Difference between VM and Container?", a: "VMs virtualize hardware (heavy OS). Containers virtualize the OS kernel (lightweight, shared kernel)." },
-                        { q: "What is Kubernetes?", a: "An orchestrator for containers. Handles scaling, self-healing, and networking of thousands of containers." }
+                        { q: "Container vs VM?", a: "Containers share the host OS kernel (lightweight). VMs have their own full OS (heavy)." }
                     ]
                 }
             },
             {
                 day: 9,
                 title: 'CI/CD Pipelines',
-                intro: "Continuous Integration / Continuous Deployment. Automate the pain.",
+                intro: "Automate testing and deployment.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Pipeline</h3>
-<div class="flex items-center space-x-2 text-xs md:text-sm mb-6">
-    <div class="bg-blue-900/40 p-2 rounded border border-blue-500">Code Push</div>
-    <span>➞</span>
-    <div class="bg-yellow-900/40 p-2 rounded border border-yellow-500">Test (CI)</div>
-    <span>➞</span>
-    <div class="bg-green-900/40 p-2 rounded border border-green-500">Deploy (CD)</div>
-</div>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Deployment Strategies</h3>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li><strong>Blue/Green:</strong> Zero downtime. Instant rollback.</li>
-    <li><strong>Canary:</strong> Roll out to 10% of users first.</li>
-</ul>
+<p>Build -> Test -> Deploy.</p>
                 `,
-                code: `// Example 1: GitHub Actions Workflow
-// name: CI
-// on: [push]
-// jobs:
-//   test:
-//     runs-on: ubuntu-latest
-//     steps:
-//       - uses: actions/checkout@v2
-//       - run: npm install
-//       - run: npm test`,
+                code: `// .github/workflows/main.yml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm test`,
+                comparison: {
+                    junior: `// ❌ Deploying from Local
+// "Hey, I'm deploying, don't touch dev!"
+// *Uploads uncommitted code*`,
+                    senior: `// ✅ Automated Pipeline
+// Code must pass tests in CI
+// Main branch automatically deploys to Staging`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Blue-Green Deployment?", a: "Running two identical environments. Blue is live. Deploy to Green. Switch router to Green. Zero downtime. Instant rollback." },
-                        { q: "Why immutable infrastructure?", a: "Never patch a running server. Replace it with a new one. Eliminates configuration drift." }
+                        { q: "What is Blue/Green Deployment?", a: "Running two identical production environments. You switch the router from Blue (Old) to Green (New) instantly." }
                     ]
                 }
             },
             {
                 day: 10,
-                title: 'System Design: Scalability',
-                intro: "Horizontal vs Vertical Scaling. Load Balancers.",
+                title: 'GraphQL',
+                intro: "Ask for exactly what you need.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Architecture of Scale</h3>
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-purple-300 mb-6 overflow-x-auto shadow-inner">
-<pre>
-      [ Load Balancer ]
-      /       |       \
-[ App 1 ] [ App 2 ] [ App 3 ]
-      \       |       /
-      [ Shared Redis ]
-              |
-         [ Database ]
-</pre>
-</div>
+<h3 class="text-xl font-bold text-white mb-4">1. One Endpoint</h3>
+<p>No more versioned routes.</p>
                 `,
-                code: `// Example 1: Nginx Config (Simplified)
-// upstream backend {
-//    server 10.0.0.1;
-//    server 10.0.0.2;
-// }
-// server {
-//    location / {
-//       proxy_pass http://backend;
-//    }
-// }`,
+                code: `query {
+  user(id: 1) {
+    name
+    posts { title }
+  }
+}`,
+                comparison: {
+                    junior: `// ❌ Over-fetching
+GET /api/users/1
+// Returns object with 50 fields
+// We only needed the name`,
+                    senior: `// ✅ GraphQL Query
+query { user(id: 1) { name } }
+// Returns JSON with JUST name`
+                },
                 interview: {
                     questions: [
-                        { q: "What is CAP Theorem?", a: "Consistency, Availability, Partition Tolerance. In a distributed system, you can only pick 2. (Usually AP or CP)." },
-                        { q: "Stateful vs Stateless Architecture?", a: "Stateless (REST) allows easy scaling (any server can handle any request). Stateful (Sticky Sessions) is harder to scale." }
+                        { q: "What is the N+1 problem in GraphQL?", a: "Resolvers executing a database query for every item in a list. Solved with DataLoaders." }
                     ]
                 }
             },
-            // --- WEEK 3: ADVANCED ARCHITECTURE ---
             {
                 day: 11,
-                title: 'Microservices & Communication',
-                intro: "Breaking the monolith. Service Discovery, API Gateway.",
+                title: 'Serverless Functions (Lambda)',
+                intro: "Pay only for compute time.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The API Gateway</h3>
-<p class="mb-4">The single entry point for all clients. Handles Auth, Rate Limiting, and Routing.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Async Communication</h3>
-<p>Services shouldn't talk directly (tight coupling). They should emit events.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Event Driven</h3>
+<p>Triggered by HTTP, S3 upload, etc.</p>
                 `,
-                code: `// Example 1: Event Driven Architecture
-// Service A (Order) emits 'OrderCreated'
-// Service B (Inventory) listens and subtracts stock
-// Service C (Shipping) listens and prints label`,
+                code: `exports.handler = async (event) => {
+  return { statusCode: 200, body: 'Hello' };
+};`,
+                comparison: {
+                    junior: `// ❌ Idle Server
+// Paying $50/mo for a VPS 
+// Traffic is low 90% of the time`,
+                    senior: `// ✅ Serverless
+// 0 cost when idle
+// Auto-scales to 1000s of requests
+// Pay $5/mo`
+                },
                 interview: {
                     questions: [
-                        { q: "What is the Saga Pattern?", a: "Managing distributed transactions. Instead of a global lock, use a sequence of local transactions. If one fails, execute compensating transactions to undo." },
-                        { q: "What is Circuit Breaker?", a: "If a service is failing, stop calling it immediately to prevent cascading failure. Retry after a timeout." }
+                        { q: "What is a Cold Start?", a: "The latency when a Lambda function starts up for the first time after being idle." }
                     ]
                 }
             },
             {
                 day: 12,
-                title: 'WebSockets & Real-time',
-                intro: "HTTP is request-response. Sockets are full-duplex. Chat, Gaming, Live Updates.",
+                title: 'Caching Strategies (Redis)',
+                intro: "The fastest query is the one you don't make.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Upgrade Header</h3>
-<p class="mb-4">WebSockets start as a standard HTTP GET request with <code>Connection: Upgrade</code>.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Scaling Sockets</h3>
-<p>Socket connections are stateful. You need a <strong>Redis Adapter</strong> to broadcast messages across multiple server instances.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Key-Value Store</h3>
+<p>In-memory speed.</p>
                 `,
-                code: `// Example 1: Socket.io
-const io = require('socket.io')(server);
-io.on('connection', (socket) => {
-    socket.on('chat', (msg) => {
-        io.emit('chat', msg); // Broadcast
-    });
-});`,
+                code: `const cached = await redis.get('user:1');
+if (cached) return JSON.parse(cached);
+const user = await db.find(1);
+await redis.set('user:1', JSON.stringify(user));`,
+                comparison: {
+                    junior: `// ❌ Hitting DB Every Request
+// /getProfile -> SQL Query
+// /getProfile -> SQL Query
+// /getProfile -> SQL Query`,
+                    senior: `// ✅ Redis Cache
+// /getProfile -> Cache Hit (1ms)
+// /getProfile -> Cache Hit (1ms)
+// DB sleeps`
+                },
                 interview: {
                     questions: [
-                        { q: "Polling vs Long Polling vs WebSockets?", a: "Polling: 'Are we there yet?' every 1s. Long Polling: Server holds request until data ready. Sockets: Permanent open channel." },
-                        { q: "How many concurrent socket connections can a server handle?", a: "Depends on RAM and File Descriptors (ulimit). A single Node process can handle 10k-100k idle connections easily." }
+                        { q: "Cache Invalidation strategies?", a: "TTL (Time To Live), Write-Through (Update cache on write), LRU (Least Recently Used)." }
                     ]
                 }
             },
             {
                 day: 13,
-                title: 'Testing: Integration & Load',
-                intro: "Unit tests aren't enough. Does the API actually work? Can it handle 10k users?",
+                title: 'Load Balancing & NGINX',
+                intro: "Distribute traffic across multiple servers.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Integration Tests</h3>
-<p class="mb-4">Spin up a real DB. Hit real endpoints. Ensure the system works as a whole.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Load Testing</h3>
-<p>Simulating 10,000 users hitting your login route at once.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Reverse Proxy</h3>
+<p>Shields your servers.</p>
                 `,
-                code: `// Example 1: Supertest (Integration)
-const request = require('supertest');
-const app = require('./app');
-
-it('GET /user responds with json', (done) => {
-  request(app)
-    .get('/user')
-    .expect(200, done);
-});`,
+                code: `upstream app_servers {
+  server 10.0.0.1;
+  server 10.0.0.2;
+}`,
+                comparison: {
+                    junior: `// ❌ Single Point of Failure
+// One server crashes
+// Website is Down`,
+                    senior: `// ✅ Load Balancer
+// Detects server crash
+// Routes traffic to healthy servers`
+                },
                 interview: {
                     questions: [
-                        { q: "What is Chaos Engineering?", a: "Intentionally breaking things (killing servers, adding latency) in production to test resilience (Netflix Simian Army)." },
-                        { q: "What metrics to watch during load test?", a: "Latency (p95, p99), Error Rate, CPU/RAM saturation, Throughput (RPS)." }
+                        { q: "Round Robin vs Least Connections?", a: "Round Robin rotates sequentially. Least Connections sends traffic to the server with fewest active users." }
                     ]
                 }
             },
             {
                 day: 14,
-                title: 'Serverless & Edge Functions',
-                intro: "No servers to manage. Pay per execution. AWS Lambda, Cloudflare Workers.",
+                title: 'Security: Hashing & Salting',
+                intro: "Protecting user passwords.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Cold Starts</h3>
-<p class="mb-4">The container needs to "wake up" for the first request. This adds latency.</p>
-
-<h3 class="text-xl font-bold text-white mb-4">2. The Edge</h3>
-<p>Running code on CDN nodes physically closer to the user. Near-zero latency.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. Bcrypt</h3>
+<p>Slow hashing algorithm.</p>
                 `,
-                code: `// Example 1: AWS Lambda Handler
-exports.handler = async (event) => {
-    return {
-        statusCode: 200,
-        body: JSON.stringify('Hello from Lambda!'),
-    };
-};`,
+                code: `const salt = await bcrypt.genSalt(10);
+const hash = await bcrypt.hash(password, salt);`,
+                comparison: {
+                    junior: `// ❌ Plain Text / MD5
+db.save({ password: "password123" });
+// One hack = Everyone exposed`,
+                    senior: `// ✅ Salted Hash
+// Saved as: $2b$10$nOUIs5...
+// Even if DB leaks, passwords are safe`
+                },
                 interview: {
                     questions: [
-                        { q: "Pros and Cons of Serverless?", a: "Pros: Infinite scale, zero ops, cost effective for spiky traffic. Cons: Cold starts, vendor lock-in, hard to debug, stateless." },
-                        { q: "How to handle DB connections in Serverless?", a: "Reuse the connection outside the handler function. Or use a connection pool proxy (like AWS RDS Proxy/Prisma Accelerate)." }
+                        { q: "Why use a Salt?", a: "To prevent Rainbow Table attacks. Identical passwords will have different hashes." }
                     ]
                 }
             },
             {
                 day: 15,
-                title: 'Capstone: Designing Twitter',
-                intro: "Putting it all together. A classic System Design interview question.",
+                title: 'System Design: Scaling',
+                intro: "Vertical vs Horizontal Scaling.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Fan-Out Problem</h3>
-<p class="mb-4">When Justin Bieber tweets, 100M people need to see it.</p>
-<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
-    <li><strong>Pull Model:</strong> Users query DB on load. (Slow reads).</li>
-    <li><strong>Push Model:</strong> Pre-compute feeds into Redis Lists. (Fast reads, slow writes).</li>
-</ul>
-
-<h3 class="text-xl font-bold text-white mb-4">2. Architecture</h3>
-<p>LB ➞ API ➞ Fan-out Service ➞ Redis Cluster ➞ User Feed.</p>
+<h3 class="text-xl font-bold text-white mb-4">1. The Cube</h3>
+<p>X, Y, Z axis scaling.</p>
                 `,
-                code: `// No code, just architecture diagrams in your head.
-// 1. LB -> Web Server -> Redis (Feed) -> User
-// 2. Async Worker -> Fan out tweets to Redis Lists`,
+                code: `// Conceptual`,
+                comparison: {
+                    junior: `// ❌ Buy Bigger Server
+// Vertical Scaling
+// Limited by hardware`,
+                    senior: `// ✅ Buy More Servers
+// Horizontal Scaling
+// Unlimited theoretical limit`
+                },
                 interview: {
                     questions: [
-                        { q: "How to store Images?", a: "S3 (Object Storage). Store the URL in the DB. Use a CDN to serve them." },
-                        { q: "How to generate unique IDs?", a: "Twitter Snowflake (Timestamp + Machine ID + Sequence). UUIDs are too big and not sortable." },
-                        { q: "How to search tweets?", a: "Elasticsearch (Inverted Index). A separate service that indexes tweets asynchronously." }
+                        { q: "CAP Theorem?", a: "Consistency, Availability, Partition Tolerance. You can only pick 2." }
                     ]
                 }
             }

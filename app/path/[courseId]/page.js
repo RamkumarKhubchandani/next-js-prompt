@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { COURSES } from '../../lib/courses';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview } from "@codesandbox/sandpack-react";
 import { atomDark } from "@codesandbox/sandpack-themes";
-import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube } from 'lucide-react';
+import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import CompleteButton from '../../components/public/CompleteButton';
+import CodeComparison from '../../components/public/CodeComparison';
 
 export default function LearningPathPage() {
     const params = useParams();
@@ -140,6 +141,23 @@ export default function LearningPathPage() {
                             <div className="prose prose-invert max-w-none mb-12 text-light-200">
                                 <div dangerouslySetInnerHTML={{ __html: activeContent.content }} />
                             </div>
+
+                            {/* AI vs Junior Comparison */}
+                            {activeContent.comparison && (
+                                <div className="mb-12">
+                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <Scale className="text-purple-400" /> 
+                                        The "Zero to Architect" Diff
+                                    </h3>
+                                    <p className="text-light-400 mb-6">
+                                        See how a Junior Developer writes this vs. how an AI Architect refactors it for production.
+                                    </p>
+                                    <CodeComparison 
+                                        juniorCode={activeContent.comparison.junior} 
+                                        seniorCode={activeContent.comparison.senior} 
+                                    />
+                                </div>
+                            )}
 
                             {/* Interactive Code */}
                             {activeContent.code && (
