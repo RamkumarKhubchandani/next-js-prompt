@@ -139,9 +139,11 @@ export default function DashboardPage() {
                                 <h3 className="text-lg font-bold text-white mb-1">Day 1: The Foundation</h3>
                                 <p className="text-gray-400 text-sm">Understanding the core concepts before we build.</p>
                             </div>
-                            <button className="px-6 py-2 bg-brand-primary text-dark-900 font-bold rounded-lg hover:opacity-90 transition">
-                                Start Lesson
-                            </button>
+                            <Link href={`/path/${stats.learningPath}`}>
+                                <button className="px-6 py-2 bg-brand-primary text-dark-900 font-bold rounded-lg hover:opacity-90 transition">
+                                    Start Lesson
+                                </button>
+                            </Link>
                         </div>
                     </motion.div>
                 )}
