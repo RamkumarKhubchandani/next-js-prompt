@@ -960,6 +960,51 @@ async function getData(id) {
         description: 'Move beyond "How to use Hooks". Learn how React Fiber works, concurrent rendering, and Server Components.',
         totalDays: 15,
         days: [
+            // --- WEEK 0: ENVIRONMENT SETUP ---
+            {
+                day: 0,
+                title: 'Day 0: The Professional Setup (Vite & Tools)',
+                intro: "Stop using Create-React-App. Learn the professional toolchain: Vite, ESLint, Prettier, and VS Code extensions.",
+                video: "SqcY0GlETPk", // React in 100 Seconds
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">1. Why Vite? (vs CRA)</h3>
+<p class="mb-4">CRA (Webpack) bundles the *entire* app before starting dev server. Slow. Vite uses ES Modules to serve files instantly.</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
+<pre>
+[ Webpack (CRA) ]       [ Vite ]
+Build Bundle...         Start Server!
+(Wait 10s...)           (Instant)
+Serve bundle.js         Serve index.html
+                        (Browser requests modules)
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">2. The Golden Stack</h3>
+<ul class="list-disc list-inside space-y-2 bg-dark-800 p-4 rounded-lg">
+    <li><strong>Vite:</strong> Build Tool.</li>
+    <li><strong>ESLint:</strong> Catch bugs (logic).</li>
+    <li><strong>Prettier:</strong> Fix style (formatting).</li>
+    <li><strong>Husky:</strong> Git hooks (prevent bad commits).</li>
+</ul>
+                `,
+                code: `// Terminal Commands to Setup a Pro Project
+// 1. Create Project
+npm create vite@latest my-app -- --template react
+
+// 2. Install Dependencies
+cd my-app
+npm install
+
+// 3. Add Prettier
+npm install -D prettier eslint-config-prettier`,
+                interview: {
+                    questions: [
+                        { q: "Why is Vite faster than Webpack?", a: "Vite serves source code over native ESM (ES Modules). It lets the browser do the bundler's job during development. Webpack bundles everything before serving." },
+                        { q: "What is the difference between ESLint and Prettier?", a: "ESLint looks for logical errors (unused vars, infinite loops). Prettier looks for stylistic issues (indentation, quotes). Use them together." }
+                    ]
+                }
+            },
             // --- WEEK 1: CORE INTERNALS ---
             {
                 day: 1,
@@ -1502,6 +1547,43 @@ test('login flow', async () => {
         description: 'From Backend Internals to Microservices. Master the complete stack.',
         totalDays: 20,
         days: [
+            // --- WEEK 0: ENVIRONMENT SETUP ---
+            {
+                day: 0,
+                title: 'Day 0: The Server Environment (Node & Docker)',
+                intro: "Node.js versions matter. Database containers matter. Set up your machine like a Senior Engineer.",
+                video: "TlB_eWDSMt4", // Node.js in 100 Seconds
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">1. Version Management (nvm)</h3>
+<p class="mb-4">Never install Node from the official website installer. You will run into permission issues. Use <code>nvm</code> (Node Version Manager).</p>
+
+<h3 class="text-xl font-bold text-white mb-4">2. Docker for Databases</h3>
+<p class="mb-4">Don't install Postgres/Mongo directly on your Mac/PC. It pollutes your OS. Use Docker Containers.</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
+<pre>
+# The Senior Dev Way to start Mongo:
+docker run -d -p 27017:27017 --name my-mongo mongo:latest
+</pre>
+</div>
+                `,
+                code: `// 1. Install NVM (Mac/Linux)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+// 2. Use NVM
+nvm install 18
+nvm use 18
+
+// 3. Check versions
+node -v
+npm -v`,
+                interview: {
+                    questions: [
+                        { q: "Why use Docker for local development?", a: "Isolation. You can run different versions of Postgres for different projects without conflicts. You can spin up/down environments in seconds." },
+                        { q: "What is `package-lock.json`?", a: "It locks down the exact version of every dependency (and sub-dependency) to ensure the project works exactly the same on every machine." }
+                    ]
+                }
+            },
             // --- WEEK 1: NODE.JS & DATABASE ---
             {
                 day: 1,

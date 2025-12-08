@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { COURSES } from '../../lib/courses';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview } from "@codesandbox/sandpack-react";
 import { atomDark } from "@codesandbox/sandpack-themes";
-import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain } from 'lucide-react';
+import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import CompleteButton from '../../components/public/CompleteButton';
 
@@ -16,12 +16,12 @@ export default function LearningPathPage() {
     const courseId = params.courseId;
     const course = COURSES[courseId];
 
-    const [activeDay, setActiveDay] = useState(1);
+    const [activeDay, setActiveDay] = useState(courseId === 'react' || courseId === 'fullstack' ? 0 : 1);
     const [completedDays, setCompletedDays] = useState([]); 
 
     if (!course) return <div className="text-white p-10">Course not found</div>;
 
-    const activeContent = course.days.find(d => d.day === activeDay);
+    const activeContent = course.days.find(d => d.day === activeDay) || course.days[0];
 
     return (
         <div className="min-h-screen bg-dark-900 text-white pt-24 pb-12">
@@ -115,65 +115,90 @@ export default function LearningPathPage() {
                                 </p>
                             </div>
 
+                            {/* Video Section (If Available) */}
+                            {activeContent.video && (
+                                <div className="mb-12">
+                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <Youtube className="text-red-500" /> 
+                                        Video Guide
+                                    </h3>
+                                    <div className="aspect-video rounded-xl overflow-hidden border border-dark-600 shadow-2xl bg-black">
+                                        <iframe 
+                                            width="100%" 
+                                            height="100%" 
+                                            src={`https://www.youtube.com/embed/${activeContent.video}`} 
+                                            title="YouTube video player" 
+                                            frameBorder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Theory Content */}
                             <div className="prose prose-invert max-w-none mb-12 text-light-200">
                                 <div dangerouslySetInnerHTML={{ __html: activeContent.content }} />
                             </div>
 
                             {/* Interactive Code */}
-                            <div className="mb-12">
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Code className="text-blue-400" /> 
-                                    Live Lab: Verify The Theory
-                                </h3>
-                                <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
-                                    <SandpackProvider
-                                        template="vanilla"
-                                        theme={atomDark}
-                                        files={{
-                                            "index.js": activeContent.code,
-                                            "index.html": '<div style="font-family: sans-serif; color: #fff;">Check the console below 👇</div>'
-                                        }}
-                                        options={{
-                                            showConsole: true,
-                                            showConsoleButton: true,
-                                            editorHeight: 400
-                                        }}
-                                    >
-                                        <SandpackLayout>
-                                            <SandpackCodeEditor showLineNumbers showInlineErrors style={{ height: 400 }} />
-                                            <SandpackPreview showOpenInCodeSandbox={false} style={{ height: 400 }} />
-                                        </SandpackLayout>
-                                    </SandpackProvider>
-                                </div>
-                            </div>
-
-                            {/* Interview Prep */}
-                            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-1 border border-purple-500/30 shadow-lg">
-                                <div className="bg-dark-800 rounded-xl p-8">
-                                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                        <Brain className="text-purple-400" /> 
-                                        Senior Engineer Interview Prep
+                            {activeContent.code && (
+                                <div className="mb-12">
+                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                        <Code className="text-blue-400" /> 
+                                        Live Lab: Verify The Theory
                                     </h3>
-                                    
-                                    <div className="space-y-4">
-                                        {activeContent.interview.questions.map((q, i) => (
-                                            <div key={i} className="border border-dark-600 rounded-xl overflow-hidden">
-                                                <details className="group">
-                                                    <summary className="flex justify-between items-center p-4 cursor-pointer bg-dark-700/50 hover:bg-dark-700 transition">
-                                                        <span className="font-bold text-light-100 pr-4">Q{i+1}: {q.q}</span>
-                                                        <ChevronRight className="text-brand-primary group-open:rotate-90 transition-transform shrink-0" />
-                                                    </summary>
-                                                    <div className="p-6 bg-dark-900/50 text-light-300 leading-relaxed border-t border-dark-600">
-                                                        <span className="text-purple-400 font-bold text-xs uppercase tracking-wider mb-2 block">Answer Strategy</span>
-                                                        {q.a}
-                                                    </div>
-                                                </details>
-                                            </div>
-                                        ))}
+                                    <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
+                                        <SandpackProvider
+                                            template="vanilla"
+                                            theme={atomDark}
+                                            files={{
+                                                "index.js": activeContent.code,
+                                                "index.html": '<div style="font-family: sans-serif; color: #fff;">Check the console below 👇</div>'
+                                            }}
+                                            options={{
+                                                showConsole: true,
+                                                showConsoleButton: true,
+                                                editorHeight: 400
+                                            }}
+                                        >
+                                            <SandpackLayout>
+                                                <SandpackCodeEditor showLineNumbers showInlineErrors style={{ height: 400 }} />
+                                                <SandpackPreview showOpenInCodeSandbox={false} style={{ height: 400 }} />
+                                            </SandpackLayout>
+                                        </SandpackProvider>
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Interview Prep */}
+                            {activeContent.interview && (
+                                <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-1 border border-purple-500/30 shadow-lg">
+                                    <div className="bg-dark-800 rounded-xl p-8">
+                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                                            <Brain className="text-purple-400" /> 
+                                            Senior Engineer Interview Prep
+                                        </h3>
+                                        
+                                        <div className="space-y-4">
+                                            {activeContent.interview.questions.map((q, i) => (
+                                                <div key={i} className="border border-dark-600 rounded-xl overflow-hidden">
+                                                    <details className="group">
+                                                        <summary className="flex justify-between items-center p-4 cursor-pointer bg-dark-700/50 hover:bg-dark-700 transition">
+                                                            <span className="font-bold text-light-100 pr-4">Q{i+1}: {q.q}</span>
+                                                            <ChevronRight className="text-brand-primary group-open:rotate-90 transition-transform shrink-0" />
+                                                        </summary>
+                                                        <div className="p-6 bg-dark-900/50 text-light-300 leading-relaxed border-t border-dark-600">
+                                                            <span className="text-purple-400 font-bold text-xs uppercase tracking-wider mb-2 block">Answer Strategy</span>
+                                                            {q.a}
+                                                        </div>
+                                                    </details>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                         </motion.div>
 
