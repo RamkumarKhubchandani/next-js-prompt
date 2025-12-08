@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings, Briefcase, Crown, ArrowRight, Users } from 'lucide-react';
 import Link from 'next/link';
+import DailyChallengeCard from '../components/public/DailyChallengeCard';
 
 const PATHS = [
     { id: 'react', title: 'React Mastery', icon: '⚛️', desc: 'Master React, Next.js, and Redux.' },
@@ -94,6 +95,11 @@ export default function DashboardPage() {
                         </button>
                     </Link>
                 </motion.div>
+
+                {/* DAILY CHALLENGE CARD */}
+                <div className="mb-12">
+                     <DailyChallengeCard />
+                </div>
 
                 {/* PRO ONBOARDING: Select Path */}
                 {isPro && stats.learningPath === 'none' && (
