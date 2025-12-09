@@ -12,7 +12,7 @@ export const COURSES = {
                 intro: "Stop thinking of code as text. Think of it as memory allocation. We start by dissecting how the V8 Engine parses your file.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Compilation Process (JIT)</h3>
-<p class="mb-4">JavaScript is <strong>Just-In-Time</strong> compiled. It is not interpreted line-by-line like in 1995. V8 (Chrome's Engine) uses a complex pipeline to optimize your code.</p>
+<p class="mb-4">JavaScript is <span class="text-yellow-400 font-bold">Just-In-Time</span> compiled. It is not interpreted line-by-line like in 1995. V8 (Chrome's Engine) uses a complex pipeline to optimize your code.</p>
 
 <div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
@@ -36,7 +36,7 @@ export const COURSES = {
 </pre>
 </div>
 
-<p class="mb-6"><strong>Why this matters:</strong> If you change the "shape" of an object (e.g., adding properties dynamically), TurboFan has to "De-optimize" and go back to Bytecode, slowing down your app.</p>
+<p class="mb-6"><span class="text-yellow-400 font-bold">Why this matters:</span> If you change the "shape" of an object (e.g., adding properties dynamically), TurboFan has to "De-optimize" and go back to Bytecode, slowing down your app.</p>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Execution Context: The Two Phases</h3>
 <p class="mb-4">When you run a function, the engine doesn't just "run" it. It makes two passes.</p>
@@ -48,7 +48,7 @@ export const COURSES = {
         <ul class="list-disc list-inside text-sm mt-2 space-y-1">
             <li>Allocates memory for <code class="bg-dark-900 px-1 rounded">var</code> (sets to undefined).</li>
             <li>Allocates memory for <code class="bg-dark-900 px-1 rounded">function</code> (stores code).</li>
-            <li><strong>Code is NOT executed yet.</strong></li>
+            <li><span class="text-yellow-400 font-bold">Code is NOT executed yet.</span></li>
         </ul>
     </div>
     <div class="bg-dark-800 p-4 rounded-lg border border-dark-600">
@@ -138,7 +138,7 @@ loop();`
                 intro: "Scope is the set of rules for where variables live. ES6 introduced Block Scope, changing the game forever.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Lexical Scope (Static Scope)</h3>
-<p class="mb-4">Scope is determined at <strong>compile time</strong>. The JS engine knows exactly where variables live before running a single line.</p>
+<p class="mb-4">Scope is determined at <span class="text-yellow-400 font-bold">compile time</span>. The JS engine knows exactly where variables live before running a single line.</p>
 
 <div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
@@ -157,10 +157,10 @@ Global Scope
 <h3 class="text-xl font-bold text-white mb-4">2. The Scope Chain</h3>
 <p class="mb-4">When you ask for a variable, JS looks "up" the elevator. It never looks "down".</p>
 <ul class="list-disc list-inside space-y-2 text-light-300 mb-6 bg-dark-800 p-4 rounded-lg">
-    <li><strong>Level 1:</strong> Local Scope (Found it? Stop.)</li>
-    <li><strong>Level 2:</strong> Outer Function Scope</li>
-    <li><strong>Level 3:</strong> Global Scope</li>
-    <li><strong>Roof:</strong> <code class="text-red-400">ReferenceError</code></li>
+    <li><span class="text-yellow-400 font-bold">Level 1:</span> Local Scope (Found it? Stop.)</li>
+    <li><span class="text-yellow-400 font-bold">Level 2:</span> Outer Function Scope</li>
+    <li><span class="text-yellow-400 font-bold">Level 3:</span> Global Scope</li>
+    <li><span class="text-yellow-400 font-bold">Roof:</span> <code class="text-red-400">ReferenceError</code></li>
 </ul>
 
 <h3 class="text-xl font-bold text-white mb-4">3. Module Scope (ES Modules)</h3>
@@ -243,13 +243,13 @@ function outer() {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Memory Implications</h3>
-<p class="mb-4">Closures prevent Garbage Collection. As long as <code>inner()</code> exists, <code>data</code> stays in RAM.</p>
+<p class="mb-4">Closures prevent Garbage Collection. As long as <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> exists, <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> stays in RAM.</p>
 <div class="bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r mb-6">
-    <p class="text-red-200 text-sm"><strong>Warning:</strong> If you accidentally close over a huge DOM node or Array, it creates a Memory Leak.</p>
+    <p class="text-red-200 text-sm"><span class="text-yellow-400 font-bold">Warning:</span> If you accidentally close over a huge DOM node or Array, it creates a Memory Leak.</p>
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">3. The React Connection</h3>
-<p><code>useState</code> relies entirely on closures. It "remembers" the state from the previous render using a closure created outside your component.</p>
+<p><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> relies entirely on closures. It "remembers" the state from the previous render using a closure created outside your component.</p>
                 `,
                 code: `// Example 1: Memoization (Caching)
 function memoize(fn) {
@@ -317,22 +317,22 @@ counter.increment(); // 1
         <tbody class="divide-y divide-dark-700 bg-dark-900">
             <tr>
                 <td class="p-3 text-brand-primary">1 (Highest)</td>
-                <td class="p-3"><strong>New Binding</strong></td>
+                <td class="p-3"><span class="text-yellow-400 font-bold">New Binding</span></td>
                 <td class="p-3 font-mono text-xs">new Person()</td>
             </tr>
             <tr>
                 <td class="p-3">2</td>
-                <td class="p-3"><strong>Explicit</strong></td>
+                <td class="p-3"><span class="text-yellow-400 font-bold">Explicit</span></td>
                 <td class="p-3 font-mono text-xs">fn.call(obj)</td>
             </tr>
             <tr>
                 <td class="p-3">3</td>
-                <td class="p-3"><strong>Implicit</strong></td>
+                <td class="p-3"><span class="text-yellow-400 font-bold">Implicit</span></td>
                 <td class="p-3 font-mono text-xs">obj.fn()</td>
             </tr>
             <tr>
                 <td class="p-3 text-light-500">4 (Lowest)</td>
-                <td class="p-3"><strong>Default</strong></td>
+                <td class="p-3"><span class="text-yellow-400 font-bold">Default</span></td>
                 <td class="p-3 font-mono text-xs">fn()</td>
             </tr>
         </tbody>
@@ -340,7 +340,7 @@ counter.increment(); // 1
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Arrow Functions</h3>
-<p class="mb-4">Arrow functions <strong>do not</strong> have their own <code>this</code>. They bypass the 4 rules and look up to the lexical scope.</p>
+<p class="mb-4">Arrow functions <span class="text-yellow-400 font-bold">do not</span> have their own <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>. They bypass the 4 rules and look up to the lexical scope.</p>
 <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-lg">
     <code class="text-blue-300">const arrow = () => this;</code>
     <p class="text-sm text-blue-200 mt-2">"I will just use whatever 'this' my parent uses."</p>
@@ -391,7 +391,7 @@ function Timer() {
                 intro: "JavaScript does not have classes (not really). It has objects linking to other objects. This is the Prototype Chain.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Prototype Chain</h3>
-<p class="mb-4">When you access <code>dog.eats</code>, JS walks up the chain until it finds it or hits null.</p>
+<p class="mb-4">When you access <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>, JS walks up the chain until it finds it or hits null.</p>
 
 <div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-pink-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
@@ -411,12 +411,12 @@ function Timer() {
 
 <h3 class="text-xl font-bold text-white mb-4">2. __proto__ vs prototype</h3>
 <ul class="list-disc list-inside space-y-3 text-light-300 bg-dark-800 p-4 rounded-lg">
-    <li><code>__proto__</code>: The actual link on an <strong>instance</strong>.</li>
-    <li><code>prototype</code>: A property on a <strong>Function</strong> that acts as a blueprint for <code>new</code> instances.</li>
+    <li><code class="bg-dark-700 text-brand-primary px-1 rounded">__proto__</code>: The actual link on an <span class="text-yellow-400 font-bold">instance</span>.</li>
+    <li><code class="bg-dark-700 text-brand-primary px-1 rounded">prototype</code>: A property on a <span class="text-yellow-400 font-bold">Function</span> that acts as a blueprint for <code class="bg-dark-700 text-brand-primary px-1 rounded">new</code> instances.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-white mb-4">3. ES6 Classes</h3>
-<p>Classes are just "Syntactic Sugar". <code>class Dog extends Animal</code> creates the exact same prototype chain as above.</p>
+<p>Classes are just "Syntactic Sugar". <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> creates the exact same prototype chain as above.</p>
                 `,
                 code: `// Example 1: Manual Inheritance
 const animal = { eats: true };
@@ -480,15 +480,15 @@ class Cat extends Animal {
 
 <h3 class="text-xl font-bold text-white mb-4">2. The Priority Rules</h3>
 <ol class="list-decimal list-inside space-y-3 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
-    <li><strong>Run Synchronous Code</strong> until Stack is empty.</li>
-    <li><strong>Run ALL Microtasks</strong> until queue is empty. (Can starve the loop!)</li>
-    <li><strong>Render UI</strong> (Browser Repaint).</li>
-    <li><strong>Run ONE Macrotask</strong>.</li>
+    <li><span class="text-yellow-400 font-bold">Run Synchronous Code</span> until Stack is empty.</li>
+    <li><span class="text-yellow-400 font-bold">Run ALL Microtasks</span> until queue is empty. (Can starve the loop!)</li>
+    <li><span class="text-yellow-400 font-bold">Render UI</span> (Browser Repaint).</li>
+    <li><span class="text-yellow-400 font-bold">Run ONE Macrotask</span>.</li>
     <li>Repeat.</li>
 </ol>
 
 <h3 class="text-xl font-bold text-white mb-4">3. Starvation</h3>
-<p>If you recursively create Microtasks (e.g., <code>Promise.resolve().then(loop)</code>), the loop never reaches the Macrotask queue or UI Paint. The page freezes.</p>
+<p>If you recursively create Microtasks (e.g., <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>), the loop never reaches the Macrotask queue or UI Paint. The page freezes.</p>
                 `,
                 code: `// Example 1: Order of Operations
 console.log(1);
@@ -552,11 +552,11 @@ function processHugeList(list) {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. The "Then" Chain</h3>
-<p class="mb-4"><code>.then()</code> always returns a <strong>NEW Promise</strong>. This is why you can chain them.</p>
+<p class="mb-4"><code class="bg-dark-700 text-brand-primary px-1 rounded">.then()</code> always returns a <span class="text-yellow-400 font-bold">NEW Promise</span>. This is why you can chain them.</p>
 <ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg">
-    <li>Return a value? ➞ Next Promise <strong>Fulfilled</strong>.</li>
-    <li>Return a Promise? ➞ Next Promise <strong>waits</strong> for it.</li>
-    <li>Throw Error? ➞ Next Promise <strong>Rejected</strong>.</li>
+    <li>Return a value? ➞ Next Promise <span class="text-yellow-400 font-bold">Fulfilled</span>.</li>
+    <li>Return a Promise? ➞ Next Promise <span class="text-yellow-400 font-bold">waits</span> for it.</li>
+    <li>Throw Error? ➞ Next Promise <span class="text-yellow-400 font-bold">Rejected</span>.</li>
 </ul>
                 `,
                 code: `// Example 1: Building a Simple Promise
@@ -599,7 +599,7 @@ getUser(id)
                 intro: "Async/Await is just Generators + Promises wrapped in a nice syntax. It allows async code to look synchronous.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The 'Pausing' Power</h3>
-<p class="mb-4">Normal functions run to completion. <strong>Generators</strong> (<code>function*</code>) can pause (<code>yield</code>) and resume.</p>
+<p class="mb-4">Normal functions run to completion. <span class="text-yellow-400 font-bold">Generators</span> (<code class="bg-dark-700 text-brand-primary px-1 rounded">function*</code>) can pause (<code class="bg-dark-700 text-brand-primary px-1 rounded">yield</code>) and resume.</p>
 
 <div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-teal-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
@@ -617,7 +617,7 @@ function* generator() {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Error Handling</h3>
-<p>Unlike <code>.catch()</code>, we use standard <code>try/catch</code> blocks.</p>
+<p>Unlike <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>, we use standard <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> blocks.</p>
                 `,
                 code: `// Example 1: Async/Await
 async function fetchData() {
@@ -663,15 +663,15 @@ async function getData() {
 <h3 class="text-xl font-bold text-white mb-4">1. Mark and Sweep Algorithm</h3>
 <p class="mb-4">The Garbage Collector (GC) starts at the Root.</p>
 <ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
-    <li><strong>Mark:</strong> "I can reach this object!" (Paint it white).</li>
-    <li><strong>Sweep:</strong> "I cannot reach that object!" (Delete it).</li>
+    <li><span class="text-yellow-400 font-bold">Mark:</span> "I can reach this object!" (Paint it white).</li>
+    <li><span class="text-yellow-400 font-bold">Sweep:</span> "I cannot reach that object!" (Delete it).</li>
 </ul>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Common Leaks</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
     <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
         <span class="text-red-400 font-bold block mb-2">Global Variables</span>
-        Accidental <code>window.x = largeData</code> stays forever.
+        Accidental <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> stays forever.
     </div>
     <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
         <span class="text-red-400 font-bold block mb-2">Detached DOM</span>
@@ -738,8 +738,8 @@ useEffect(() => {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Serialization Cost</h3>
-<p class="mb-4">Data sent between threads is <strong>Cloned</strong>. Sending a 100MB JSON is slow.</p>
-<p><strong>Solution:</strong> <code class="text-brand-primary">SharedArrayBuffer</code> or <code class="text-brand-primary">Transferable Objects</code>.</p>
+<p class="mb-4">Data sent between threads is <span class="text-yellow-400 font-bold">Cloned</span>. Sending a 100MB JSON is slow.</p>
+<p><span class="text-yellow-400 font-bold">Solution:</span> <code class="text-brand-primary">SharedArrayBuffer</code> or <code class="text-brand-primary">Transferable Objects</code>.</p>
                 `,
                 code: `// Example 1: Basic Worker Logic
 // main.js
@@ -786,7 +786,7 @@ worker.onmessage = (e) => {
                 intro: "OOP is about Objects. FP is about Actions (Verbs). Learning FP makes your code predictable and testable.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Pure Functions</h3>
-<p class="mb-4">A pure function always returns the same output for the same input and has <strong>No Side Effects</strong>.</p>
+<p class="mb-4">A pure function always returns the same output for the same input and has <span class="text-yellow-400 font-bold">No Side Effects</span>.</p>
 
 <div class="grid grid-cols-2 gap-4 mb-6">
     <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
@@ -911,9 +911,9 @@ const cats = filterBy('cat')(items);`
 
 <h3 class="text-xl font-bold text-white mb-4">2. Use Cases</h3>
 <ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
-    <li><strong>Validation:</strong> Reject invalid types on assignment.</li>
-    <li><strong>Data Binding:</strong> Vue 3 uses Proxies for reactivity.</li>
-    <li><strong>Logging:</strong> Debug property access.</li>
+    <li><span class="text-yellow-400 font-bold">Validation:</span> Reject invalid types on assignment.</li>
+    <li><span class="text-yellow-400 font-bold">Data Binding:</span> Vue 3 uses Proxies for reactivity.</li>
+    <li><span class="text-yellow-400 font-bold">Logging:</span> Debug property access.</li>
 </ul>
                 `,
                 code: `// Example 1: Validation Proxy
@@ -1195,7 +1195,7 @@ btn.subscribe(analytics.track);`
                 intro: "Code that is easy to maintain follows SOLID. S: Single Responsibility is the most important.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Single Responsibility (SRP)</h3>
-<p class="mb-4">A function/class should have <strong>one reason to change</strong>.</p>
+<p class="mb-4">A function/class should have <span class="text-yellow-400 font-bold">one reason to change</span>.</p>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Open/Closed (OCP)</h3>
 <p class="mb-4">Open for extension, closed for modification. Use configuration/plugins instead of changing code.</p>
@@ -1266,9 +1266,9 @@ function registerUser(user) {
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Testing Pyramid</h3>
 <ul class="list-disc list-inside space-y-2 text-light-300 bg-dark-800 p-4 rounded-lg mb-6">
-    <li><strong>E2E (Top 10%):</strong> Click buttons in browser (Cypress). Slow.</li>
-    <li><strong>Integration (Middle 30%):</strong> Test module interactions.</li>
-    <li><strong>Unit (Bottom 60%):</strong> Test single functions (Jest/Vitest). Fast.</li>
+    <li><span class="text-yellow-400 font-bold">E2E (Top 10%):</span> Click buttons in browser (Cypress). Slow.</li>
+    <li><span class="text-yellow-400 font-bold">Integration (Middle 30%):</span> Test module interactions.</li>
+    <li><span class="text-yellow-400 font-bold">Unit (Bottom 60%):</span> Test single functions (Jest/Vitest). Fast.</li>
 </ul>
                 `,
                 code: `// Example: Jest Unit Test
@@ -1499,36 +1499,133 @@ module.exports = {
             {
                 day: 1,
                 title: 'Virtual DOM & Reconciliation',
-                intro: "React is fast because it doesn't touch the DOM. It touches the Virtual DOM.",
+                intro: "Why is React so fast? Because it never touches the Real DOM directly. It uses a clever trick called the Virtual DOM.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Diffing Algorithm</h3>
-<p class="mb-4">When state changes, React creates a new VDOM tree and compares it to the old one.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is the DOM and why is it slow?</li>
+    <li>What is the Virtual DOM?</li>
+    <li>How React's "Diffing" algorithm works</li>
+    <li>Why keys matter in lists</li>
+</ul>
 
-<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto shadow-inner">
+<h3 class="text-xl font-bold text-white mb-4">📚 Understanding the Problem: The Real DOM is Slow</h3>
+<p class="mb-4 text-light-300">Imagine you have a webpage with 1000 elements. If you change just ONE element using vanilla JavaScript:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <p class="text-red-300 font-mono text-sm">document.getElementById('count').innerText = 5;</p>
+    <p class="text-red-200 mt-2 text-sm">❌ This triggers the browser to: Recalculate styles → Reflow layout → Repaint pixels</p>
+    <p class="text-red-200 text-sm">Even for ONE tiny change, this is expensive!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 The Solution: Virtual DOM</h3>
+<p class="mb-4 text-light-300">React keeps a <span class="text-brand-primary font-bold">lightweight copy</span> of the DOM in JavaScript memory. This is called the <span class="text-brand-primary font-bold">Virtual DOM (VDOM)</span>.</p>
+
+<p class="mb-4 text-yellow-400 font-bold">Think of it like this:</p>
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200">🏠 <span class="text-white font-bold">Real DOM</span> = Actual house (expensive to rebuild)</p>
+    <p class="text-blue-200">📋 <span class="text-white font-bold">Virtual DOM</span> = Blueprint of the house (cheap to modify)</p>
+    <p class="text-blue-200 mt-2">When you want to change the house, you first update the blueprint, compare it to the old blueprint, and ONLY rebuild the parts that changed!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚙️ How It Works: The Diffing Algorithm</h3>
+<p class="mb-4 text-light-300">When state changes in React, here's what happens step-by-step:</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
 <pre>
-[ New VDOM ]      [ Old VDOM ]
-     │                 │
-     ▼                 ▼
-  Compare (Diff) ──▶ [ Updates ]
-                         │
-                         ▼
-                    [ Real DOM ]
-                    (Minimal Paints)
+Step 1: State Changes (e.g., setCount(5))
+              │
+              ▼
+Step 2: React creates a NEW Virtual DOM tree
+              │
+              ▼
+Step 3: React COMPARES new VDOM with old VDOM
+        ┌─────────────────────────────────┐
+        │  OLD VDOM        NEW VDOM       │
+        │  ┌───────┐      ┌───────┐       │
+        │  │ div   │      │ div   │       │
+        │  │ ├─h1  │      │ ├─h1  │       │
+        │  │ └─p:4 │  vs  │ └─p:5 │ ←Changed!
+        │  └───────┘      └───────┘       │
+        └─────────────────────────────────┘
+              │
+              ▼
+Step 4: React finds the MINIMUM changes needed
+        (Only the &lt;p&gt; text changed from 4 to 5)
+              │
+              ▼
+Step 5: React updates ONLY that one element in Real DOM
+        (One surgical update, not a full rebuild!)
 </pre>
 </div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Why Keys Matter in Lists</h3>
+<p class="mb-4 text-light-300">When rendering lists, React needs to know which items changed. Without <code class="bg-dark-700 px-2 py-1 rounded">key</code>, React might re-render everything!</p>
+
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl">
+        <p class="text-red-300 font-bold mb-2">❌ Without Keys</p>
+        <pre class="text-red-200 text-xs">{items.map(item => 
+  &lt;li&gt;{item}&lt;/li&gt;
+)}</pre>
+        <p class="text-red-200 text-xs mt-2">React: "I don't know what changed, let me re-render ALL items"</p>
+    </div>
+    <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl">
+        <p class="text-green-300 font-bold mb-2">✅ With Keys</p>
+        <pre class="text-green-200 text-xs">{items.map(item => 
+  &lt;li key={item.id}&gt;{item}&lt;/li&gt;
+)}</pre>
+        <p class="text-green-200 text-xs mt-2">React: "Ah, only item #3 changed, I'll update just that one!"</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Never use array index as key</span> if the list can reorder (causes bugs!)</li>
+    <li><span class="text-yellow-400 font-bold">Use unique IDs</span> from your data (like database IDs)</li>
+    <li><span class="text-yellow-400 font-bold">React batches updates</span> - multiple setState calls = one render</li>
+</ul>
                 `,
-                code: `function App() {
+                code: `// 🎯 Virtual DOM Demo
+// Watch how React only updates what changed!
+
+function App() {
+  // 📦 State: React's memory for this component
   const [count, setCount] = React.useState(0);
+  
+  // 🔄 When you click, setCount triggers:
+  // 1. New VDOM created
+  // 2. Diff with old VDOM
+  // 3. Only the <p> with count updates!
   
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h2>Virtual DOM Demo</h2>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>
-        Increment
+      
+      {/* 👇 Only THIS element updates when count changes */}
+      <p style={{ 
+        fontSize: '24px', 
+        color: '#3b82f6',
+        transition: 'all 0.2s'
+      }}>
+        Count: {count}
+      </p>
+      
+      <button 
+        onClick={() => setCount(count + 1)}
+        style={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          cursor: 'pointer'
+        }}
+      >
+        Increment (+1)
       </button>
-      <p style={{ color: '#666', marginTop: '10px' }}>
-        React only updates what changed!
+      
+      {/* 👇 This paragraph NEVER re-renders (no state dependency) */}
+      <p style={{ color: '#666', marginTop: '15px' }}>
+        ✨ Open DevTools → Elements tab → Watch only the 
+        count number flash when you click!
       </p>
     </div>
   );
@@ -1562,25 +1659,157 @@ return (
             {
                 day: 2,
                 title: 'JSX & React.createElement',
-                intro: "JSX is not HTML. It's JavaScript XML. It compiles down to function calls.",
+                intro: "JSX looks like HTML but it's actually JavaScript in disguise. Understanding this is key to mastering React.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Babel's Job</h3>
-<p>Babel transpiles JSX into <code>React.createElement()</code>.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What JSX really is (hint: it's not HTML!)</li>
+    <li>How Babel transforms JSX into JavaScript</li>
+    <li>JSX rules you must follow</li>
+    <li>How to use JavaScript inside JSX</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Big Secret: JSX = JavaScript</h3>
+<p class="mb-4 text-light-300">When you write this:</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-4 font-mono text-sm text-cyan-300">
+    <pre>&lt;h1 className="title"&gt;Hello&lt;/h1&gt;</pre>
+</div>
+
+<p class="mb-4 text-light-300">Babel (a compiler) transforms it into this:</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-yellow-300">
+    <pre>React.createElement('h1', { className: 'title' }, 'Hello')</pre>
+</div>
+
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200">💡 <span class="text-yellow-400 font-bold">Key Insight:</span> JSX is just syntactic sugar! It makes writing React.createElement() calls easier and more readable.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚙️ The Transformation Process</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
+─────────────────                  ────────────────────────
+&lt;div&gt;                              React.createElement(
+  &lt;h1&gt;Title&lt;/h1&gt;          →         'div',
+  &lt;p&gt;Text&lt;/p&gt;                        null,
+&lt;/div&gt;                               React.createElement('h1', null, 'Title'),
+                                     React.createElement('p', null, 'Text')
+                                   )
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📜 JSX Rules You MUST Follow</h3>
+
+<div class="space-y-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-red-500">
+        <p class="text-white font-bold">Rule 1: Return ONE parent element</p>
+        <div class="grid md:grid-cols-2 gap-4 mt-2">
+            <div class="text-red-300 text-sm">
+                <p>❌ Wrong:</p>
+                <pre class="bg-dark-900 p-2 rounded mt-1">return (
+  &lt;h1&gt;Title&lt;/h1&gt;
+  &lt;p&gt;Text&lt;/p&gt;
+)</pre>
+            </div>
+            <div class="text-green-300 text-sm">
+                <p>✅ Correct:</p>
+                <pre class="bg-dark-900 p-2 rounded mt-1">return (
+  &lt;div&gt;
+    &lt;h1&gt;Title&lt;/h1&gt;
+    &lt;p&gt;Text&lt;/p&gt;
+  &lt;/div&gt;
+)</pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-yellow-500">
+        <p class="text-white font-bold">Rule 2: Use className, not class</p>
+        <p class="text-light-300 text-sm mt-2"><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> is a reserved word in JavaScript, so JSX uses <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></p>
+        <pre class="bg-dark-900 p-2 rounded mt-2 text-green-300 text-sm">&lt;div className="container"&gt;...&lt;/div&gt;</pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
+        <p class="text-white font-bold">Rule 3: Close ALL tags</p>
+        <p class="text-light-300 text-sm mt-2">Even self-closing tags need a slash:</p>
+        <pre class="bg-dark-900 p-2 rounded mt-2 text-green-300 text-sm">&lt;img src="pic.jpg" /&gt;
+&lt;input type="text" /&gt;
+&lt;br /&gt;</pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-purple-500">
+        <p class="text-white font-bold">Rule 4: camelCase for attributes</p>
+        <p class="text-light-300 text-sm mt-2">HTML: onclick → JSX: onClick</p>
+        <pre class="bg-dark-900 p-2 rounded mt-2 text-green-300 text-sm">&lt;button onClick={handleClick}&gt;Click&lt;/button&gt;
+&lt;label htmlFor="name"&gt;Name&lt;/label&gt;</pre>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Using JavaScript in JSX</h3>
+<p class="mb-4 text-light-300">Use <span class="text-yellow-400 font-bold">curly braces { }</span> to embed any JavaScript expression:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+    <pre class="text-cyan-300">const name = "John";
+const age = 25;
+
+return (
+  &lt;div&gt;
+    &lt;p&gt;Name: <span class="text-yellow-300">{name}</span>&lt;/p&gt;           {/* Variable */}
+    &lt;p&gt;Age: <span class="text-yellow-300">{age}</span>&lt;/p&gt;             {/* Variable */}
+    &lt;p&gt;Next year: <span class="text-yellow-300">{age + 1}</span>&lt;/p&gt;   {/* Expression */}
+    &lt;p&gt;Adult: <span class="text-yellow-300">{age >= 18 ? 'Yes' : 'No'}</span>&lt;/p&gt;  {/* Ternary */}
+  &lt;/div&gt;
+);</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Use <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> (Fragment) instead of div when you don't need a wrapper</li>
+    <li>Inline styles use double curly braces: <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></li>
+    <li>Comments in JSX: <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></li>
+</ul>
                 `,
-                code: `function App() {
+                code: `// 🎯 JSX Demo - JavaScript in disguise!
+
+function App() {
+  // 📦 Variables we'll use in JSX
   const name = "React Developer";
-  const styles = { color: 'blue', padding: '10px' };
+  const skills = ['React', 'JavaScript', 'CSS'];
+  const isExpert = true;
+  
+  // 🎨 Styles are JavaScript objects!
+  const titleStyle = { 
+    color: '#3b82f6', 
+    fontSize: '24px',
+    marginBottom: '10px'
+  };
   
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
-      <h2 style={styles}>Hello, {name}!</h2>
-      <p>JSX allows JavaScript expressions in curly braces</p>
+    // 👇 One parent element (Rule 1)
+    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+      
+      {/* 👇 Using variable in JSX */}
+      <h2 style={titleStyle}>Hello, {name}!</h2>
+      
+      {/* 👇 JavaScript expression */}
       <p>2 + 2 = {2 + 2}</p>
+      
+      {/* 👇 Conditional (ternary) */}
+      <p>Status: {isExpert ? '🏆 Expert' : '📚 Learning'}</p>
+      
+      {/* 👇 Rendering a list with .map() */}
+      <h3>Skills:</h3>
       <ul>
-        {['React', 'Vue', 'Angular'].map(fw => (
-          <li key={fw}>{fw}</li>
+        {skills.map(skill => (
+          // 👇 Always use key for lists!
+          <li key={skill}>{skill}</li>
         ))}
       </ul>
+      
+      {/* 👇 This is a JSX comment */}
+      <p style={{ color: '#666', marginTop: '15px' }}>
+        Try adding your own skills to the array!
+      </p>
     </div>
   );
 }`,
@@ -1608,30 +1837,191 @@ return <User />;`
             {
                 day: 3,
                 title: 'Props vs State',
-                intro: "Props are arguments passed to functions. State is memory inside the function.",
+                intro: "This is the MOST important concept in React. Master this, and everything else becomes easy.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. One-Way Data Flow</h3>
-<p>Data flows DOWN. Actions flow UP.</p>
-                `,
-                code: `function Child({ name, onUpdate }) {
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What are Props? (Data passed IN)</li>
+    <li>What is State? (Data managed INSIDE)</li>
+    <li>The one-way data flow rule</li>
+    <li>How children talk to parents</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Simple Analogy</h3>
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200 mb-2">Think of a component like a <span class="text-yellow-400 font-bold">vending machine</span>:</p>
+    <p class="text-blue-200">📥 <span class="text-yellow-400 font-bold">Props</span> = The money you put IN (external input, read-only)</p>
+    <p class="text-blue-200">🧠 <span class="text-yellow-400 font-bold">State</span> = The machine's inventory (internal memory, can change)</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📦 Props: Data from Parent</h3>
+<p class="mb-4 text-light-300">Props are <span class="text-yellow-400 font-bold">read-only</span> values passed from parent to child:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// Parent passes data DOWN via props
+&lt;UserCard <span class="text-yellow-300">name="John"</span> <span class="text-yellow-300">age={25}</span> /&gt;
+
+// Child RECEIVES props (read-only!)
+function UserCard(<span class="text-yellow-300">{ name, age }</span>) {
+  return &lt;p&gt;{name} is {age} years old&lt;/p&gt;;
+}</pre>
+</div>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <p class="text-red-300 font-bold">⚠️ NEVER modify props!</p>
+    <pre class="text-red-200 text-sm mt-2">function Child({ name }) {
+  name = "Bob";  // ❌ WRONG! Props are read-only!
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🧠 State: Component's Memory</h3>
+<p class="mb-4 text-light-300">State is data that the component <span class="text-yellow-400 font-bold">owns and can change</span>:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">function Counter() {
+  // 👇 State: internal memory that can change
+  const [<span class="text-yellow-300">count</span>, <span class="text-green-300">setCount</span>] = React.useState(0);
+  
   return (
-    <div style={{ padding: '10px', background: '#f0f0f0', margin: '5px' }}>
-      <p>Child received: <strong>{name}</strong></p>
-      <button onClick={() => onUpdate('Updated from Child!')}>
-        Update Parent
+    &lt;button onClick={() => <span class="text-green-300">setCount</span>(count + 1)}&gt;
+      Clicked {<span class="text-yellow-300">count</span>} times
+    &lt;/button&gt;
+  );
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔄 One-Way Data Flow</h3>
+<p class="mb-4 text-light-300">Data flows DOWN. Events flow UP. This is React's golden rule!</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+┌─────────────────────────────────────┐
+│           PARENT                    │
+│   ┌─────────────────────────────┐   │
+│   │  state = { name: "John" }   │   │
+│   └─────────────────────────────┘   │
+│              │                      │
+│              │ Props (data DOWN)    │
+│              ▼                      │
+│   ┌─────────────────────────────┐   │
+│   │         CHILD               │   │
+│   │   props.name = "John"       │   │
+│   │                             │   │
+│   │   onClick → calls           │   │
+│   │   props.onUpdate("Bob")     │───┼──→ Event (action UP)
+│   └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+                                      │
+                                      ▼
+                            Parent's setState runs
+                            Child gets new props!
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Quick Reference</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Feature</th>
+                <th class="p-3">Props</th>
+                <th class="p-3 rounded-tr-lg">State</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Owned by</td>
+                <td class="p-3">Parent</td>
+                <td class="p-3">Component itself</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Mutable?</td>
+                <td class="p-3">❌ Read-only</td>
+                <td class="p-3">✅ Can change</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Purpose</td>
+                <td class="p-3">Configure component</td>
+                <td class="p-3">Track changing data</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Changes cause</td>
+                <td class="p-3">Re-render</td>
+                <td class="p-3 rounded-br-lg">Re-render</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Lift state up</span>: If two siblings need the same data, move state to their parent</li>
+    <li><span class="text-yellow-400 font-bold">Keep state minimal</span>: Don't store what you can calculate from other state</li>
+    <li><span class="text-yellow-400 font-bold">Use props for configuration</span>: Color, size, labels, callbacks</li>
+</ul>
+                `,
+                code: `// 🎯 Props vs State Demo
+// Watch how data flows DOWN and actions flow UP!
+
+// 👶 CHILD Component - receives props, sends events UP
+function Child({ name, onUpdate }) {
+  return (
+    <div style={{ 
+      padding: '15px', 
+      background: '#f0fdf4', 
+      borderRadius: '8px',
+      margin: '10px 0',
+      border: '2px solid #22c55e'
+    }}>
+      <p style={{ margin: 0 }}>
+        👶 <span class="text-yellow-400 font-bold">Child</span> received prop: 
+        <span style={{ color: '#3b82f6' }}> "{name}"</span>
+      </p>
+      
+      {/* 👇 Child can't change props directly!
+          Instead, it calls the parent's function */}
+      <button 
+        onClick={() => onUpdate('Hello from Child! 👋')}
+        style={{ marginTop: '10px', padding: '8px 16px', cursor: 'pointer' }}
+      >
+        Send Message to Parent ⬆️
       </button>
     </div>
   );
 }
 
+// 👨 PARENT Component - owns the state
 function App() {
-  const [message, setMessage] = React.useState('Hello from Parent');
+  // 🧠 State: Parent's internal memory
+  const [message, setMessage] = React.useState('Hello from Parent! 👨');
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
       <h3>Props vs State Demo</h3>
-      <p>Parent state: {message}</p>
-      <Child name={message} onUpdate={setMessage} />
+      
+      {/* 👇 Parent displays its own state */}
+      <div style={{ 
+        padding: '15px', 
+        background: '#eff6ff', 
+        borderRadius: '8px',
+        border: '2px solid #3b82f6'
+      }}>
+        <p style={{ margin: 0 }}>
+          👨 <span class="text-yellow-400 font-bold">Parent</span> state: 
+          <span style={{ color: '#22c55e' }}> "{message}"</span>
+        </p>
+      </div>
+      
+      {/* 👇 Parent passes state DOWN as props
+          AND passes setMessage so child can update it */}
+      <Child 
+        name={message}           
+        onUpdate={setMessage}    
+      />
+      
+      <p style={{ color: '#666', fontSize: '12px', marginTop: '15px' }}>
+        📝 Data flows DOWN (props) | Actions flow UP (callbacks)
+      </p>
     </div>
   );
 }`,
@@ -1659,7 +2049,7 @@ const Child = ({ name }) => {
                 intro: "React 18 batches state updates automatically to prevent unnecessary renders.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Automatic Batching</h3>
-<p>Multiple <code>setState</code> calls are grouped into one render.</p>
+<p>Multiple <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> calls are grouped into one render.</p>
                 `,
                 code: `function App() {
   const [count, setCount] = React.useState(0);
@@ -1713,10 +2103,139 @@ const inc = () => {
             {
                 day: 5,
                 title: 'Effects & Lifecycle',
-                intro: "`useEffect` allows you to sync your component with external systems (API, DOM, Subscriptions).",
+                intro: "useEffect is how React talks to the outside world - APIs, timers, subscriptions. Master this hook!",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Dependency Array</h3>
-<p>Controls when the effect runs.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is a "side effect"?</li>
+    <li>The 3 types of useEffect</li>
+    <li>The dependency array explained</li>
+    <li>Cleanup functions (prevent memory leaks!)</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 What is a Side Effect?</h3>
+<p class="mb-4 text-light-300">A <span class="text-yellow-400 font-bold">side effect</span> is anything that happens OUTSIDE of rendering:</p>
+
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl">
+        <p class="text-green-300 font-bold mb-2">✅ Rendering (Pure)</p>
+        <ul class="text-green-200 text-sm space-y-1">
+            <li>• Calculating what to display</li>
+            <li>• Returning JSX</li>
+            <li>• Transforming data</li>
+        </ul>
+    </div>
+    <div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl">
+        <p class="text-yellow-300 font-bold mb-2">⚡ Side Effects</p>
+        <ul class="text-yellow-200 text-sm space-y-1">
+            <li>• Fetching data from API</li>
+            <li>• Setting up timers</li>
+            <li>• Subscribing to events</li>
+            <li>• Changing the DOM directly</li>
+        </ul>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚙️ The 3 Types of useEffect</h3>
+
+<div class="space-y-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-red-500">
+        <p class="text-white font-bold">Type 1: Run on EVERY render</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">useEffect(() => {
+  console.log('I run after EVERY render');
+}); // ← No dependency array!</pre>
+        <p class="text-light-400 text-sm mt-2">⚠️ Use rarely - can cause performance issues</p>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-green-500">
+        <p class="text-white font-bold">Type 2: Run ONCE on mount</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">useEffect(() => {
+  console.log('I run ONCE when component mounts');
+  fetchData(); // Perfect for initial API calls!
+}, <span class="text-yellow-300">[]</span>); // ← Empty array = mount only</pre>
+        <p class="text-light-400 text-sm mt-2">✅ Most common - use for initial data fetching</p>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
+        <p class="text-white font-bold">Type 3: Run when DEPENDENCIES change</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">useEffect(() => {
+  console.log('userId changed to:', userId);
+  fetchUser(userId);
+}, <span class="text-yellow-300">[userId]</span>); // ← Runs when userId changes</pre>
+        <p class="text-light-400 text-sm mt-2">✅ Use when effect depends on specific values</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🧹 Cleanup Functions (Prevent Memory Leaks!)</h3>
+<p class="mb-4 text-light-300">The <span class="text-yellow-400 font-bold">return function</span> runs BEFORE the effect re-runs or when component unmounts:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">useEffect(() => {
+  // ✅ Setup: Subscribe to something
+  const subscription = someAPI.subscribe(data);
+  
+  // 🧹 Cleanup: Unsubscribe when done
+  <span class="text-yellow-300">return () => {
+    subscription.unsubscribe();
+  };</span>
+}, []);</pre>
+</div>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <p class="text-red-300 font-bold">⚠️ Common Memory Leak:</p>
+    <pre class="text-red-200 text-sm mt-2">useEffect(() => {
+  setInterval(() => {
+    setCount(c => c + 1);
+  }, 1000);
+  // ❌ Interval keeps running even after unmount!
+}, []);</pre>
+    <pre class="text-green-200 text-sm mt-2">// ✅ Fixed:
+useEffect(() => {
+  const id = setInterval(() => setCount(c => c + 1), 1000);
+  return () => clearInterval(id); // 🧹 Cleanup!
+}, []);</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Visual: Effect Lifecycle</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+Component Mounts
+       │
+       ▼
+┌──────────────────┐
+│  First Render    │
+└──────────────────┘
+       │
+       ▼
+┌──────────────────┐
+│  useEffect runs  │ ← Setup (fetch, subscribe)
+└──────────────────┘
+       │
+       ▼ (state changes)
+┌──────────────────┐
+│  Re-render       │
+└──────────────────┘
+       │
+       ▼
+┌──────────────────┐
+│  Cleanup runs    │ ← Return function
+│  Effect re-runs  │ ← If dependencies changed
+└──────────────────┘
+       │
+       ▼ (unmount)
+┌──────────────────┐
+│  Final Cleanup   │ ← Prevent memory leaks!
+└──────────────────┘
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Include ALL values</span> from component scope that the effect uses</li>
+    <li><span class="text-yellow-400 font-bold">ESLint will warn you</span> if you forget a dependency - listen to it!</li>
+    <li><span class="text-yellow-400 font-bold">Avoid objects/arrays</span> in dependencies (they change every render)</li>
+    <li><span class="text-yellow-400 font-bold">Use multiple useEffects</span> for unrelated logic (separation of concerns)</li>
+</ul>
                 `,
                 code: `function App() {
   const [count, setCount] = React.useState(0);
@@ -1823,7 +2342,7 @@ const ref = useRef();
                 intro: "Don't optimize prematurely. But when you do, use Memoization to skip expensive calculations.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Referential Equality</h3>
-<p><code>{'{} === {}'}</code> is false. Objects are compared by reference.</p>
+<p><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> is false. Objects are compared by reference.</p>
                 `,
                 code: `function App() {
   const [count, setCount] = React.useState(0);
@@ -1948,7 +2467,7 @@ const theme = useContext(ThemeContext);
                 intro: "Reuse logic, not UI. If you find yourself copying `useEffect`, make a hook.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Rules of Hooks</h3>
-<p>Must start with <code>use</code>. Must call at top level.</p>
+<p>Must start with <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>. Must call at top level.</p>
                 `,
                 code: `// Custom Hook
 function useCounter(initial = 0) {
@@ -2072,7 +2591,7 @@ const MyComponent = () => {
                 intro: "Render outside the parent hierarchy (Modals) and catch crashes gracefully.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Portals</h3>
-<p>Teleport a child into <code>document.body</code>.</p>
+<p>Teleport a child into <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>.</p>
                 `,
                 code: `// Error Boundary Demo (Class Component)
 class ErrorBoundary extends React.Component {
