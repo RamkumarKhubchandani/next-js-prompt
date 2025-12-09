@@ -243,13 +243,13 @@ function outer() {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Memory Implications</h3>
-<p class="mb-4">Closures prevent Garbage Collection. As long as <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> exists, <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> stays in RAM.</p>
+<p class="mb-4">Closures prevent Garbage Collection. As long as <code class="bg-dark-700 text-brand-primary px-1 rounded">inner()</code> exists, <code class="bg-dark-700 text-brand-primary px-1 rounded">data</code> stays in RAM.</p>
 <div class="bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r mb-6">
     <p class="text-red-200 text-sm"><span class="text-yellow-400 font-bold">Warning:</span> If you accidentally close over a huge DOM node or Array, it creates a Memory Leak.</p>
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">3. The React Connection</h3>
-<p><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> relies entirely on closures. It "remembers" the state from the previous render using a closure created outside your component.</p>
+<p><code class="bg-dark-700 text-brand-primary px-1 rounded">useState</code> relies entirely on closures. It "remembers" the state from the previous render using a closure created outside your component.</p>
                 `,
                 code: `// Example 1: Memoization (Caching)
 function memoize(fn) {
@@ -391,7 +391,7 @@ function Timer() {
                 intro: "JavaScript does not have classes (not really). It has objects linking to other objects. This is the Prototype Chain.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. The Prototype Chain</h3>
-<p class="mb-4">When you access <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>, JS walks up the chain until it finds it or hits null.</p>
+<p class="mb-4">When you access <code class="bg-dark-700 text-brand-primary px-1 rounded">dog.eats</code>, JS walks up the chain until it finds it or hits null.</p>
 
 <div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-pink-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
@@ -416,7 +416,7 @@ function Timer() {
 </ul>
 
 <h3 class="text-xl font-bold text-white mb-4">3. ES6 Classes</h3>
-<p>Classes are just "Syntactic Sugar". <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> creates the exact same prototype chain as above.</p>
+<p>Classes are just "Syntactic Sugar". <code class="bg-dark-700 text-brand-primary px-1 rounded">class Dog extends Animal</code> creates the exact same prototype chain as above.</p>
                 `,
                 code: `// Example 1: Manual Inheritance
 const animal = { eats: true };
@@ -488,7 +488,7 @@ class Cat extends Animal {
 </ol>
 
 <h3 class="text-xl font-bold text-white mb-4">3. Starvation</h3>
-<p>If you recursively create Microtasks (e.g., <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>), the loop never reaches the Macrotask queue or UI Paint. The page freezes.</p>
+<p>If you recursively create Microtasks (e.g., <code class="bg-dark-700 text-brand-primary px-1 rounded">Promise.resolve().then(loop)</code>), the loop never reaches the Macrotask queue or UI Paint. The page freezes.</p>
                 `,
                 code: `// Example 1: Order of Operations
 console.log(1);
@@ -617,7 +617,7 @@ function* generator() {
 </div>
 
 <h3 class="text-xl font-bold text-white mb-4">2. Error Handling</h3>
-<p>Unlike <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>, we use standard <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> blocks.</p>
+<p>Unlike <code class="bg-dark-700 text-brand-primary px-1 rounded">.catch()</code>, we use standard <code class="bg-dark-700 text-brand-primary px-1 rounded">try/catch</code> blocks.</p>
                 `,
                 code: `// Example 1: Async/Await
 async function fetchData() {
@@ -671,7 +671,7 @@ async function getData() {
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
     <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
         <span class="text-red-400 font-bold block mb-2">Global Variables</span>
-        Accidental <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> stays forever.
+        Accidental <code class="bg-dark-700 text-brand-primary px-1 rounded">window.x = largeData</code> stays forever.
     </div>
     <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
         <span class="text-red-400 font-bold block mb-2">Detached DOM</span>
@@ -1586,46 +1586,124 @@ Step 5: React updates ONLY that one element in Real DOM
     <li><span class="text-yellow-400 font-bold">React batches updates</span> - multiple setState calls = one render</li>
 </ul>
                 `,
-                code: `// 🎯 Virtual DOM Demo
-// Watch how React only updates what changed!
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║                  🎯 VIRTUAL DOM DEMO                         ║
+║  See React's efficiency - only changed elements update!      ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   CLICK BUTTON                                               ║
+║        ↓                                                     ║
+║   setCount(1)  →  New VDOM Created                          ║
+║        ↓                                                     ║
+║   React DIFFS:  Old VDOM  vs  New VDOM                      ║
+║        ↓                                                     ║
+║   Only <p>Count: 1</p> changes in Real DOM!                 ║
+║                                                              ║
+║   💡 Everything else stays untouched = FAST!                 ║
+╚══════════════════════════════════════════════════════════════╝
+*/
 
 function App() {
-  // 📦 State: React's memory for this component
+  // ═══════════════════════════════════════════════════════════
+  // 📦 STATE: React's memory system
+  // ═══════════════════════════════════════════════════════════
+  // useState returns an array with 2 items:
+  //   [0] count    = current value (starts at 0)
+  //   [1] setCount = function to update value
+  //
+  // When setCount is called:
+  //   1. React creates NEW Virtual DOM
+  //   2. Compares with OLD Virtual DOM (diffing)
+  //   3. Updates ONLY what changed in Real DOM
+  // ═══════════════════════════════════════════════════════════
   const [count, setCount] = React.useState(0);
   
-  // 🔄 When you click, setCount triggers:
-  // 1. New VDOM created
-  // 2. Diff with old VDOM
-  // 3. Only the <p> with count updates!
-  
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h2>Virtual DOM Demo</h2>
+    <div style={{ padding: '20px', fontFamily: 'system-ui' }}>
+      <h2 style={{ color: '#1e293b' }}>⚛️ Virtual DOM Demo</h2>
       
-      {/* 👇 Only THIS element updates when count changes */}
-      <p style={{ 
-        fontSize: '24px', 
-        color: '#3b82f6',
-        transition: 'all 0.2s'
+      {/* ════════════════════════════════════════════════════════
+          🎯 THIS IS THE MAGIC PART!
+          ════════════════════════════════════════════════════════
+          Only this <p> element will update in the Real DOM
+          when you click the button. React's diffing algorithm
+          sees that ONLY the count value changed!
+          
+          Open DevTools → Elements tab → Watch it flash!
+          ════════════════════════════════════════════════════════ */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px',
+        borderRadius: '12px',
+        marginBottom: '15px'
       }}>
-        Count: {count}
-      </p>
+        <p style={{ 
+          fontSize: '48px', 
+          color: 'white',
+          margin: 0,
+          fontWeight: 'bold'
+        }}>
+          {count}
+        </p>
+        <p style={{ color: 'rgba(255,255,255,0.8)', margin: '5px 0 0' }}>
+          clicks counted
+        </p>
+      </div>
       
+      {/* ════════════════════════════════════════════════════════
+          🔘 BUTTON: Triggers state change
+          ════════════════════════════════════════════════════════
+          onClick={() => setCount(count + 1)}
+          
+          This arrow function:
+          1. Gets current count (e.g., 0)
+          2. Adds 1 (e.g., 0 + 1 = 1)
+          3. Calls setCount(1) with new value
+          4. React re-renders with new state!
+          ════════════════════════════════════════════════════════ */}
       <button 
         onClick={() => setCount(count + 1)}
         style={{
-          padding: '10px 20px',
+          padding: '12px 24px',
           fontSize: '16px',
-          cursor: 'pointer'
+          background: '#3b82f6',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontWeight: 'bold'
         }}
       >
-        Increment (+1)
+        ➕ Increment Count
       </button>
       
-      {/* 👇 This paragraph NEVER re-renders (no state dependency) */}
-      <p style={{ color: '#666', marginTop: '15px' }}>
-        ✨ Open DevTools → Elements tab → Watch only the 
-        count number flash when you click!
+      <button 
+        onClick={() => setCount(0)}
+        style={{
+          padding: '12px 24px',
+          fontSize: '16px',
+          background: '#ef4444',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginLeft: '10px'
+        }}
+      >
+        🔄 Reset
+      </button>
+      
+      {/* ════════════════════════════════════════════════════════
+          📝 STATIC CONTENT: Never re-renders!
+          ════════════════════════════════════════════════════════
+          This paragraph has NO state dependency.
+          React's diff sees: "Nothing changed here, skip!"
+          This is why React is so fast.
+          ════════════════════════════════════════════════════════ */}
+      <p style={{ color: '#64748b', marginTop: '20px', fontSize: '14px' }}>
+        💡 <strong>Try this:</strong> Open DevTools → Elements → 
+        Watch only the number flash purple when you click!
       </p>
     </div>
   );
@@ -1725,7 +1803,7 @@ YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
     
     <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-yellow-500">
         <p class="text-white font-bold">Rule 2: Use className, not class</p>
-        <p class="text-light-300 text-sm mt-2"><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> is a reserved word in JavaScript, so JSX uses <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></p>
+        <p class="text-light-300 text-sm mt-2"><code class="bg-dark-700 text-brand-primary px-1 rounded">class</code> is a reserved word in JavaScript, so JSX uses <code class="bg-dark-700 text-brand-primary px-1 rounded">className</code></p>
         <pre class="bg-dark-900 p-2 rounded mt-2 text-green-300 text-sm">&lt;div className="container"&gt;...&lt;/div&gt;</pre>
     </div>
     
@@ -1764,51 +1842,137 @@ return (
 
 <h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
 <ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-    <li>Use <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> (Fragment) instead of div when you don't need a wrapper</li>
-    <li>Inline styles use double curly braces: <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></li>
-    <li>Comments in JSX: <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code></li>
+    <li>Use <code class="bg-dark-700 text-brand-primary px-1 rounded">&lt;&gt;...&lt;/&gt;</code> (Fragment) instead of div when you don't need a wrapper</li>
+    <li>Inline styles use double curly braces: <code class="bg-dark-700 text-brand-primary px-1 rounded">style={{ color: 'red' }}</code></li>
+    <li>Comments in JSX: <code class="bg-dark-700 text-brand-primary px-1 rounded">{/* comment */}</code></li>
 </ul>
                 `,
-                code: `// 🎯 JSX Demo - JavaScript in disguise!
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║              🎯 JSX = JavaScript + XML                       ║
+║      JSX is NOT HTML! It compiles to JavaScript.             ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   JSX (What you write)      JavaScript (What browser sees)   ║
+║   ════════════════════      ══════════════════════════════   ║
+║   <h1>Hello</h1>      →     React.createElement(             ║
+║                               'h1',                          ║
+║                               null,                          ║
+║                               'Hello'                        ║
+║                             )                                ║
+║                                                              ║
+║   {name}              →     Variable value inserted          ║
+║   {2 + 2}             →     Expression evaluated (= 4)       ║
+║   {isTrue ? 'A':'B'}  →     Ternary evaluated                ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
 
 function App() {
-  // 📦 Variables we'll use in JSX
+  // ═══════════════════════════════════════════════════════════
+  // 📦 JAVASCRIPT VARIABLES
+  // ═══════════════════════════════════════════════════════════
+  // These are regular JS variables. We can use them in JSX
+  // by wrapping them in curly braces: {variableName}
+  // ═══════════════════════════════════════════════════════════
   const name = "React Developer";
-  const skills = ['React', 'JavaScript', 'CSS'];
+  const skills = ['React', 'JavaScript', 'CSS', 'Node.js'];
   const isExpert = true;
+  const yearsExp = 3;
   
-  // 🎨 Styles are JavaScript objects!
-  const titleStyle = { 
-    color: '#3b82f6', 
-    fontSize: '24px',
-    marginBottom: '10px'
+  // ═══════════════════════════════════════════════════════════
+  // 🎨 INLINE STYLES IN JSX
+  // ═══════════════════════════════════════════════════════════
+  // Unlike HTML (style="color: blue"), JSX uses objects:
+  //   HTML:  style="font-size: 24px"  
+  //   JSX:   style={{ fontSize: '24px' }}  (camelCase!)
+  //
+  // Double curly braces because:
+  //   Outer {} = "this is JavaScript"
+  //   Inner {} = "this is an object"
+  // ═══════════════════════════════════════════════════════════
+  const cardStyle = { 
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    padding: '20px',
+    borderRadius: '12px',
+    color: 'white',
+    marginBottom: '15px'
   };
   
   return (
-    // 👇 One parent element (Rule 1)
-    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+    // ════════════════════════════════════════════════════════
+    // 🔴 RULE 1: ONE PARENT ELEMENT
+    // ════════════════════════════════════════════════════════
+    // JSX must return ONE parent. Use <div> or <> (Fragment)
+    // ════════════════════════════════════════════════════════
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
       
-      {/* 👇 Using variable in JSX */}
-      <h2 style={titleStyle}>Hello, {name}!</h2>
+      {/* ════════════════════════════════════════════════════════
+          📝 EMBEDDING VARIABLES
+          ════════════════════════════════════════════════════════
+          Use {variableName} to insert JavaScript values.
+          The curly braces tell React: "evaluate this JavaScript"
+          ════════════════════════════════════════════════════════ */}
+      <div style={cardStyle}>
+        <h2 style={{ margin: 0 }}>👋 Hello, {name}!</h2>
+        <p style={{ margin: '5px 0 0', opacity: 0.9 }}>
+          {yearsExp} years of experience
+        </p>
+      </div>
       
-      {/* 👇 JavaScript expression */}
-      <p>2 + 2 = {2 + 2}</p>
+      {/* ════════════════════════════════════════════════════════
+          ➕ EXPRESSIONS
+          ════════════════════════════════════════════════════════
+          Any valid JS expression works inside {}
+          ════════════════════════════════════════════════════════ */}
+      <div style={{ background: '#f1f5f9', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
+        <p style={{ margin: '5px 0' }}>🧮 Math: 2 + 2 = <strong>{2 + 2}</strong></p>
+        <p style={{ margin: '5px 0' }}>📅 Year: <strong>{new Date().getFullYear()}</strong></p>
+        <p style={{ margin: '5px 0' }}>📏 Skills count: <strong>{skills.length}</strong></p>
+      </div>
       
-      {/* 👇 Conditional (ternary) */}
-      <p>Status: {isExpert ? '🏆 Expert' : '📚 Learning'}</p>
+      {/* ════════════════════════════════════════════════════════
+          ❓ CONDITIONAL RENDERING (Ternary)
+          ════════════════════════════════════════════════════════
+          condition ? showIfTrue : showIfFalse
+          ════════════════════════════════════════════════════════ */}
+      <p style={{ 
+        padding: '10px 15px', 
+        background: isExpert ? '#dcfce7' : '#fef3c7',
+        borderRadius: '8px',
+        marginBottom: '15px'
+      }}>
+        Status: {isExpert ? '🏆 Expert Developer' : '📚 Still Learning'}
+      </p>
       
-      {/* 👇 Rendering a list with .map() */}
-      <h3>Skills:</h3>
-      <ul>
-        {skills.map(skill => (
-          // 👇 Always use key for lists!
-          <li key={skill}>{skill}</li>
-        ))}
-      </ul>
+      {/* ════════════════════════════════════════════════════════
+          🔄 RENDERING LISTS WITH .map()
+          ════════════════════════════════════════════════════════
+          Array.map() transforms each item into JSX.
+          ALWAYS add a unique "key" prop for React's diffing!
+          ════════════════════════════════════════════════════════ */}
+      <div>
+        <h3 style={{ marginBottom: '10px' }}>💼 Skills:</h3>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {skills.map((skill, index) => (
+            <span 
+              key={skill}  // ← KEY IS REQUIRED!
+              style={{
+                background: '#3b82f6',
+                color: 'white',
+                padding: '5px 12px',
+                borderRadius: '20px',
+                fontSize: '14px'
+              }}
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      </div>
       
-      {/* 👇 This is a JSX comment */}
-      <p style={{ color: '#666', marginTop: '15px' }}>
-        Try adding your own skills to the array!
+      <p style={{ color: '#64748b', marginTop: '20px', fontSize: '14px' }}>
+        💡 Try editing the skills array or changing isExpert to false!
       </p>
     </div>
   );
@@ -1960,68 +2124,195 @@ function UserCard(<span class="text-yellow-300">{ name, age }</span>) {
     <li><span class="text-yellow-400 font-bold">Use props for configuration</span>: Color, size, labels, callbacks</li>
 </ul>
                 `,
-                code: `// 🎯 Props vs State Demo
-// Watch how data flows DOWN and actions flow UP!
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            🎯 PROPS vs STATE - The Core Concept              ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   ┌─────────────────────────────────────────────────┐        ║
+║   │                   PARENT                        │        ║
+║   │  ┌───────────────────────────────────────────┐  │        ║
+║   │  │  STATE = { message: "Hello!" }            │  │        ║
+║   │  │         ↑                                 │  │        ║
+║   │  │         │ setState()                      │  │        ║
+║   │  └─────────│─────────────────────────────────┘  │        ║
+║   │            │                                    │        ║
+║   │    ┌───────┴───────┐                            │        ║
+║   │    ↓ PROPS (down)  ↑ EVENTS (up)               │        ║
+║   │    │               │                            │        ║
+║   │  ┌─┴───────────────┴─────────────────────────┐  │        ║
+║   │  │              CHILD                        │  │        ║
+║   │  │  props.message = "Hello!"  (READ-ONLY)   │  │        ║
+║   │  │  props.onUpdate → calls parent setState  │  │        ║
+║   │  └───────────────────────────────────────────┘  │        ║
+║   └─────────────────────────────────────────────────┘        ║
+║                                                              ║
+║   💡 REMEMBER:                                               ║
+║      • Props = EXTERNAL input (from parent)                  ║
+║      • State = INTERNAL memory (owned by component)          ║
+║      • Data flows DOWN, Events flow UP                       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
 
-// 👶 CHILD Component - receives props, sends events UP
-function Child({ name, onUpdate }) {
+// ═══════════════════════════════════════════════════════════════
+// 👶 CHILD COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// This component RECEIVES data via props.
+// It cannot change props directly - they are READ-ONLY!
+// To communicate back to parent, it calls callback functions.
+// ═══════════════════════════════════════════════════════════════
+function ChildComponent({ 
+  message,      // 📥 Data from parent (read-only)
+  onSendReply   // 📤 Callback to send data UP to parent
+}) {
   return (
     <div style={{ 
-      padding: '15px', 
-      background: '#f0fdf4', 
-      borderRadius: '8px',
-      margin: '10px 0',
-      border: '2px solid #22c55e'
+      padding: '20px', 
+      background: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)',
+      borderRadius: '12px',
+      margin: '15px 0',
+      border: '3px solid #22c55e'
     }}>
-      <p style={{ margin: 0 }}>
-        👶 <span class="text-yellow-400 font-bold">Child</span> received prop: 
-        <span style={{ color: '#3b82f6' }}> "{name}"</span>
-      </p>
+      <h4 style={{ margin: '0 0 10px', color: '#166534' }}>
+        👶 Child Component
+      </h4>
       
-      {/* 👇 Child can't change props directly!
-          Instead, it calls the parent's function */}
+      {/* ════════════════════════════════════════════════════════
+          📥 DISPLAYING PROPS
+          ════════════════════════════════════════════════════════
+          Props are the "configuration" passed from parent.
+          We can READ them but NEVER modify them directly!
+          ════════════════════════════════════════════════════════ */}
+      <div style={{ 
+        background: 'white', 
+        padding: '10px 15px', 
+        borderRadius: '8px',
+        marginBottom: '15px'
+      }}>
+        <strong>Received from parent:</strong>
+        <p style={{ 
+          margin: '5px 0 0', 
+          color: '#3b82f6',
+          fontSize: '18px'
+        }}>
+          "{message}"
+        </p>
+      </div>
+      
+      {/* ════════════════════════════════════════════════════════
+          📤 SENDING DATA BACK UP
+          ════════════════════════════════════════════════════════
+          Child can't modify parent's state directly.
+          Instead, it CALLS A FUNCTION that parent provided.
+          This function (onSendReply) triggers parent's setState!
+          ════════════════════════════════════════════════════════ */}
       <button 
-        onClick={() => onUpdate('Hello from Child! 👋')}
-        style={{ marginTop: '10px', padding: '8px 16px', cursor: 'pointer' }}
+        onClick={() => onSendReply('Reply from Child! 👋')}
+        style={{ 
+          padding: '10px 20px', 
+          background: '#22c55e',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontWeight: 'bold'
+        }}
       >
-        Send Message to Parent ⬆️
+        📤 Send Reply to Parent
       </button>
     </div>
   );
 }
 
-// 👨 PARENT Component - owns the state
+// ═══════════════════════════════════════════════════════════════
+// 👨 PARENT COMPONENT (App)
+// ═══════════════════════════════════════════════════════════════
+// This component OWNS the state.
+// It passes data DOWN to children via props.
+// It passes callback functions so children can send data UP.
+// ═══════════════════════════════════════════════════════════════
 function App() {
-  // 🧠 State: Parent's internal memory
+  // ═══════════════════════════════════════════════════════════
+  // 🧠 STATE: Component's Internal Memory
+  // ═══════════════════════════════════════════════════════════
+  // useState returns: [currentValue, setterFunction]
+  // When setMessage is called, React re-renders this component
+  // AND all children that depend on this state!
+  // ═══════════════════════════════════════════════════════════
   const [message, setMessage] = React.useState('Hello from Parent! 👨');
+  const [replyCount, setReplyCount] = React.useState(0);
+  
+  // ═══════════════════════════════════════════════════════════
+  // 📮 HANDLER: Called when child sends a reply
+  // ═══════════════════════════════════════════════════════════
+  const handleChildReply = (childMessage) => {
+    setMessage(childMessage);
+    setReplyCount(prev => prev + 1);
+  };
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
-      <h3>Props vs State Demo</h3>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🔄 Props & State Demo</h3>
       
-      {/* 👇 Parent displays its own state */}
+      {/* Parent's own state display */}
       <div style={{ 
-        padding: '15px', 
-        background: '#eff6ff', 
-        borderRadius: '8px',
-        border: '2px solid #3b82f6'
+        padding: '20px', 
+        background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+        borderRadius: '12px',
+        border: '3px solid #3b82f6'
       }}>
-        <p style={{ margin: 0 }}>
-          👨 <span class="text-yellow-400 font-bold">Parent</span> state: 
-          <span style={{ color: '#22c55e' }}> "{message}"</span>
-        </p>
+        <h4 style={{ margin: '0 0 10px', color: '#1e40af' }}>
+          👨 Parent Component (owns state)
+        </h4>
+        <div style={{ background: 'white', padding: '10px 15px', borderRadius: '8px' }}>
+          <strong>Current State:</strong>
+          <p style={{ margin: '5px 0 0', color: '#22c55e', fontSize: '18px' }}>
+            "{message}"
+          </p>
+          <p style={{ margin: '5px 0 0', color: '#666', fontSize: '14px' }}>
+            Replies received: {replyCount}
+          </p>
+        </div>
+        
+        <button 
+          onClick={() => setMessage('Fresh message from Parent! 📬')}
+          style={{ 
+            marginTop: '15px',
+            padding: '10px 20px', 
+            background: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          📬 Update Message
+        </button>
       </div>
       
-      {/* 👇 Parent passes state DOWN as props
-          AND passes setMessage so child can update it */}
-      <Child 
-        name={message}           
-        onUpdate={setMessage}    
+      {/* Pass state DOWN and callback function */}
+      <ChildComponent 
+        message={message}           
+        onSendReply={handleChildReply}    
       />
       
-      <p style={{ color: '#666', fontSize: '12px', marginTop: '15px' }}>
-        📝 Data flows DOWN (props) | Actions flow UP (callbacks)
-      </p>
+      <div style={{ 
+        marginTop: '15px', 
+        padding: '15px', 
+        background: '#fef3c7', 
+        borderRadius: '8px',
+        fontSize: '14px'
+      }}>
+        <strong>💡 What's happening:</strong>
+        <ul style={{ margin: '10px 0 0', paddingLeft: '20px' }}>
+          <li>Parent owns <code>message</code> state</li>
+          <li>Parent passes <code>message</code> to Child as prop</li>
+          <li>Child displays prop but <strong>cannot modify it</strong></li>
+          <li>Child calls <code>onSendReply()</code> to send data UP</li>
+          <li>Parent receives it and updates state</li>
+        </ul>
+      </div>
     </div>
   );
 }`,
@@ -2049,7 +2340,7 @@ const Child = ({ name }) => {
                 intro: "React 18 batches state updates automatically to prevent unnecessary renders.",
                 content: `
 <h3 class="text-xl font-bold text-white mb-4">1. Automatic Batching</h3>
-<p>Multiple <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> calls are grouped into one render.</p>
+<p>Multiple <code class="bg-dark-700 text-brand-primary px-1 rounded">setState</code> calls are grouped into one render.</p>
                 `,
                 code: `function App() {
   const [count, setCount] = React.useState(0);
@@ -2237,36 +2528,147 @@ Component Mounts
     <li><span class="text-yellow-400 font-bold">Use multiple useEffects</span> for unrelated logic (separation of concerns)</li>
 </ul>
                 `,
-                code: `function App() {
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║              🎯 useEffect LIFECYCLE DEMO                     ║
+║         Understand when effects run & cleanup                ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   EFFECT TYPES & WHEN THEY RUN:                              ║
+║   ══════════════════════════════                             ║
+║                                                              ║
+║   useEffect(() => {...})           → EVERY render           ║
+║   useEffect(() => {...}, [])       → ONCE on mount          ║
+║   useEffect(() => {...}, [dep])    → When dep changes       ║
+║                                                              ║
+║   LIFECYCLE FLOW:                                            ║
+║   ════════════════                                           ║
+║                                                              ║
+║   Mount → Render → Effect runs                               ║
+║      ↓                                                       ║
+║   State Change → Re-render → Cleanup → Effect re-runs        ║
+║      ↓                                                       ║
+║   Unmount → Final Cleanup                                    ║
+║                                                              ║
+║   💡 TRY THIS: Click the button and watch the log!           ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 📦 STATE: Values that trigger re-renders when changed
+  // ═══════════════════════════════════════════════════════════
   const [count, setCount] = React.useState(0);
-  const [logs, setLogs] = React.useState([]);
+  const [logs, setLogs] = React.useState([]);  // Log history
   
+  // Helper function to add messages to our log
   const log = (msg) => setLogs(prev => [...prev, msg]);
   
-  // Runs on EVERY render
+  // ═══════════════════════════════════════════════════════════
+  // ⚡ EFFECT TYPE 1: NO DEPENDENCY ARRAY
+  // ═══════════════════════════════════════════════════════════
+  // This runs after EVERY render (initial + all updates)
+  // ⚠️ Use sparingly - can cause performance issues!
+  //
+  // Timeline:
+  //   Render 1 → Effect runs
+  //   Render 2 → Effect runs  
+  //   Render 3 → Effect runs... and so on
+  // ═══════════════════════════════════════════════════════════
   React.useEffect(() => {
-    log('Effect: Runs on every render');
+    log('🔄 Effect: Runs on EVERY render');
   });
   
-  // Runs ONLY on mount
+  // ═══════════════════════════════════════════════════════════
+  // ⚡ EFFECT TYPE 2: EMPTY DEPENDENCY ARRAY []
+  // ═══════════════════════════════════════════════════════════
+  // This runs ONLY ONCE when component mounts.
+  // Perfect for: initial API calls, setting up subscriptions
+  //
+  // The RETURN function is the CLEANUP:
+  //   - Runs when component unmounts
+  //   - Prevents memory leaks
+  //   - Example: unsubscribe, clearTimeout, remove listeners
+  // ═══════════════════════════════════════════════════════════
   React.useEffect(() => {
-    log('Effect: Mounted!');
-    return () => log('Cleanup: Unmounting...');
-  }, []);
+    log('✅ Effect: Component MOUNTED!');
+    
+    // 🧹 Cleanup function - runs on unmount
+    return () => log('❌ Cleanup: Component UNMOUNTING...');
+  }, []);  // ← Empty array = run once
   
-  // Runs when count changes
+  // ═══════════════════════════════════════════════════════════
+  // ⚡ EFFECT TYPE 3: WITH DEPENDENCIES [count]
+  // ═══════════════════════════════════════════════════════════
+  // This runs:
+  //   1. Once on initial mount
+  //   2. Again whenever 'count' changes
+  //
+  // React checks: did count change? 
+  //   Yes → Run effect
+  //   No  → Skip effect
+  // ═══════════════════════════════════════════════════════════
   React.useEffect(() => {
-    log('Effect: Count changed to ' + count);
-  }, [count]);
+    log('📊 Effect: count changed to ' + count);
+  }, [count]);  // ← Runs when count changes
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>useEffect Demo</h3>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(c => c + 1)}>Increment</button>
-      <div style={{ marginTop: '10px', padding: '10px', background: '#1a1a2e', color: '#22c55e', fontFamily: 'monospace', fontSize: '12px', maxHeight: '150px', overflow: 'auto' }}>
-        {logs.map((log, i) => <div key={i}>→ {log}</div>)}
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⚡ useEffect Lifecycle Demo</h3>
+      
+      {/* Counter display */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        padding: '20px',
+        borderRadius: '12px',
+        color: 'white',
+        marginBottom: '15px'
+      }}>
+        <span style={{ fontSize: '32px', fontWeight: 'bold' }}>{count}</span>
+        <button 
+          onClick={() => setCount(c => c + 1)}
+          style={{ 
+            marginLeft: '15px',
+            padding: '10px 20px',
+            background: 'white',
+            color: '#764ba2',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          + Increment
+        </button>
       </div>
+      
+      {/* Effect log - shows exactly when each effect runs */}
+      <div style={{ 
+        padding: '15px', 
+        background: '#0f172a', 
+        borderRadius: '12px',
+        border: '1px solid #334155'
+      }}>
+        <p style={{ color: '#94a3b8', margin: '0 0 10px', fontSize: '14px' }}>
+          📋 Effect Log (watch the order!)
+        </p>
+        <div style={{ 
+          color: '#22c55e', 
+          fontFamily: 'monospace', 
+          fontSize: '12px', 
+          maxHeight: '120px', 
+          overflow: 'auto' 
+        }}>
+          {logs.map((log, i) => (
+            <div key={i} style={{ padding: '2px 0' }}>→ {log}</div>
+          ))}
+        </div>
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Click the button multiple times and observe which effects run!
+      </p>
     </div>
   );
 }`,
@@ -2291,31 +2693,279 @@ useEffect(() => {
                 title: 'Refs & The DOM',
                 intro: "Need to focus an input or measure a div? Use `useRef`. It persists values without re-rendering.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Persistent Storage</h3>
-<p>Like a class instance variable.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is useRef and when to use it</li>
+    <li>Accessing DOM elements directly</li>
+    <li>Storing values that persist without re-renders</li>
+    <li>Common use cases and patterns</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Big Question: When Do I Need useRef?</h3>
+<p class="mb-4 text-light-300">Sometimes you need to:</p>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl">
+        <p class="text-blue-300 font-bold mb-2">🎯 Access DOM Elements</p>
+        <ul class="text-blue-200 text-sm space-y-1">
+            <li>• Focus an input field</li>
+            <li>• Scroll to a section</li>
+            <li>• Measure element size</li>
+            <li>• Play/pause video</li>
+        </ul>
+    </div>
+    <div class="bg-purple-900/20 border border-purple-500/30 p-4 rounded-xl">
+        <p class="text-purple-300 font-bold mb-2">💾 Store Values Silently</p>
+        <ul class="text-purple-200 text-sm space-y-1">
+            <li>• Previous state values</li>
+            <li>• Timer/interval IDs</li>
+            <li>• Render count (debugging)</li>
+            <li>• Any value that shouldn't trigger re-render</li>
+        </ul>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🧠 How useRef Works</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+const myRef = useRef(initialValue);
+
+// myRef is an object: { current: initialValue }
+// 
+// KEY DIFFERENCE FROM useState:
+// ══════════════════════════════
+// 
+// useState:
+//   setValue(newValue) → Triggers RE-RENDER → UI Updates
+// 
+// useRef:
+//   myRef.current = newValue → NO re-render → UI stays same
+//
+// Think of useRef as a "box" that holds a value
+// You can change what's in the box anytime
+// React doesn't care - it won't re-render!
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📍 Use Case 1: Accessing DOM Elements</h3>
+<p class="mb-4 text-light-300">Attach a ref to any JSX element to access the actual DOM node:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// Step 1: Create a ref
+const inputRef = useRef(<span class="text-yellow-300">null</span>);
+
+// Step 2: Attach to element
+&lt;input <span class="text-yellow-300">ref={inputRef}</span> /&gt;
+
+// Step 3: Access the DOM node!
+inputRef.<span class="text-green-300">current</span>.focus();  // Focus the input!
+inputRef.<span class="text-green-300">current</span>.value;   // Read the value
+inputRef.<span class="text-green-300">current</span>.style.background = 'yellow';</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💾 Use Case 2: Storing Values Without Re-renders</h3>
+<p class="mb-4 text-light-300">Perfect for values you need to track but don't want to display:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">function Timer() {
+  const intervalId = useRef(<span class="text-yellow-300">null</span>);
+  
+  const start = () => {
+    // Store the interval ID (no re-render needed!)
+    intervalId.<span class="text-green-300">current</span> = setInterval(() => {
+      console.log('tick');
+    }, 1000);
+  };
+  
+  const stop = () => {
+    // Access the stored ID to clear
+    clearInterval(intervalId.<span class="text-green-300">current</span>);
+  };
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Quick Reference: useState vs useRef</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Feature</th>
+                <th class="p-3">useState</th>
+                <th class="p-3 rounded-tr-lg">useRef</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">Re-renders on change?</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+                <td class="p-3 text-red-400">❌ No</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">Persists between renders?</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">Use for UI data?</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+                <td class="p-3 text-red-400">❌ No</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg font-bold">Use for DOM access?</td>
+                <td class="p-3 text-red-400">❌ No</td>
+                <td class="p-3 rounded-br-lg text-green-400">✅ Yes</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Common Mistakes</h3>
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <p class="text-red-300 font-bold mb-2">❌ Don't read/write ref.current during render!</p>
+    <pre class="text-red-200 text-sm mt-2">function Bad() {
+  const ref = useRef(0);
+  ref.current++;  // ❌ Side effect during render!
+  return &lt;p&gt;{ref.current}&lt;/p&gt;; // ❌ Won't update UI anyway
+}</pre>
+    <pre class="text-green-200 text-sm mt-2">function Good() {
+  const ref = useRef(0);
+  useEffect(() => {
+    ref.current++;  // ✅ Side effect in useEffect
+  });
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Initial value of null</span> is common for DOM refs (element doesn't exist yet)</li>
+    <li><span class="text-yellow-400 font-bold">Refs are mutable</span> - unlike props and state, you can modify .current directly</li>
+    <li><span class="text-yellow-400 font-bold">Refs survive re-renders</span> - value persists even when component updates</li>
+    <li><span class="text-yellow-400 font-bold">Use for "escape hatches"</span> - when React's declarative model isn't enough</li>
+</ul>
                 `,
-                code: `function App() {
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║                    🎯 useRef DEMO                            ║
+║       Access DOM elements & persist values without           ║
+║              triggering re-renders!                          ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   TWO MAIN USE CASES FOR useRef:                             ║
+║   ══════════════════════════════                             ║
+║                                                              ║
+║   1️⃣  ACCESS DOM ELEMENTS                                    ║
+║       const inputRef = useRef(null);                         ║
+║       <input ref={inputRef} />                               ║
+║       inputRef.current.focus(); // Direct DOM access!        ║
+║                                                              ║
+║   2️⃣  PERSIST VALUES (without re-render)                     ║
+║       const count = useRef(0);                               ║
+║       count.current++;  // ← NO re-render triggered!         ║
+║                                                              ║
+║   STATE vs REF:                                              ║
+║   ═════════════                                              ║
+║       useState  → Changes trigger re-render                  ║
+║       useRef    → Changes are SILENT                         ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 🎯 USE CASE 1: DOM Element Reference
+  // ═══════════════════════════════════════════════════════════
+  // useRef(null) creates a "box" that holds a reference.
+  // When we attach it to an element via ref={inputRef},
+  // inputRef.current becomes that actual DOM element!
+  //
+  // This allows us to:
+  //   - Focus inputs programmatically
+  //   - Measure element dimensions
+  //   - Trigger animations
+  //   - Access canvas context
+  // ═══════════════════════════════════════════════════════════
   const inputRef = React.useRef(null);
+  
+  // ═══════════════════════════════════════════════════════════
+  // 🎯 USE CASE 2: Persist Values Across Renders
+  // ═══════════════════════════════════════════════════════════
+  // Unlike useState, changing a ref does NOT cause re-render!
+  // Perfect for:
+  //   - Counting renders (for debugging)
+  //   - Storing previous values
+  //   - Holding timer IDs
+  //   - Any value you need to persist but not display
+  // ═══════════════════════════════════════════════════════════
   const renderCount = React.useRef(0);
+  
+  // State DOES cause re-renders (needed for UI updates)
   const [value, setValue] = React.useState('');
   
+  // This increments every render, but DOESN'T trigger new renders
   renderCount.current++;
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>useRef Demo</h3>
-      <input 
-        ref={inputRef}
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        placeholder="Type something..."
-        style={{ padding: '8px', marginRight: '10px' }}
-      />
-      <button onClick={() => inputRef.current.focus()}>
-        Focus Input
-      </button>
-      <p style={{ color: '#666', marginTop: '10px' }}>
-        Render count (ref doesn't cause re-render): {renderCount.current}
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🎯 useRef Demo</h3>
+      
+      {/* Input with ref attached */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        padding: '20px',
+        borderRadius: '12px',
+        marginBottom: '15px'
+      }}>
+        <input 
+          ref={inputRef}  // ← Attach ref to DOM element
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          placeholder="Type something..."
+          style={{ 
+            padding: '12px', 
+            marginRight: '10px',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '16px',
+            width: '200px'
+          }}
+        />
+        <button 
+          onClick={() => inputRef.current.focus()}  // ← Direct DOM access!
+          style={{ 
+            padding: '12px 20px',
+            background: 'white',
+            color: '#f5576c',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          📍 Focus Input
+        </button>
+      </div>
+      
+      {/* Render count display */}
+      <div style={{ 
+        background: '#0f172a', 
+        padding: '15px',
+        borderRadius: '12px',
+        border: '1px solid #334155'
+      }}>
+        <p style={{ color: '#94a3b8', margin: '0 0 5px', fontSize: '14px' }}>
+          Render Count (ref mutation doesn't re-render):
+        </p>
+        <span style={{ 
+          color: '#22c55e', 
+          fontSize: '24px', 
+          fontWeight: 'bold',
+          fontFamily: 'monospace' 
+        }}>
+          {renderCount.current}
+        </span>
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Type in the input - ref.current stays synced without extra renders!
       </p>
     </div>
   );
@@ -2341,37 +2991,279 @@ const ref = useRef();
                 title: 'Memoization (useMemo & useCallback)',
                 intro: "Don't optimize prematurely. But when you do, use Memoization to skip expensive calculations.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Referential Equality</h3>
-<p><code class="bg-dark-700 text-brand-primary px-1 rounded">this</code> is false. Objects are compared by reference.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Why React re-runs calculations on every render</li>
+    <li>How useMemo caches expensive calculations</li>
+    <li>How useCallback caches function references</li>
+    <li>When to use (and when NOT to use) memoization</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Wasted Calculations</h3>
+<p class="mb-4 text-light-300">Every time a component re-renders, ALL code inside it runs again:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">function ProductList({ products }) {
+  // ❌ This runs on EVERY render, even if products didn't change!
+  const sortedProducts = products
+    .filter(p => p.inStock)
+    .sort((a, b) => b.price - a.price)
+    .map(p => ({ ...p, discount: calculateDiscount(p) }));
+  
+  return sortedProducts.map(...);
+}</pre>
+    <p class="text-red-300 text-sm mt-2">If parent re-renders 100 times, this calculation runs 100 times! 🐌</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🧮 Solution 1: useMemo - Cache Calculated Values</h3>
+<p class="mb-4 text-light-300">useMemo remembers the result and only recalculates when dependencies change:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">const memoizedValue = useMemo(() => {
+  // Expensive calculation here
+  return expensiveCalculation(a, b);
+}, <span class="text-yellow-300">[a, b]</span>); // Only recalculates when a or b changes!
+
+// ═══════════════════════════════════════════════════
+// HOW IT WORKS:
+// ═══════════════════════════════════════════════════
+// Render 1: [a=1, b=2] → Calculates → Returns 3 → Stores 3
+// Render 2: [a=1, b=2] → Same deps → Returns cached 3 ✅
+// Render 3: [a=1, b=5] → Deps changed → Recalculates → 6
+// ═══════════════════════════════════════════════════</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔗 Solution 2: useCallback - Cache Function References</h3>
+<p class="mb-4 text-light-300">In JavaScript, functions are objects. A new function is created on every render:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// ❌ WITHOUT useCallback:
+function Parent() {
+  const handleClick = () => { ... };
+  // handleClick is a NEW function on every render!
+  // Child will always re-render (even with React.memo)
+  return &lt;Child onClick={handleClick} /&gt;;
+}
+
+// ✅ WITH useCallback:
+function Parent() {
+  const handleClick = <span class="text-yellow-300">useCallback</span>(() => {
+    console.log('clicked');
+  }, <span class="text-yellow-300">[]</span>); // Same function reference every render!
+  
+  return &lt;Child onClick={handleClick} /&gt;;
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🎯 The Referential Equality Problem</h3>
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200 mb-2">In JavaScript, objects/arrays/functions are compared by <span class="text-yellow-400 font-bold">reference</span>, not value:</p>
+    <pre class="text-blue-300 text-sm bg-dark-900 p-3 rounded mt-2">
+{} === {}              // false (different references!)
+[] === []              // false
+(() => {}) === (() => {}) // false
+
+const obj = {};
+obj === obj            // true (same reference!)
+    </pre>
+    <p class="text-blue-200 mt-2 text-sm">This is why passing a new object/function as a prop always triggers child re-render!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Visual: When to Use What</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Scenario</th>
+                <th class="p-3">Hook</th>
+                <th class="p-3 rounded-tr-lg">Example</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Expensive calculation</td>
+                <td class="p-3 text-green-400 font-bold">useMemo</td>
+                <td class="p-3 font-mono text-xs">Filtering 10,000 items</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Creating object for dependency</td>
+                <td class="p-3 text-green-400 font-bold">useMemo</td>
+                <td class="p-3 font-mono text-xs">useEffect deps</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Callback to memoized child</td>
+                <td class="p-3 text-blue-400 font-bold">useCallback</td>
+                <td class="p-3 font-mono text-xs">onClick to React.memo child</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Callback in useEffect deps</td>
+                <td class="p-3 text-blue-400 font-bold">useCallback</td>
+                <td class="p-3 rounded-br-lg font-mono text-xs">Preventing infinite loops</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Don't Over-Optimize!</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <p class="text-yellow-300 font-bold mb-2">🛑 Memoization has a cost!</p>
+    <ul class="text-yellow-200 text-sm space-y-1">
+        <li>• React must store the cached value in memory</li>
+        <li>• React must compare dependencies on every render</li>
+        <li>• For simple calculations, this overhead is MORE than just recalculating!</li>
+    </ul>
+    <p class="text-yellow-300 mt-3 font-bold">Rule: Profile first, optimize second. Don't guess!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">useMemo for values</span> - results of calculations</li>
+    <li><span class="text-yellow-400 font-bold">useCallback for functions</span> - actually just useMemo(() => fn, deps)</li>
+    <li><span class="text-yellow-400 font-bold">React.memo for components</span> - wrap child to skip re-render if props same</li>
+    <li><span class="text-yellow-400 font-bold">Use React DevTools Profiler</span> - find what actually needs optimization</li>
+</ul>
                 `,
-                code: `function App() {
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║          🎯 MEMOIZATION: useMemo & useCallback               ║
+║      Skip expensive calculations & maintain stable refs      ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   THE PROBLEM:                                               ║
+║   ═══════════════                                            ║
+║   React re-runs your ENTIRE component on every render.       ║
+║   Without memoization:                                       ║
+║     - Expensive calculations run repeatedly                  ║
+║     - New function references break child optimization       ║
+║                                                              ║
+║   THE SOLUTION:                                              ║
+║   ═══════════════                                            ║
+║                                                              ║
+║   useMemo(() => value, [deps])                               ║
+║     → Caches the RESULT of a calculation                     ║
+║     → Only recalculates when deps change                     ║
+║                                                              ║
+║   useCallback(() => fn, [deps])                              ║
+║     → Caches the FUNCTION itself                             ║
+║     → Keeps same reference between renders                   ║
+║     → Essential when passing to React.memo() children        ║
+║                                                              ║
+║   💡 TRY: Type in input vs click button - watch the log!     ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 📦 TWO PIECES OF STATE
+  // ═══════════════════════════════════════════════════════════
+  // count: Controls the expensive calculation
+  // text:  Independent state that SHOULD NOT trigger calculation
+  // ═══════════════════════════════════════════════════════════
   const [count, setCount] = React.useState(0);
   const [text, setText] = React.useState('');
+  const [computeLog, setComputeLog] = React.useState([]);
   
-  // Expensive calculation - only recalculates when count changes
+  // ═══════════════════════════════════════════════════════════
+  // 🧮 useMemo: CACHE EXPENSIVE CALCULATION
+  // ═══════════════════════════════════════════════════════════
+  // WITHOUT useMemo: This runs on EVERY render (even text changes)
+  // WITH useMemo:    Only runs when [count] changes!
+  //
+  // Perfect for:
+  //   - Filtering/sorting large arrays
+  //   - Complex calculations
+  //   - Object creation for useEffect dependencies
+  // ═══════════════════════════════════════════════════════════
   const expensiveValue = React.useMemo(() => {
-    console.log('Computing...');
+    const timestamp = new Date().toLocaleTimeString();
+    setComputeLog(prev => [...prev, '🧮 Computing at ' + timestamp]);
+    
+    // Simulate expensive work
+    let result = 0;
+    for (let i = 0; i < count * 1000000; i++) {
+      result += 1;
+    }
     return count * 100;
-  }, [count]);
+  }, [count]);  // ← Only recalculates when count changes!
   
-  // Stable callback reference
+  // ═══════════════════════════════════════════════════════════
+  // 🔗 useCallback: CACHE FUNCTION REFERENCE
+  // ═══════════════════════════════════════════════════════════
+  // WITHOUT useCallback: New function created every render
+  //   → Children using React.memo() re-render anyway!
+  //
+  // WITH useCallback: Same function reference persists
+  //   → Children can skip re-rendering
+  // ═══════════════════════════════════════════════════════════
   const handleClick = React.useCallback(() => {
     setCount(c => c + 1);
-  }, []);
+  }, []);  // ← Empty deps = always same function
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>useMemo & useCallback Demo</h3>
-      <p>Count: {count} | Computed: {expensiveValue}</p>
-      <button onClick={handleClick}>Increment</button>
-      <div style={{ marginTop: '10px' }}>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🧮 Memoization Demo</h3>
+      
+      {/* Counter with memoized value */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+        padding: '20px',
+        borderRadius: '12px',
+        marginBottom: '15px'
+      }}>
+        <p style={{ margin: '0 0 10px', color: '#7c2d12' }}>
+          Count: <strong>{count}</strong> | Computed: <strong>{expensiveValue}</strong>
+        </p>
+        <button 
+          onClick={handleClick}
+          style={{ 
+            padding: '10px 20px',
+            background: '#ea580c',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          + Increment (triggers useMemo)
+        </button>
+      </div>
+      
+      {/* Text input - should NOT trigger useMemo */}
+      <div style={{ marginBottom: '15px' }}>
         <input 
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Type here (won't recompute)"
-          style={{ padding: '8px' }}
+          placeholder="Type here (NO recomputation!)"
+          style={{ 
+            padding: '12px',
+            borderRadius: '8px',
+            border: '2px solid #e2e8f0',
+            width: '100%',
+            fontSize: '16px'
+          }}
         />
-        <p style={{ color: '#666' }}>Typing doesn't trigger useMemo!</p>
+        <p style={{ color: '#64748b', fontSize: '13px', marginTop: '5px' }}>
+          ⬆️ Typing here re-renders but useMemo skips calculation!
+        </p>
+      </div>
+      
+      {/* Computation log */}
+      <div style={{ 
+        background: '#0f172a', 
+        padding: '15px',
+        borderRadius: '12px',
+        border: '1px solid #334155'
+      }}>
+        <p style={{ color: '#94a3b8', margin: '0 0 10px', fontSize: '14px' }}>
+          📋 Computation Log (should only update on button click):
+        </p>
+        <div style={{ color: '#22c55e', fontFamily: 'monospace', fontSize: '12px' }}>
+          {computeLog.slice(-5).map((log, i) => (
+            <div key={i}>→ {log}</div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -2407,38 +3299,283 @@ function Parent() {
                 title: 'Context API',
                 intro: "Avoid Prop Drilling. Share global data like User Auth or Theme.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Provider Pattern</h3>
-<p>Wrap your app in a Provider.</p>
-                `,
-                code: `const ThemeContext = React.createContext('light');
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is "prop drilling" and why it's a problem</li>
+    <li>How Context provides a solution</li>
+    <li>Creating, providing, and consuming context</li>
+    <li>When to use Context vs other state management</li>
+</ul>
 
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Prop Drilling</h3>
+<p class="mb-4 text-light-300">Imagine you need to pass user data from App to a deeply nested component:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ PROP DRILLING - Passing through every level!
+
+&lt;App user={user}&gt;                    // Level 0: Has the data
+  &lt;Layout user={user}&gt;               // Level 1: Just passes it
+    &lt;Sidebar user={user}&gt;            // Level 2: Just passes it
+      &lt;Navigation user={user}&gt;       // Level 3: Just passes it
+        &lt;UserMenu user={user} /&gt;     // Level 4: Finally uses it!
+      &lt;/Navigation&gt;
+    &lt;/Sidebar&gt;
+  &lt;/Layout&gt;
+&lt;/App&gt;</pre>
+    <p class="text-red-300 text-sm mt-2">❌ Layout, Sidebar, Navigation don't even USE user - they just pass it through!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Context API</h3>
+<p class="mb-4 text-light-300">Context creates a "portal" - data teleports directly to where it's needed:</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+┌──────────────────────────────────────────────────────┐
+│  &lt;UserContext.Provider value={user}&gt;                 │  ← PROVIDE once
+│                                                      │
+│    &lt;App&gt;                                             │
+│      &lt;Layout&gt;            ← No props needed!          │
+│        &lt;Sidebar&gt;         ← No props needed!          │
+│          &lt;Navigation&gt;    ← No props needed!          │
+│            &lt;UserMenu /&gt;  ← useContext(UserContext)   │  ← CONSUME anywhere!
+│                                                      │
+└──────────────────────────────────────────────────────┘
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Three Steps to Use Context</h3>
+
+<div class="space-y-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
+        <p class="text-white font-bold">Step 1: CREATE the Context</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">const UserContext = React.createContext(null);
+// The argument is the DEFAULT value (used when no Provider above)</pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-green-500">
+        <p class="text-white font-bold">Step 2: PROVIDE the value</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">&lt;UserContext.Provider value={currentUser}&gt;
+  &lt;App /&gt;   {/* Everything inside can access currentUser */}
+&lt;/UserContext.Provider&gt;</pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-purple-500">
+        <p class="text-white font-bold">Step 3: CONSUME anywhere below</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-cyan-300 text-sm">function UserMenu() {
+  const user = React.useContext(UserContext);
+  return &lt;span&gt;Hello, {user.name}!&lt;/span&gt;;
+}</pre>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Common Use Cases for Context</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl">
+        <p class="text-green-300 font-bold mb-2">✅ GOOD Use Cases</p>
+        <ul class="text-green-200 text-sm space-y-1">
+            <li>• Theme (dark/light mode)</li>
+            <li>• Current user / Auth state</li>
+            <li>• Language / Locale</li>
+            <li>• UI state (sidebar open/closed)</li>
+        </ul>
+    </div>
+    <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl">
+        <p class="text-red-300 font-bold mb-2">❌ BAD Use Cases</p>
+        <ul class="text-red-200 text-sm space-y-1">
+            <li>• Frequently changing data</li>
+            <li>• Large objects (causes many re-renders)</li>
+            <li>• Data only used by 1-2 components</li>
+            <li>• Complex state with many actions</li>
+        </ul>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Context Re-render Trap</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <p class="text-yellow-300 font-bold mb-2">🚨 When Provider value changes, ALL consumers re-render!</p>
+    <pre class="text-yellow-200 text-sm mt-2">// ❌ BAD: New object every render!
+&lt;UserContext.Provider value={{ user, theme }}&gt;
+
+// ✅ GOOD: Memoize or split contexts
+const value = useMemo(() => ({ user, theme }), [user, theme]);
+&lt;UserContext.Provider value={value}&gt;</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Context vs Redux vs Other State Management</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Feature</th>
+                <th class="p-3">Context</th>
+                <th class="p-3 rounded-tr-lg">Redux/Zustand</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Setup complexity</td>
+                <td class="p-3 text-green-400">Simple</td>
+                <td class="p-3 text-yellow-400">Medium</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Re-render optimization</td>
+                <td class="p-3 text-red-400">Poor (all consumers)</td>
+                <td class="p-3 text-green-400">Great (selectors)</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">DevTools</td>
+                <td class="p-3 text-yellow-400">Limited</td>
+                <td class="p-3 text-green-400">Excellent</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Best for</td>
+                <td class="p-3">Low-frequency updates</td>
+                <td class="p-3 rounded-br-lg">Complex app state</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Split contexts by update frequency</span> - separate theme from user data</li>
+    <li><span class="text-yellow-400 font-bold">Create custom hooks</span> - useUser() instead of useContext(UserContext)</li>
+    <li><span class="text-yellow-400 font-bold">Colocate Provider near consumers</span> - don't always put at app root</li>
+    <li><span class="text-yellow-400 font-bold">Consider Zustand/Jotai</span> - for complex state with better performance</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║              🎯 CONTEXT API - Global State                   ║
+║         Share data without passing props through every       ║
+║                    level of the tree!                        ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   THE PROBLEM: PROP DRILLING                                 ║
+║   ═══════════════════════════                                ║
+║                                                              ║
+║   <App theme={theme}>                                        ║
+║     <Header theme={theme}>         ← Pass through            ║
+║       <Nav theme={theme}>          ← Pass through            ║
+║         <Button theme={theme} />   ← Finally uses it!        ║
+║                                                              ║
+║   THE SOLUTION: CONTEXT                                      ║
+║   ══════════════════════                                     ║
+║                                                              ║
+║   <ThemeContext.Provider value={theme}>                      ║
+║     <Header>                                                 ║
+║       <Nav>                                                  ║
+║         <Button />  ← useContext(ThemeContext) 🎉            ║
+║                                                              ║
+║   HOW IT WORKS:                                              ║
+║   ══════════════                                             ║
+║   1. createContext() - Create the context                    ║
+║   2. <Provider value={...}> - Provide the value              ║
+║   3. useContext() - Consume anywhere below                   ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 📦 STEP 1: CREATE CONTEXT
+// ═══════════════════════════════════════════════════════════════
+// createContext takes a default value (used when no Provider above)
+// This creates a "channel" for passing data down the tree
+// ═══════════════════════════════════════════════════════════════
+const ThemeContext = React.createContext('light');
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 CONSUMER COMPONENT (Deep in the tree)
+// ═══════════════════════════════════════════════════════════════
+// This component is nested deep, but it can access theme
+// directly via useContext - NO prop drilling needed!
+// ═══════════════════════════════════════════════════════════════
 function ThemeButton() {
+  // 🎯 STEP 3: CONSUME CONTEXT
+  // React finds the nearest ThemeContext.Provider above
+  // and returns its current value
   const theme = React.useContext(ThemeContext);
+  
   return (
     <button style={{
-      background: theme === 'dark' ? '#333' : '#fff',
-      color: theme === 'dark' ? '#fff' : '#333',
-      padding: '10px 20px',
-      border: '1px solid #ccc'
+      background: theme === 'dark' ? '#1e293b' : '#ffffff',
+      color: theme === 'dark' ? '#f8fafc' : '#1e293b',
+      padding: '12px 24px',
+      border: theme === 'dark' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+      borderRadius: '8px',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease'
     }}>
-      Current Theme: {theme}
+      🎨 Theme: {theme.toUpperCase()}
     </button>
+  );
+}
+
+// Another consumer - shows context can be used by multiple components
+function ThemeStatus() {
+  const theme = React.useContext(ThemeContext);
+  return (
+    <p style={{ 
+      color: theme === 'dark' ? '#94a3b8' : '#64748b',
+      fontSize: '14px' 
+    }}>
+      Current mode: {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+    </p>
   );
 }
 
 function App() {
   const [theme, setTheme] = React.useState('light');
   
+  // ═══════════════════════════════════════════════════════════
+  // 📦 STEP 2: PROVIDE CONTEXT
+  // ═══════════════════════════════════════════════════════════
+  // Wrap your app (or part of it) in Provider
+  // Any component below can access the value!
+  // When value changes, all consumers re-render
+  // ═══════════════════════════════════════════════════════════
   return (
     <ThemeContext.Provider value={theme}>
-      <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-        <h3>Context API Demo</h3>
+      <div style={{ 
+        fontFamily: 'system-ui', 
+        padding: '20px',
+        background: theme === 'dark' ? '#0f172a' : '#f8fafc',
+        minHeight: '200px',
+        borderRadius: '12px',
+        transition: 'all 0.3s ease'
+      }}>
+        <h3 style={{ color: theme === 'dark' ? '#f8fafc' : '#1e293b' }}>
+          🔗 Context API Demo
+        </h3>
+        
+        {/* These components access theme via context, not props! */}
         <ThemeButton />
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
-            Toggle Theme
+        <ThemeStatus />
+        
+        <div style={{ marginTop: '15px' }}>
+          <button 
+            onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
+            style={{
+              padding: '10px 20px',
+              background: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Toggle Theme
           </button>
         </div>
+        
+        <p style={{ 
+          color: theme === 'dark' ? '#64748b' : '#94a3b8',
+          marginTop: '15px',
+          fontSize: '13px'
+        }}>
+          💡 ThemeButton and ThemeStatus use useContext - no props passed!
+        </p>
       </div>
     </ThemeContext.Provider>
   );
@@ -2466,36 +3603,326 @@ const theme = useContext(ThemeContext);
                 title: 'Custom Hooks',
                 intro: "Reuse logic, not UI. If you find yourself copying `useEffect`, make a hook.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Rules of Hooks</h3>
-<p>Must start with <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>. Must call at top level.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is a custom hook and why create one</li>
+    <li>How to extract reusable logic from components</li>
+    <li>The rules of hooks (and why they exist)</li>
+    <li>Real-world custom hook examples</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Duplicated Logic</h3>
+<p class="mb-4 text-light-300">You find yourself writing the same logic in multiple components:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ Component A - Fetch user data
+function ProfilePage() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch('/api/user').then(r => r.json()).then(setUser).finally(() => setLoading(false));
+  }, []);
+}
+
+// ❌ Component B - Same exact logic duplicated!
+function SettingsPage() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch('/api/user').then(r => r.json()).then(setUser).finally(() => setLoading(false));
+  }, []);
+}</pre>
+    <p class="text-red-300 text-sm mt-2">❌ Copy-paste = bugs, inconsistency, hard to maintain!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Custom Hook</h3>
+<p class="mb-4 text-light-300">Extract the logic into a reusable function that starts with "use":</p>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ Custom Hook - Single source of truth!
+function <span class="text-yellow-300">useUser</span>() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    fetch('/api/user')
+      .then(r => r.json())
+      .then(setUser)
+      .finally(() => setLoading(false));
+  }, []);
+  
+  return { user, loading };
+}
+
+// Now in ANY component:
+function ProfilePage() {
+  const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // One line! ✨
+}
+
+function SettingsPage() {
+  const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // Same hook, same behavior!
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📜 Rules of Hooks</h3>
+<div class="space-y-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
+        <p class="text-white font-bold">Rule 1: Name must start with "use"</p>
+        <p class="text-light-300 text-sm mt-2">This tells React it's a hook and enables linting rules</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-sm">
+<span class="text-green-300">✅ useCounter, useFetch, useLocalStorage</span>
+<span class="text-red-300">❌ getCounter, fetchData, withStorage</span></pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-yellow-500">
+        <p class="text-white font-bold">Rule 2: Only call hooks at the TOP LEVEL</p>
+        <p class="text-light-300 text-sm mt-2">Never inside loops, conditions, or nested functions</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-sm">
+<span class="text-red-300">❌ if (condition) { useState(...) }</span>
+<span class="text-red-300">❌ for (let i...) { useEffect(...) }</span>
+<span class="text-green-300">✅ const [state, setState] = useState(...);</span></pre>
+    </div>
+    
+    <div class="bg-dark-800 p-4 rounded-xl border-l-4 border-purple-500">
+        <p class="text-white font-bold">Rule 3: Only call hooks from React functions</p>
+        <p class="text-light-300 text-sm mt-2">Components or other custom hooks only</p>
+        <pre class="bg-dark-900 p-3 rounded mt-2 text-sm">
+<span class="text-red-300">❌ Regular function: function helper() { useState(...) }</span>
+<span class="text-green-300">✅ Component: function MyComponent() { useState(...) }</span>
+<span class="text-green-300">✅ Custom Hook: function useMyHook() { useState(...) }</span></pre>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Popular Custom Hook Patterns</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useLocalStorage</p>
+        <p class="text-light-300 text-sm">Sync state with localStorage</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useFetch</p>
+        <p class="text-light-300 text-sm">Data fetching with loading/error</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useDebounce</p>
+        <p class="text-light-300 text-sm">Delay value updates (search input)</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useMediaQuery</p>
+        <p class="text-light-300 text-sm">Respond to screen size changes</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useOnClickOutside</p>
+        <p class="text-light-300 text-sm">Detect clicks outside element</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">usePrevious</p>
+        <p class="text-light-300 text-sm">Access previous value of state</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Custom Hook vs Regular Function</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Feature</th>
+                <th class="p-3">Custom Hook</th>
+                <th class="p-3 rounded-tr-lg">Regular Function</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Can use useState?</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+                <td class="p-3 text-red-400">❌ No</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Can use useEffect?</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+                <td class="p-3 text-red-400">❌ No</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Has its own state?</td>
+                <td class="p-3 text-green-400">✅ Yes (per component)</td>
+                <td class="p-3 text-red-400">❌ No</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Use case</td>
+                <td class="p-3">Stateful logic reuse</td>
+                <td class="p-3 rounded-br-lg">Pure calculations</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Each component gets its own state</span> - hooks don't share state between components</li>
+    <li><span class="text-yellow-400 font-bold">Return objects for flexibility</span> - { value, setValue } instead of [value, setValue]</li>
+    <li><span class="text-yellow-400 font-bold">Keep hooks focused</span> - one responsibility per hook</li>
+    <li><span class="text-yellow-400 font-bold">Check existing libraries first</span> - react-use, usehooks-ts have 100+ hooks</li>
+</ul>
                 `,
-                code: `// Custom Hook
-function useCounter(initial = 0) {
-  const [count, setCount] = React.useState(initial);
-  const increment = () => setCount(c => c + 1);
-  const decrement = () => setCount(c => c - 1);
-  const reset = () => setCount(initial);
-  return { count, increment, decrement, reset };
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║              🎯 CUSTOM HOOKS - Reusable Logic                ║
+║         Extract and share stateful logic between             ║
+║                      components!                             ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   WHAT IS A CUSTOM HOOK?                                     ║
+║   ══════════════════════                                     ║
+║   A function that:                                           ║
+║     ✅ Starts with "use" (useCounter, useFetch, useForm)     ║
+║     ✅ Can call other hooks (useState, useEffect, etc.)      ║
+║     ✅ Returns anything (value, object, array)               ║
+║                                                              ║
+║   WHY USE CUSTOM HOOKS?                                      ║
+║   ═════════════════════                                      ║
+║                                                              ║
+║   WITHOUT Custom Hook:         WITH Custom Hook:             ║
+║   ════════════════════         ══════════════════            ║
+║   ComponentA:                  ComponentA:                   ║
+║     const [count, set] = ...     const counter = useCounter()║
+║     const inc = () => ...                                    ║
+║     const dec = () => ...      ComponentB:                   ║
+║                                  const counter = useCounter()║
+║   ComponentB:                                                ║
+║     const [count, set] = ...   🎉 Logic is REUSED!           ║
+║     const inc = () => ...                                    ║
+║     const dec = () => ...                                    ║
+║                                                              ║
+║   RULES:                                                     ║
+║   ══════                                                     ║
+║   1. Name MUST start with "use"                              ║
+║   2. Call hooks at TOP LEVEL only (no if/loops)              ║
+║   3. Call hooks from React functions only                    ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🎣 CUSTOM HOOK: useCounter
+// ═══════════════════════════════════════════════════════════════
+// This hook encapsulates all counter logic:
+//   - State (count)
+//   - Actions (increment, decrement, reset)
+//
+// Any component can now use this without duplicating code!
+// ═══════════════════════════════════════════════════════════════
+function useCounter(initialValue = 0, step = 1) {
+  // Internal state - each component using this hook gets its OWN state
+  const [count, setCount] = React.useState(initialValue);
+  
+  // Action functions - encapsulated logic
+  const increment = () => setCount(prev => prev + step);
+  const decrement = () => setCount(prev => prev - step);
+  const reset = () => setCount(initialValue);
+  const setTo = (value) => setCount(value);
+  
+  // Return an object with everything the consumer needs
+  return { 
+    count,       // Current value
+    increment,   // +step
+    decrement,   // -step
+    reset,       // Back to initial
+    setTo        // Set to specific value
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎣 BONUS: useToggle Hook
+// ═══════════════════════════════════════════════════════════════
+// Another common pattern - toggling boolean state
+// ═══════════════════════════════════════════════════════════════
+function useToggle(initialValue = false) {
+  const [value, setValue] = React.useState(initialValue);
+  const toggle = () => setValue(prev => !prev);
+  const setTrue = () => setValue(true);
+  const setFalse = () => setValue(false);
+  return { value, toggle, setTrue, setFalse };
 }
 
 function App() {
-  const { count, increment, decrement, reset } = useCounter(10);
+  // 🎯 Using our custom hooks - so clean!
+  const counter = useCounter(10, 5);  // Start at 10, step by 5
+  const darkMode = useToggle(false);
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>Custom Hook Demo</h3>
-      <p style={{ fontSize: '24px' }}>Count: {count}</p>
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <button onClick={decrement}>-</button>
-        <button onClick={increment}>+</button>
-        <button onClick={reset}>Reset</button>
+    <div style={{ 
+      fontFamily: 'system-ui', 
+      padding: '20px',
+      background: darkMode.value ? '#1e293b' : '#f8fafc',
+      borderRadius: '12px',
+      transition: 'all 0.3s ease'
+    }}>
+      <h3 style={{ color: darkMode.value ? '#f8fafc' : '#1e293b' }}>
+        🎣 Custom Hooks Demo
+      </h3>
+      
+      {/* Counter using useCounter hook */}
+      <div style={{
+        background: darkMode.value ? '#0f172a' : '#ffffff',
+        padding: '20px',
+        borderRadius: '12px',
+        marginBottom: '15px',
+        border: darkMode.value ? '1px solid #334155' : '1px solid #e2e8f0'
+      }}>
+        <p style={{ 
+          fontSize: '32px', 
+          fontWeight: 'bold',
+          color: '#3b82f6',
+          margin: '0 0 15px'
+        }}>
+          {counter.count}
+        </p>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button onClick={counter.decrement} style={btnStyle}>➖ Decrease</button>
+          <button onClick={counter.increment} style={btnStyle}>➕ Increase</button>
+          <button onClick={counter.reset} style={{...btnStyle, background: '#ef4444'}}>🔄 Reset</button>
+        </div>
+        <p style={{ color: '#64748b', marginTop: '10px', fontSize: '13px' }}>
+          Step size: 5 (configured in useCounter)
+        </p>
       </div>
-      <p style={{ color: '#666', marginTop: '10px' }}>
-        useCounter is a reusable custom hook!
+      
+      {/* Toggle using useToggle hook */}
+      <button 
+        onClick={darkMode.toggle}
+        style={{
+          padding: '10px 20px',
+          background: darkMode.value ? '#f8fafc' : '#1e293b',
+          color: darkMode.value ? '#1e293b' : '#f8fafc',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer'
+        }}
+      >
+        {darkMode.value ? '☀️ Light Mode' : '🌙 Dark Mode'}
+      </button>
+      
+      <p style={{ 
+        color: darkMode.value ? '#94a3b8' : '#64748b',
+        marginTop: '15px',
+        fontSize: '13px'
+      }}>
+        💡 Both useCounter and useToggle are custom hooks - reusable everywhere!
       </p>
     </div>
   );
-}`,
+}
+
+// Shared button style
+const btnStyle = {
+  padding: '10px 16px',
+  background: '#3b82f6',
+  color: 'white',
+  border: 'none',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontWeight: '500'
+};`,
                 comparison: {
                     junior: `// ❌ Duplicate Logic
 // Component A
@@ -2523,39 +3950,286 @@ const data = useFetch('/a');`
                 title: 'Patterns: HOCs vs Render Props',
                 intro: "Historical patterns are still useful, but Hooks have replaced most of them.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. HOC (Higher Order Component)</h3>
-<p>A function that takes a component and returns a new component.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is a Higher Order Component (HOC)</li>
+    <li>What is the Render Props pattern</li>
+    <li>When these patterns are still useful today</li>
+    <li>How Hooks have replaced most use cases</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 Pattern 1: Higher Order Component (HOC)</h3>
+<p class="mb-4 text-light-300">An HOC is a function that takes a component and returns a NEW enhanced component:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// HOC Pattern: withSomething(Component) → EnhancedComponent
+
+const <span class="text-yellow-300">EnhancedButton</span> = <span class="text-green-300">withLogging</span>(Button);
+//                       ↑ HOC adds logging capability
+//                         to the original Button
+
+// Using it:
+&lt;EnhancedButton onClick={...} /&gt;</pre>
+</div>
+
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200 mb-2">🎯 <span class="text-yellow-400 font-bold">Think of HOCs like decorators</span> - they wrap a component and add extra features without modifying the original.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Common HOC Examples</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">withAuth</p>
+        <p class="text-light-300 text-sm">Redirect if not logged in</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">withLoading</p>
+        <p class="text-light-300 text-sm">Show spinner while loading</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">withTheme</p>
+        <p class="text-light-300 text-sm">Inject theme props</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">connect()</p>
+        <p class="text-light-300 text-sm">Redux's famous HOC</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 Pattern 2: Render Props</h3>
+<p class="mb-4 text-light-300">A component that takes a function as a prop and calls it to render UI:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// Render Props Pattern: A prop whose value is a function
+
+&lt;MouseTracker <span class="text-yellow-300">render</span>={(position) => (
+  &lt;p&gt;Mouse is at {position.x}, {position.y}&lt;/p&gt;
+)} /&gt;
+
+// The component calls render(data) internally:
+function MouseTracker({ render }) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  // ... track mouse ...
+  return <span class="text-yellow-300">render(position)</span>;  // Call the function!
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚔️ HOC vs Render Props vs Hooks</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Pattern</th>
+                <th class="p-3">Pros</th>
+                <th class="p-3 rounded-tr-lg">Cons</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">HOC</td>
+                <td class="p-3 text-sm">Clean usage, props injection</td>
+                <td class="p-3 text-sm text-red-300">Wrapper hell, naming collisions</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">Render Props</td>
+                <td class="p-3 text-sm">Explicit data flow, flexible</td>
+                <td class="p-3 text-sm text-red-300">Callback hell, harder to read</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg font-bold text-green-400">Hooks ✓</td>
+                <td class="p-3 text-sm text-green-300">Simple, composable, no wrappers</td>
+                <td class="p-3 rounded-br-lg text-sm">Can't use in class components</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔄 Evolution: From HOC to Hooks</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-light-300">// ❌ OLD WAY: HOC Wrapper Hell
+export default withRouter(
+  withAuth(
+    withTheme(
+      withLogging(
+        MyComponent
+      )
+    )
+  )
+);
+
+// ✅ NEW WAY: Hooks Composition
+function MyComponent() {
+  const router = useRouter();
+  const auth = useAuth();
+  const theme = useTheme();
+  const logger = useLogger();
+  
+  // Clean, readable, no wrappers!
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ When HOCs Are Still Useful</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <ul class="text-yellow-200 text-sm space-y-1">
+        <li>• <span class="font-bold">Class components</span> - can't use hooks</li>
+        <li>• <span class="font-bold">Library APIs</span> - some libraries still use HOC pattern</li>
+        <li>• <span class="font-bold">Static composition</span> - when you need to wrap at definition time</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Prefer Hooks for new code</span> - simpler and more flexible</li>
+    <li><span class="text-yellow-400 font-bold">Understand HOCs for legacy code</span> - many older codebases use them</li>
+    <li><span class="text-yellow-400 font-bold">HOC naming convention</span> - withXxx (withAuth, withRouter)</li>
+    <li><span class="text-yellow-400 font-bold">Don't mix patterns</span> - pick one approach per feature</li>
+</ul>
                 `,
-                code: `// Higher Order Component Pattern
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║         🎯 HIGHER ORDER COMPONENTS (HOCs)                    ║
+║     A function that takes a component and returns            ║
+║              an enhanced component!                          ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   HOC PATTERN EXPLAINED:                                     ║
+║   ══════════════════════                                     ║
+║                                                              ║
+║   const EnhancedComp = withFeature(OriginalComp)             ║
+║                                                              ║
+║   ┌─────────────────────┐                                    ║
+║   │   withLogger(Comp)  │  ← HOC (Higher Order Component)    ║
+║   └──────────┬──────────┘                                    ║
+║              │                                               ║
+║              ▼                                               ║
+║   ┌─────────────────────┐                                    ║
+║   │  function Wrapper() │  ← Returns NEW component           ║
+║   │    useEffect(log)   │  ← Adds logging                    ║
+║   │    return <Comp />  │  ← Renders original                ║
+║   └─────────────────────┘                                    ║
+║                                                              ║
+║   COMMON HOC USE CASES:                                      ║
+║   ═════════════════════                                      ║
+║   • withAuth     → Add authentication check                  ║
+║   • withLogger   → Add logging/analytics                     ║
+║   • withTheme    → Inject theme props                        ║
+║   • withLoading  → Add loading state                         ║
+║                                                              ║
+║   ⚠️ MODERN ALTERNATIVE: Custom Hooks are simpler!           ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🏭 HOC: withLogger
+// ═══════════════════════════════════════════════════════════════
+// This HOC wraps ANY component and adds logging capability.
+// It demonstrates the "decorator" pattern - adding features
+// without modifying the original component.
+// ═══════════════════════════════════════════════════════════════
 function withLogger(WrappedComponent) {
+  // Return a NEW component (the wrapper)
   return function LoggedComponent(props) {
+    const [logs, setLogs] = React.useState([]);
+    
+    // Add logging on mount
     React.useEffect(() => {
-      console.log('Component mounted:', WrappedComponent.name);
+      const timestamp = new Date().toLocaleTimeString();
+      setLogs(prev => [...prev, \`[\${timestamp}] Mounted: \${WrappedComponent.name || 'Component'}\`]);
     }, []);
-    return <WrappedComponent {...props} />;
+    
+    // Add logging on every render
+    React.useEffect(() => {
+      const timestamp = new Date().toLocaleTimeString();
+      setLogs(prev => [...prev, \`[\${timestamp}] Rendered with props: \${JSON.stringify(props)}\`]);
+    });
+    
+    return (
+      <div>
+        {/* Render the original component with all its props */}
+        <WrappedComponent {...props} />
+        
+        {/* Display logs (added by HOC) */}
+        <div style={{
+          marginTop: '10px',
+          padding: '10px',
+          background: '#0f172a',
+          borderRadius: '8px',
+          maxHeight: '100px',
+          overflow: 'auto'
+        }}>
+          <p style={{ color: '#94a3b8', margin: '0 0 5px', fontSize: '12px' }}>
+            📋 HOC Logger Output:
+          </p>
+          {logs.slice(-3).map((log, i) => (
+            <div key={i} style={{ color: '#22c55e', fontFamily: 'monospace', fontSize: '11px' }}>
+              {log}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 }
 
-function Greeting({ name }) {
-  return <h2>Hello, {name}!</h2>;
+// ═══════════════════════════════════════════════════════════════
+// 📦 ORIGINAL COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// This is a simple component with NO logging capability.
+// We'll enhance it using our HOC!
+// ═══════════════════════════════════════════════════════════════
+function Greeting({ name, color }) {
+  return (
+    <div style={{
+      padding: '15px',
+      background: \`linear-gradient(135deg, \${color}22 0%, \${color}44 100%)\`,
+      borderRadius: '8px',
+      borderLeft: \`4px solid \${color}\`
+    }}>
+      <h2 style={{ margin: 0, color }}>Hello, {name}! 👋</h2>
+    </div>
+  );
 }
 
+// ═══════════════════════════════════════════════════════════════
+// 🎯 ENHANCED COMPONENT (Original + HOC features)
+// ═══════════════════════════════════════════════════════════════
+// LoggedGreeting = Greeting + logging (from withLogger HOC)
+// ═══════════════════════════════════════════════════════════════
 const LoggedGreeting = withLogger(Greeting);
 
 function App() {
   const [name, setName] = React.useState('React Developer');
+  const [color, setColor] = React.useState('#3b82f6');
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>HOC Pattern Demo</h3>
-      <LoggedGreeting name={name} />
-      <input 
-        value={name}
-        onChange={e => setName(e.target.value)}
-        style={{ padding: '8px', marginTop: '10px' }}
-      />
-      <p style={{ color: '#666', marginTop: '10px' }}>
-        withLogger HOC logs when component mounts
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🏭 HOC Pattern Demo</h3>
+      
+      {/* Using the HOC-enhanced component */}
+      <LoggedGreeting name={name} color={color} />
+      
+      <div style={{ marginTop: '15px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <input 
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Enter name..."
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+        />
+        <select 
+          value={color} 
+          onChange={e => setColor(e.target.value)}
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+        >
+          <option value="#3b82f6">Blue</option>
+          <option value="#22c55e">Green</option>
+          <option value="#f59e0b">Orange</option>
+          <option value="#ef4444">Red</option>
+        </select>
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Change inputs and watch the HOC logger update!
       </p>
     </div>
   );
@@ -2590,50 +4264,304 @@ const MyComponent = () => {
                 title: 'Portals & Error Boundaries',
                 intro: "Render outside the parent hierarchy (Modals) and catch crashes gracefully.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Portals</h3>
-<p>Teleport a child into <code class="bg-dark-700 text-brand-primary px-1 rounded">this</code>.</p>
-                `,
-                code: `// Error Boundary Demo (Class Component)
-class ErrorBoundary extends React.Component {
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What are Portals and why you need them</li>
+    <li>How to render modals, tooltips outside parent</li>
+    <li>What are Error Boundaries</li>
+    <li>How to catch and handle component crashes gracefully</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🚪 Portals: Escape the DOM Hierarchy</h3>
+<p class="mb-4 text-light-300">Normally, a child renders inside its parent's DOM node. But sometimes you need to break free:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <p class="text-red-300 font-bold mb-2">❌ The Problem: CSS Inheritance & Overflow</p>
+    <pre class="text-red-200 text-sm mt-2">&lt;div style={{ overflow: 'hidden' }}&gt;
+  &lt;Modal /&gt;  {/* Modal gets clipped! Can't escape parent's overflow */}
+&lt;/div&gt;
+
+&lt;div style={{ zIndex: 1 }}&gt;
+  &lt;Tooltip /&gt;  {/* z-index wars! Can't go above other elements */}
+&lt;/div&gt;</pre>
+</div>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+    <p class="text-green-300 font-bold mb-2">✅ The Solution: Portal</p>
+    <pre class="text-green-200 text-sm mt-2">import { createPortal } from 'react-dom';
+
+function Modal({ children }) {
+  // Render directly into document.body, not parent!
+  return <span class="text-yellow-300">createPortal</span>(
+    &lt;div className="modal"&gt;{children}&lt;/div&gt;,
+    <span class="text-yellow-300">document.body</span>  // Target DOM node
+  );
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Portal Behavior</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+DOM Tree (Visual):              React Tree (Logical):
+═══════════════════════         ═════════════════════════
+
+document.body                   &lt;App&gt;
+├── #root                         └── &lt;Parent&gt;
+│   └── &lt;App&gt;                          └── &lt;Modal&gt;  ← Events still bubble up!
+│       └── &lt;Parent&gt;                   
+│                               
+└── &lt;Modal /&gt; ← Portal renders here!
+
+🎯 KEY INSIGHT: 
+Events bubble through the REACT tree, not the DOM tree!
+A click in the Modal still bubbles to Parent in React.
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Common Portal Use Cases</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">🗔 Modals/Dialogs</p>
+        <p class="text-light-300 text-sm">Render above everything</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">💬 Tooltips</p>
+        <p class="text-light-300 text-sm">Escape overflow: hidden</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">📋 Dropdown menus</p>
+        <p class="text-light-300 text-sm">Position anywhere on screen</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">🔔 Notifications</p>
+        <p class="text-light-300 text-sm">Toast messages at screen edge</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🛡️ Error Boundaries: Catch Component Crashes</h3>
+<p class="mb-4 text-light-300">Without Error Boundaries, one component crash = entire app white screen!</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+Without Error Boundary:         With Error Boundary:
+════════════════════════        ═══════════════════════════
+
+&lt;App&gt;                           &lt;App&gt;
+  └── &lt;Dashboard&gt;                 └── &lt;Dashboard&gt;
+        └── &lt;Widget&gt; 💥 ERROR           └── &lt;ErrorBoundary&gt;
+                                              └── &lt;Widget&gt; 💥 ERROR
+        ↓                                     ↓
+┌─────────────────────┐         ┌─────────────────────────┐
+│                     │         │   Widget crashed!       │
+│   WHITE SCREEN      │         │   [Retry] [Report Bug]  │
+│   💀 App is dead    │         │                         │
+│                     │         │   Rest of app works! ✅ │
+└─────────────────────┘         └─────────────────────────┘
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚙️ Error Boundary Implementation</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <p class="text-yellow-300 font-bold mb-2">⚠️ Error Boundaries MUST be class components!</p>
+    <p class="text-yellow-200 text-sm">There's no hook equivalent for getDerivedStateFromError or componentDidCatch (yet).</p>
+</div>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
   
-  static getDerivedStateFromError(error) {
+  // Called when child throws - update state to show fallback
+  static <span class="text-yellow-300">getDerivedStateFromError</span>(error) {
     return { hasError: true, error };
+  }
+  
+  // Called after error - log to error service
+  <span class="text-yellow-300">componentDidCatch</span>(error, errorInfo) {
+    logErrorToService(error, errorInfo);
   }
   
   render() {
     if (this.state.hasError) {
+      return &lt;FallbackUI error={this.state.error} /&gt;;
+    }
+    return this.props.children;
+  }
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🚫 What Error Boundaries DON'T Catch</h3>
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <ul class="text-red-200 text-sm space-y-1">
+        <li>• <span class="font-bold">Event handlers</span> - use try/catch inside handlers</li>
+        <li>• <span class="font-bold">Async code</span> - setTimeout, Promises need their own handling</li>
+        <li>• <span class="font-bold">Server-side rendering</span> - only works on client</li>
+        <li>• <span class="font-bold">Errors in the boundary itself</span> - boundaries can't catch their own errors</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Portal target should exist</span> - create a div in index.html for modals</li>
+    <li><span class="text-yellow-400 font-bold">Multiple error boundaries</span> - wrap different sections independently</li>
+    <li><span class="text-yellow-400 font-bold">Error boundaries for routes</span> - each page can have its own boundary</li>
+    <li><span class="text-yellow-400 font-bold">Libraries like react-error-boundary</span> - adds hooks and more features</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║          🎯 ERROR BOUNDARIES - Graceful Crash Handling       ║
+║      Catch JavaScript errors anywhere in child component     ║
+║                tree and display a fallback UI!               ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   WITHOUT ERROR BOUNDARY:                                    ║
+║   ══════════════════════                                     ║
+║                                                              ║
+║   Component throws error → Entire app crashes → White screen ║
+║                                                              ║
+║   WITH ERROR BOUNDARY:                                       ║
+║   ════════════════════                                       ║
+║                                                              ║
+║   Component throws error → Boundary catches → Fallback UI    ║
+║                                                              ║
+║   LIFECYCLE METHODS:                                         ║
+║   ══════════════════                                         ║
+║                                                              ║
+║   static getDerivedStateFromError(error)                     ║
+║     → Called during "render" phase                           ║
+║     → Returns new state to trigger fallback UI               ║
+║                                                              ║
+║   componentDidCatch(error, errorInfo)                        ║
+║     → Called during "commit" phase                           ║
+║     → Perfect for logging errors to a service                ║
+║                                                              ║
+║   ⚠️ NOTE: Error Boundaries MUST be class components!        ║
+║            (There's no hook equivalent yet)                  ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🛡️ ERROR BOUNDARY (Class Component - Required!)
+// ═══════════════════════════════════════════════════════════════
+// Error Boundaries MUST be class components because they need:
+//   - getDerivedStateFromError (no hook equivalent)
+//   - componentDidCatch (no hook equivalent)
+//
+// Wrap risky components in an ErrorBoundary to prevent crashes!
+// ═══════════════════════════════════════════════════════════════
+class ErrorBoundary extends React.Component {
+  // State to track if an error occurred
+  state = { hasError: false, error: null, errorInfo: null };
+  
+  // Called when a child throws an error
+  // Returns object to update state (triggers re-render with fallback)
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  
+  // Called after error is caught - perfect for logging!
+  componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary caught:', error, errorInfo);
+    // In production: Send to error tracking service
+    // logErrorToService(error, errorInfo);
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      // 🎨 FALLBACK UI - Show this instead of white screen
       return (
-        <div style={{ padding: '20px', background: '#fee', border: '1px solid #f00', borderRadius: '8px' }}>
-          <h3 style={{ color: '#c00' }}>Something went wrong!</h3>
-          <p>{this.state.error?.message}</p>
+        <div style={{ 
+          padding: '20px', 
+          background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+          border: '2px solid #ef4444',
+          borderRadius: '12px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '10px' }}>💥</div>
+          <h3 style={{ color: '#dc2626', margin: '0 0 10px' }}>Oops! Something Crashed</h3>
+          <p style={{ color: '#7f1d1d', margin: '0 0 15px' }}>
+            {this.state.error?.message || 'Unknown error'}
+          </p>
+          <button 
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{
+              padding: '10px 20px',
+              background: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Try Again
+          </button>
         </div>
       );
     }
+    
+    // No error - render children normally
     return this.props.children;
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// 💣 BUGGY COMPONENT (Will crash on purpose!)
+// ═══════════════════════════════════════════════════════════════
 function BuggyComponent({ shouldCrash }) {
-  if (shouldCrash) throw new Error('Oops! Component crashed.');
-  return <p style={{ color: 'green' }}>✓ Component is working fine!</p>;
+  // This simulates a runtime error (like undefined.map())
+  if (shouldCrash) {
+    throw new Error('Component crashed! (Simulated error)');
+  }
+  
+  return (
+    <div style={{
+      padding: '20px',
+      background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      border: '2px solid #22c55e',
+      borderRadius: '12px',
+      textAlign: 'center'
+    }}>
+      <div style={{ fontSize: '48px', marginBottom: '10px' }}>✅</div>
+      <p style={{ color: '#166534', margin: 0, fontWeight: 'bold' }}>
+        Component is working perfectly!
+      </p>
+    </div>
+  );
 }
 
 function App() {
   const [crash, setCrash] = React.useState(false);
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>Error Boundary Demo</h3>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🛡️ Error Boundary Demo</h3>
+      
+      {/* Wrap potentially buggy components */}
       <ErrorBoundary>
         <BuggyComponent shouldCrash={crash} />
       </ErrorBoundary>
-      <button 
-        onClick={() => setCrash(true)} 
-        style={{ marginTop: '10px', padding: '8px 16px' }}
-      >
-        Trigger Error
-      </button>
+      
+      <div style={{ marginTop: '15px' }}>
+        <button 
+          onClick={() => setCrash(true)}
+          style={{
+            padding: '12px 24px',
+            background: '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          💥 Trigger Error
+        </button>
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Click the button - the boundary catches the crash!
+      </p>
     </div>
   );
 }`,
@@ -2659,32 +4587,308 @@ createPortal(
                 title: 'Suspense & Concurrent Mode',
                 intro: "Tell React to 'wait' for data before showing the UI. No more `isLoading` booleans.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Suspense</h3>
-<p>Declarative loading states.</p>
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is Suspense and how it works</li>
+    <li>Declarative loading states vs imperative</li>
+    <li>Code splitting with React.lazy()</li>
+    <li>Introduction to Concurrent Features</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Imperative Loading States</h3>
+<p class="mb-4 text-light-300">Traditional approach requires manually tracking loading state:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ OLD WAY: Manual loading state everywhere
+function UserProfile() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);  // Extra state
+  const [error, setError] = useState(null);      // More state
+  
+  useEffect(() => {
+    setLoading(true);               // Set loading
+    fetchUser()
+      .then(setUser)
+      .catch(setError)
+      .finally(() => setLoading(false));  // Clear loading
+  }, []);
+  
+  if (loading) return &lt;Spinner /&gt;;   // Handle loading
+  if (error) return &lt;Error /&gt;;        // Handle error
+  return &lt;Profile user={user} /&gt;;     // Finally render!
+}</pre>
+    <p class="text-red-300 text-sm mt-2">❌ Every component has the same boilerplate!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Suspense</h3>
+<p class="mb-4 text-light-300">Suspense lets you declaratively specify loading UI:</p>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ NEW WAY: Declarative with Suspense
+&lt;<span class="text-yellow-300">Suspense</span> fallback={&lt;Spinner /&gt;}&gt;
+  &lt;UserProfile /&gt;   {/* Just renders! No loading state needed */}
+&lt;/Suspense&gt;
+
+// The component "suspends" until data is ready
+// React automatically shows the fallback while waiting</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 How Suspense Works</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+1. Component "suspends" (throws a Promise)
+2. React catches the Promise
+3. React shows the fallback UI
+4. When Promise resolves, React retries render
+5. Component renders with data!
+
+Timeline:
+═════════════════════════════════════════════════════════
+
+[User clicks]
+     │
+     ▼
+┌─────────────────────┐
+│ Component suspends  │ ← Throws Promise
+│ (data not ready)    │
+└─────────────────────┘
+     │
+     ▼
+┌─────────────────────┐
+│ Suspense shows      │ ← &lt;Spinner /&gt;
+│ fallback            │
+└─────────────────────┘
+     │
+     ▼ (Promise resolves)
+┌─────────────────────┐
+│ Component renders   │ ← With data! 🎉
+│ with data           │
+└─────────────────────┘
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📦 Code Splitting with React.lazy()</h3>
+<p class="mb-4 text-light-300">Split your bundle and load components on demand:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// ❌ Regular import: Component in main bundle
+import HeavyComponent from './HeavyComponent';
+
+// ✅ Lazy import: Separate chunk, loaded on demand
+const HeavyComponent = <span class="text-yellow-300">React.lazy</span>(() => import('./HeavyComponent'));
+
+// Must wrap in Suspense!
+function App() {
+  return (
+    &lt;Suspense fallback={&lt;Loading /&gt;}&gt;
+      &lt;HeavyComponent /&gt;  {/* Loaded only when rendered */}
+    &lt;/Suspense&gt;
+  );
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Concurrent Features (React 18+)</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useTransition</p>
+        <p class="text-light-300 text-sm">Mark updates as non-urgent, keep UI responsive</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">useDeferredValue</p>
+        <p class="text-light-300 text-sm">Defer updating a value until urgent work is done</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Streaming SSR</p>
+        <p class="text-light-300 text-sm">Stream HTML as components become ready</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Selective Hydration</p>
+        <p class="text-light-300 text-sm">Hydrate important parts first</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Suspense Compatible Libraries</h3>
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <p class="text-blue-200 mb-2">⚠️ Suspense for data fetching requires special libraries:</p>
+    <ul class="text-blue-200 text-sm space-y-1">
+        <li>• <span class="font-bold">React Query / TanStack Query</span> - Suspense mode</li>
+        <li>• <span class="font-bold">SWR</span> - Vercel's data fetching library</li>
+        <li>• <span class="font-bold">Relay</span> - GraphQL client by Meta</li>
+        <li>• <span class="font-bold">Next.js</span> - Built-in Suspense support</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">React.lazy() only for default exports</span> - wrap named exports</li>
+    <li><span class="text-yellow-400 font-bold">Place Suspense boundaries strategically</span> - not too high, not too low</li>
+    <li><span class="text-yellow-400 font-bold">Multiple Suspense boundaries</span> - different sections load independently</li>
+    <li><span class="text-yellow-400 font-bold">Nested Suspense</span> - inner boundary catches first, outer is backup</li>
+</ul>
                 `,
-                code: `function SlowComponent() {
-  // Simulate slow render
-  const start = Date.now();
-  while (Date.now() - start < 100) {}
-  return <p>✓ Loaded!</p>;
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            🎯 SUSPENSE - Declarative Loading States          ║
+║       Tell React to "pause" rendering while data loads       ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   BEFORE SUSPENSE (Imperative):                              ║
+║   ═════════════════════════════                              ║
+║                                                              ║
+║   if (isLoading) return <Spinner />;                         ║
+║   if (error) return <Error />;                               ║
+║   return <Content data={data} />;                            ║
+║                                                              ║
+║   WITH SUSPENSE (Declarative):                               ║
+║   ════════════════════════════                               ║
+║                                                              ║
+║   <Suspense fallback={<Spinner />}>                          ║
+║     <Content />  ← Just renders! React handles the rest      ║
+║   </Suspense>                                                ║
+║                                                              ║
+║   HOW IT WORKS:                                              ║
+║   ══════════════                                             ║
+║                                                              ║
+║   1. Component "suspends" (throws a Promise)                 ║
+║   2. React catches it, shows fallback                        ║
+║   3. When Promise resolves, React retries render             ║
+║   4. Now data is ready, component renders!                   ║
+║                                                              ║
+║   USE CASES:                                                 ║
+║   ══════════                                                 ║
+║   • React.lazy() for code splitting                          ║
+║   • Data fetching with supporting libraries                  ║
+║   • Image loading                                            ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🎲 SIMULATED LAZY COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// In real apps, use: const LazyComp = React.lazy(() => import('./Comp'))
+// This demo simulates the loading behavior
+// ═══════════════════════════════════════════════════════════════
+function HeavyComponent() {
+  return (
+    <div style={{
+      padding: '20px',
+      background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      borderRadius: '12px',
+      border: '2px solid #22c55e'
+    }}>
+      <div style={{ fontSize: '48px', marginBottom: '10px' }}>✨</div>
+      <h3 style={{ color: '#166534', margin: 0 }}>Content Loaded!</h3>
+      <p style={{ color: '#15803d', margin: '10px 0 0' }}>
+        This component could be a heavy chart, large list, or fetched data.
+      </p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 LOADING FALLBACK COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// This is shown while the main content is loading
+// Make it visually appealing - users see this while waiting!
+// ═══════════════════════════════════════════════════════════════
+function LoadingFallback() {
+  return (
+    <div style={{
+      padding: '40px',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      borderRadius: '12px',
+      border: '2px dashed #94a3b8',
+      textAlign: 'center'
+    }}>
+      <div style={{ 
+        fontSize: '32px', 
+        animation: 'spin 1s linear infinite',
+        display: 'inline-block'
+      }}>
+        ⏳
+      </div>
+      <p style={{ color: '#64748b', margin: '10px 0 0' }}>
+        Loading content...
+      </p>
+    </div>
+  );
 }
 
 function App() {
-  const [show, setShow] = React.useState(false);
+  const [showContent, setShowContent] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  
+  // Simulate async loading
+  const loadContent = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setShowContent(true);
+      setIsLoading(false);
+    }, 1500); // Simulate 1.5s load time
+  };
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>Suspense Demo</h3>
-      <button onClick={() => setShow(true)}>Load Component</button>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⏳ Suspense Demo</h3>
       
-      {show && (
-        <React.Suspense fallback={<p style={{ color: '#666' }}>Loading...</p>}>
-          <SlowComponent />
-        </React.Suspense>
-      )}
+      {/* Content area with loading state */}
+      <div style={{ marginBottom: '15px' }}>
+        {isLoading ? (
+          <LoadingFallback />
+        ) : showContent ? (
+          <HeavyComponent />
+        ) : (
+          <div style={{
+            padding: '40px',
+            background: '#f8fafc',
+            borderRadius: '12px',
+            textAlign: 'center',
+            border: '2px solid #e2e8f0'
+          }}>
+            <p style={{ color: '#64748b', margin: 0 }}>
+              Click the button to load content
+            </p>
+          </div>
+        )}
+      </div>
       
-      <p style={{ color: '#666', marginTop: '10px', fontSize: '12px' }}>
-        Note: Real Suspense works with lazy() and data fetching libraries
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button 
+          onClick={loadContent}
+          disabled={isLoading || showContent}
+          style={{
+            padding: '12px 24px',
+            background: isLoading || showContent ? '#94a3b8' : '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isLoading || showContent ? 'not-allowed' : 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          {isLoading ? '⏳ Loading...' : '📦 Load Content'}
+        </button>
+        
+        {showContent && (
+          <button 
+            onClick={() => setShowContent(false)}
+            style={{
+              padding: '12px 24px',
+              background: '#ef4444',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Reset
+          </button>
+        )}
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 In real apps, use React.lazy() and Suspense for code splitting!
       </p>
     </div>
   );
@@ -2714,58 +4918,316 @@ return <Data />;`,
                 title: 'Compound Components',
                 intro: "Build flexible UI libraries. `Select.Option` instead of `options={[]}`.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Context for Communication</h3>
-<p>Parent communicates with children via hidden context.</p>
-                `,
-                code: `const TabsContext = React.createContext();
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is the Compound Component pattern</li>
+    <li>How parent and children share state implicitly</li>
+    <li>Building flexible, declarative APIs</li>
+    <li>Real-world examples (Tabs, Accordion, Select)</li>
+</ul>
 
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Inflexible Component APIs</h3>
+<p class="mb-4 text-light-300">Config-based components are hard to customize:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ Configuration Prop Approach
+&lt;Select 
+  options={[
+    { value: 'a', label: 'Option A', icon: '🍎', disabled: false },
+    { value: 'b', label: 'Option B', icon: '🍊', disabled: true },
+  ]}
+  renderOption={(opt) => ...}  // Need custom renderer
+  optionClassName="..."        // What if I need different styles per option?
+/&gt;
+
+// Problems:
+// • Hard to add custom behavior to individual items
+// • Complex prop types to maintain
+// • Every customization = another prop</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Compound Components</h3>
+<p class="mb-4 text-light-300">Let users compose UI naturally, like HTML's &lt;select&gt; and &lt;option&gt;:</p>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ Compound Component Approach (Like HTML!)
+&lt;Select&gt;
+  &lt;Select.Option value="a"&gt;🍎 Option A&lt;/Select.Option&gt;
+  &lt;Select.Option value="b" disabled&gt;🍊 Option B&lt;/Select.Option&gt;
+  &lt;Select.Divider /&gt;
+  &lt;Select.Option value="c" className="special"&gt;
+    &lt;CustomIcon /&gt; Option C with anything!
+  &lt;/Select.Option&gt;
+&lt;/Select&gt;
+
+// Benefits:
+// • Full control over each item
+// • Natural JSX composition
+// • Easy to add custom elements</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 How It Works: Implicit State Sharing</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+Parent Component (Tabs)              Child Components (Tab, Panel)
+════════════════════════             ════════════════════════════
+
+┌──────────────────────────┐         
+│  const TabsContext =     │         
+│    createContext();      │         
+│                          │         
+│  function Tabs() {       │         
+│    const [active, set]   │   ───────► Child reads from context:
+│      = useState(0);      │         │
+│                          │         │  function Tab({ id }) {
+│    return (              │         │    const { active, setActive }
+│      &lt;TabsContext.Provider│         │      = useContext(TabsContext);
+│        value={{          │         │    return (
+│          active,         │         │      &lt;button
+│          setActive       │         │        onClick={() => setActive(id)}
+│        }}                │         │        className={active === id ? ... }
+│      &gt;                   │         │      &gt;
+│        {children}        │         │    );
+│      &lt;/TabsContext.Provider&gt;│      │  }
+│    );                    │         │
+│  }                       │         │
+└──────────────────────────┘         
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Real-World Compound Components</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Tabs</p>
+        <p class="text-light-300 text-sm font-mono">&lt;Tabs&gt;&lt;Tabs.Tab&gt;&lt;Tabs.Panel&gt;</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Accordion</p>
+        <p class="text-light-300 text-sm font-mono">&lt;Accordion&gt;&lt;Accordion.Item&gt;</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Menu</p>
+        <p class="text-light-300 text-sm font-mono">&lt;Menu&gt;&lt;Menu.Item&gt;&lt;Menu.Divider&gt;</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">Form</p>
+        <p class="text-light-300 text-sm font-mono">&lt;Form&gt;&lt;Form.Field&gt;&lt;Form.Error&gt;</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Two Implementation Approaches</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Approach</th>
+                <th class="p-3">How</th>
+                <th class="p-3 rounded-tr-lg">Best For</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3 font-bold">Static Properties</td>
+                <td class="p-3 font-mono text-xs">Tabs.Tab = TabComponent</td>
+                <td class="p-3 text-sm">Simple grouping</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg font-bold">Context</td>
+                <td class="p-3 font-mono text-xs">useContext(TabsContext)</td>
+                <td class="p-3 rounded-br-lg text-sm">Shared state between children</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Common Pitfalls</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <ul class="text-yellow-200 text-sm space-y-1">
+        <li>• <span class="font-bold">Context value stability</span> - memoize to prevent re-renders</li>
+        <li>• <span class="font-bold">Missing Provider</span> - handle gracefully when used outside</li>
+        <li>• <span class="font-bold">Deeply nested children</span> - context only works for descendants</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Throw helpful errors</span> if child used outside parent</li>
+    <li><span class="text-yellow-400 font-bold">Export a custom hook</span> - useTabs() instead of useContext(TabsContext)</li>
+    <li><span class="text-yellow-400 font-bold">TypeScript</span> - children can be typed for better DX</li>
+    <li><span class="text-yellow-400 font-bold">Libraries like Radix UI</span> - use this pattern extensively</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║         🎯 COMPOUND COMPONENTS - Flexible UI Patterns        ║
+║      Components that work together to form a complete UI     ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   THE PROBLEM:                                               ║
+║   ════════════                                               ║
+║                                                              ║
+║   // Giant config object - hard to customize                 ║
+║   <Tabs tabs={[                                              ║
+║     { id: 'a', label: 'Tab A', content: '...' },             ║
+║     { id: 'b', label: 'Tab B', content: '...' }              ║
+║   ]} />                                                      ║
+║                                                              ║
+║   THE SOLUTION - Compound Components:                        ║
+║   ════════════════════════════════════                       ║
+║                                                              ║
+║   // Like HTML <select> + <option> - natural & flexible!     ║
+║   <Tabs>                                                     ║
+║     <Tabs.Tab>Tab A</Tabs.Tab>                               ║
+║     <Tabs.Tab>Tab B</Tabs.Tab>                               ║
+║     <Tabs.Panel>Content A</Tabs.Panel>                       ║
+║     <Tabs.Panel>Content B</Tabs.Panel>                       ║
+║   </Tabs>                                                    ║
+║                                                              ║
+║   HOW IT WORKS:                                              ║
+║   ══════════════                                             ║
+║                                                              ║
+║   1. Parent creates Context to share state                   ║
+║   2. Child components consume Context                        ║
+║   3. Children are attached as static properties (Tabs.Tab)   ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 📦 STEP 1: CREATE CONTEXT
+// ═══════════════════════════════════════════════════════════════
+// Context allows parent and children to communicate
+// without passing props through every level
+// ═══════════════════════════════════════════════════════════════
+const TabsContext = React.createContext();
+
+// ═══════════════════════════════════════════════════════════════
+// 🏠 PARENT COMPONENT: Tabs
+// ═══════════════════════════════════════════════════════════════
+// - Holds the shared state (activeTab)
+// - Provides context to all children
+// - Children can be placed anywhere inside!
+// ═══════════════════════════════════════════════════════════════
 function Tabs({ children, defaultTab }) {
   const [activeTab, setActiveTab] = React.useState(defaultTab);
+  
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-      <div>{children}</div>
+      <div style={{
+        background: '#f8fafc',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        border: '1px solid #e2e8f0'
+      }}>
+        {children}
+      </div>
     </TabsContext.Provider>
   );
 }
 
-Tabs.Tab = function Tab({ id, children }) {
+// ═══════════════════════════════════════════════════════════════
+// 🔘 CHILD COMPONENT: Tabs.Tab
+// ═══════════════════════════════════════════════════════════════
+// - Reads activeTab from context
+// - Calls setActiveTab when clicked
+// - Attached as static property: Tabs.Tab
+// ═══════════════════════════════════════════════════════════════
+Tabs.Tab = function Tab({ id, children, icon }) {
   const { activeTab, setActiveTab } = React.useContext(TabsContext);
+  const isActive = activeTab === id;
+  
   return (
     <button
       onClick={() => setActiveTab(id)}
       style={{
-        padding: '8px 16px',
-        background: activeTab === id ? '#3b82f6' : '#e5e7eb',
-        color: activeTab === id ? '#fff' : '#000',
+        padding: '12px 20px',
+        background: isActive ? '#3b82f6' : 'transparent',
+        color: isActive ? 'white' : '#64748b',
         border: 'none',
-        cursor: 'pointer'
+        borderBottom: isActive ? '3px solid #1d4ed8' : '3px solid transparent',
+        cursor: 'pointer',
+        fontWeight: isActive ? 'bold' : 'normal',
+        transition: 'all 0.2s ease',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }}
     >
+      {icon && <span>{icon}</span>}
       {children}
     </button>
   );
 };
 
+// ═══════════════════════════════════════════════════════════════
+// 📄 CHILD COMPONENT: Tabs.Panel
+// ═══════════════════════════════════════════════════════════════
+// - Only renders if its id matches activeTab
+// - Content is completely flexible!
+// ═══════════════════════════════════════════════════════════════
 Tabs.Panel = function Panel({ id, children }) {
   const { activeTab } = React.useContext(TabsContext);
+  
+  // Don't render if not active
   if (activeTab !== id) return null;
-  return <div style={{ padding: '16px', border: '1px solid #e5e7eb' }}>{children}</div>;
+  
+  return (
+    <div style={{ 
+      padding: '20px',
+      background: 'white',
+      animation: 'fadeIn 0.3s ease'
+    }}>
+      {children}
+    </div>
+  );
 };
 
+// ═══════════════════════════════════════════════════════════════
+// 🎯 USAGE EXAMPLE
+// ═══════════════════════════════════════════════════════════════
 function App() {
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>Compound Components Demo</h3>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🧩 Compound Components Demo</h3>
+      
       <Tabs defaultTab="home">
-        <div style={{ display: 'flex', gap: '4px', marginBottom: '-1px' }}>
-          <Tabs.Tab id="home">Home</Tabs.Tab>
-          <Tabs.Tab id="profile">Profile</Tabs.Tab>
-          <Tabs.Tab id="settings">Settings</Tabs.Tab>
+        {/* Tab List */}
+        <div style={{ 
+          display: 'flex', 
+          borderBottom: '1px solid #e2e8f0',
+          background: '#f1f5f9'
+        }}>
+          <Tabs.Tab id="home" icon="🏠">Home</Tabs.Tab>
+          <Tabs.Tab id="profile" icon="👤">Profile</Tabs.Tab>
+          <Tabs.Tab id="settings" icon="⚙️">Settings</Tabs.Tab>
         </div>
-        <Tabs.Panel id="home">Welcome Home!</Tabs.Panel>
-        <Tabs.Panel id="profile">Your Profile</Tabs.Panel>
-        <Tabs.Panel id="settings">Settings Page</Tabs.Panel>
+        
+        {/* Panels - can have ANY content! */}
+        <Tabs.Panel id="home">
+          <h4 style={{ margin: '0 0 10px', color: '#1e293b' }}>Welcome Home! 🎉</h4>
+          <p style={{ color: '#64748b', margin: 0 }}>
+            This is the home panel with custom content.
+          </p>
+        </Tabs.Panel>
+        
+        <Tabs.Panel id="profile">
+          <h4 style={{ margin: '0 0 10px', color: '#1e293b' }}>Your Profile 👤</h4>
+          <p style={{ color: '#64748b', margin: 0 }}>
+            Edit your profile settings here.
+          </p>
+        </Tabs.Panel>
+        
+        <Tabs.Panel id="settings">
+          <h4 style={{ margin: '0 0 10px', color: '#1e293b' }}>Settings ⚙️</h4>
+          <p style={{ color: '#64748b', margin: 0 }}>
+            Configure your preferences.
+          </p>
+        </Tabs.Panel>
       </Tabs>
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Click tabs - components communicate via Context!
+      </p>
     </div>
   );
 }`,
@@ -2796,57 +5258,326 @@ function App() {
                 title: 'Performance: Virtualization & Profiler',
                 intro: "Render 100,000 items at 60fps.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. Windowing</h3>
-<p>Only render what is visible on screen.</p>
-                `,
-                code: `function App() {
-  const [items] = React.useState(() => 
-    Array.from({ length: 10000 }, (_, i) => 'Item ' + (i + 1))
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Why large lists kill performance</li>
+    <li>What is virtualization (windowing)</li>
+    <li>How to use React DevTools Profiler</li>
+    <li>Common performance optimization strategies</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: Too Many DOM Nodes</h3>
+<p class="mb-4 text-light-300">Rendering thousands of elements destroys performance:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ Rendering 10,000 items directly
+function ProductList({ products }) {
+  return (
+    &lt;div&gt;
+      {products.map(product => (
+        &lt;ProductCard key={product.id} product={product} /&gt;
+      ))}
+    &lt;/div&gt;
   );
-  const [visibleRange, setVisibleRange] = React.useState({ start: 0, end: 10 });
+}
+
+// Problems:
+// • 10,000 DOM nodes created at once
+// • Browser freezes during initial render
+// • Scrolling is janky
+// • Memory usage skyrockets</pre>
+    <p class="text-red-300 text-sm mt-2">❌ Each DOM node costs memory and painting time!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Virtualization (Windowing)</h3>
+<p class="mb-4 text-light-300">Only render items that are visible in the viewport:</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+REGULAR LIST (10,000 items):        VIRTUALIZED LIST:
+════════════════════════════        ══════════════════════════
+
+&lt;ul&gt;                                &lt;ul style={{ height: '300px' }}&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;    ← In DOM          {/* Spacer for items above */}
+  &lt;li&gt;Item 2&lt;/li&gt;    ← In DOM          &lt;div style={{height: '1500px'}} /&gt;
+  &lt;li&gt;Item 3&lt;/li&gt;    ← In DOM          
+  ... 9,994 more ...  ← ALL IN DOM!     &lt;li&gt;Item 51&lt;/li&gt;   ← Only visible
+  &lt;li&gt;Item 9998&lt;/li&gt; ← In DOM          &lt;li&gt;Item 52&lt;/li&gt;   ← Only visible
+  &lt;li&gt;Item 9999&lt;/li&gt; ← In DOM          &lt;li&gt;Item 53&lt;/li&gt;   ← Only visible
+  &lt;li&gt;Item 10000&lt;/li&gt;← In DOM          ... 7 more ...
+&lt;/ul&gt;                                   
+                                        {/* Spacer for items below */}
+Total DOM nodes: 10,000 🐌             &lt;div style={{height: '9700px'}} /&gt;
+                                      &lt;/ul&gt;
+                                      
+                                      Total DOM nodes: ~15 🚀
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔧 Virtualization Libraries</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">react-window</p>
+        <p class="text-light-300 text-sm">Lightweight, most popular choice</p>
+        <p class="text-light-400 text-xs mt-1">~6KB gzipped</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">react-virtualized</p>
+        <p class="text-light-300 text-sm">Feature-rich, more complex</p>
+        <p class="text-light-400 text-xs mt-1">~35KB gzipped</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">@tanstack/react-virtual</p>
+        <p class="text-light-300 text-sm">Headless, framework agnostic</p>
+        <p class="text-light-400 text-xs mt-1">~3KB gzipped</p>
+    </div>
+    <div class="bg-dark-800 p-4 rounded-xl">
+        <p class="text-brand-primary font-bold mb-2">react-virtuoso</p>
+        <p class="text-light-300 text-sm">Auto height, grouped items</p>
+        <p class="text-light-400 text-xs mt-1">~15KB gzipped</p>
+    </div>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔍 React DevTools Profiler</h3>
+<p class="mb-4 text-light-300">Find performance bottlenecks without guessing:</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">How to use:
+1. Open React DevTools → "Profiler" tab
+2. Click "Record" 🔴
+3. Interact with your app
+4. Click "Stop" ⬛
+5. Analyze the flamegraph!
+
+What to look for:
+───────────────────────────────
+<span class="text-yellow-300">• Long bars</span> = slow components (optimize these!)
+<span class="text-yellow-300">• Many re-renders</span> = missing memoization
+<span class="text-yellow-300">• "Why did this render?"</span> = enable in settings
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Performance Optimization Checklist</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Issue</th>
+                <th class="p-3">Solution</th>
+                <th class="p-3 rounded-tr-lg">Hook/Tool</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Too many items</td>
+                <td class="p-3">Virtualization</td>
+                <td class="p-3 font-mono text-xs">react-window</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Expensive calculation</td>
+                <td class="p-3">Memoize result</td>
+                <td class="p-3 font-mono text-xs">useMemo</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Child re-renders</td>
+                <td class="p-3">Stable references</td>
+                <td class="p-3 font-mono text-xs">useCallback, React.memo</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Large bundle</td>
+                <td class="p-3">Code splitting</td>
+                <td class="p-3 font-mono text-xs">React.lazy, dynamic import</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Slow images</td>
+                <td class="p-3">Lazy loading</td>
+                <td class="p-3 rounded-br-lg font-mono text-xs">loading="lazy"</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Don't Optimize Prematurely!</h3>
+<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <p class="text-yellow-300 font-bold mb-2">🎯 Optimization workflow:</p>
+    <ol class="text-yellow-200 text-sm space-y-1 list-decimal list-inside">
+        <li>Notice a performance problem (sluggish UI)</li>
+        <li>Profile to find the actual bottleneck</li>
+        <li>Apply targeted optimization</li>
+        <li>Measure improvement</li>
+    </ol>
+    <p class="text-yellow-300 mt-2 text-sm">Never add useMemo/useCallback "just in case"!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Virtualize lists over ~100 items</span></li>
+    <li><span class="text-yellow-400 font-bold">Use Profiler in production mode</span> - dev mode is slower</li>
+    <li><span class="text-yellow-400 font-bold">Check "Highlight updates"</span> in DevTools to see re-renders</li>
+    <li><span class="text-yellow-400 font-bold">Consider pagination</span> as an alternative to virtualization</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║         🎯 VIRTUALIZATION - Render 100,000 items at 60fps    ║
+║            Only render what's visible on screen!             ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   THE PROBLEM:                                               ║
+║   ════════════                                               ║
+║                                                              ║
+║   10,000 items = 10,000 DOM nodes = 🐌 SLOW                  ║
+║                                                              ║
+║   THE SOLUTION - WINDOWING:                                  ║
+║   ══════════════════════════                                 ║
+║                                                              ║
+║   ┌─────────────────────────────────┐                        ║
+║   │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │ ← Items above viewport ║
+║   │ ░░░░░ (not rendered) ░░░░░░░░░░ │   (just empty space)   ║
+║   ├─────────────────────────────────┤                        ║
+║   │ Item 50                         │ ← VISIBLE WINDOW       ║
+║   │ Item 51                         │   (only these render!) ║
+║   │ Item 52                         │                        ║
+║   │ Item 53                         │   ~15 DOM nodes        ║
+║   │ Item 54                         │   instead of 10,000!   ║
+║   ├─────────────────────────────────┤                        ║
+║   │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │ ← Items below viewport ║
+║   │ ░░░░░ (not rendered) ░░░░░░░░░░ │   (just empty space)   ║
+║   └─────────────────────────────────┘                        ║
+║                                                              ║
+║   POPULAR LIBRARIES:                                         ║
+║   ══════════════════                                         ║
+║   • react-window (lightweight)                               ║
+║   • react-virtualized (feature-rich)                         ║
+║   • @tanstack/react-virtual                                  ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 📦 GENERATE 10,000 ITEMS
+  // ═══════════════════════════════════════════════════════════
+  // Using lazy initialization to avoid creating array on every render
+  // ═══════════════════════════════════════════════════════════
+  const [items] = React.useState(() => 
+    Array.from({ length: 10000 }, (_, i) => ({
+      id: i + 1,
+      name: 'User ' + (i + 1),
+      email: 'user' + (i + 1) + '@example.com'
+    }))
+  );
   
+  // Track which items are visible based on scroll position
+  const [visibleRange, setVisibleRange] = React.useState({ start: 0, end: 12 });
+  const [renderCount, setRenderCount] = React.useState(0);
+  
+  const ITEM_HEIGHT = 50; // Fixed height per item
+  const CONTAINER_HEIGHT = 300;
+  
+  // ═══════════════════════════════════════════════════════════
+  // 🎯 CALCULATE VISIBLE RANGE ON SCROLL
+  // ═══════════════════════════════════════════════════════════
+  // Only update state when we need to show different items
+  // ═══════════════════════════════════════════════════════════
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
-    const start = Math.floor(scrollTop / 30);
-    setVisibleRange({ start, end: start + 10 });
+    const start = Math.floor(scrollTop / ITEM_HEIGHT);
+    const end = start + Math.ceil(CONTAINER_HEIGHT / ITEM_HEIGHT) + 2; // +2 for buffer
+    
+    setVisibleRange(prev => {
+      if (prev.start !== start || prev.end !== end) {
+        setRenderCount(c => c + 1);
+        return { start, end };
+      }
+      return prev;
+    });
   };
   
-  const visibleItems = items.slice(visibleRange.start, visibleRange.end + 5);
+  // Only slice the visible items
+  const visibleItems = items.slice(visibleRange.start, visibleRange.end);
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>Virtualization Demo</h3>
-      <p style={{ color: '#666' }}>10,000 items, only ~15 rendered:</p>
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🚀 Virtualization Demo</h3>
+      
+      {/* Stats panel */}
+      <div style={{
+        display: 'flex',
+        gap: '20px',
+        marginBottom: '15px',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ background: '#f0fdf4', padding: '10px 15px', borderRadius: '8px', border: '1px solid #22c55e' }}>
+          <span style={{ color: '#166534', fontWeight: 'bold' }}>Total Items: </span>
+          <span style={{ color: '#15803d' }}>{items.length.toLocaleString()}</span>
+        </div>
+        <div style={{ background: '#eff6ff', padding: '10px 15px', borderRadius: '8px', border: '1px solid #3b82f6' }}>
+          <span style={{ color: '#1e40af', fontWeight: 'bold' }}>DOM Nodes: </span>
+          <span style={{ color: '#2563eb' }}>~{visibleItems.length}</span>
+        </div>
+        <div style={{ background: '#fef3c7', padding: '10px 15px', borderRadius: '8px', border: '1px solid #f59e0b' }}>
+          <span style={{ color: '#92400e', fontWeight: 'bold' }}>Scroll Events: </span>
+          <span style={{ color: '#d97706' }}>{renderCount}</span>
+        </div>
+      </div>
+      
+      {/* Virtualized list */}
       <div 
         onScroll={handleScroll}
         style={{ 
-          height: '200px', 
+          height: CONTAINER_HEIGHT, 
           overflow: 'auto', 
-          border: '1px solid #ccc',
-          position: 'relative'
+          border: '2px solid #e2e8f0',
+          borderRadius: '12px',
+          position: 'relative',
+          background: '#f8fafc'
         }}
       >
-        <div style={{ height: items.length * 30 }}>
+        {/* Spacer div to maintain scroll height */}
+        <div style={{ height: items.length * ITEM_HEIGHT, position: 'relative' }}>
           {visibleItems.map((item, i) => (
             <div 
-              key={visibleRange.start + i}
+              key={item.id}
               style={{
                 position: 'absolute',
-                top: (visibleRange.start + i) * 30,
-                height: 30,
-                padding: '5px',
-                borderBottom: '1px solid #eee',
+                top: (visibleRange.start + i) * ITEM_HEIGHT,
+                height: ITEM_HEIGHT,
                 width: '100%',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                padding: '10px 15px',
+                borderBottom: '1px solid #e2e8f0',
+                background: (visibleRange.start + i) % 2 === 0 ? 'white' : '#f8fafc',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '15px'
               }}
             >
-              {item}
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                fontSize: '12px'
+              }}>
+                {item.id}
+              </div>
+              <div>
+                <div style={{ fontWeight: '500', color: '#1e293b' }}>{item.name}</div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>{item.email}</div>
+              </div>
             </div>
           ))}
         </div>
       </div>
-      <p style={{ color: '#22c55e', marginTop: '8px' }}>
-        DOM Nodes: ~{visibleItems.length} (not 10,000!)
+      
+      <p style={{ color: '#64748b', marginTop: '15px', fontSize: '13px' }}>
+        💡 Scroll through 10,000 items smoothly - only ~{visibleItems.length} are actually rendered!
       </p>
     </div>
   );
@@ -2878,54 +5609,356 @@ function App() {
                 title: 'React Server Components (RSC)',
                 intro: "The future. Server Components run on the server, send zero JS to the client, and can access DB directly.",
                 content: `
-<h3 class="text-xl font-bold text-white mb-4">1. The Waterline</h3>
-<p>Server components can import Client components. Client components CANNOT import Server components.</p>
-                `,
-                code: `function App() {
-  // This demonstrates the CONCEPT of Server vs Client Components
-  // Real RSCs run in Next.js App Router
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What are React Server Components (RSC)</li>
+    <li>The difference between Server and Client Components</li>
+    <li>The "use client" directive</li>
+    <li>When to use each type of component</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📚 The Problem: JavaScript Bloat</h3>
+<p class="mb-4 text-light-300">Traditional React apps send ALL component JS to the browser:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ TRADITIONAL CLIENT COMPONENTS
+// Every component = More JS to download
+
+function BlogPost({ id }) {
+  const [post, setPost] = useState(null);
   
-  const serverData = ['Post 1', 'Post 2', 'Post 3']; // Simulated DB data
+  useEffect(() => {
+    fetch('/api/posts/' + id)    // 1. Browser loads page
+      .then(r => r.json())       // 2. JS downloads
+      .then(setPost);            // 3. JS fetches data
+  }, [id]);                      // 4. Finally renders!
+  
+  return &lt;article&gt;{post?.content}&lt;/article&gt;;
+}
+
+// Problems:
+// • User waits for JS to download
+// • Then waits for API request
+// • Component code shipped even if it never changes
+// • Large bundle sizes</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">✅ The Solution: Server Components</h3>
+<p class="mb-4 text-light-300">Components that run on the server and send ONLY HTML to the client:</p>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ SERVER COMPONENT (Default in Next.js App Router)
+// Zero JavaScript sent to client!
+
+async function BlogPost({ id }) {
+  // Direct database access - no API needed!
+  const post = await db.post.findUnique({ where: { id } });
+  
+  return &lt;article&gt;{post.content}&lt;/article&gt;;
+}
+
+// Benefits:
+// • No JS bundle for this component
+// • Data fetched on server (fast!)
+// • SEO friendly (HTML sent immediately)
+// • Can access backend resources directly</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🌊 The Waterline: Server vs Client</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+┌─────────────────────────────────────────────────────────┐
+│                    🖥️ SERVER                           │
+│  ───────────────────────────────────────────────────   │
+│                                                         │
+│   // Server Components (Default)                        │
+│   • Run on server only                                 │
+│   • Can be async                                       │
+│   • Can access DB, file system, env secrets            │
+│   • Send 0 KB JavaScript                               │
+│   • ❌ No useState, useEffect, onClick                  │
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│            ↑ "use client" ↑  (The Waterline)           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│                    💻 CLIENT                           │
+│  ───────────────────────────────────────────────────   │
+│                                                         │
+│   // Client Components ("use client")                   │
+│   • Run on both server (SSR) and client                │
+│   • JavaScript sent to browser                         │
+│   • Can use hooks: useState, useEffect                 │
+│   • Can have onClick, onChange, etc.                   │
+│   • ❌ Cannot be async, no direct DB access             │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📜 The "use client" Directive</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300"><span class="text-yellow-300">"use client"</span>  // This MUST be the first line!
+
+import { useState } from 'react';
+
+export function LikeButton() {
+  const [liked, setLiked] = useState(false);
   
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
-      <h3>RSC Concept Demo</h3>
+    &lt;button onClick={() => setLiked(!liked)}&gt;
+      {liked ? '❤️' : '🤍'}
+    &lt;/button&gt;
+  );
+}
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 When to Use Server vs Client</h3>
+<div class="overflow-x-auto mb-6">
+    <table class="w-full text-sm text-left">
+        <thead class="bg-dark-700 text-light-200">
+            <tr>
+                <th class="p-3 rounded-tl-lg">Feature</th>
+                <th class="p-3">Server Component</th>
+                <th class="p-3 rounded-tr-lg">Client Component</th>
+            </tr>
+        </thead>
+        <tbody class="text-light-300">
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Fetch data</td>
+                <td class="p-3 text-green-400">✅ Direct DB/API</td>
+                <td class="p-3 text-yellow-400">useEffect + fetch</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">useState/useEffect</td>
+                <td class="p-3 text-red-400">❌ Not allowed</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">onClick/onChange</td>
+                <td class="p-3 text-red-400">❌ Not allowed</td>
+                <td class="p-3 text-green-400">✅ Yes</td>
+            </tr>
+            <tr class="border-b border-dark-600">
+                <td class="p-3">Access secrets</td>
+                <td class="p-3 text-green-400">✅ Safe</td>
+                <td class="p-3 text-red-400">❌ Never expose!</td>
+            </tr>
+            <tr>
+                <td class="p-3 rounded-bl-lg">Bundle size impact</td>
+                <td class="p-3 text-green-400">0 KB</td>
+                <td class="p-3 rounded-br-lg text-yellow-400">Adds to bundle</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 The Import Rules</h3>
+<div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <ul class="text-blue-200 space-y-2">
+        <li>✅ <span class="font-bold">Server → Client:</span> Server Components CAN import Client Components</li>
+        <li>❌ <span class="font-bold">Client → Server:</span> Client Components CANNOT import Server Components</li>
+        <li>✅ <span class="font-bold">Workaround:</span> Pass Server Component as children prop to Client Component</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚠️ Common Mistakes</h3>
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <ul class="text-red-200 text-sm space-y-1">
+        <li>• <span class="font-bold">Adding "use client" everywhere</span> - defeats the purpose!</li>
+        <li>• <span class="font-bold">Using hooks in Server Components</span> - will error</li>
+        <li>• <span class="font-bold">Passing functions as props</span> from Server to Client - not serializable</li>
+    </ul>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">💡 Pro Tips</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">Start with Server Components</span> - only add "use client" when needed</li>
+    <li><span class="text-yellow-400 font-bold">Keep Client Components small</span> - extract interactive parts only</li>
+    <li><span class="text-yellow-400 font-bold">Use composition</span> - pass Server Components as children to Client</li>
+    <li><span class="text-yellow-400 font-bold">Next.js App Router</span> - built for Server Components from the ground up</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║       🎯 REACT SERVER COMPONENTS (RSC) - The Future          ║
+║   Components that run on the server, send ZERO JS to client! ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   THE REVOLUTION:                                            ║
+║   ═══════════════                                            ║
+║                                                              ║
+║   BEFORE RSC:                                                ║
+║   ───────────                                                ║
+║   Browser downloads JS → JS fetches data → Renders UI        ║
+║   (Slow! Multiple round trips)                               ║
+║                                                              ║
+║   WITH RSC:                                                  ║
+║   ─────────                                                  ║
+║   Server renders HTML → Sends to browser → Done!             ║
+║   (Fast! Data fetched on server)                             ║
+║                                                              ║
+║   THE WATERLINE:                                             ║
+║   ══════════════                                             ║
+║                                                              ║
+║   ┌────────────────────────────────────┐                     ║
+║   │         🖥️ SERVER                  │                     ║
+║   │  ┌─────────────────────────────┐   │                     ║
+║   │  │ Server Component            │   │  • Direct DB access ║
+║   │  │ async function Posts() {    │   │  • No JS to client  ║
+║   │  │   const data = await db()   │   │  • No hooks         ║
+║   │  │   return <List data={data}> │   │                     ║
+║   │  └─────────────────────────────┘   │                     ║
+║   ├────────────────────────────────────┤ ← "use client"      ║
+║   │         💻 CLIENT                  │                     ║
+║   │  ┌─────────────────────────────┐   │                     ║
+║   │  │ "use client"                │   │  • useState/Effect  ║
+║   │  │ function Like() {           │   │  • onClick handlers ║
+║   │  │   const [liked, setLiked]   │   │  • JS sent to       ║
+║   │  │   return <button>Like       │   │    browser          ║
+║   │  └─────────────────────────────┘   │                     ║
+║   └────────────────────────────────────┘                     ║
+║                                                              ║
+║   RULES:                                                     ║
+║   ══════                                                     ║
+║   • Server can import Client ✅                              ║
+║   • Client CANNOT import Server ❌                           ║
+║   • "use client" at top marks boundary                       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🖥️ SIMULATED SERVER COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// In Next.js App Router, this would be a real async server component
+// that fetches data directly from the database - NO API needed!
+// ═══════════════════════════════════════════════════════════════
+function ServerPostList() {
+  // Simulated server-side data (in real RSC: const posts = await db.post.findMany())
+  const posts = [
+    { id: 1, title: 'Understanding RSC', author: 'React Team' },
+    { id: 2, title: 'Zero JavaScript', author: 'Dan Abramov' },
+    { id: 3, title: 'The Future of React', author: 'Vercel' }
+  ];
+  
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      borderRadius: '12px',
+      padding: '20px',
+      border: '2px solid #22c55e'
+    }}>
+      <h4 style={{ color: '#166534', margin: '0 0 15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        🖥️ Server Component
+        <span style={{ fontSize: '12px', background: '#22c55e', color: 'white', padding: '2px 8px', borderRadius: '12px' }}>
+          0 KB JS
+        </span>
+      </h4>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-        {/* Server Component Simulation */}
-        <div style={{ padding: '12px', background: '#f0fdf4', borderRadius: '8px' }}>
-          <h4 style={{ color: '#16a34a' }}>🖥️ Server Component</h4>
-          <ul>
-            {serverData.map((post, i) => <li key={i}>{post}</li>)}
-          </ul>
-          <p style={{ fontSize: '11px', color: '#666' }}>
-            ✓ No JS sent to client<br/>
-            ✓ Direct DB access<br/>
-            ✓ No useState/useEffect
-          </p>
+      {posts.map(post => (
+        <div key={post.id} style={{
+          background: 'white',
+          padding: '12px',
+          borderRadius: '8px',
+          marginBottom: '8px',
+          borderLeft: '3px solid #22c55e'
+        }}>
+          <div style={{ fontWeight: 'bold', color: '#1e293b' }}>{post.title}</div>
+          <div style={{ fontSize: '12px', color: '#64748b' }}>by {post.author}</div>
         </div>
-        
-        {/* Client Component Simulation */}
-        <div style={{ padding: '12px', background: '#fef3c7', borderRadius: '8px' }}>
-          <h4 style={{ color: '#d97706' }}>💻 Client Component</h4>
-          <ClientCounter />
-        </div>
+      ))}
+      
+      <div style={{ fontSize: '11px', color: '#166534', marginTop: '10px' }}>
+        ✅ Direct DB access • ✅ No JS bundle • ✅ SEO friendly
       </div>
     </div>
   );
 }
 
-function ClientCounter() {
-  const [count, setCount] = React.useState(0);
+// ═══════════════════════════════════════════════════════════════
+// 💻 CLIENT COMPONENT (needs "use client" in Next.js)
+// ═══════════════════════════════════════════════════════════════
+// This component has interactivity (useState, onClick)
+// It MUST be marked with "use client" in Next.js
+// Its JS code is sent to the browser
+// ═══════════════════════════════════════════════════════════════
+function ClientLikeButton() {
+  const [liked, setLiked] = React.useState(false);
+  const [count, setCount] = React.useState(42);
+  
+  const handleLike = () => {
+    setLiked(!liked);
+    setCount(c => liked ? c - 1 : c + 1);
+  };
+  
   return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(c => c + 1)}>+1</button>
-      <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
-        ✓ Needs "use client"<br/>
-        ✓ Has interactivity<br/>
-        ✓ JS sent to browser
-      </p>
+    <div style={{
+      background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+      borderRadius: '12px',
+      padding: '20px',
+      border: '2px solid #f59e0b'
+    }}>
+      <h4 style={{ color: '#92400e', margin: '0 0 15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        💻 Client Component
+        <span style={{ fontSize: '12px', background: '#f59e0b', color: 'white', padding: '2px 8px', borderRadius: '12px' }}>
+          ~2 KB JS
+        </span>
+      </h4>
+      
+      <button 
+        onClick={handleLike}
+        style={{
+          padding: '12px 24px',
+          background: liked ? '#ef4444' : '#3b82f6',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontWeight: 'bold',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          transition: 'all 0.2s'
+        }}
+      >
+        {liked ? '❤️' : '🤍'} {liked ? 'Liked' : 'Like'} ({count})
+      </button>
+      
+      <div style={{ fontSize: '11px', color: '#92400e', marginTop: '10px' }}>
+        ✅ useState • ✅ onClick • ✅ Interactive
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⚛️ React Server Components Demo</h3>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+        {/* Server Component - No JS sent */}
+        <ServerPostList />
+        
+        {/* Client Component - JS required for interactivity */}
+        <ClientLikeButton />
+      </div>
+      
+      <div style={{
+        marginTop: '15px',
+        padding: '15px',
+        background: '#f8fafc',
+        borderRadius: '12px',
+        border: '1px solid #e2e8f0'
+      }}>
+        <p style={{ color: '#64748b', margin: 0, fontSize: '13px' }}>
+          💡 <strong>In Next.js App Router:</strong> Components are Server by default. 
+          Add <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>"use client"</code> only 
+          when you need hooks or event handlers!
+        </p>
+      </div>
     </div>
   );
 }`,
