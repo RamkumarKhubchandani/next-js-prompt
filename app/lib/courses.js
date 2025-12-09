@@ -1438,8 +1438,43 @@ module.exports = {
     </code></pre>
 </div>
                     `,
-                code: `// No interactive code for setup, focus on terminal commands.
-// You can try running 'npm run dev' in your terminal!`,
+                code: `function App() {
+  const tools = [
+    { name: 'Vite', desc: 'Lightning fast bundler', status: '✅' },
+    { name: 'ESLint', desc: 'Code quality checker', status: '✅' },
+    { name: 'Prettier', desc: 'Code formatter', status: '✅' },
+    { name: 'TypeScript', desc: 'Type safety', status: '✅' },
+  ];
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>🛠️ Professional React Setup</h3>
+      <p style={{ color: '#666', marginBottom: '15px' }}>
+        Modern tools for modern development
+      </p>
+      <div style={{ display: 'grid', gap: '8px' }}>
+        {tools.map(tool => (
+          <div key={tool.name} style={{ 
+            padding: '12px', 
+            background: '#f0fdf4', 
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <div>
+              <strong>{tool.name}</strong>
+              <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>{tool.desc}</p>
+            </div>
+            <span style={{ fontSize: '20px' }}>{tool.status}</span>
+          </div>
+        ))}
+      </div>
+      <p style={{ marginTop: '15px', fontSize: '12px', color: '#666' }}>
+        Run: npm create vite@latest my-app -- --template react-ts
+      </p>
+    </div>
+  );
+}`,
                 video: 'SqcY0GlETPk', 
                 comparison: {
                     junior: `// ❌ Manual Setup (CRA)
@@ -1482,10 +1517,22 @@ module.exports = {
 </pre>
 </div>
                 `,
-                code: `// Example: How JSX becomes JS
-const element = <h1>Hello</h1>;
-// Becomes:
-// React.createElement('h1', null, 'Hello')`,
+                code: `function App() {
+  const [count, setCount] = React.useState(0);
+  
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h2>Virtual DOM Demo</h2>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+      <p style={{ color: '#666', marginTop: '10px' }}>
+        React only updates what changed!
+      </p>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Direct DOM Manipulation
 function updateCount(n) {
@@ -1520,11 +1567,23 @@ return (
 <h3 class="text-xl font-bold text-white mb-4">1. Babel's Job</h3>
 <p>Babel transpiles JSX into <code>React.createElement()</code>.</p>
                 `,
-                code: `// JSX
-const el = <div className="box">Hi</div>;
-
-// Compiled
-const el2 = React.createElement('div', { className: 'box' }, 'Hi');`,
+                code: `function App() {
+  const name = "React Developer";
+  const styles = { color: 'blue', padding: '10px' };
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif' }}>
+      <h2 style={styles}>Hello, {name}!</h2>
+      <p>JSX allows JavaScript expressions in curly braces</p>
+      <p>2 + 2 = {2 + 2}</p>
+      <ul>
+        {['React', 'Vue', 'Angular'].map(fw => (
+          <li key={fw}>{fw}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Confusing Logic in JSX
 return (
@@ -1554,8 +1613,28 @@ return <User />;`
 <h3 class="text-xl font-bold text-white mb-4">1. One-Way Data Flow</h3>
 <p>Data flows DOWN. Actions flow UP.</p>
                 `,
-                code: `const Child = ({ name }) => <div>{name}</div>;
-const Parent = () => <Child name="Alice" />;`,
+                code: `function Child({ name, onUpdate }) {
+  return (
+    <div style={{ padding: '10px', background: '#f0f0f0', margin: '5px' }}>
+      <p>Child received: <strong>{name}</strong></p>
+      <button onClick={() => onUpdate('Updated from Child!')}>
+        Update Parent
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [message, setMessage] = React.useState('Hello from Parent');
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Props vs State Demo</h3>
+      <p>Parent state: {message}</p>
+      <Child name={message} onUpdate={setMessage} />
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Mutating Props
 const Child = (props) => {
@@ -1582,11 +1661,33 @@ const Child = ({ name }) => {
 <h3 class="text-xl font-bold text-white mb-4">1. Automatic Batching</h3>
 <p>Multiple <code>setState</code> calls are grouped into one render.</p>
                 `,
-                code: `const handleClick = () => {
-  setCount(c => c + 1);
-  setFlag(f => !f);
-  // Re-renders ONCE, not twice.
-};`,
+                code: `function App() {
+  const [count, setCount] = React.useState(0);
+  const [flag, setFlag] = React.useState(false);
+  const [renders, setRenders] = React.useState(0);
+  
+  React.useEffect(() => {
+    setRenders(r => r + 1);
+  });
+  
+  const handleClick = () => {
+    // React 18 batches these into ONE render!
+    setCount(c => c + 1);
+    setFlag(f => !f);
+  };
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>State Batching Demo</h3>
+      <p>Count: {count}</p>
+      <p>Flag: {flag ? 'ON' : 'OFF'}</p>
+      <p style={{ color: '#666' }}>Render count: {renders}</p>
+      <button onClick={handleClick}>
+        Update Both (Batched!)
+      </button>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Stale State
 const inc = () => {
@@ -1617,13 +1718,39 @@ const inc = () => {
 <h3 class="text-xl font-bold text-white mb-4">1. The Dependency Array</h3>
 <p>Controls when the effect runs.</p>
                 `,
-                code: `useEffect(() => {
-  console.log("Runs on Mount + Update");
-}); // No array
-
-useEffect(() => {
-  console.log("Runs on Mount Only");
-}, []); // Empty array`,
+                code: `function App() {
+  const [count, setCount] = React.useState(0);
+  const [logs, setLogs] = React.useState([]);
+  
+  const log = (msg) => setLogs(prev => [...prev, msg]);
+  
+  // Runs on EVERY render
+  React.useEffect(() => {
+    log('Effect: Runs on every render');
+  });
+  
+  // Runs ONLY on mount
+  React.useEffect(() => {
+    log('Effect: Mounted!');
+    return () => log('Cleanup: Unmounting...');
+  }, []);
+  
+  // Runs when count changes
+  React.useEffect(() => {
+    log('Effect: Count changed to ' + count);
+  }, [count]);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>useEffect Demo</h3>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(c => c + 1)}>Increment</button>
+      <div style={{ marginTop: '10px', padding: '10px', background: '#1a1a2e', color: '#22c55e', fontFamily: 'monospace', fontSize: '12px', maxHeight: '150px', overflow: 'auto' }}>
+        {logs.map((log, i) => <div key={i}>→ {log}</div>)}
+      </div>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Missing Dependency
 useEffect(() => {
@@ -1648,8 +1775,32 @@ useEffect(() => {
 <h3 class="text-xl font-bold text-white mb-4">1. Persistent Storage</h3>
 <p>Like a class instance variable.</p>
                 `,
-                code: `const inputRef = useRef(null);
-const focus = () => inputRef.current.focus();`,
+                code: `function App() {
+  const inputRef = React.useRef(null);
+  const renderCount = React.useRef(0);
+  const [value, setValue] = React.useState('');
+  
+  renderCount.current++;
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>useRef Demo</h3>
+      <input 
+        ref={inputRef}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder="Type something..."
+        style={{ padding: '8px', marginRight: '10px' }}
+      />
+      <button onClick={() => inputRef.current.focus()}>
+        Focus Input
+      </button>
+      <p style={{ color: '#666', marginTop: '10px' }}>
+        Render count (ref doesn't cause re-render): {renderCount.current}
+      </p>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ DOM Query
 function focus() {
@@ -1674,8 +1825,38 @@ const ref = useRef();
 <h3 class="text-xl font-bold text-white mb-4">1. Referential Equality</h3>
 <p><code>{'{} === {}'}</code> is false. Objects are compared by reference.</p>
                 `,
-                code: `const memoizedValue = useMemo(() => compute(a, b), [a, b]);
-const memoizedFn = useCallback(() => doSomething(a), [a]);`,
+                code: `function App() {
+  const [count, setCount] = React.useState(0);
+  const [text, setText] = React.useState('');
+  
+  // Expensive calculation - only recalculates when count changes
+  const expensiveValue = React.useMemo(() => {
+    console.log('Computing...');
+    return count * 100;
+  }, [count]);
+  
+  // Stable callback reference
+  const handleClick = React.useCallback(() => {
+    setCount(c => c + 1);
+  }, []);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>useMemo & useCallback Demo</h3>
+      <p>Count: {count} | Computed: {expensiveValue}</p>
+      <button onClick={handleClick}>Increment</button>
+      <div style={{ marginTop: '10px' }}>
+        <input 
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder="Type here (won't recompute)"
+          style={{ padding: '8px' }}
+        />
+        <p style={{ color: '#666' }}>Typing doesn't trigger useMemo!</p>
+      </div>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Breaking Memoization
 const Child = React.memo(C);
@@ -1710,13 +1891,39 @@ function Parent() {
 <h3 class="text-xl font-bold text-white mb-4">1. The Provider Pattern</h3>
 <p>Wrap your app in a Provider.</p>
                 `,
-                code: `const ThemeCtx = createContext('light');
-const App = () => (
-  <ThemeCtx.Provider value="dark">
-    <Child />
-  </ThemeCtx.Provider>
-);
-const Child = () => useContext(ThemeCtx);`,
+                code: `const ThemeContext = React.createContext('light');
+
+function ThemeButton() {
+  const theme = React.useContext(ThemeContext);
+  return (
+    <button style={{
+      background: theme === 'dark' ? '#333' : '#fff',
+      color: theme === 'dark' ? '#fff' : '#333',
+      padding: '10px 20px',
+      border: '1px solid #ccc'
+    }}>
+      Current Theme: {theme}
+    </button>
+  );
+}
+
+function App() {
+  const [theme, setTheme] = React.useState('light');
+  
+  return (
+    <ThemeContext.Provider value={theme}>
+      <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+        <h3>Context API Demo</h3>
+        <ThemeButton />
+        <div style={{ marginTop: '10px' }}>
+          <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
+            Toggle Theme
+          </button>
+        </div>
+      </div>
+    </ThemeContext.Provider>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Prop Drilling
 <GrandParent theme={theme} />
@@ -1743,12 +1950,32 @@ const theme = useContext(ThemeContext);
 <h3 class="text-xl font-bold text-white mb-4">1. Rules of Hooks</h3>
 <p>Must start with <code>use</code>. Must call at top level.</p>
                 `,
-                code: `function useWindowSize() {
-  const [size, setSize] = useState(window.innerWidth);
-  useEffect(() => {
-     window.onresize = () => setSize(window.innerWidth);
-  }, []);
-  return size;
+                code: `// Custom Hook
+function useCounter(initial = 0) {
+  const [count, setCount] = React.useState(initial);
+  const increment = () => setCount(c => c + 1);
+  const decrement = () => setCount(c => c - 1);
+  const reset = () => setCount(initial);
+  return { count, increment, decrement, reset };
+}
+
+function App() {
+  const { count, increment, decrement, reset } = useCounter(10);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Custom Hook Demo</h3>
+      <p style={{ fontSize: '24px' }}>Count: {count}</p>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button onClick={decrement}>-</button>
+        <button onClick={increment}>+</button>
+        <button onClick={reset}>Reset</button>
+      </div>
+      <p style={{ color: '#666', marginTop: '10px' }}>
+        useCounter is a reusable custom hook!
+      </p>
+    </div>
+  );
 }`,
                 comparison: {
                     junior: `// ❌ Duplicate Logic
@@ -1780,9 +2007,40 @@ const data = useFetch('/a');`
 <h3 class="text-xl font-bold text-white mb-4">1. HOC (Higher Order Component)</h3>
 <p>A function that takes a component and returns a new component.</p>
                 `,
-                code: `const withAuth = (Component) => (props) => {
-  return isAuth ? <Component {...props} /> : <Login />;
-};`,
+                code: `// Higher Order Component Pattern
+function withLogger(WrappedComponent) {
+  return function LoggedComponent(props) {
+    React.useEffect(() => {
+      console.log('Component mounted:', WrappedComponent.name);
+    }, []);
+    return <WrappedComponent {...props} />;
+  };
+}
+
+function Greeting({ name }) {
+  return <h2>Hello, {name}!</h2>;
+}
+
+const LoggedGreeting = withLogger(Greeting);
+
+function App() {
+  const [name, setName] = React.useState('React Developer');
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>HOC Pattern Demo</h3>
+      <LoggedGreeting name={name} />
+      <input 
+        value={name}
+        onChange={e => setName(e.target.value)}
+        style={{ padding: '8px', marginTop: '10px' }}
+      />
+      <p style={{ color: '#666', marginTop: '10px' }}>
+        withLogger HOC logs when component mounts
+      </p>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Wrapper Hell
 <WithAuth>
@@ -1816,7 +2074,50 @@ const MyComponent = () => {
 <h3 class="text-xl font-bold text-white mb-4">1. Portals</h3>
 <p>Teleport a child into <code>document.body</code>.</p>
                 `,
-                code: `createPortal(<div>Modal</div>, document.body);`,
+                code: `// Error Boundary Demo (Class Component)
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+  
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', background: '#fee', border: '1px solid #f00', borderRadius: '8px' }}>
+          <h3 style={{ color: '#c00' }}>Something went wrong!</h3>
+          <p>{this.state.error?.message}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function BuggyComponent({ shouldCrash }) {
+  if (shouldCrash) throw new Error('Oops! Component crashed.');
+  return <p style={{ color: 'green' }}>✓ Component is working fine!</p>;
+}
+
+function App() {
+  const [crash, setCrash] = React.useState(false);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Error Boundary Demo</h3>
+      <ErrorBoundary>
+        <BuggyComponent shouldCrash={crash} />
+      </ErrorBoundary>
+      <button 
+        onClick={() => setCrash(true)} 
+        style={{ marginTop: '10px', padding: '8px 16px' }}
+      >
+        Trigger Error
+      </button>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Z-Index Wars
 <div style={{ zIndex: 9999, position: 'fixed' }}>
@@ -1842,9 +2143,33 @@ createPortal(
 <h3 class="text-xl font-bold text-white mb-4">1. Suspense</h3>
 <p>Declarative loading states.</p>
                 `,
-                code: `<Suspense fallback={<Spinner />}>
-  <AsyncComponent />
-</Suspense>`,
+                code: `function SlowComponent() {
+  // Simulate slow render
+  const start = Date.now();
+  while (Date.now() - start < 100) {}
+  return <p>✓ Loaded!</p>;
+}
+
+function App() {
+  const [show, setShow] = React.useState(false);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Suspense Demo</h3>
+      <button onClick={() => setShow(true)}>Load Component</button>
+      
+      {show && (
+        <React.Suspense fallback={<p style={{ color: '#666' }}>Loading...</p>}>
+          <SlowComponent />
+        </React.Suspense>
+      )}
+      
+      <p style={{ color: '#666', marginTop: '10px', fontSize: '12px' }}>
+        Note: Real Suspense works with lazy() and data fetching libraries
+      </p>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Imperative Loading
 if (loading) return <Spinner />;
@@ -1873,10 +2198,58 @@ return <Data />;`,
 <h3 class="text-xl font-bold text-white mb-4">1. Context for Communication</h3>
 <p>Parent communicates with children via hidden context.</p>
                 `,
-                code: `<Menu>
-  <Menu.Item>Home</Menu.Item>
-  <Menu.Item>Settings</Menu.Item>
-</Menu>`,
+                code: `const TabsContext = React.createContext();
+
+function Tabs({ children, defaultTab }) {
+  const [activeTab, setActiveTab] = React.useState(defaultTab);
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div>{children}</div>
+    </TabsContext.Provider>
+  );
+}
+
+Tabs.Tab = function Tab({ id, children }) {
+  const { activeTab, setActiveTab } = React.useContext(TabsContext);
+  return (
+    <button
+      onClick={() => setActiveTab(id)}
+      style={{
+        padding: '8px 16px',
+        background: activeTab === id ? '#3b82f6' : '#e5e7eb',
+        color: activeTab === id ? '#fff' : '#000',
+        border: 'none',
+        cursor: 'pointer'
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
+Tabs.Panel = function Panel({ id, children }) {
+  const { activeTab } = React.useContext(TabsContext);
+  if (activeTab !== id) return null;
+  return <div style={{ padding: '16px', border: '1px solid #e5e7eb' }}>{children}</div>;
+};
+
+function App() {
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Compound Components Demo</h3>
+      <Tabs defaultTab="home">
+        <div style={{ display: 'flex', gap: '4px', marginBottom: '-1px' }}>
+          <Tabs.Tab id="home">Home</Tabs.Tab>
+          <Tabs.Tab id="profile">Profile</Tabs.Tab>
+          <Tabs.Tab id="settings">Settings</Tabs.Tab>
+        </div>
+        <Tabs.Panel id="home">Welcome Home!</Tabs.Panel>
+        <Tabs.Panel id="profile">Your Profile</Tabs.Panel>
+        <Tabs.Panel id="settings">Settings Page</Tabs.Panel>
+      </Tabs>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Giant Configuration Prop
 <Menu items={[
@@ -1907,15 +2280,58 @@ return <Data />;`,
 <h3 class="text-xl font-bold text-white mb-4">1. Windowing</h3>
 <p>Only render what is visible on screen.</p>
                 `,
-                code: `// react-window example
-<List
-  height={150}
-  itemCount={1000}
-  itemSize={35}
-  width={300}
->
-  {Row}
-</List>`,
+                code: `function App() {
+  const [items] = React.useState(() => 
+    Array.from({ length: 10000 }, (_, i) => 'Item ' + (i + 1))
+  );
+  const [visibleRange, setVisibleRange] = React.useState({ start: 0, end: 10 });
+  
+  const handleScroll = (e) => {
+    const scrollTop = e.target.scrollTop;
+    const start = Math.floor(scrollTop / 30);
+    setVisibleRange({ start, end: start + 10 });
+  };
+  
+  const visibleItems = items.slice(visibleRange.start, visibleRange.end + 5);
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>Virtualization Demo</h3>
+      <p style={{ color: '#666' }}>10,000 items, only ~15 rendered:</p>
+      <div 
+        onScroll={handleScroll}
+        style={{ 
+          height: '200px', 
+          overflow: 'auto', 
+          border: '1px solid #ccc',
+          position: 'relative'
+        }}
+      >
+        <div style={{ height: items.length * 30 }}>
+          {visibleItems.map((item, i) => (
+            <div 
+              key={visibleRange.start + i}
+              style={{
+                position: 'absolute',
+                top: (visibleRange.start + i) * 30,
+                height: 30,
+                padding: '5px',
+                borderBottom: '1px solid #eee',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p style={{ color: '#22c55e', marginTop: '8px' }}>
+        DOM Nodes: ~{visibleItems.length} (not 10,000!)
+      </p>
+    </div>
+  );
+}`,
                 comparison: {
                     junior: `// ❌ Render All
 <ul>
@@ -1946,12 +2362,53 @@ return <Data />;`,
 <h3 class="text-xl font-bold text-white mb-4">1. The Waterline</h3>
 <p>Server components can import Client components. Client components CANNOT import Server components.</p>
                 `,
-                code: `// app/page.tsx (Server Component)
-import db from 'db';
+                code: `function App() {
+  // This demonstrates the CONCEPT of Server vs Client Components
+  // Real RSCs run in Next.js App Router
+  
+  const serverData = ['Post 1', 'Post 2', 'Post 3']; // Simulated DB data
+  
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+      <h3>RSC Concept Demo</h3>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        {/* Server Component Simulation */}
+        <div style={{ padding: '12px', background: '#f0fdf4', borderRadius: '8px' }}>
+          <h4 style={{ color: '#16a34a' }}>🖥️ Server Component</h4>
+          <ul>
+            {serverData.map((post, i) => <li key={i}>{post}</li>)}
+          </ul>
+          <p style={{ fontSize: '11px', color: '#666' }}>
+            ✓ No JS sent to client<br/>
+            ✓ Direct DB access<br/>
+            ✓ No useState/useEffect
+          </p>
+        </div>
+        
+        {/* Client Component Simulation */}
+        <div style={{ padding: '12px', background: '#fef3c7', borderRadius: '8px' }}>
+          <h4 style={{ color: '#d97706' }}>💻 Client Component</h4>
+          <ClientCounter />
+        </div>
+      </div>
+    </div>
+  );
+}
 
-export default async function Page() {
-  const data = await db.query();
-  return <div>{data}</div>;
+function ClientCounter() {
+  const [count, setCount] = React.useState(0);
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(c => c + 1)}>+1</button>
+      <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
+        ✓ Needs "use client"<br/>
+        ✓ Has interactivity<br/>
+        ✓ JS sent to browser
+      </p>
+    </div>
+  );
 }`,
                 comparison: {
                     junior: `// ❌ Client Fetch (Waterfall)

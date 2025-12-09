@@ -1,14 +1,267 @@
 "use client";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { COURSES } from '../../lib/courses';
-import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview } from "@codesandbox/sandpack-react";
-import { atomDark } from "@codesandbox/sandpack-themes";
-import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale } from 'lucide-react';
+import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale, Copy, Check, Play, RotateCcw } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import CompleteButton from '../../components/public/CompleteButton';
 import CodeComparison from '../../components/public/CodeComparison';
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+
+// React Live Editor Component - Simple version
+function ReactLiveEditor({ initialCode }) {
+    const [copied, setCopied] = useState(false);
+    
+    const handleCopy = () => {
+        navigator.clipboard.writeText(initialCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+    
+    // Clean up any existing render calls
+    let cleanCode = initialCode
+        .replace(/ReactDOM\.createRoot.*render\(.*\);?/gs, '')
+        .replace(/ReactDOM\.render\(.*\);?/gs, '')
+        .replace(/render\s*\(\s*<App\s*\/>\s*\)\s*;?/g, '')
+        .trim();
+    
+    // Check if code has multiple top-level declarations (needs noInline)
+    // Count function/const declarations at start of lines
+    const hasMultipleDeclarations = (cleanCode.match(/^(const |function |class )/gm) || []).length > 1;
+    
+    // If multiple declarations, add render() call for noInline mode
+    if (hasMultipleDeclarations && !cleanCode.includes('render(')) {
+        cleanCode = cleanCode + '\n\nrender(<App />);';
+    }
+    
+    return (
+        <div className="mb-12">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Code className="text-blue-400" /> 
+                Live Lab: Try It Yourself
+                <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/30">
+                    React
+                </span>
+            </h3>
+            <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
+                <LiveProvider 
+                    code={cleanCode} 
+                    noInline={hasMultipleDeclarations}
+                    scope={{ React }}
+                >
+                    {/* Toolbar */}
+                    <div className="flex items-center justify-between px-4 py-2 bg-dark-800 border-b border-dark-700">
+                        <span className="text-xs font-mono text-light-400">App.jsx</span>
+                        <button
+                            onClick={handleCopy}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                        >
+                            {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                            {copied ? 'Copied!' : 'Copy'}
+                        </button>
+                    </div>
+                    
+                    {/* Code Editor */}
+                    <div className="bg-[#1a1a2e] text-sm font-mono">
+                        <LiveEditor 
+                            style={{
+                                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                                fontSize: '14px',
+                                padding: '16px',
+                                minHeight: '200px',
+                                backgroundColor: '#1a1a2e',
+                            }}
+                        />
+                    </div>
+                    
+                    {/* Error Display */}
+                    <LiveError 
+                        style={{
+                            padding: '12px 16px',
+                            backgroundColor: '#2d1f1f',
+                            color: '#ff6b6b',
+                            fontFamily: 'monospace',
+                            fontSize: '13px',
+                            borderTop: '1px solid #4a3333',
+                        }}
+                    />
+                    
+                    {/* Live Preview */}
+                    <div className="bg-dark-900 border-t border-dark-600">
+                        <div className="px-4 py-2 text-xs font-mono text-light-300 border-b border-dark-700 flex items-center gap-2 bg-dark-800">
+                            <span className="text-blue-400">●</span> Live Preview
+                        </div>
+                        <div className="p-4 min-h-[120px] bg-white text-gray-900">
+                            <LivePreview />
+                        </div>
+                    </div>
+                </LiveProvider>
+            </div>
+            <p className="mt-3 text-sm text-light-400 flex items-center gap-2">
+                <span className="text-blue-400">⚡</span>
+                Edit the code above - changes appear instantly!
+            </p>
+        </div>
+    );
+}
+
+// JavaScript Live Code Editor with iframe execution
+function LiveCodeEditor({ initialCode }) {
+    const [code, setCode] = useState(initialCode);
+    const [output, setOutput] = useState([]);
+    const [copied, setCopied] = useState(false);
+    const iframeRef = useRef(null);
+    
+    const handleCopy = () => {
+        navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+    
+    const handleReset = () => {
+        setCode(initialCode);
+        setOutput([]);
+    };
+    
+    const handleRun = () => {
+        setOutput([]);
+        
+        const html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <script>
+                    ['log', 'error', 'warn', 'info'].forEach(method => {
+                        console[method] = (...args) => {
+                            const formatted = args.map(arg => {
+                                if (typeof arg === 'object') {
+                                    try { return JSON.stringify(arg, null, 2); }
+                                    catch { return String(arg); }
+                                }
+                                return String(arg);
+                            }).join(' ');
+                            window.parent.postMessage({ type: 'console', method, content: formatted }, '*');
+                        };
+                    });
+                    window.onerror = (msg, url, line) => {
+                        window.parent.postMessage({ type: 'console', method: 'error', content: msg + ' (line ' + line + ')' }, '*');
+                        return true;
+                    };
+                </script>
+            </head>
+            <body>
+                <script>
+                    try {
+                        ${code}
+                    } catch(e) {
+                        console.error(e.message);
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+        
+        if (iframeRef.current) {
+            iframeRef.current.srcdoc = html;
+        }
+    };
+    
+    // Listen for console messages from iframe
+    useEffect(() => {
+        const handleMessage = (event) => {
+            if (event.data?.type === 'console') {
+                setOutput(prev => [...prev, {
+                    method: event.data.method,
+                    content: event.data.content
+                }]);
+            }
+        };
+        
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+    
+    return (
+        <div className="mb-12">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Code className="text-blue-400" /> 
+                Live Lab: Try It Yourself
+            </h3>
+            <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
+                {/* Toolbar */}
+                <div className="flex items-center justify-between px-4 py-2 bg-dark-800 border-b border-dark-700">
+                    <span className="text-xs font-mono text-light-400">index.js</span>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleCopy}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                        >
+                            {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                            {copied ? 'Copied!' : 'Copy'}
+                        </button>
+                        <button
+                            onClick={handleReset}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                        >
+                            <RotateCcw size={14} />
+                            Reset
+                        </button>
+                        <button
+                            onClick={handleRun}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-dark-900 bg-green-500 hover:bg-green-400 rounded-lg transition-colors"
+                        >
+                            <Play size={14} fill="currentColor" />
+                            Run
+                        </button>
+                    </div>
+                </div>
+                
+                {/* Code Editor (textarea) */}
+                <textarea
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    spellCheck={false}
+                    className="w-full h-64 p-4 bg-[#1a1a2e] text-light-100 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
+                    style={{ tabSize: 2 }}
+                />
+                
+                {/* Console Output */}
+                <div className="bg-dark-900 border-t border-dark-600">
+                    <div className="px-4 py-2 text-xs font-mono text-light-300 border-b border-dark-700 flex items-center gap-2 bg-dark-800">
+                        <span className="text-green-400">●</span> Console Output
+                    </div>
+                    <div className="h-40 overflow-y-auto p-4 font-mono text-sm space-y-1">
+                        {output.length === 0 ? (
+                            <span className="text-light-500 italic">Click "Run" to see output...</span>
+                        ) : (
+                            output.map((item, i) => (
+                                <div 
+                                    key={i} 
+                                    className={`${
+                                        item.method === 'error' ? 'text-red-400' :
+                                        item.method === 'warn' ? 'text-yellow-400' :
+                                        'text-green-300'
+                                    }`}
+                                >
+                                    {item.content}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+                
+                {/* Hidden iframe for JS execution */}
+                <iframe 
+                    ref={iframeRef}
+                    sandbox="allow-scripts"
+                    style={{ display: 'none' }}
+                    title="Code Execution"
+                />
+            </div>
+        </div>
+    );
+}
 
 export default function LearningPathPage() {
     const params = useParams();
@@ -159,34 +412,11 @@ export default function LearningPathPage() {
                                 </div>
                             )}
 
-                            {/* Interactive Code */}
+                            {/* Live Code Lab */}
                             {activeContent.code && (
-                                <div className="mb-12">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                        <Code className="text-blue-400" /> 
-                                        Live Lab: Verify The Theory
-                                    </h3>
-                                    <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
-                                        <SandpackProvider
-                                            template="vanilla"
-                                            theme={atomDark}
-                                            files={{
-                                                "index.js": activeContent.code,
-                                                "index.html": '<div style="font-family: sans-serif; color: #fff;">Check the console below 👇</div>'
-                                            }}
-                                            options={{
-                                                showConsole: true,
-                                                showConsoleButton: true,
-                                                editorHeight: 400
-                                            }}
-                                        >
-                                            <SandpackLayout>
-                                                <SandpackCodeEditor showLineNumbers showInlineErrors style={{ height: 400 }} />
-                                                <SandpackPreview showOpenInCodeSandbox={false} style={{ height: 400 }} />
-                                            </SandpackLayout>
-                                        </SandpackProvider>
-                                    </div>
-                                </div>
+                                courseId === 'react' 
+                                    ? <ReactLiveEditor initialCode={activeContent.code} />
+                                    : <LiveCodeEditor initialCode={activeContent.code} />
                             )}
 
                             {/* Interview Prep */}

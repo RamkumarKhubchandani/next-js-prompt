@@ -1,10 +1,23 @@
 "use client";
+import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { motion } from 'framer-motion';
-import { User, Bot, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { User, Bot, AlertCircle, CheckCircle2, Copy, Check } from 'lucide-react';
 
 export default function CodeComparison({ juniorCode, seniorCode, language = "javascript" }) {
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(seniorCode);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
             {/* Junior Side */}
@@ -57,18 +70,28 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="rounded-xl border border-green-900/30 bg-dark-800/50 overflow-hidden"
+                className="rounded-xl border border-green-900/30 bg-dark-800/50 overflow-hidden flex flex-col"
             >
                 <div className="bg-green-900/20 border-b border-green-900/30 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-green-200 font-bold">
                         <Bot size={18} />
                         <span>AI Architect</span>
                     </div>
-                    <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded border border-green-500/30">
-                        Optimized
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleCopy}
+                            className="flex items-center gap-1.5 text-xs bg-green-600 hover:bg-green-500 text-white px-3 py-1.5 rounded-lg font-medium transition-all shadow-sm"
+                            title="Copy Code"
+                        >
+                            {isCopied ? <Check size={14} /> : <Copy size={14} />}
+                            {isCopied ? 'Copied!' : 'Copy Code'}
+                        </button>
+                        <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded border border-green-500/30">
+                            Optimized
+                        </span>
+                    </div>
                 </div>
-                <div className="relative">
+                <div className="relative flex-grow">
                     <SyntaxHighlighter 
                         language={language} 
                         style={atomDark}
@@ -77,13 +100,14 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
                             padding: '1.5rem',
                             background: 'transparent',
                             fontSize: '0.85rem',
-                            lineHeight: '1.5'
+                            lineHeight: '1.5',
+                            height: '100%'
                         }}
                     >
                         {seniorCode}
                     </SyntaxHighlighter>
-                    <div className="absolute bottom-4 right-4">
-                        <CheckCircle2 className="text-green-500 w-6 h-6" />
+                    <div className="absolute bottom-4 right-4 pointer-events-none">
+                        <CheckCircle2 className="text-green-500 w-6 h-6 opacity-50" />
                     </div>
                 </div>
             </motion.div>
