@@ -1349,7 +1349,7 @@ div.textContent = userComment;
         id: 'react',
         title: 'React: The Professional Guide',
         description: 'Master the internals of React 19. Fiber, Concurrent Mode, Suspense, and Server Components.',
-        totalDays: 15,
+        totalDays: 32,
         days: [
             {
                 day: 0,
@@ -5984,6 +5984,4624 @@ async function Page() {
                 interview: {
                     questions: [
                          { q: "Can you use hooks in Server Components?", a: "No. `useState` and `useEffect` are client-only concepts. RSCs run once on the server." }
+                    ]
+                }
+            },
+            {
+                day: 16,
+                title: 'React 19: Actions & Optimistic UI',
+                intro: "React 19 brings the biggest changes in years. Built-in Actions, useOptimistic, and useActionState simplify forms and mutations.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>How React 19 simplifies data mutations with "Actions"</li>
+    <li>Using <code>useActionState</code> for form handling</li>
+    <li>Optimistic updates with <code>useOptimistic</code></li>
+    <li>The new <code>use</code> API for promises and context</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ 1. Actions: Forms without the Hassle</h3>
+<p class="mb-4 text-light-300">Forget <code>onSubmit</code>, <code>e.preventDefault()</code>, and manual loading states.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// ❌ React 18: Manual Everything
+function Form() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await updateName(e.target.name.value);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return &lt;form onSubmit={handleSubmit}&gt;...&lt;/form&gt;;
+}
+
+// ✅ React 19: Actions
+function Form() {
+  // "action" automatically handles pending states!
+  const [state, action, isPending] = useActionState(updateName, null);
+  
+  return (
+    &lt;form action={action}&gt;
+      &lt;input name="name" /&gt;
+      &lt;button disabled={isPending}&gt;Update&lt;/button&gt;
+      {state?.error && &lt;p&gt;{state.error}&lt;/p&gt;}
+    &lt;/form&gt;
+  );
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🚀 2. Optimistic UI Updates</h3>
+<p class="mb-4 text-light-300">Show the new value <i>instantly</i>, before the server responds.</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+const [optimisticName, setOptimisticName] = useOptimistic(currentName);
+
+function action(formData) {
+  const newName = formData.get("name");
+  
+  // 1. Update UI immediately!
+  setOptimisticName(newName);
+  
+  // 2. Send to server (background)
+  await updateNameOnServer(newName);
+}
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔮 3. The "use" API</h3>
+<p class="mb-4 text-light-300">Read Promises and Context directly in render.</p>
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+    <pre class="text-green-200 text-sm">// Read a Promise (suspends automatically!)
+const comments = use(commentsPromise);
+
+// Read Context (conditional!)
+if (showTheme) {
+  const theme = use(ThemeContext);
+}</pre>
+</div>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ REACT 19 ACTIONS DEMO                          ║
+║      Built-in mutation handling with automatic pending states║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   NEW HOOKS:                                                 ║
+║   ══════════                                                 ║
+║   1. useActionState(fn, initial)                             ║
+║      → Manages form state (data, errors, pending)            ║
+║                                                              ║
+║   2. useOptimistic(state, reducer)                           ║
+║      → Show updates INSTANTLY while server processes         ║
+║                                                              ║
+║   3. useFormStatus()                                         ║
+║      → Read pending state in child components                ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🛠️ SIMULATED SERVER ACTION
+// ═══════════════════════════════════════════════════════════════
+async function updateProfile(prevState, formData) {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  const name = formData.get("name");
+  
+  if (name.toLowerCase() === "error") {
+    return { error: "Invalid name! Try something else." };
+  }
+  
+  return { message: "Updated to " + name + "!" };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🧩 CHILD COMPONENT (Accessing Status)
+// ═══════════════════════════════════════════════════════════════
+// useFormStatus lets us read the parent form's pending state
+// without passing props!
+function SubmitButton() {
+  const { pending } = React.useFormStatus ? React.useFormStatus() : { pending: false };
+  // Fallback for demo environment if React 19 not fully active
+  
+  return (
+    <button 
+      type="submit" 
+      disabled={pending}
+      style={{
+        padding: '10px 20px',
+        background: pending ? '#94a3b8' : '#3b82f6',
+        color: 'white',
+        border: 'none',
+        borderRadius: '8px',
+        fontWeight: 'bold',
+        cursor: pending ? 'not-allowed' : 'pointer'
+      }}
+    >
+      {pending ? '⏳ Saving...' : '💾 Save Profile'}
+    </button>
+  );
+}
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 🎣 useActionState (New in React 19)
+  // ═══════════════════════════════════════════════════════════
+  // Automatically handles:
+  // 1. Pending state (isPending)
+  // 2. Return value from action (state)
+  // 3. Form resetting
+  // ═══════════════════════════════════════════════════════════
+  
+  // NOTE: In this live demo, we might be on React 18.
+  // We'll simulate React 19 behavior if hooks aren't available.
+  const [state, formAction] = React.useActionState 
+    ? React.useActionState(updateProfile, null)
+    : [null, (formData) => alert("React 19 Action would run here!")];
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⚛️ React 19 Actions Demo</h3>
+      
+      <div style={{ 
+        padding: '20px', 
+        background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
+        borderRadius: '16px',
+        border: '1px solid #818cf8'
+      }}>
+        <form action={formAction}>
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: '#3730a3', fontWeight: 'bold' }}>
+              Update Username
+            </label>
+            <input 
+              name="name" 
+              placeholder="Enter new name..." 
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '8px',
+                border: '1px solid #a5b4fc',
+                fontSize: '16px'
+              }}
+            />
+          </div>
+          
+          <SubmitButton />
+          
+          {/* Success/Error Message */}
+          {state?.error && (
+            <p style={{ marginTop: '15px', color: '#ef4444', fontWeight: 'bold' }}>
+              ❌ {state.error}
+            </p>
+          )}
+          {state?.message && (
+            <p style={{ marginTop: '15px', color: '#16a34a', fontWeight: 'bold' }}>
+              ✅ {state.message}
+            </p>
+          )}
+        </form>
+      </div>
+      
+      <p style={{ color: '#64748b', marginTop: '20px', fontSize: '13px' }}>
+        💡 Try typing "error" to see error handling!
+      </p>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ React 18 Boilerplate
+const [loading, setLoading] = useState(false);
+const onSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  await saveData();
+  setLoading(false);
+};`,
+                    senior: `// ✅ React 19 Action
+const [state, action, isPending] = useActionState(saveData, null);
+
+return <form action={action}>
+  <button disabled={isPending}>Save</button>
+</form>;`
+                },
+                interview: {
+                    questions: [
+                        { q: "What is the difference between useActionState and useFormStatus?", a: "useActionState is used at the top level to manage the form's state and action. useFormStatus is used in child components (like buttons) to read the pending state without passing props." }
+                    ]
+                }
+            },
+            {
+                day: 17,
+                title: 'React 19: Ref Improvements & Cleanup',
+                intro: "The end of `forwardRef`. React 19 simplifies refs significantly and adds cleanup functions to ref callbacks.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Why <code>forwardRef</code> is deprecated</li>
+    <li>Passing <code>ref</code> as a standard prop</li>
+    <li>Returning cleanup functions from ref callbacks</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🗑️ 1. The Death of forwardRef</h3>
+<p class="mb-4 text-light-300">In React 18, if you wanted to pass a ref to a child component, you had to wrap it in <code>forwardRef</code>. It was boilerplate-heavy and messed up type inference.</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ React 18: The Old Way
+const MyInput = forwardRef((props, ref) => {
+  return &lt;input ref={ref} {...props} /&gt;;
+});</pre>
+</div>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ React 19: Just use props!
+function MyInput({ ref, ...props }) {
+  return &lt;input ref={ref} {...props} /&gt;;
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🧹 2. Ref Callback Cleanup</h3>
+<p class="mb-4 text-light-300">Ref callbacks can now return a cleanup function, just like <code>useEffect</code>. This is huge for managing DOM listeners or third-party libraries attached to nodes.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">&lt;div ref={(node) => {
+  // Mount logic
+  const observer = new ResizeObserver(...);
+  observer.observe(node);
+
+  // Unmount logic (Cleanup)
+  return () => {
+    observer.disconnect();
+  };
+}} /&gt;</pre>
+</div>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ REACT 19 REF DEMO                              ║
+║      No more forwardRef! Cleanup in callbacks!               ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   NEW FEATURES:                                              ║
+║   ═════════════                                              ║
+║   1. ref as a prop: <Child ref={myRef} /> works natively     ║
+║                                                              ║
+║   2. Callback Cleanup:                                       ║
+║      ref={node => {                                          ║
+║         // init                                              ║
+║         return () => { // cleanup }                          ║
+║      }}                                                      ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 👶 CHILD COMPONENT (No forwardRef!)
+// ═══════════════════════════════════════════════════════════════
+function CustomInput({ ref, placeholder }) {
+  return (
+    <input 
+      ref={ref}
+      placeholder={placeholder}
+      style={{
+        padding: '10px',
+        borderRadius: '8px',
+        border: '2px solid #6366f1',
+        width: '100%',
+        marginBottom: '15px'
+      }}
+    />
+  );
+}
+
+function App() {
+  const inputRef = React.useRef(null);
+  const [width, setWidth] = React.useState(0);
+
+  // ═══════════════════════════════════════════════════════════
+  // 🧹 REF CALLBACK WITH CLEANUP
+  // ═══════════════════════════════════════════════════════════
+  // Instead of useEffect, we can manage the ResizeObserver
+  // directly on the element's ref callback!
+  const measureRef = (node) => {
+    if (!node) return;
+    
+    const observer = new ResizeObserver((entries) => {
+      setWidth(entries[0].contentRect.width);
+    });
+    
+    observer.observe(node);
+    
+    // Cleanup function (New in React 19)
+    return () => observer.disconnect();
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⚛️ React 19 Ref Demo</h3>
+      
+      <div 
+        ref={measureRef} 
+        style={{ 
+          background: '#e0e7ff', 
+          padding: '20px', 
+          borderRadius: '12px',
+          resize: 'horizontal', 
+          overflow: 'auto',
+          border: '1px dashed #4338ca'
+        }}
+      >
+        <p style={{ margin: '0 0 10px', color: '#3730a3' }}>
+          <strong>Resize me!</strong> Width: {Math.round(width)}px
+        </p>
+        
+        {/* Passing ref as a regular prop! */}
+        <CustomInput ref={inputRef} placeholder="I accept refs natively..." />
+        
+        <button 
+          onClick={() => inputRef.current.focus()}
+          style={{
+            background: '#4f46e5',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '6px',
+            cursor: 'pointer'
+          }}
+        >
+          Focus Input
+        </button>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ React 18: Boilerplate
+const Input = forwardRef((props, ref) => (
+  <input ref={ref} {...props} />
+));`,
+                    senior: `// ✅ React 19: Clean
+function Input({ ref, ...props }) {
+  return <input ref={ref} {...props} />;
+}`
+                },
+                interview: {
+                    questions: [
+                        { q: "Why is returning a cleanup function from a ref callback useful?", a: "It ensures that side effects attached to DOM nodes (like Event Listeners or Observers) are properly cleaned up when the element is removed from the DOM, preventing memory leaks without needing a separate `useEffect`." }
+                    ]
+                }
+            },
+            {
+                day: 18,
+                title: 'React 19: Metadata & Asset Loading',
+                intro: "No more `react-helmet`. React 19 handles `<title>`, `<meta>`, and asset preloading natively.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Hoisting metadata with native tags</li>
+    <li>Preloading styles and scripts</li>
+    <li>Resource loading priorities</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🏷️ 1. Native Metadata Support</h3>
+<p class="mb-4 text-light-300">You can now render <code>&lt;title&gt;</code> and <code>&lt;meta&gt;</code> tags <i>anywhere</i> in your component tree. React will automatically hoist them to the <code>&lt;head&gt;</code>.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">function BlogPost({ title }) {
+  return (
+    &lt;article&gt;
+      {/* Automatically moved to &lt;head&gt;! */}
+      &lt;title&gt;{title} | My Blog&lt;/title&gt;
+      &lt;meta name="description" content="Great post" /&gt;
+      
+      &lt;h1&gt;{title}&lt;/h1&gt;
+    &lt;/article&gt;
+  );
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ 2. Asset Preloading</h3>
+<p class="mb-4 text-light-300">React 19 introduces new APIs to hint the browser about resources.</p>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><code>preload('url', { as: 'style' })</code></li>
+    <li><code>preinit('url', { as: 'script' })</code></li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ REACT 19 METADATA DEMO                         ║
+║      Native <title> and <meta> support + Preloading          ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   NEW CAPABILITIES:                                          ║
+║   ═════════════════                                          ║
+║   1. Hoisting: <title> inside a component <div> works!       ║
+║      React moves it to <head>.                               ║
+║                                                              ║
+║   2. Deduplication: React avoids duplicate tags.             ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function PageSEO({ title, description }) {
+  return (
+    // These tags effectively render in the <head>
+    <>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={title} />
+    </>
+  );
+}
+
+function App() {
+  const [page, setPage] = React.useState('home');
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>⚛️ Metadata Hoisting</h3>
+      
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <button onClick={() => setPage('home')}>Home</button>
+        <button onClick={() => setPage('about')}>About</button>
+      </div>
+
+      <div style={{ 
+        padding: '20px', 
+        border: '1px solid #ccc', 
+        borderRadius: '8px',
+        background: '#f8fafc'
+      }}>
+        {page === 'home' ? (
+          <>
+            <PageSEO title="Home Page" description="Welcome to the home page" />
+            <h1>🏠 Home</h1>
+            <p>Check the document title!</p>
+          </>
+        ) : (
+          <>
+            <PageSEO title="About Us" description="Learn more about us" />
+            <h1>ℹ️ About</h1>
+            <p>Title changed automatically.</p>
+          </>
+        )}
+      </div>
+      
+      <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+        Note: In this sandbox, you might not see the browser tab title change due to iframe restrictions, but in a real app, it works natively!
+      </p>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Third-party Library
+import { Helmet } from "react-helmet";
+
+<Helmet>
+  <title>My Page</title>
+</Helmet>`,
+                    senior: `// ✅ Native React 19
+<title>My Page</title>
+<meta name="description" content="..." />
+// React handles hoisting & deduplication`
+                },
+                interview: {
+                    questions: [
+                        { q: "How does React 19 handle metadata tags differently?", a: "It natively recognizes tags like `<title>`, `<meta>`, and `<link>` anywhere in the component tree and hoists them to the `<head>`, automatically handling deduplication." }
+                    ]
+                }
+            },
+            {
+                day: 19,
+                title: 'React 19: Web Components & Error Reporting',
+                intro: "First-class support for Custom Elements and better error handling hooks.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Using Web Components (Custom Elements) in React</li>
+    <li>Handling properties vs attributes</li>
+    <li>New Error Reporting hooks: <code>onCaughtError</code></li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🧩 1. Web Components Finally Work</h3>
+<p class="mb-4 text-light-300">React 19 passes data to custom elements as properties if they exist, and attributes if they don't. It also handles events correctly.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// React 19 passes complex data correctly!
+&lt;my-calendar
+  date={new Date()}
+  events={eventList} 
+/&gt;</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🚨 2. Better Error Reporting</h3>
+<p class="mb-4 text-light-300">New options for <code>createRoot</code> and <code>hydrateRoot</code> to handle errors globally.</p>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><code>onCaughtError</code>: Triggered when an Error Boundary catches an error.</li>
+    <li><code>onUncaughtError</code>: Triggered when an error bubbles to the top.</li>
+</ul>
+                `,
+                code: `// Conceptual Demo for Web Components
+// Assuming <fancy-button> is defined in the browser
+
+function App() {
+  return (
+    <div>
+      <h3>🧩 Web Component Support</h3>
+      <p>React 19 allows passing objects and functions to Custom Elements.</p>
+      
+      {/* 
+        In React 18, 'user' would be stringified to "[object Object]"
+        In React 19, it is passed as a DOM property!
+      */}
+      {/* <user-card user={{ name: 'John', id: 1 }} /> */}
+      
+      <div style={{ padding: '10px', background: '#eee' }}>
+        <em>(Requires a Custom Element registry to demonstrate visually)</em>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ React 18 Hack
+const ref = useRef();
+useEffect(() => {
+  ref.current.data = complexData; // Manual assignment
+}, [complexData]);
+
+return <my-element ref={ref} />;`,
+                    senior: `// ✅ React 19 Native
+<my-element data={complexData} />;`
+                },
+                interview: {
+                    questions: [
+                        { q: "What changed regarding Custom Elements in React 19?", a: "React 19 checks if a prop exists as a property on the DOM instance. If so, it assigns it as a property (allowing objects/arrays). If not, it sets it as an attribute (string)." }
+                    ]
+                }
+            },
+            {
+                day: 20,
+                title: 'The "use" API Deep Dive',
+                intro: "The universal API for unwrapping resources. Promises, Context, and future data types.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><code>use(Context)</code> vs <code>useContext()</code></li>
+    <li>Unwrapping Promises in Client Components</li>
+    <li>Conditional Context usage</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🔮 1. use(Context)</h3>
+<p class="mb-4 text-light-300"><code>useContext</code> must be at the top level. <code>use(Context)</code> can be inside loops and conditionals!</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">if (isDark) {
+  // ✅ Allowed with use()
+  const theme = use(ThemeContext);
+  return &lt;DarkButton theme={theme} /&gt;;
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⏳ 2. use(Promise)</h3>
+<p class="mb-4 text-light-300">You can pass a Promise from a Server Component to a Client Component and unwrap it with <code>use()</code>. This triggers Suspense.</p>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ REACT 19 "use" API DEMO                         ║
+║      Conditional Context & Promise Unwrapping                ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   1. Conditional Context:                                    ║
+║      if (cond) { const val = use(Context); }                 ║
+║                                                              ║
+║   2. Promise Unwrapping:                                     ║
+║      const data = use(promise);                              ║
+║      (Triggers Suspense automatically!)                      ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+const ThemeContext = React.createContext('light');
+
+function ThemedButton({ show }) {
+  if (!show) return null;
+  
+  // ✅ Conditional hook usage! Only possible with use()
+  // Note: We use React.use() if available, else simulate
+  const theme = React.use ? React.use(ThemeContext) : React.useContext(ThemeContext);
+  
+  return (
+    <button style={{
+      background: theme === 'dark' ? '#333' : '#eee',
+      color: theme === 'dark' ? '#fff' : '#333',
+      padding: '10px 20px',
+      borderRadius: '8px',
+      border: 'none',
+      marginTop: '10px'
+    }}>
+      I am a {theme} button
+    </button>
+  );
+}
+
+function App() {
+  const [show, setShow] = React.useState(false);
+  
+  return (
+    <ThemeContext.Provider value="dark">
+      <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+        <h3 style={{ color: '#1e293b' }}>🔮 The "use" API</h3>
+        
+        <label>
+          <input 
+            type="checkbox" 
+            checked={show} 
+            onChange={e => setShow(e.target.checked)} 
+          />
+          Show Button (Triggers conditional context read)
+        </label>
+        
+        <br />
+        <ThemedButton show={show} />
+      </div>
+    </ThemeContext.Provider>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ useContext (Must be top level)
+const theme = useContext(ThemeContext);
+if (!show) return null; // Wasted read if not shown`,
+                    senior: `// ✅ use (Conditional)
+if (!show) return null;
+const theme = use(ThemeContext); // Only reads if needed`
+                },
+                interview: {
+                    questions: [
+                        { q: "Can `use()` be called in a Server Component?", a: "Yes. It can be used to unwrap promises in Server Components (though async/await is preferred there) and is the standard way to read Context in Client Components conditionally." }
+                    ]
+                }
+            },
+            {
+                day: 21,
+                title: 'The React Compiler (React Forget)',
+                intro: "The end of manual memoization. Learn how the new compiler automatically optimizes your code so you can delete useMemo and useCallback.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is the React Compiler ("React Forget")?</li>
+    <li>How it eliminates re-renders automatically</li>
+    <li>Why you can stop using <code>useMemo</code> and <code>useCallback</code></li>
+    <li>How to verify it's working with DevTools</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🧠 The Problem: Manual Memoization</h3>
+<p class="mb-4 text-light-300">React 18 requires you to manually cache functions and objects to prevent children from re-rendering:</p>
+
+<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6">
+<pre class="text-red-200 text-sm">// ❌ Before Compiler: Dependency Hell
+const handleClick = useCallback(() => {
+  console.log(count);
+}, [count]); // Don't forget this!
+
+const filtered = useMemo(() => {
+  return items.filter(i => i > 10);
+}, [items]); // Or this!</pre>
+<p class="text-red-300 text-sm mt-2">Miss a dependency? Bugs. Add too many? Performance loss.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ The Solution: Auto-Memoization</h3>
+<p class="mb-4 text-light-300">The React Compiler analyzes your code at build time. It understands the data flow and caches <i>everything</i> automatically.</p>
+
+<div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mb-6">
+<pre class="text-green-200 text-sm">// ✅ After Compiler: Just write JavaScript!
+const handleClick = () => {
+  console.log(count);
+};
+
+const filtered = items.filter(i => i > 10);</pre>
+<p class="text-green-300 text-sm mt-2">The compiler rewrites this into highly optimized, cached code during the build.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔍 How it Works (Conceptual)</h3>
+<p class="mb-4 text-light-300">The compiler wraps your component code in a specialized <code>useMemoCache</code> hook:</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+function Component(props) {
+  const $ = useMemoCache(2); // React Internal Hook
+  
+  let t0;
+  if ($[0] !== props.a) {
+    t0 = expensiveCalc(props.a); // Re-run only if 'a' changed
+    $[0] = props.a;
+    $[1] = t0;
+  } else {
+    t0 = $[1]; // Return cached value
+  }
+  
+  return t0;
+}
+</pre>
+</div>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ REACT COMPILER DEMO                            ║
+║      See how cleaner code works without manual optimization  ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   INSTRUCTIONS:                                              ║
+║   1. Notice we use NO useMemo or useCallback                 ║
+║   2. We pass an object and function to Child                 ║
+║   3. In React 18, this would cause re-renders                ║
+║   4. With Compiler, it's automatically stable!               ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 👶 CHILD COMPONENT
+// ═══════════════════════════════════════════════════════════════
+// We wrap in memo() to prove props are stable.
+// If props change, this WILL log "Rendered!".
+// If props are stable (thanks to compiler), it won't log.
+const HeavyChild = React.memo(function HeavyChild({ config, onClick }) {
+  const renders = React.useRef(0);
+  renders.current++;
+  
+  return (
+    <div style={{
+      padding: '15px',
+      background: renders.current > 1 ? '#fee2e2' : '#dcfce7',
+      borderRadius: '8px',
+      border: '2px solid #cbd5e1',
+      transition: 'background 0.3s'
+    }}>
+      <h4 style={{ margin: 0, color: '#334155' }}>👶 Child Component</h4>
+      <p style={{ margin: '5px 0 0', fontSize: '12px' }}>
+        Render Count: <strong>{renders.current}</strong>
+      </p>
+      <p style={{ fontSize: '12px', color: '#64748b' }}>
+        Config: {JSON.stringify(config)}
+      </p>
+      <button onClick={onClick} style={{ marginTop: '10px', padding: '5px 10px' }}>
+        Call Parent
+      </button>
+    </div>
+  );
+});
+
+function App() {
+  const [count, setCount] = React.useState(0);
+  const [color, setColor] = React.useState('blue');
+
+  // ═══════════════════════════════════════════════════════════
+  // ❌ NO useMemo needed!
+  // The compiler sees that 'color' dependency didn't change
+  // when 'count' changed, so it reuses this object!
+  // ═══════════════════════════════════════════════════════════
+  const config = { theme: color, debug: true };
+
+  // ═══════════════════════════════════════════════════════════
+  // ❌ NO useCallback needed!
+  // The compiler caches this function automatically.
+  // ═══════════════════════════════════════════════════════════
+  const handleClick = () => {
+    console.log('Clicked in parent');
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>🤖 React Compiler Simulation</h3>
+      
+      <div style={{ marginBottom: '20px', padding: '15px', background: '#f1f5f9', borderRadius: '12px' }}>
+        <p>Parent State (Unrelated to Child): <strong>{count}</strong></p>
+        <button 
+          onClick={() => setCount(c => c + 1)}
+          style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px' }}
+        >
+          Increment Parent Count
+        </button>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <p>Child Prop (Related): <strong>{color}</strong></p>
+        <button onClick={() => setColor(c => c === 'blue' ? 'red' : 'blue')}>
+          Toggle Color
+        </button>
+      </div>
+
+      <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '10px' }}>
+        👇 If Compiler is working, Child render count stays at <strong>1</strong> when you click "Increment Parent"!
+      </p>
+
+      <HeavyChild config={config} onClick={handleClick} />
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ React 18 (Manual)
+const handleClick = useCallback(() => {
+  doSomething(data);
+}, [data]); // Manual array management`,
+                    senior: `// ✅ React 19 (Compiler)
+const handleClick = () => {
+  doSomething(data);
+};
+// Compiler detects 'data' dependency 
+// and caches the function automatically.`
+                },
+                interview: {
+                    questions: [
+                        { q: "How does the React Compiler optimize re-renders?", a: "It uses a build-time optimization to cache (memoize) values and components automatically. It effectively applies `useMemo` and `useCallback` everywhere it's needed without developer intervention." },
+                        { q: "Can the React Compiler break existing code?", a: "Generally no, if the code follows React Rules. However, code that relies on accidental re-renders or side effects during render might behave differently." }
+                    ]
+                }
+            },
+            {
+                day: 22,
+                title: 'Advanced Patterns: Headless UI & Slots',
+                intro: "Build reusable, accessible component libraries. Separate logic from UI using Headless Hooks and Composition.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What is "Headless UI"?</li>
+    <li>Building a <code>useToggle</code> hook with accessibility props</li>
+    <li>The "Slots" pattern for flexible layouts</li>
+    <li>Inversion of Control</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">💀 1. Headless UI Concept</h3>
+<p class="mb-4 text-light-300">A "Headless" component provides <strong>logic and accessibility</strong> but <strong>no styles</strong>. It gives you full control over the look and feel.</p>
+
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">// 1. Headless Hook (Logic + A11y)
+function useSwitch() {
+  const [on, setOn] = useState(false);
+  const toggle = () => setOn(!on);
+  
+  return {
+    isOn: on,
+    switchProps: {
+      role: 'switch',
+      'aria-checked': on,
+      onClick: toggle,
+    }
+  };
+}
+
+// 2. UI Component (Styles)
+function MySwitch() {
+  const { isOn, switchProps } = useSwitch();
+  return <button className={isOn ? 'bg-green' : 'bg-gray'} {...switchProps} />;
+}</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🎰 2. The Slots Pattern</h3>
+<p class="mb-4 text-light-300">Instead of <code>children</code>, allow users to inject content into specific "slots" of your layout.</p>
+
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+// Flexible Layout
+function PageLayout({ header, sidebar, content }) {
+  return (
+    &lt;div className="grid"&gt;
+      &lt;div className="head"&gt;{header}&lt;/div&gt;
+      &lt;div className="side"&gt;{sidebar}&lt;/div&gt;
+      &lt;div className="main"&gt;{content}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+// Usage
+&lt;PageLayout 
+  header={&lt;Nav /&gt;} 
+  sidebar={&lt;Menu /&gt;} 
+  content={&lt;Feed /&gt;} 
+/&gt;
+</pre>
+</div>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            ⚛️ HEADLESS UI PATTERN DEMO                        ║
+║      Separate Logic (Hook) from UI (Component)               ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   GOAL: Build a "Toggle" logic that can power ANY UI.        ║
+║                                                              ║
+║   1. useToggle() -> Returns state + accessibility props      ║
+║   2. IOSSwitch   -> Looks like iOS                           ║
+║   3. ButtonSwitch -> Looks like a button                     ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════
+// 🧠 HEADLESS LOGIC HOOK
+// ═══════════════════════════════════════════════════════════════
+function useToggle({ initial = false } = {}) {
+  const [on, setOn] = React.useState(initial);
+  
+  const toggle = () => setOn(!on);
+  
+  // Return "Prop Getters" or plain props object
+  return {
+    on,
+    toggle,
+    // Accessibility props pre-wired!
+    getTogglerProps: ({ onClick, ...props } = {}) => ({
+      'aria-pressed': on,
+      onClick: (e) => {
+        toggle();
+        if (onClick) onClick(e);
+      },
+      ...props
+    })
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 UI 1: iOS STYLE SWITCH
+// ═══════════════════════════════════════════════════════════════
+function IOSSwitch() {
+  const { on, getTogglerProps } = useToggle();
+  
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <p>iOS Style:</p>
+      <button 
+        {...getTogglerProps()}
+        style={{
+          width: '50px',
+          height: '30px',
+          borderRadius: '30px',
+          background: on ? '#34c759' : '#e2e8f0',
+          border: 'none',
+          position: 'relative',
+          cursor: 'pointer',
+          transition: 'background 0.3s'
+        }}
+      >
+        <div style={{
+          width: '26px',
+          height: '26px',
+          background: 'white',
+          borderRadius: '50%',
+          position: 'absolute',
+          top: '2px',
+          left: on ? '22px' : '2px',
+          transition: 'left 0.3s',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }} />
+      </button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🎨 UI 2: SIMPLE BUTTON
+// ═══════════════════════════════════════════════════════════════
+function ButtonSwitch() {
+  // We reuse the EXACT same logic!
+  const { on, getTogglerProps } = useToggle({ initial: true });
+  
+  return (
+    <div>
+      <p>Button Style:</p>
+      <button
+        {...getTogglerProps()}
+        style={{
+          padding: '10px 20px',
+          background: on ? '#3b82f6' : '#cbd5e1',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: 'bold',
+          cursor: 'pointer'
+        }}
+      >
+        {on ? 'ON' : 'OFF'}
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3 style={{ color: '#1e293b' }}>💀 Headless UI Demo</h3>
+      <p style={{ color: '#64748b', fontSize: '14px' }}>
+        Two very different UIs powered by the same <code>useToggle</code> hook.
+      </p>
+      
+      <div style={{ 
+        padding: '20px', 
+        border: '1px solid #e2e8f0', 
+        borderRadius: '12px',
+        background: '#f8fafc'
+      }}>
+        <IOSSwitch />
+        <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
+        <ButtonSwitch />
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Hardcoded UI Logic
+function Switch({ on, setOn }) {
+  return <div className={on ? 'on' : 'off'} onClick={() => setOn(!on)} />;
+}
+// Hard to reuse for a Button or Checkbox`,
+                    senior: `// ✅ Headless Hook
+const { props } = useSwitch();
+// Apply to ANY element:
+<div {...props} /> 
+<button {...props} />
+<CustomElement {...props} />`
+                },
+                interview: {
+                    questions: [
+                        { q: "What is Inversion of Control in React?", a: "Giving the user of your component control over rendering. Examples include Render Props, Compound Components, and Headless UI hooks." },
+                        { q: "Why return 'prop getters' from a hook?", a: "Prop getters (like `getTogglerProps`) allow the user to compose their own event handlers with the hook's internal handlers safely." }
+                    ]
+                }
+            },
+            {
+                day: 23,
+                title: 'System Design: Infinite Feed (Instagram)',
+                intro: "A classic interview challenge. Design a high-performance infinite scroll feed with virtualization, caching, and optimistic fetching.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 The Challenge</h3>
+<p class="mb-4 text-light-300">Design a feed that handles:</p>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Thousands of posts with images/videos</li>
+    <li>Scroll position memory (back button support)</li>
+    <li>Zero layout shift during loading</li>
+    <li>Network efficiency (no over-fetching)</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🏗️ Architecture</h3>
+<div class="bg-dark-900 p-6 rounded-xl border border-dark-600 font-mono text-xs md:text-sm text-cyan-300 mb-6 overflow-x-auto">
+<pre>
+[ UI Layer ]
+    │
+    ▼
+[ Virtualizer (react-window) ]  <- Renders only 5 items
+    │
+    ▼
+[ Data Layer (TanStack Query) ] <- Caches pages
+    │
+    ▼
+[ Intersection Observer ]       <- Triggers "Fetch Next"
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Key Technologies</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><span class="text-yellow-400 font-bold">TanStack Query (useInfiniteQuery):</span> Handles pagination logic, caching, and background refetching.</li>
+    <li><span class="text-yellow-400 font-bold">Virtualization:</span> Only renders items in viewport. Mandatory for performance.</li>
+    <li><span class="text-yellow-400 font-bold">BlurHash:</span> Show a blurry placeholder while image loads to prevent layout shift.</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            📱 INFINITE SCROLL SYSTEM DESIGN                  ║
+║      Simulating a social feed with Virtualization & Fetching ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   ARCHITECTURE:                                              ║
+║   1. useInfiniteQuery: Manages pages of data                 ║
+║   2. IntersectionObserver: Detects bottom of list            ║
+║   3. Virtualization: Renders only visible DOM nodes          ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function App() {
+  // ═══════════════════════════════════════════════════════════
+  // 📦 STATE MOCK (Replacing TanStack Query for demo)
+  // ═══════════════════════════════════════════════════════════
+  const [posts, setPosts] = React.useState(
+    Array.from({ length: 5 }).map((_, i) => ({ id: i, text: \`Post #\${i}\` }))
+  );
+  const [loading, setLoading] = React.useState(false);
+  const loaderRef = React.useRef(null);
+
+  // ═══════════════════════════════════════════════════════════
+  // 🔭 INTERSECTION OBSERVER (The Trigger)
+  // ═══════════════════════════════════════════════════════════
+  React.useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const target = entries[0];
+      if (target.isIntersecting && !loading) {
+        loadMore();
+      }
+    }, { rootMargin: '100px' }); // Load 100px before reaching bottom
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    
+    return () => observer.disconnect();
+  }, [loading, posts.length]);
+
+  // ═══════════════════════════════════════════════════════════
+  // 📡 FETCH SIMULATION
+  // ═══════════════════════════════════════════════════════════
+  const loadMore = () => {
+    setLoading(true);
+    setTimeout(() => {
+      const newPosts = Array.from({ length: 5 }).map((_, i) => ({
+        id: posts.length + i,
+        text: \`Post #\${posts.length + i}\`
+      }));
+      setPosts(prev => [...prev, ...newPosts]);
+      setLoading(false);
+    }, 1000);
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', height: '400px', overflow: 'auto', border: '2px solid #ccc', borderRadius: '12px' }}>
+      <h3 style={{ position: 'sticky', top: 0, background: 'white', margin: 0, padding: '10px', borderBottom: '1px solid #eee' }}>
+        📱 Infinite Feed
+      </h3>
+      
+      <div style={{ padding: '10px' }}>
+        {posts.map(post => (
+          <div key={post.id} style={{
+            height: '150px',
+            background: '#f1f5f9',
+            marginBottom: '15px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            color: '#64748b'
+          }}>
+            {post.text}
+          </div>
+        ))}
+        
+        {/* Sentinel Element */}
+        <div ref={loaderRef} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>
+          {loading ? '⏳ Loading more...' : 'End of feed'}
+        </div>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Scroll Event Listener
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 1000) fetch();
+});
+// Fires 100s of times per second. Laggy.`,
+                    senior: `// ✅ Intersection Observer
+const observer = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) fetch();
+});
+observer.observe(target);
+// Fires ONCE when element appears. Efficient.`
+                },
+                interview: {
+                    questions: [
+                        { q: "How do you handle scroll position restoration?", a: "Store the scroll offset (or virtualization state) in `sessionStorage` or a global store before navigating away. On mount, restore it." },
+                        { q: "What is Cumulative Layout Shift (CLS)?", a: "A metric that measures how much the page content shifts unexpectedly. Prevent it by setting fixed aspect ratios for images (`aspect-ratio: 16/9`) before they load." }
+                    ]
+                }
+            },
+            {
+                day: 24,
+                title: 'System Design: Real-time Chat (WhatsApp)',
+                intro: "Handling optimistic updates, message queues, and offline synchronization in a chat application.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 The Challenge</h3>
+<p class="mb-4 text-light-300">A chat app needs to feel <i>instant</i>, even on slow networks.</p>
+
+<h3 class="text-xl font-bold text-white mb-4">🚀 1. Optimistic UI</h3>
+<p class="mb-4 text-light-300">When user sends a message:</p>
+<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+    <li>Generate a temporary ID (e.g., <code>Date.now()</code>)</li>
+    <li>Add message to UI immediately with status "Sending..."</li>
+    <li>Send API request</li>
+    <li>On success, replace temp ID with server ID and status "Sent"</li>
+    <li>On fail, show "Retry" button</li>
+</ol>
+
+<h3 class="text-xl font-bold text-white mb-4">📬 2. Message Queue</h3>
+<p class="mb-4 text-light-300">If offline, messages shouldn't fail. They should go into a <strong>Persistent Queue</strong> (LocalStorage / IndexedDB). The app retries sending them when connection returns.</p>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════╗
+║            💬 OPTIMISTIC CHAT DEMO                           ║
+║      Local ID generation + Status tracking                   ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║   STATES:                                                    ║
+║   1. pending: Shown locally, not sent yet                    ║
+║   2. sent: Confirmed by server                               ║
+║   3. error: Failed to send                                   ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+*/
+
+function ChatApp() {
+  const [messages, setMessages] = React.useState([]);
+  const [input, setInput] = React.useState('');
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    // 1. Optimistic Update
+    const tempId = Date.now();
+    const newMsg = { 
+      id: tempId, 
+      text: input, 
+      status: 'pending' // ⏳
+    };
+    
+    setMessages(prev => [...prev, newMsg]);
+    setInput('');
+
+    // 2. Network Request Simulation
+    try {
+      await new Promise((resolve, reject) => {
+        // Randomly fail to demonstrate error state
+        setTimeout(() => Math.random() > 0.3 ? resolve() : reject(), 1000);
+      });
+
+      // 3. Success: Update status to 'sent'
+      setMessages(prev => prev.map(m => 
+        m.id === tempId ? { ...m, status: 'sent' } : m
+      ));
+    } catch (err) {
+      // 4. Error: Update status to 'error'
+      setMessages(prev => prev.map(m => 
+        m.id === tempId ? { ...m, status: 'error' } : m
+      ));
+    }
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
+      <div style={{ 
+        height: '300px', 
+        border: '1px solid #e2e8f0', 
+        borderRadius: '12px',
+        padding: '15px',
+        overflowY: 'auto',
+        background: '#f8fafc',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px'
+      }}>
+        {messages.length === 0 && <p style={{ textAlign: 'center', color: '#ccc' }}>No messages yet</p>}
+        
+        {messages.map(msg => (
+          <div key={msg.id} style={{ 
+            alignSelf: 'flex-end', 
+            background: msg.status === 'error' ? '#fee2e2' : '#3b82f6',
+            color: msg.status === 'error' ? '#ef4444' : 'white',
+            padding: '8px 12px',
+            borderRadius: '12px 12px 0 12px',
+            opacity: msg.status === 'pending' ? 0.7 : 1,
+            position: 'relative',
+            border: msg.status === 'error' ? '1px solid #ef4444' : 'none'
+          }}>
+            {msg.text}
+            <span style={{ fontSize: '10px', display: 'block', textAlign: 'right', marginTop: '4px', opacity: 0.8 }}>
+              {msg.status === 'pending' && '⏳'}
+              {msg.status === 'sent' && '✅'}
+              {msg.status === 'error' && '❌ Failed'}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <form onSubmit={sendMessage} style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+        <input 
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Type a message..."
+          style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+        />
+        <button style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0 20px', borderRadius: '8px', cursor: 'pointer' }}>
+          Send
+        </button>
+      </form>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Wait for Server
+async function send() {
+  setLoading(true);
+  await api.send(msg); // UI freezes or does nothing
+  setLoading(false);
+  setMessages(prev => [...prev, msg]); // Message appears 1s later
+}`,
+                    senior: `// ✅ Optimistic UI
+setMessages(prev => [...prev, optimisticMsg]); // Instant!
+api.send(msg).catch(() => showError()); // Handle failure later`
+                },
+                interview: {
+                    questions: [
+                        { q: "How to ensure message ordering?", a: "The server assigns a timestamp or incremental ID. The client sorts by this ID. For optimistic messages, place them at the bottom until confirmed." },
+                        { q: "How to handle offline mode?", a: "Use `navigator.onLine` to detect status. Store requests in IndexedDB. Use a 'Sync Manager' (Service Worker) to flush the queue when back online." }
+                    ]
+                }
+            },
+            {
+                day: 23,
+                title: 'Machine Coding: Build Autocomplete from Scratch',
+                intro: "The #1 frontend interview problem. Build a production-grade typeahead with debouncing, keyboard navigation, and caching.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Build</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Full autocomplete/typeahead component</li>
+    <li>Debounced API calls (no API spam)</li>
+    <li>Keyboard navigation (Arrow keys + Enter)</li>
+    <li>Click-outside-to-close behavior</li>
+    <li>Results caching for performance</li>
+    <li>Loading and error states</li>
+</ul>
+
+<div class="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-yellow-400 font-bold mb-2">⚠️ Interview Reality Check</h4>
+    <p class="text-light-300">This exact problem is asked at Google, Meta, Amazon, and every top startup. You MUST be able to build this in 45 minutes.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Key Concepts</h3>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">1. Debouncing: Don't Spam the API</h4>
+<p class="mb-4 text-light-300">Wait for the user to stop typing before making a request.</p>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  
+  return debouncedValue;
+}</pre>
+</div>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">2. Keyboard Navigation: A11y Matters</h4>
+<p class="mb-4 text-light-300">Track the highlighted index and respond to key events.</p>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">3. Caching: Don't Re-fetch</h4>
+<p class="mb-4 text-light-300">Store previous results in a Map or object to avoid duplicate requests.</p>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🔍 PRODUCTION AUTOCOMPLETE / TYPEAHEAD                              ║
+║  The #1 Frontend Interview Question - Build it in 45 minutes!        ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  FEATURES:                                                           ║
+║  ✅ Debounced API calls (300ms)                                      ║
+║  ✅ Keyboard navigation (↑↓ + Enter)                                 ║
+║  ✅ Click outside to close                                           ║
+║  ✅ Results caching                                                  ║
+║  ✅ Loading & error states                                           ║
+║  ✅ Highlight matching text                                          ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 🪝 CUSTOM HOOK: useDebounce
+// ═══════════════════════════════════════════════════════════════════
+function useDebounce(value, delay = 300) {
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🪝 CUSTOM HOOK: useClickOutside
+// ═══════════════════════════════════════════════════════════════════
+function useClickOutside(ref, handler) {
+  React.useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) return;
+      handler();
+    };
+    document.addEventListener('mousedown', listener);
+    return () => document.removeEventListener('mousedown', listener);
+  }, [ref, handler]);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 MOCK API (Replace with real API in production)
+// ═══════════════════════════════════════════════════════════════════
+const MOCK_DATA = [
+  'JavaScript', 'Java', 'Python', 'TypeScript', 'PHP', 
+  'C++', 'C#', 'Ruby', 'Go', 'Rust', 'Swift', 'Kotlin',
+  'React', 'Redux', 'Angular', 'Vue', 'Svelte', 'Next.js'
+];
+
+const searchAPI = async (query) => {
+  await new Promise(r => setTimeout(r, 200 + Math.random() * 300)); // Simulate latency
+  if (Math.random() < 0.05) throw new Error('API Error'); // 5% chance of error
+  return MOCK_DATA.filter(item => 
+    item.toLowerCase().includes(query.toLowerCase())
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// 🧩 HIGHLIGHT COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+function HighlightMatch({ text, query }) {
+  if (!query) return <span>{text}</span>;
+  
+  const regex = new RegExp(\`(\${query})\`, 'gi');
+  const parts = text.split(regex);
+  
+  return (
+    <span>
+      {parts.map((part, i) => 
+        regex.test(part) 
+          ? <mark key={i} style={{ background: '#fef08a', padding: '0 2px' }}>{part}</mark>
+          : part
+      )}
+    </span>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔍 MAIN AUTOCOMPLETE COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+function Autocomplete() {
+  const [query, setQuery] = React.useState('');
+  const [results, setResults] = React.useState([]);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
+  
+  const containerRef = React.useRef(null);
+  const inputRef = React.useRef(null);
+  const cache = React.useRef(new Map());
+  
+  const debouncedQuery = useDebounce(query, 300);
+  
+  useClickOutside(containerRef, () => setIsOpen(false));
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🔄 FETCH RESULTS (with caching)
+  // ═══════════════════════════════════════════════════════════════
+  React.useEffect(() => {
+    const fetchResults = async () => {
+      if (!debouncedQuery.trim()) {
+        setResults([]);
+        setIsOpen(false);
+        return;
+      }
+
+      // Check cache first!
+      if (cache.current.has(debouncedQuery)) {
+        setResults(cache.current.get(debouncedQuery));
+        setIsOpen(true);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const data = await searchAPI(debouncedQuery);
+        cache.current.set(debouncedQuery, data); // Cache it!
+        setResults(data);
+        setIsOpen(true);
+      } catch (err) {
+        setError('Failed to fetch results. Try again.');
+        setResults([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [debouncedQuery]);
+
+  // ═══════════════════════════════════════════════════════════════
+  // ⌨️ KEYBOARD NAVIGATION
+  // ═══════════════════════════════════════════════════════════════
+  const handleKeyDown = (e) => {
+    if (!isOpen) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setHighlightedIndex(prev => 
+          prev < results.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setHighlightedIndex(prev => 
+          prev > 0 ? prev - 1 : results.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (highlightedIndex >= 0 && results[highlightedIndex]) {
+          selectItem(results[highlightedIndex]);
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        break;
+    }
+  };
+
+  const selectItem = (item) => {
+    setQuery(item);
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+    console.log('Selected:', item); // In real app, call onSelect prop
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  // 🎨 RENDER
+  // ═══════════════════════════════════════════════════════════════
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '400px' }}>
+      <h3 style={{ marginBottom: '15px' }}>🔍 Autocomplete Demo</h3>
+      
+      <div ref={containerRef} style={{ position: 'relative' }}>
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setHighlightedIndex(-1);
+          }}
+          onFocus={() => results.length > 0 && setIsOpen(true)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search programming languages..."
+          style={{
+            width: '100%',
+            padding: '12px 40px 12px 16px',
+            fontSize: '16px',
+            border: '2px solid #e2e8f0',
+            borderRadius: '8px',
+            outline: 'none',
+            boxSizing: 'border-box'
+          }}
+          aria-autocomplete="list"
+          aria-controls="autocomplete-list"
+          aria-expanded={isOpen}
+        />
+        
+        {isLoading && (
+          <span style={{
+            position: 'absolute',
+            right: '12px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#94a3b8'
+          }}>⏳</span>
+        )}
+
+        {/* Dropdown */}
+        {isOpen && (
+          <ul
+            id="autocomplete-list"
+            role="listbox"
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              margin: '4px 0 0 0',
+              padding: 0,
+              listStyle: 'none',
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+              maxHeight: '250px',
+              overflowY: 'auto',
+              zIndex: 1000
+            }}
+          >
+            {error && (
+              <li style={{ padding: '12px', color: '#ef4444' }}>⚠️ {error}</li>
+            )}
+            
+            {!error && results.length === 0 && (
+              <li style={{ padding: '12px', color: '#94a3b8' }}>No results found</li>
+            )}
+            
+            {results.map((item, index) => (
+              <li
+                key={item}
+                role="option"
+                aria-selected={index === highlightedIndex}
+                onClick={() => selectItem(item)}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                style={{
+                  padding: '10px 16px',
+                  cursor: 'pointer',
+                  background: index === highlightedIndex ? '#f1f5f9' : 'transparent',
+                  borderBottom: index < results.length - 1 ? '1px solid #f1f5f9' : 'none'
+                }}
+              >
+                <HighlightMatch text={item} query={query} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      
+      <p style={{ fontSize: '12px', color: '#64748b', marginTop: '10px' }}>
+        Try: "java", "react", "python" | Use ↑↓ keys + Enter
+      </p>
+    </div>
+  );
+}
+
+function App() {
+  return <Autocomplete />;
+}`,
+                comparison: {
+                    junior: `// ❌ No debouncing, laggy
+const [query, setQuery] = useState('');
+
+useEffect(() => {
+  fetch('/api/search?q=' + query) // Called on EVERY keystroke!
+    .then(r => r.json())
+    .then(setResults);
+}, [query]);`,
+                    senior: `// ✅ Debounced + Cached
+const debouncedQuery = useDebounce(query, 300);
+const cache = useRef(new Map());
+
+useEffect(() => {
+  if (cache.current.has(debouncedQuery)) {
+    return setResults(cache.current.get(debouncedQuery));
+  }
+  fetch('/api/search?q=' + debouncedQuery)
+    .then(r => r.json())
+    .then(data => {
+      cache.current.set(debouncedQuery, data);
+      setResults(data);
+    });
+}, [debouncedQuery]);`
+                },
+                interview: {
+                    questions: [
+                        { q: "Why debounce instead of throttle for autocomplete?", a: "Debounce waits until the user STOPS typing for X ms, then fires once. Throttle fires every X ms while typing. For search, we want the final query, not intermediate ones. Debounce = better UX and fewer API calls." },
+                        { q: "How would you handle race conditions with async search?", a: "Use an AbortController to cancel previous requests, or track request IDs. Only update state if the response matches the current query. Libraries like TanStack Query handle this automatically." },
+                        { q: "How do you make autocomplete accessible?", a: "Use ARIA attributes: aria-autocomplete, aria-expanded, aria-controls, aria-selected, role='listbox' and role='option'. Ensure keyboard navigation works (↑↓ Enter Escape). Announce changes to screen readers." }
+                    ]
+                }
+            },
+            {
+                day: 24,
+                title: 'Machine Coding: Infinite Scroll with Virtualization',
+                intro: "Render 10,000 items without killing the browser. Master Intersection Observer, windowing, and virtual lists.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Build</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Infinite scroll with Intersection Observer</li>
+    <li>Virtual list (only render visible items)</li>
+    <li>Smooth scrolling with overscan</li>
+    <li>Dynamic row heights (advanced)</li>
+</ul>
+
+<div class="bg-gradient-to-r from-red-500/20 to-pink-500/20 border border-red-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-red-400 font-bold mb-2">🚨 The Problem</h4>
+    <p class="text-light-300">Rendering 10,000 DOM nodes = Laggy scrolling, high memory, crashed tabs. The solution? <strong>Only render what's visible.</strong></p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Key Concepts</h3>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">1. Intersection Observer</h4>
+<p class="mb-4 text-light-300">Detects when an element enters or leaves the viewport. No scroll event listeners needed.</p>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">2. Windowing / Virtualization</h4>
+<p class="mb-4 text-light-300">Calculate which items are visible based on scroll position and container height, then render only those + a few extra (overscan).</p>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">3. Libraries (for production)</h4>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><code>@tanstack/react-virtual</code> - Modern, lightweight</li>
+    <li><code>react-window</code> - Popular, battle-tested</li>
+    <li><code>react-virtuoso</code> - Best for dynamic heights</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  📜 INFINITE SCROLL + VIRTUALIZATION                                 ║
+║  Render 10,000 items without killing the browser!                    ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  PART 1: Infinite Scroll with Intersection Observer                  ║
+║  PART 2: Basic Virtualized List (DIY)                                ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 🪝 CUSTOM HOOK: useIntersectionObserver
+// ═══════════════════════════════════════════════════════════════════
+function useIntersectionObserver(callback, options = {}) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        callback();
+      }
+    }, { threshold: 0.1, ...options });
+
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, [callback, options]);
+
+  return ref;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 MOCK API - Simulate paginated data
+// ═══════════════════════════════════════════════════════════════════
+const fetchPage = async (page, pageSize = 20) => {
+  await new Promise(r => setTimeout(r, 500)); // Simulate network
+  const start = page * pageSize;
+  return Array.from({ length: pageSize }, (_, i) => ({
+    id: start + i,
+    title: \`Item #\${start + i + 1}\`,
+    description: \`This is the description for item \${start + i + 1}. It contains some sample text.\`
+  }));
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// 📜 PART 1: INFINITE SCROLL (Simple)
+// ═══════════════════════════════════════════════════════════════════
+function InfiniteScrollList() {
+  const [items, setItems] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+
+  const loadMore = React.useCallback(async () => {
+    if (isLoading || !hasMore) return;
+    
+    setIsLoading(true);
+    const newItems = await fetchPage(page);
+    
+    if (newItems.length === 0) {
+      setHasMore(false);
+    } else {
+      setItems(prev => [...prev, ...newItems]);
+      setPage(prev => prev + 1);
+    }
+    setIsLoading(false);
+  }, [page, isLoading, hasMore]);
+
+  // Load initial data
+  React.useEffect(() => { loadMore(); }, []);
+
+  // Intersection Observer for infinite scroll trigger
+  const loaderRef = useIntersectionObserver(loadMore);
+
+  return (
+    <div style={{ height: '300px', overflow: 'auto', border: '1px solid #ddd', borderRadius: '8px' }}>
+      {items.map(item => (
+        <div key={item.id} style={{ 
+          padding: '15px', 
+          borderBottom: '1px solid #eee',
+          background: item.id % 2 === 0 ? '#f8fafc' : 'white'
+        }}>
+          <strong>{item.title}</strong>
+          <p style={{ margin: '5px 0 0', fontSize: '14px', color: '#666' }}>{item.description}</p>
+        </div>
+      ))}
+      
+      {/* Sentinel element - when visible, triggers loadMore */}
+      <div ref={loaderRef} style={{ padding: '20px', textAlign: 'center' }}>
+        {isLoading && '⏳ Loading more...'}
+        {!hasMore && '✅ No more items'}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🚀 PART 2: VIRTUALIZED LIST (Advanced)
+// ═══════════════════════════════════════════════════════════════════
+function VirtualizedList({ items, itemHeight = 60, containerHeight = 300, overscan = 5 }) {
+  const [scrollTop, setScrollTop] = React.useState(0);
+  const containerRef = React.useRef(null);
+
+  // Calculate visible range
+  const totalHeight = items.length * itemHeight;
+  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+  const visibleCount = Math.ceil(containerHeight / itemHeight) + (2 * overscan);
+  const endIndex = Math.min(items.length, startIndex + visibleCount);
+  
+  const visibleItems = items.slice(startIndex, endIndex);
+  const offsetY = startIndex * itemHeight;
+
+  const handleScroll = (e) => {
+    setScrollTop(e.target.scrollTop);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onScroll={handleScroll}
+      style={{
+        height: containerHeight,
+        overflow: 'auto',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        position: 'relative'
+      }}
+    >
+      {/* Spacer to maintain scroll height */}
+      <div style={{ height: totalHeight, position: 'relative' }}>
+        {/* Rendered items positioned absolutely */}
+        <div style={{ position: 'absolute', top: offsetY, left: 0, right: 0 }}>
+          {visibleItems.map((item, index) => (
+            <div
+              key={item.id}
+              style={{
+                height: itemHeight,
+                padding: '10px 15px',
+                boxSizing: 'border-box',
+                borderBottom: '1px solid #eee',
+                background: (startIndex + index) % 2 === 0 ? '#f0fdf4' : 'white',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}
+            >
+              <span style={{ 
+                background: '#10b981', 
+                color: 'white', 
+                padding: '4px 8px', 
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}>
+                #{item.id}
+              </span>
+              <span>{item.title}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Debug info */}
+      <div style={{
+        position: 'sticky',
+        bottom: 0,
+        background: '#1e293b',
+        color: '#94a3b8',
+        padding: '8px',
+        fontSize: '11px',
+        textAlign: 'center'
+      }}>
+        Rendering {visibleItems.length} of {items.length} items | 
+        Visible: {startIndex}-{endIndex}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 APP: Demo Both Approaches
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  const [tab, setTab] = React.useState('infinite');
+  
+  // Generate 10,000 items for virtualization demo
+  const bigList = React.useMemo(() => 
+    Array.from({ length: 10000 }, (_, i) => ({
+      id: i,
+      title: \`Virtual Item #\${i + 1}\`
+    })), 
+  []);
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '500px' }}>
+      <h3>📜 Infinite Scroll vs Virtualization</h3>
+      
+      <div style={{ display: 'flex', gap: '10px', margin: '15px 0' }}>
+        <button 
+          onClick={() => setTab('infinite')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            background: tab === 'infinite' ? '#3b82f6' : '#e2e8f0',
+            color: tab === 'infinite' ? 'white' : '#333'
+          }}
+        >
+          Infinite Scroll
+        </button>
+        <button 
+          onClick={() => setTab('virtual')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            background: tab === 'virtual' ? '#3b82f6' : '#e2e8f0',
+            color: tab === 'virtual' ? 'white' : '#333'
+          }}
+        >
+          Virtualized (10K items!)
+        </button>
+      </div>
+
+      {tab === 'infinite' ? (
+        <>
+          <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+            Scroll down to load more items automatically.
+          </p>
+          <InfiniteScrollList />
+        </>
+      ) : (
+        <>
+          <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+            10,000 items rendered instantly! Only ~15 DOM nodes exist.
+          </p>
+          <VirtualizedList items={bigList} />
+        </>
+      )}
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Scroll event listener (bad)
+window.addEventListener('scroll', () => {
+  if (window.innerHeight + scrollY >= document.body.offsetHeight) {
+    loadMore();
+  }
+});
+// Problems: Fires 100x/sec, blocks main thread`,
+                    senior: `// ✅ Intersection Observer
+const observer = new IntersectionObserver(
+  ([entry]) => {
+    if (entry.isIntersecting) loadMore();
+  },
+  { threshold: 0.1 }
+);
+observer.observe(sentinelElement);
+// Benefits: Browser-optimized, fires once per intersection`
+                },
+                interview: {
+                    questions: [
+                        { q: "What is the difference between infinite scroll and virtualization?", a: "Infinite scroll loads more data as you scroll (appends to DOM). Virtualization keeps the DOM small by only rendering visible items + overscan, regardless of total data size. Use infinite scroll for lazy loading, virtualization for huge lists." },
+                        { q: "Why is Intersection Observer better than scroll events?", a: "Scroll events fire continuously (60+ times/sec), blocking the main thread. Intersection Observer is browser-optimized, batches callbacks, and only fires when visibility changes. It's also simpler to use." },
+                        { q: "How do you handle dynamic row heights in virtualization?", a: "Measure each row after render and cache heights in a Map. Use a 'position' array that tracks cumulative heights. Libraries like react-virtuoso handle this automatically with 'estimatedItemSize' + real measurement." }
+                    ]
+                }
+            },
+            {
+                day: 25,
+                title: 'Machine Coding: Drag & Drop from Scratch',
+                intro: "Build a Kanban board drag-and-drop system using native HTML5 APIs. No libraries.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Build</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Draggable items with visual feedback</li>
+    <li>Drop zones with hover indicators</li>
+    <li>Cross-container drag and drop (Kanban style)</li>
+    <li>Reorder items within a list</li>
+    <li>Touch device support (bonus)</li>
+</ul>
+
+<div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-purple-400 font-bold mb-2">💡 Interview Context</h4>
+    <p class="text-light-300">Companies like Trello, Notion, Asana, and Jira all need drag-and-drop. This is a HIGH-VALUE skill.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ HTML5 Drag & Drop API</h3>
+<table class="w-full text-left mb-6">
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">draggable="true"</td>
+        <td class="py-2 text-light-300">Makes element draggable</td>
+    </tr>
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">onDragStart</td>
+        <td class="py-2 text-light-300">Fires when drag begins (set data here)</td>
+    </tr>
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">onDragOver</td>
+        <td class="py-2 text-light-300">Fires while dragging over a zone (must preventDefault!)</td>
+    </tr>
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">onDrop</td>
+        <td class="py-2 text-light-300">Fires when item is dropped</td>
+    </tr>
+    <tr>
+        <td class="py-2 text-cyan-400 font-mono">onDragEnd</td>
+        <td class="py-2 text-light-300">Fires when drag ends (cleanup)</td>
+    </tr>
+</table>
+
+<h3 class="text-xl font-bold text-white mb-4">🔑 Critical: e.preventDefault()</h3>
+<p class="mb-4 text-light-300">The browser's default behavior is to reject drops. You MUST call <code>e.preventDefault()</code> in <code>onDragOver</code> to allow dropping.</p>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🎯 DRAG & DROP KANBAN BOARD                                         ║
+║  Built with native HTML5 APIs - No libraries!                        ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  FEATURES:                                                           ║
+║  ✅ Drag items between columns                                       ║
+║  ✅ Visual feedback (drag ghost, drop indicators)                    ║
+║  ✅ State updates on drop                                            ║
+║  ✅ Reorder within same column                                       ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+const INITIAL_DATA = {
+  columns: {
+    todo: {
+      id: 'todo',
+      title: '📋 To Do',
+      items: [
+        { id: '1', content: 'Learn React DnD' },
+        { id: '2', content: 'Build Kanban Board' },
+        { id: '3', content: 'Add animations' }
+      ]
+    },
+    progress: {
+      id: 'progress',
+      title: '🔄 In Progress',
+      items: [
+        { id: '4', content: 'Review drag events' }
+      ]
+    },
+    done: {
+      id: 'done',
+      title: '✅ Done',
+      items: [
+        { id: '5', content: 'Setup project' }
+      ]
+    }
+  },
+  columnOrder: ['todo', 'progress', 'done']
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// 🧩 DRAGGABLE ITEM COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+function DraggableItem({ item, columnId, index, onDragStart, onDragEnd }) {
+  const [isDragging, setIsDragging] = React.useState(false);
+
+  const handleDragStart = (e) => {
+    setIsDragging(true);
+    // Store the item data for the drop handler
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      itemId: item.id,
+      sourceColumnId: columnId,
+      sourceIndex: index
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    onDragStart?.();
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    onDragEnd?.();
+  };
+
+  return (
+    <div
+      draggable="true"
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      style={{
+        padding: '12px',
+        marginBottom: '8px',
+        background: isDragging ? '#dbeafe' : 'white',
+        borderRadius: '8px',
+        boxShadow: isDragging 
+          ? '0 8px 16px rgba(59, 130, 246, 0.3)' 
+          : '0 1px 3px rgba(0,0,0,0.1)',
+        cursor: 'grab',
+        opacity: isDragging ? 0.5 : 1,
+        border: '1px solid #e2e8f0',
+        transition: 'box-shadow 0.2s, opacity 0.2s'
+      }}
+    >
+      {item.content}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 DROPPABLE COLUMN COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+function DroppableColumn({ column, onDrop }) {
+  const [isOver, setIsOver] = React.useState(false);
+
+  // ⚠️ CRITICAL: Must preventDefault to allow drop!
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setIsOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsOver(false);
+    
+    const data = JSON.parse(e.dataTransfer.getData('application/json'));
+    onDrop(data.itemId, data.sourceColumnId, column.id);
+  };
+
+  return (
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      style={{
+        flex: 1,
+        minWidth: '200px',
+        padding: '12px',
+        background: isOver ? '#dbeafe' : '#f1f5f9',
+        borderRadius: '12px',
+        border: isOver ? '2px dashed #3b82f6' : '2px solid transparent',
+        transition: 'background 0.2s, border 0.2s',
+        minHeight: '300px'
+      }}
+    >
+      <h3 style={{ 
+        marginTop: 0, 
+        marginBottom: '15px',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        color: '#334155'
+      }}>
+        {column.title}
+        <span style={{ 
+          marginLeft: '8px',
+          background: '#cbd5e1',
+          padding: '2px 8px',
+          borderRadius: '10px',
+          fontSize: '12px'
+        }}>
+          {column.items.length}
+        </span>
+      </h3>
+      
+      {column.items.map((item, index) => (
+        <DraggableItem 
+          key={item.id} 
+          item={item} 
+          columnId={column.id}
+          index={index}
+        />
+      ))}
+      
+      {column.items.length === 0 && (
+        <div style={{ 
+          padding: '20px', 
+          textAlign: 'center', 
+          color: '#94a3b8',
+          fontSize: '14px'
+        }}>
+          Drop items here
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 MAIN KANBAN BOARD
+// ═══════════════════════════════════════════════════════════════════
+function KanbanBoard() {
+  const [data, setData] = React.useState(INITIAL_DATA);
+
+  const handleDrop = (itemId, sourceColumnId, targetColumnId) => {
+    if (sourceColumnId === targetColumnId) return; // Same column, no change
+    
+    setData(prev => {
+      const newColumns = { ...prev.columns };
+      
+      // Find and remove item from source
+      const sourceColumn = { ...newColumns[sourceColumnId] };
+      const itemIndex = sourceColumn.items.findIndex(i => i.id === itemId);
+      const [movedItem] = sourceColumn.items.splice(itemIndex, 1);
+      newColumns[sourceColumnId] = { ...sourceColumn, items: [...sourceColumn.items] };
+      
+      // Add item to target
+      const targetColumn = { ...newColumns[targetColumnId] };
+      newColumns[targetColumnId] = { 
+        ...targetColumn, 
+        items: [...targetColumn.items, movedItem] 
+      };
+      
+      return { ...prev, columns: newColumns };
+    });
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h2 style={{ marginBottom: '20px' }}>🎯 Kanban Drag & Drop</h2>
+      
+      <div style={{ 
+        display: 'flex', 
+        gap: '16px',
+        overflowX: 'auto',
+        paddingBottom: '10px'
+      }}>
+        {data.columnOrder.map(columnId => (
+          <DroppableColumn
+            key={columnId}
+            column={data.columns[columnId]}
+            onDrop={handleDrop}
+          />
+        ))}
+      </div>
+      
+      <p style={{ marginTop: '20px', fontSize: '13px', color: '#64748b' }}>
+        💡 Drag items between columns. Uses native HTML5 Drag & Drop API.
+      </p>
+    </div>
+  );
+}
+
+function App() {
+  return <KanbanBoard />;
+}`,
+                comparison: {
+                    junior: `// ❌ Forgetting preventDefault
+onDragOver={(e) => {
+  // Nothing here - drops won't work!
+}}`,
+                    senior: `// ✅ Allow drops + visual feedback
+onDragOver={(e) => {
+  e.preventDefault(); // REQUIRED!
+  e.dataTransfer.dropEffect = 'move';
+  setIsOver(true);
+}}`
+                },
+                interview: {
+                    questions: [
+                        { q: "Why must you call e.preventDefault() in onDragOver?", a: "The browser's default behavior is to reject all drops. Without preventDefault(), the onDrop event will never fire. This is the #1 mistake developers make with drag-and-drop." },
+                        { q: "How do you pass data during drag operations?", a: "Use e.dataTransfer.setData('type', data) in onDragStart, and e.dataTransfer.getData('type') in onDrop. For complex data, stringify JSON. The dataTransfer object is the bridge between drag and drop." },
+                        { q: "When would you use a library like dnd-kit or react-beautiful-dnd instead of native APIs?", a: "Use libraries when you need: sortable lists with reorder animations, touch/mobile support, complex nested drop zones, accessibility (ARIA), or keyboard drag support. Native API is fine for simple cross-container moves." }
+                    ]
+                }
+            },
+            {
+                day: 26,
+                title: 'Custom Hooks Mastery: 10 Production Hooks',
+                intro: "Build your own hook library. useDebounce, useThrottle, useLocalStorage, usePrevious, and more.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 Hooks You'll Build</h3>
+<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+    <li><code>useDebounce</code> - Delay value updates</li>
+    <li><code>useThrottle</code> - Limit update frequency</li>
+    <li><code>useLocalStorage</code> - Persist state to localStorage</li>
+    <li><code>usePrevious</code> - Access previous render's value</li>
+    <li><code>useToggle</code> - Boolean state with toggle function</li>
+    <li><code>useClickOutside</code> - Detect clicks outside element</li>
+    <li><code>useWindowSize</code> - Track window dimensions</li>
+    <li><code>useMediaQuery</code> - CSS media query as state</li>
+    <li><code>useFetch</code> - Data fetching with loading/error</li>
+    <li><code>useKeyPress</code> - Detect keyboard shortcuts</li>
+</ol>
+
+<div class="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-green-400 font-bold mb-2">🏆 Why Build Custom Hooks?</h4>
+    <p class="text-light-300">Custom hooks show senior-level React understanding. They demonstrate ability to abstract complexity, follow DRY principles, and create reusable code.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Hook Rules Reminder</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Only call hooks at the top level (no conditions/loops)</li>
+    <li>Only call hooks from React functions</li>
+    <li>Name must start with <code>use</code></li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🪝 CUSTOM HOOKS LIBRARY                                              ║
+║  10 Production-Ready Hooks Every Senior Dev Should Know              ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  1. useDebounce      6. useClickOutside                              ║
+║  2. useThrottle      7. useWindowSize                                ║
+║  3. useLocalStorage  8. useMediaQuery                                ║
+║  4. usePrevious      9. useFetch                                     ║
+║  5. useToggle       10. useKeyPress                                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 1️⃣ useDebounce - Delay value updates
+// ═══════════════════════════════════════════════════════════════════
+function useDebounce(value, delay = 300) {
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 2️⃣ useThrottle - Limit update frequency
+// ═══════════════════════════════════════════════════════════════════
+function useThrottle(value, limit = 300) {
+  const [throttledValue, setThrottledValue] = React.useState(value);
+  const lastRan = React.useRef(Date.now());
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      if (Date.now() - lastRan.current >= limit) {
+        setThrottledValue(value);
+        lastRan.current = Date.now();
+      }
+    }, limit - (Date.now() - lastRan.current));
+
+    return () => clearTimeout(handler);
+  }, [value, limit]);
+
+  return throttledValue;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 3️⃣ useLocalStorage - Persist state
+// ═══════════════════════════════════════════════════════════════════
+function useLocalStorage(key, initialValue) {
+  const [storedValue, setStoredValue] = React.useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
+    }
+  });
+
+  const setValue = (value) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return [storedValue, setValue];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 4️⃣ usePrevious - Access previous value
+// ═══════════════════════════════════════════════════════════════════
+function usePrevious(value) {
+  const ref = React.useRef();
+  React.useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 5️⃣ useToggle - Boolean with toggle
+// ═══════════════════════════════════════════════════════════════════
+function useToggle(initialValue = false) {
+  const [value, setValue] = React.useState(initialValue);
+  const toggle = React.useCallback(() => setValue(v => !v), []);
+  return [value, toggle];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 6️⃣ useClickOutside - Detect outside clicks
+// ═══════════════════════════════════════════════════════════════════
+function useClickOutside(ref, handler) {
+  React.useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) return;
+      handler(event);
+    };
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [ref, handler]);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 7️⃣ useWindowSize - Track dimensions
+// ═══════════════════════════════════════════════════════════════════
+function useWindowSize() {
+  const [size, setSize] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return size;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 8️⃣ useMediaQuery - CSS media query as state
+// ═══════════════════════════════════════════════════════════════════
+function useMediaQuery(query) {
+  const [matches, setMatches] = React.useState(
+    () => window.matchMedia(query).matches
+  );
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    const handler = (e) => setMatches(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, [query]);
+
+  return matches;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 9️⃣ useFetch - Data fetching
+// ═══════════════════════════════════════════════════════════════════
+function useFetch(url) {
+  const [state, setState] = React.useState({
+    data: null,
+    isLoading: true,
+    error: null
+  });
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    
+    setState({ data: null, isLoading: true, error: null });
+    
+    fetch(url, { signal: controller.signal })
+      .then(res => res.json())
+      .then(data => setState({ data, isLoading: false, error: null }))
+      .catch(error => {
+        if (error.name !== 'AbortError') {
+          setState({ data: null, isLoading: false, error });
+        }
+      });
+
+    return () => controller.abort();
+  }, [url]);
+
+  return state;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔟 useKeyPress - Detect key press
+// ═══════════════════════════════════════════════════════════════════
+function useKeyPress(targetKey) {
+  const [keyPressed, setKeyPressed] = React.useState(false);
+
+  React.useEffect(() => {
+    const downHandler = ({ key }) => {
+      if (key === targetKey) setKeyPressed(true);
+    };
+    const upHandler = ({ key }) => {
+      if (key === targetKey) setKeyPressed(false);
+    };
+
+    window.addEventListener('keydown', downHandler);
+    window.addEventListener('keyup', upHandler);
+    
+    return () => {
+      window.removeEventListener('keydown', downHandler);
+      window.removeEventListener('keyup', upHandler);
+    };
+  }, [targetKey]);
+
+  return keyPressed;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 DEMO APP
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  // Demo: useDebounce
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const debouncedSearch = useDebounce(searchTerm, 500);
+  
+  // Demo: useLocalStorage
+  const [name, setName] = useLocalStorage('user-name', 'Guest');
+  
+  // Demo: useToggle
+  const [isDark, toggleDark] = useToggle(false);
+  
+  // Demo: usePrevious
+  const [count, setCount] = React.useState(0);
+  const prevCount = usePrevious(count);
+  
+  // Demo: useWindowSize
+  const { width, height } = useWindowSize();
+  
+  // Demo: useMediaQuery
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
+  // Demo: useKeyPress
+  const escPressed = useKeyPress('Escape');
+
+  return (
+    <div style={{ 
+      fontFamily: 'system-ui', 
+      padding: '20px',
+      background: isDark ? '#1e293b' : 'white',
+      color: isDark ? 'white' : '#1e293b',
+      minHeight: '100vh',
+      transition: 'all 0.3s'
+    }}>
+      <h2>🪝 Custom Hooks Demo</h2>
+      
+      <div style={{ display: 'grid', gap: '20px', maxWidth: '600px' }}>
+        {/* useDebounce */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>1. useDebounce</h4>
+          <input 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Type to search..."
+            style={{ padding: '8px', width: '100%', boxSizing: 'border-box' }}
+          />
+          <p style={{ fontSize: '14px', margin: '8px 0 0' }}>
+            Typed: "{searchTerm}" | Debounced (500ms): "{debouncedSearch}"
+          </p>
+        </section>
+
+        {/* useLocalStorage */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>3. useLocalStorage</h4>
+          <input 
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="Your name..."
+            style={{ padding: '8px', width: '100%', boxSizing: 'border-box' }}
+          />
+          <p style={{ fontSize: '14px', margin: '8px 0 0' }}>
+            Refresh the page - your name persists! 💾
+          </p>
+        </section>
+
+        {/* useToggle */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>5. useToggle</h4>
+          <button onClick={toggleDark} style={{ padding: '8px 16px' }}>
+            {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </section>
+
+        {/* usePrevious */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>4. usePrevious</h4>
+          <button onClick={() => setCount(c => c + 1)} style={{ padding: '8px 16px' }}>
+            Increment ({count})
+          </button>
+          <p style={{ fontSize: '14px', margin: '8px 0 0' }}>
+            Current: {count} | Previous: {prevCount ?? 'N/A'}
+          </p>
+        </section>
+
+        {/* useWindowSize & useMediaQuery */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>7 & 8. useWindowSize + useMediaQuery</h4>
+          <p style={{ fontSize: '14px', margin: 0 }}>
+            Window: {width} x {height} | 
+            Device: {isMobile ? '📱 Mobile' : '💻 Desktop'}
+          </p>
+        </section>
+
+        {/* useKeyPress */}
+        <section style={{ padding: '15px', background: isDark ? '#334155' : '#f1f5f9', borderRadius: '8px' }}>
+          <h4>10. useKeyPress</h4>
+          <p style={{ fontSize: '14px', margin: 0 }}>
+            Press <kbd style={{ background: '#ddd', padding: '2px 6px', borderRadius: '4px' }}>Escape</kbd>: 
+            {escPressed ? ' ✅ Pressed!' : ' ⏳ Not pressed'}
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Inline debounce (broken)
+useEffect(() => {
+  setTimeout(() => {
+    fetchResults(query); // No cleanup! Multiple timers!
+  }, 300);
+}, [query]);`,
+                    senior: `// ✅ Proper debounce hook
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer); // Cleanup!
+  }, [value, delay]);
+  return debounced;
+}`
+                },
+                interview: {
+                    questions: [
+                        { q: "What's the difference between debounce and throttle?", a: "Debounce waits until input STOPS for X ms, then fires once (good for search). Throttle fires at most once every X ms while input is active (good for scroll/resize). Debounce = final value, Throttle = regular updates." },
+                        { q: "Why use useCallback in useToggle?", a: "The toggle function's identity never needs to change. useCallback with empty deps ensures the same function reference across renders, preventing unnecessary re-renders of children that receive toggle as a prop." },
+                        { q: "How does useFetch handle race conditions?", a: "Using AbortController. When the URL changes, the cleanup function aborts the previous request before starting a new one. We also check for AbortError in the catch block to avoid setting error state for intentional aborts." }
+                    ]
+                }
+            },
+            {
+                day: 27,
+                title: 'React Testing: RTL & Vitest Mastery',
+                intro: "Write tests that give confidence without testing implementation details. React Testing Library philosophy.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Testing philosophy: Test behavior, not implementation</li>
+    <li>Setting up Vitest + React Testing Library</li>
+    <li>Queries: getBy, findBy, queryBy</li>
+    <li>User interactions with userEvent</li>
+    <li>Mocking API calls</li>
+    <li>Testing async components</li>
+</ul>
+
+<div class="bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-green-400 font-bold mb-2">🏆 Testing Library Philosophy</h4>
+    <p class="text-light-300">"The more your tests resemble the way your software is used, the more confidence they can give you." - Kent C. Dodds</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Setup Steps</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300"># Install dependencies
+npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+
+# Add to vite.config.js
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js'
+  }
+})
+
+# Create setup.js
+import '@testing-library/jest-dom';</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔍 Query Priority (Use in Order)</h3>
+<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+    <li><code>getByRole</code> - Accessible (best!)</li>
+    <li><code>getByLabelText</code> - Form fields</li>
+    <li><code>getByPlaceholderText</code> - Inputs</li>
+    <li><code>getByText</code> - Non-interactive content</li>
+    <li><code>getByTestId</code> - Last resort</li>
+</ol>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🧪 REACT TESTING LIBRARY - COMPLETE GUIDE                           ║
+║  Test behavior, not implementation!                                  ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Note: These tests would run in Vitest/Jest environment.             ║
+║  This code demonstrates patterns and best practices.                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 COMPONENT TO TEST: LoginForm
+// ═══════════════════════════════════════════════════════════════════
+function LoginForm({ onSubmit }) {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      await onSubmit({ email, password });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} aria-label="Login form">
+      <h2>Login</h2>
+      
+      {error && <div role="alert" style={{ color: 'red' }}>{error}</div>}
+      
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter email"
+        />
+      </div>
+      
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+        />
+      </div>
+      
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🧪 TEST EXAMPLES (would go in LoginForm.test.jsx)
+// ═══════════════════════════════════════════════════════════════════
+/*
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { LoginForm } from './LoginForm';
+
+describe('LoginForm', () => {
+  // ═══════════════════════════════════════════════════════════════
+  // TEST 1: Renders correctly
+  // ═══════════════════════════════════════════════════════════════
+  it('renders email and password fields', () => {
+    render(<LoginForm onSubmit={vi.fn()} />);
+    
+    // ✅ Best: Query by role (accessible)
+    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
+    
+    // ✅ Good: Query by label
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    
+    // ✅ Good: Query by role for button
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TEST 2: Shows validation error
+  // ═══════════════════════════════════════════════════════════════
+  it('shows error when fields are empty', async () => {
+    const user = userEvent.setup();
+    render(<LoginForm onSubmit={vi.fn()} />);
+    
+    await user.click(screen.getByRole('button', { name: /login/i }));
+    
+    // ✅ Use getByRole('alert') for error messages
+    expect(screen.getByRole('alert')).toHaveTextContent(/fill in all fields/i);
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TEST 3: Submits with valid data
+  // ═══════════════════════════════════════════════════════════════
+  it('calls onSubmit with email and password', async () => {
+    const user = userEvent.setup();
+    const mockSubmit = vi.fn();
+    render(<LoginForm onSubmit={mockSubmit} />);
+    
+    // Type in fields
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'password123');
+    
+    // Submit
+    await user.click(screen.getByRole('button', { name: /login/i }));
+    
+    // Assert
+    expect(mockSubmit).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TEST 4: Shows loading state
+  // ═══════════════════════════════════════════════════════════════
+  it('disables button while loading', async () => {
+    const user = userEvent.setup();
+    // Mock that takes time to resolve
+    const mockSubmit = vi.fn(() => new Promise(r => setTimeout(r, 100)));
+    render(<LoginForm onSubmit={mockSubmit} />);
+    
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /login/i }));
+    
+    // Button should show loading
+    expect(screen.getByRole('button')).toHaveTextContent(/logging in/i);
+    expect(screen.getByRole('button')).toBeDisabled();
+    
+    // Wait for completion
+    await waitFor(() => {
+      expect(screen.getByRole('button')).toHaveTextContent(/login/i);
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════
+  // TEST 5: Shows API error
+  // ═══════════════════════════════════════════════════════════════
+  it('displays error from failed submission', async () => {
+    const user = userEvent.setup();
+    const mockSubmit = vi.fn().mockRejectedValue(new Error('Invalid credentials'));
+    render(<LoginForm onSubmit={mockSubmit} />);
+    
+    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'wrong');
+    await user.click(screen.getByRole('button', { name: /login/i }));
+    
+    // Wait for error to appear
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(/invalid credentials/i);
+    });
+  });
+});
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 INTERACTIVE DEMO
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  const [result, setResult] = React.useState(null);
+  
+  const handleSubmit = async (data) => {
+    // Simulate API
+    await new Promise(r => setTimeout(r, 1000));
+    if (data.password === 'wrong') {
+      throw new Error('Invalid credentials');
+    }
+    setResult(\`✅ Logged in as \${data.email}\`);
+  };
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '400px' }}>
+      <h3>🧪 React Testing Library Demo</h3>
+      <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+        This component demonstrates patterns for testable React components.
+      </p>
+      
+      <div style={{ background: '#f1f5f9', padding: '20px', borderRadius: '8px' }}>
+        <LoginForm onSubmit={handleSubmit} />
+      </div>
+      
+      {result && (
+        <div style={{ 
+          marginTop: '15px', 
+          padding: '10px', 
+          background: '#dcfce7', 
+          borderRadius: '8px' 
+        }}>
+          {result}
+        </div>
+      )}
+      
+      <div style={{ marginTop: '20px', fontSize: '13px', color: '#64748b' }}>
+        <strong>Test Tips:</strong>
+        <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+          <li>Try empty fields → Shows validation error</li>
+          <li>Try password "wrong" → Shows API error</li>
+          <li>Valid email + password → Shows success</li>
+        </ul>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Testing implementation details
+expect(component.state.isLoading).toBe(true);
+expect(wrapper.find('.btn-loading')).toHaveLength(1);
+// Breaks when you refactor CSS classes or state names`,
+                    senior: `// ✅ Testing behavior
+expect(screen.getByRole('button')).toBeDisabled();
+expect(screen.getByRole('button')).toHaveTextContent(/loading/i);
+// Works regardless of implementation`
+                },
+                interview: {
+                    questions: [
+                        { q: "What's the difference between getBy, findBy, and queryBy?", a: "getBy throws if not found (use when element should exist). queryBy returns null if not found (use to assert absence). findBy is async and waits (use for elements that appear after async operations)." },
+                        { q: "Why prefer getByRole over getByTestId?", a: "getByRole tests accessibility - if the test passes, screen readers can find the element. getByTestId is implementation detail that doesn't verify accessibility. Only use testId as last resort." },
+                        { q: "How do you test components that fetch data?", a: "Mock the fetch/axios at module level with vi.mock(). Use waitFor or findBy queries to wait for loading to complete. Assert on the final rendered state, not intermediate loading states." }
+                    ]
+                }
+            },
+            {
+                day: 28,
+                title: 'Performance Profiling & React DevTools Mastery',
+                intro: "Find and fix performance bottlenecks. Profiler, Chrome DevTools, and why-did-you-render.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Master</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>React DevTools Profiler: Flame graphs & ranked charts</li>
+    <li>Chrome DevTools: Performance tab & memory analysis</li>
+    <li>why-did-you-render library setup</li>
+    <li>Common performance anti-patterns</li>
+    <li>useMemo, useCallback, memo - when to use</li>
+</ul>
+
+<div class="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-orange-400 font-bold mb-2">⚠️ Premature Optimization Warning</h4>
+    <p class="text-light-300">"Don't optimize what you haven't measured." Always profile FIRST, then optimize. Most apps don't need memo() everywhere.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Setup why-did-you-render</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300"># Install
+npm install @welldone-software/why-did-you-render
+
+# Create wdyr.js (import BEFORE React!)
+import React from 'react';
+import whyDidYouRender from '@welldone-software/why-did-you-render';
+
+whyDidYouRender(React, {
+  trackAllPureComponents: true,
+});
+
+# Import in index.js FIRST LINE
+import './wdyr';</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔍 React DevTools Profiler</h3>
+<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+    <li>Open DevTools → Profiler tab</li>
+    <li>Click Record → Interact with app → Stop</li>
+    <li>Read the flame graph: wider bars = slower</li>
+    <li>Gray bars = didn't re-render (good!)</li>
+    <li>Click component → See "Why did this render?"</li>
+</ol>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🔬 REACT PERFORMANCE PROFILING                                       ║
+║  Find bottlenecks, fix them, verify improvement                      ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  This demo shows common performance anti-patterns and fixes          ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// ❌ ANTI-PATTERN 1: Inline objects cause re-renders
+// ═══════════════════════════════════════════════════════════════════
+function BadComponent({ items }) {
+  return (
+    <div>
+      {items.map(item => (
+        // ❌ New object on every render!
+        <ChildComponent 
+          key={item.id}
+          style={{ color: 'red', padding: 10 }}  // New object each time!
+          onClick={() => console.log(item)}       // New function each time!
+        />
+      ))}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ✅ FIX: Move objects outside or memoize
+// ═══════════════════════════════════════════════════════════════════
+const itemStyle = { color: 'red', padding: 10 }; // Stable reference
+
+function GoodComponent({ items }) {
+  const handleClick = React.useCallback((item) => {
+    console.log(item);
+  }, []);
+
+  return (
+    <div>
+      {items.map(item => (
+        <ChildComponent 
+          key={item.id}
+          style={itemStyle}
+          onClick={() => handleClick(item)}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ❌ ANTI-PATTERN 2: Expensive calculations on every render
+// ═══════════════════════════════════════════════════════════════════
+function BadFilteredList({ items, filter }) {
+  // ❌ Runs on EVERY render, even if items/filter didn't change
+  const filtered = items.filter(i => i.name.includes(filter));
+  const sorted = filtered.sort((a, b) => a.name.localeCompare(b.name));
+  
+  return <List items={sorted} />;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ✅ FIX: useMemo for expensive calculations
+// ═══════════════════════════════════════════════════════════════════
+function GoodFilteredList({ items, filter }) {
+  // ✅ Only recalculates when items or filter change
+  const sortedFiltered = React.useMemo(() => {
+    const filtered = items.filter(i => i.name.includes(filter));
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }, [items, filter]);
+  
+  return <List items={sortedFiltered} />;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 MEMOIZED CHILD COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+const ExpensiveChild = React.memo(function ExpensiveChild({ data, onClick }) {
+  console.log('ExpensiveChild rendered');
+  
+  // Simulate expensive render
+  const result = React.useMemo(() => {
+    let sum = 0;
+    for (let i = 0; i < 1000000; i++) sum += i;
+    return sum;
+  }, []);
+
+  return (
+    <div 
+      onClick={onClick}
+      style={{ 
+        padding: '10px', 
+        margin: '5px', 
+        background: '#e0f2fe',
+        borderRadius: '4px',
+        cursor: 'pointer'
+      }}
+    >
+      {data.name} (computed: {result})
+    </div>
+  );
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 DEMO: Toggle between optimized and unoptimized
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  const [count, setCount] = React.useState(0);
+  const [isOptimized, setIsOptimized] = React.useState(true);
+  const [renderCount, setRenderCount] = React.useState(0);
+
+  // Track renders
+  React.useEffect(() => {
+    setRenderCount(c => c + 1);
+  });
+
+  // ❌ Unoptimized callback
+  const badHandleClick = () => console.log('clicked');
+  
+  // ✅ Optimized callback
+  const goodHandleClick = React.useCallback(() => console.log('clicked'), []);
+
+  // Sample data
+  const items = React.useMemo(() => [
+    { id: 1, name: 'Item A' },
+    { id: 2, name: 'Item B' },
+    { id: 3, name: 'Item C' }
+  ], []);
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px' }}>
+      <h3>🔬 Performance Profiling Demo</h3>
+      
+      <div style={{ 
+        background: '#fef3c7', 
+        padding: '15px', 
+        borderRadius: '8px',
+        marginBottom: '20px'
+      }}>
+        <p style={{ margin: 0, fontSize: '14px' }}>
+          <strong>Render Count:</strong> {renderCount} | 
+          <strong> Mode:</strong> {isOptimized ? '✅ Optimized' : '❌ Unoptimized'}
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <button 
+          onClick={() => setCount(c => c + 1)}
+          style={{ padding: '10px 20px', cursor: 'pointer' }}
+        >
+          Increment Counter ({count})
+        </button>
+        
+        <button 
+          onClick={() => setIsOptimized(!isOptimized)}
+          style={{ 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            background: isOptimized ? '#22c55e' : '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px'
+          }}
+        >
+          Toggle Optimization
+        </button>
+      </div>
+
+      <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+        Click "Increment Counter" and watch the console. 
+        In unoptimized mode, children re-render unnecessarily.
+      </p>
+
+      <div style={{ 
+        background: '#f8fafc', 
+        padding: '15px', 
+        borderRadius: '8px' 
+      }}>
+        {items.map(item => (
+          <ExpensiveChild
+            key={item.id}
+            data={item}
+            onClick={isOptimized ? goodHandleClick : badHandleClick}
+          />
+        ))}
+      </div>
+
+      <div style={{ 
+        marginTop: '20px', 
+        padding: '15px', 
+        background: '#1e293b', 
+        color: '#94a3b8',
+        borderRadius: '8px',
+        fontSize: '13px'
+      }}>
+        <strong style={{ color: '#22d3ee' }}>📊 Open DevTools Console</strong>
+        <br />
+        When optimized, children don't log "rendered" on counter change.
+        <br /><br />
+        <strong style={{ color: '#22d3ee' }}>🔥 Why?</strong>
+        <br />
+        Unoptimized: badHandleClick is a new function each render → breaks memo()
+        <br />
+        Optimized: goodHandleClick is stable via useCallback → memo() works!
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Memoize everything "just in case"
+const MegaMemoized = React.memo(({ name }) => {
+  const style = useMemo(() => ({ color: 'red' }), []);
+  const click = useCallback(() => {}, []);
+  // 100 lines of useMemo and useCallback...
+});`,
+                    senior: `// ✅ Profile first, optimize bottlenecks
+// Step 1: Profile with DevTools
+// Step 2: Find slow components (> 16ms)
+// Step 3: Fix ONLY those
+const SlowList = React.memo(({ items }) => {
+  // Only memoize expensive operations
+  const sorted = useMemo(() => expensiveSort(items), [items]);
+  return <VirtualizedList items={sorted} />;
+});`
+                },
+                interview: {
+                    questions: [
+                        { q: "When should you NOT use React.memo?", a: "When the component is cheap to render, when props change frequently anyway, when the component always renders with different props, or when you haven't profiled and confirmed there's a problem. Memo has overhead too." },
+                        { q: "What causes 'wasted renders' in React?", a: "Parent re-renders (children re-render by default), new object/array/function references in props, context value changes, state updates that don't affect UI. Use Profiler's 'Why did this render?' to diagnose." },
+                        { q: "How do you fix a slow component that renders frequently?", a: "1) Profile to confirm it's slow. 2) Check for expensive calculations → useMemo. 3) Check for unnecessary re-renders → memo() + stable props. 4) Consider virtualization for long lists. 5) Code-split if it's large." }
+                    ]
+                }
+            },
+            {
+                day: 29,
+                title: 'Machine Coding: Modal & Toast System',
+                intro: "Build a professional modal and toast notification system with portals, animations, and accessibility.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Build</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Modal component with React Portal</li>
+    <li>Focus trap for accessibility</li>
+    <li>Toast notification system with queue</li>
+    <li>Auto-dismiss with progress bar</li>
+    <li>Multiple toast types (success, error, warning)</li>
+    <li>Smooth enter/exit animations</li>
+</ul>
+
+<div class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-blue-400 font-bold mb-2">💡 Why Portals?</h4>
+    <p class="text-light-300">Modals need to render at the top of the DOM (to escape overflow:hidden, z-index issues). React Portals let you render children into a different DOM node while keeping React's event bubbling.</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Key Concepts</h3>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">1. React Portal</h4>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">ReactDOM.createPortal(
+  children,
+  document.getElementById('modal-root')
+)</pre>
+</div>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">2. Focus Trap</h4>
+<p class="mb-4 text-light-300">Keep focus inside the modal. When Tab reaches the last element, loop back to the first. Close on Escape key.</p>
+
+<h4 class="text-lg font-semibold text-cyan-400 mb-2">3. Toast Queue Pattern</h4>
+<p class="mb-4 text-light-300">Use Context + Reducer to manage a queue of toasts. New toasts push to array, auto-dismiss removes after timeout.</p>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🔔 MODAL & TOAST NOTIFICATION SYSTEM                                ║
+║  Production-ready with accessibility & animations                    ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  PART 1: Modal with Portal & Focus Trap                              ║
+║  PART 2: Toast Notification System                                   ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 PART 1: MODAL COMPONENT
+// ═══════════════════════════════════════════════════════════════════
+function Modal({ isOpen, onClose, title, children }) {
+  const modalRef = React.useRef(null);
+  const previousActiveElement = React.useRef(null);
+
+  // Lock body scroll when modal is open
+  React.useEffect(() => {
+    if (isOpen) {
+      previousActiveElement.current = document.activeElement;
+      document.body.style.overflow = 'hidden';
+      // Focus the modal
+      modalRef.current?.focus();
+    } else {
+      document.body.style.overflow = '';
+      // Restore focus
+      previousActiveElement.current?.focus();
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Handle Escape key
+  React.useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    // In real app: ReactDOM.createPortal(content, document.body)
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        animation: 'fadeIn 0.2s ease-out'
+      }}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          maxWidth: '500px',
+          width: '90%',
+          maxHeight: '80vh',
+          overflow: 'auto',
+          animation: 'slideUp 0.3s ease-out',
+          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+        }}
+      >
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '16px'
+        }}>
+          <h2 id="modal-title" style={{ margin: 0 }}>{title}</h2>
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+              padding: '4px'
+            }}
+          >
+            ×
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔔 PART 2: TOAST SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+const ToastContext = React.createContext(null);
+
+const TOAST_TYPES = {
+  success: { bg: '#22c55e', icon: '✅' },
+  error: { bg: '#ef4444', icon: '❌' },
+  warning: { bg: '#f59e0b', icon: '⚠️' },
+  info: { bg: '#3b82f6', icon: 'ℹ️' }
+};
+
+function ToastProvider({ children }) {
+  const [toasts, setToasts] = React.useState([]);
+
+  const addToast = React.useCallback((message, type = 'info', duration = 3000) => {
+    const id = Date.now() + Math.random();
+    setToasts(prev => [...prev, { id, message, type, duration }]);
+    
+    // Auto remove
+    if (duration > 0) {
+      setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+      }, duration);
+    }
+    
+    return id;
+  }, []);
+
+  const removeToast = React.useCallback((id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  return (
+    <ToastContext.Provider value={{ addToast, removeToast }}>
+      {children}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+    </ToastContext.Provider>
+  );
+}
+
+function ToastContainer({ toasts, removeToast }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      right: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      zIndex: 1001
+    }}>
+      {toasts.map(toast => (
+        <Toast key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
+      ))}
+    </div>
+  );
+}
+
+function Toast({ toast, onClose }) {
+  const config = TOAST_TYPES[toast.type] || TOAST_TYPES.info;
+  
+  return (
+    <div
+      role="alert"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        padding: '12px 16px',
+        background: config.bg,
+        color: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        animation: 'slideIn 0.3s ease-out',
+        minWidth: '250px'
+      }}
+    >
+      <span style={{ fontSize: '18px' }}>{config.icon}</span>
+      <span style={{ flex: 1 }}>{toast.message}</span>
+      <button
+        onClick={onClose}
+        style={{
+          background: 'rgba(255,255,255,0.2)',
+          border: 'none',
+          color: 'white',
+          borderRadius: '4px',
+          padding: '4px 8px',
+          cursor: 'pointer'
+        }}
+      >
+        ×
+      </button>
+      
+      {/* Progress bar */}
+      {toast.duration > 0 && (
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '3px',
+          background: 'rgba(255,255,255,0.3)',
+          borderRadius: '0 0 8px 8px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            height: '100%',
+            background: 'rgba(255,255,255,0.7)',
+            animation: \`shrink \${toast.duration}ms linear forwards\`
+          }} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function useToast() {
+  const context = React.useContext(ToastContext);
+  if (!context) throw new Error('useToast must be used within ToastProvider');
+  return context;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 DEMO APP
+// ═══════════════════════════════════════════════════════════════════
+function DemoContent() {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { addToast } = useToast();
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'system-ui' }}>
+      <style>{\`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+      \`}</style>
+      
+      <h3>🔔 Modal & Toast Demo</h3>
+      
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '20px' }}>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Open Modal
+        </button>
+        
+        <button 
+          onClick={() => addToast('Operation successful!', 'success')}
+          style={{ padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Success Toast
+        </button>
+        
+        <button 
+          onClick={() => addToast('Something went wrong', 'error')}
+          style={{ padding: '10px 20px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Error Toast
+        </button>
+        
+        <button 
+          onClick={() => addToast('Please check this', 'warning')}
+          style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Warning Toast
+        </button>
+      </div>
+
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        title="🎉 Welcome!"
+      >
+        <p>This modal uses React Portal (conceptually) and includes:</p>
+        <ul style={{ marginLeft: '20px' }}>
+          <li>Body scroll lock</li>
+          <li>Escape key to close</li>
+          <li>Click outside to close</li>
+          <li>Focus management</li>
+          <li>ARIA attributes</li>
+        </ul>
+        <button 
+          onClick={() => {
+            setIsModalOpen(false);
+            addToast('Modal closed!', 'info');
+          }}
+          style={{ marginTop: '15px', padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Close Modal
+        </button>
+      </Modal>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <DemoContent />
+    </ToastProvider>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ Modal without portal
+function Modal({ isOpen }) {
+  // Rendered inside parent div
+  // z-index wars, overflow:hidden breaks it
+  return isOpen ? <div className="modal">...</div> : null;
+}`,
+                    senior: `// ✅ Modal with portal
+function Modal({ isOpen }) {
+  return isOpen 
+    ? ReactDOM.createPortal(
+        <div className="modal">...</div>,
+        document.body  // Renders at top level!
+      ) 
+    : null;
+}`
+                },
+                interview: {
+                    questions: [
+                        { q: "Why use React Portal for modals?", a: "Portals render children outside the parent DOM hierarchy while maintaining React context and event bubbling. This avoids z-index issues, overflow:hidden clipping, and stacking context problems. The modal is at document.body level but still a React child." },
+                        { q: "How do you implement focus trap in a modal?", a: "Query all focusable elements inside modal. On Tab, check if focus is on last element → move to first. On Shift+Tab at first → move to last. Store previous activeElement, restore on close. Use tabIndex={-1} on container for initial focus." },
+                        { q: "How would you implement toast queue with max limit?", a: "In addToast: check if toasts.length >= MAX_TOASTS, if so remove oldest. Use a reducer for complex state. For animations, use a 'leaving' state before removing from array so exit animation can play." }
+                    ]
+                }
+            },
+            {
+                day: 30,
+                title: 'useDeferredValue & useTransition Deep Dive',
+                intro: "Master React 19's concurrent features. Keep UI responsive during heavy computations.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Master</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>useTransition: Mark updates as non-urgent</li>
+    <li>useDeferredValue: Defer expensive re-renders</li>
+    <li>When to use each</li>
+    <li>Real-world patterns: Search, filtering, tabs</li>
+</ul>
+
+<div class="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-cyan-400 font-bold mb-2">⚡ Key Difference</h4>
+    <p class="text-light-300"><code>useTransition</code>: Wrap setState calls to mark them as low priority.<br/>
+    <code>useDeferredValue</code>: Create a deferred copy of a value that "lags behind".</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">🔀 useTransition</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">const [isPending, startTransition] = useTransition();
+
+// Urgent: Update input immediately
+setQuery(input);
+
+// Non-urgent: Filter can lag
+startTransition(() => {
+  setFilteredResults(expensiveFilter(input));
+});</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⏳ useDeferredValue</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">const deferredQuery = useDeferredValue(query);
+
+// query updates immediately (typing stays responsive)
+// deferredQuery lags behind (expensive render can wait)</pre>
+</div>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  ⚡ useDeferredValue & useTransition                                 ║
+║  Keep UI responsive during heavy operations                          ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  DEMO 1: Search with useDeferredValue                                ║
+║  DEMO 2: Tab switching with useTransition                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📦 SLOW COMPONENT (Simulates expensive render)
+// ═══════════════════════════════════════════════════════════════════
+function SlowList({ query }) {
+  // Simulate slow render
+  const items = [];
+  for (let i = 0; i < 500; i++) {
+    items.push(
+      <SlowItem key={i} text={\`Result \${i + 1} for "\${query}"\`} />
+    );
+  }
+  return <div>{items}</div>;
+}
+
+function SlowItem({ text }) {
+  // Artificial slowdown
+  const startTime = performance.now();
+  while (performance.now() - startTime < 1) {} // 1ms per item = 500ms total
+  
+  return (
+    <div style={{ 
+      padding: '8px', 
+      borderBottom: '1px solid #eee',
+      fontSize: '14px'
+    }}>
+      {text}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔍 DEMO 1: useDeferredValue for Search
+// ═══════════════════════════════════════════════════════════════════
+function DeferredSearch() {
+  const [query, setQuery] = React.useState('');
+  const deferredQuery = React.useDeferredValue(query);
+  
+  // Check if we're showing stale results
+  const isStale = query !== deferredQuery;
+
+  return (
+    <div>
+      <h4>🔍 useDeferredValue Demo</h4>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Type to search (try fast typing)..."
+        style={{
+          width: '100%',
+          padding: '12px',
+          fontSize: '16px',
+          border: '2px solid #e2e8f0',
+          borderRadius: '8px',
+          marginBottom: '10px'
+        }}
+      />
+      
+      <div style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
+        Query: "{query}" | Deferred: "{deferredQuery}" 
+        {isStale && <span style={{ color: '#f59e0b' }}> (stale)</span>}
+      </div>
+      
+      <div style={{ 
+        maxHeight: '200px', 
+        overflow: 'auto', 
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        opacity: isStale ? 0.7 : 1,
+        transition: 'opacity 0.2s'
+      }}>
+        {deferredQuery && <SlowList query={deferredQuery} />}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔀 DEMO 2: useTransition for Tab Switching
+// ═══════════════════════════════════════════════════════════════════
+function TabContent({ id }) {
+  // Simulate expensive render
+  const items = [];
+  for (let i = 0; i < 300; i++) {
+    items.push(
+      <div key={i} style={{ padding: '4px', borderBottom: '1px solid #f0f0f0' }}>
+        Tab {id} - Item {i + 1}
+      </div>
+    );
+  }
+  // Artificial delay
+  const start = performance.now();
+  while (performance.now() - start < 100) {}
+  
+  return <div style={{ maxHeight: '200px', overflow: 'auto' }}>{items}</div>;
+}
+
+function TransitionTabs() {
+  const [tab, setTab] = React.useState('A');
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleTabChange = (newTab) => {
+    startTransition(() => {
+      setTab(newTab);
+    });
+  };
+
+  return (
+    <div>
+      <h4>🔀 useTransition Demo</h4>
+      
+      <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
+        {['A', 'B', 'C', 'D'].map(t => (
+          <button
+            key={t}
+            onClick={() => handleTabChange(t)}
+            style={{
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              background: tab === t ? '#3b82f6' : '#e2e8f0',
+              color: tab === t ? 'white' : '#333',
+              transition: 'all 0.2s'
+            }}
+          >
+            Tab {t}
+          </button>
+        ))}
+        
+        {isPending && (
+          <span style={{ 
+            padding: '10px', 
+            color: '#f59e0b',
+            fontSize: '14px'
+          }}>
+            ⏳ Loading...
+          </span>
+        )}
+      </div>
+      
+      <div style={{ 
+        border: '1px solid #ddd', 
+        borderRadius: '8px',
+        opacity: isPending ? 0.5 : 1,
+        transition: 'opacity 0.2s'
+      }}>
+        <TabContent id={tab} />
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 MAIN APP
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  const [demo, setDemo] = React.useState('deferred');
+
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '600px' }}>
+      <h3>⚡ Concurrent React Features</h3>
+      
+      <div style={{ 
+        background: '#f8fafc', 
+        padding: '15px', 
+        borderRadius: '8px',
+        marginBottom: '20px'
+      }}>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+          <button 
+            onClick={() => setDemo('deferred')}
+            style={{
+              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              background: demo === 'deferred' ? '#6366f1' : '#e2e8f0',
+              color: demo === 'deferred' ? 'white' : '#333'
+            }}
+          >
+            useDeferredValue
+          </button>
+          <button 
+            onClick={() => setDemo('transition')}
+            style={{
+              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              background: demo === 'transition' ? '#6366f1' : '#e2e8f0',
+              color: demo === 'transition' ? 'white' : '#333'
+            }}
+          >
+            useTransition
+          </button>
+        </div>
+        
+        {demo === 'deferred' ? <DeferredSearch /> : <TransitionTabs />}
+      </div>
+      
+      <div style={{ 
+        background: '#1e293b', 
+        padding: '15px', 
+        borderRadius: '8px',
+        color: '#94a3b8',
+        fontSize: '13px'
+      }}>
+        <strong style={{ color: '#22d3ee' }}>💡 When to use which?</strong>
+        <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
+          <li><strong>useDeferredValue:</strong> You receive a value (prop) and want to defer re-rendering based on it</li>
+          <li><strong>useTransition:</strong> You control the state update and want to mark it as low priority</li>
+        </ul>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ No optimization - typing lags
+function Search() {
+  const [query, setQuery] = useState('');
+  const results = expensiveFilter(query); // Blocks typing!
+  
+  return (
+    <>
+      <input value={query} onChange={e => setQuery(e.target.value)} />
+      <List items={results} />
+    </>
+  );
+}`,
+                    senior: `// ✅ useDeferredValue - typing stays snappy
+function Search() {
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+  const results = expensiveFilter(deferredQuery);
+  
+  return (
+    <>
+      <input value={query} onChange={e => setQuery(e.target.value)} />
+      <List items={results} style={{ opacity: query !== deferredQuery ? 0.5 : 1 }} />
+    </>
+  );
+}`
+                },
+                interview: {
+                    questions: [
+                        { q: "When would you use useDeferredValue vs useTransition?", a: "useDeferredValue when you receive a value as prop and can't control its update. useTransition when you control the setState call. Think: useDeferredValue = defer rendering, useTransition = defer state update." },
+                        { q: "What happens when React is rendering a transition and a higher priority update comes in?", a: "React abandons the in-progress transition render and starts the higher priority update immediately. This is why typing stays responsive - each keystroke interrupts the previous deferred render." },
+                        { q: "Can you use useDeferredValue and useTransition together?", a: "Rarely needed. If you control the state, use useTransition. If receiving a prop, use useDeferredValue. Using both is redundant and could cause confusing double-deferred behavior." }
+                    ]
+                }
+            },
+            {
+                day: 31,
+                title: 'Streaming SSR & Asset Preloading',
+                intro: "React 19's streaming server rendering and resource preloading APIs for instant page loads.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Learn</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>renderToPipeableStream vs renderToString</li>
+    <li>Streaming HTML with Suspense boundaries</li>
+    <li>Asset preloading: preload(), preinit(), prefetchDNS()</li>
+    <li>Resource hints and priorities</li>
+</ul>
+
+<div class="bg-gradient-to-r from-indigo-500/20 to-violet-500/20 border border-indigo-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-indigo-400 font-bold mb-2">🚀 Why Streaming SSR?</h4>
+    <p class="text-light-300">Traditional SSR: Server renders entire page → User sees nothing until complete.<br/>
+    Streaming SSR: Server sends shell immediately → Streams content as ready → Instant interactivity!</p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">⚡ Streaming with renderToPipeableStream</h3>
+<div class="bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
+<pre class="text-cyan-300">import { renderToPipeableStream } from 'react-dom/server';
+
+app.get('/', (req, res) => {
+  const { pipe } = renderToPipeableStream(&lt;App /&gt;, {
+    bootstrapScripts: ['/main.js'],
+    onShellReady() {
+      res.setHeader('Content-Type', 'text/html');
+      pipe(res); // Start streaming immediately!
+    }
+  });
+});</pre>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📦 Asset Preloading APIs</h3>
+<table class="w-full text-left mb-6">
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">preload(href, options)</td>
+        <td class="py-2 text-light-300">Preload a resource (font, image, script)</td>
+    </tr>
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">preinit(href, options)</td>
+        <td class="py-2 text-light-300">Preload AND execute (for scripts/styles)</td>
+    </tr>
+    <tr class="border-b border-dark-600">
+        <td class="py-2 text-cyan-400 font-mono">prefetchDNS(href)</td>
+        <td class="py-2 text-light-300">Pre-resolve DNS for external domain</td>
+    </tr>
+    <tr>
+        <td class="py-2 text-cyan-400 font-mono">preconnect(href)</td>
+        <td class="py-2 text-light-300">Pre-establish connection (DNS + TCP + TLS)</td>
+    </tr>
+</table>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🌊 STREAMING SSR & ASSET PRELOADING                                 ║
+║  React 19's server rendering capabilities                            ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  NOTE: This code demonstrates patterns for server environments.      ║
+║  In this sandbox, we show the client-side preloading APIs.           ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📚 SERVER-SIDE CODE REFERENCE (Node.js/Express)
+// ═══════════════════════════════════════════════════════════════════
+/*
+// server.js - Express example with streaming SSR
+
+import express from 'express';
+import React from 'react';
+import { renderToPipeableStream } from 'react-dom/server';
+import App from './App';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  let didError = false;
+  
+  const { pipe, abort } = renderToPipeableStream(
+    <App />,
+    {
+      // Scripts to load for hydration
+      bootstrapScripts: ['/static/js/main.js'],
+      
+      // ✅ onShellReady: Shell (non-Suspense content) is ready
+      // Start streaming immediately for fast TTFB
+      onShellReady() {
+        res.statusCode = didError ? 500 : 200;
+        res.setHeader('Content-Type', 'text/html');
+        pipe(res);
+      },
+      
+      // ⚠️ onShellError: Fatal error before shell
+      onShellError(error) {
+        res.statusCode = 500;
+        res.send('<h1>Something went wrong</h1>');
+      },
+      
+      // 📊 onAllReady: Everything including Suspense content
+      // Use for crawlers/bots that need complete HTML
+      onAllReady() {
+        // Called when all content has been generated
+      },
+      
+      // ❌ onError: Non-fatal errors during streaming
+      onError(error) {
+        didError = true;
+        console.error(error);
+      }
+    }
+  );
+  
+  // Abort after timeout
+  setTimeout(() => abort(), 10000);
+});
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎯 CLIENT-SIDE: Asset Preloading Demo
+// ═══════════════════════════════════════════════════════════════════
+function PreloadDemo() {
+  const [logs, setLogs] = React.useState([]);
+  
+  const addLog = (message) => {
+    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), message }]);
+  };
+
+  const handlePreload = () => {
+    addLog('Calling preload() for image...');
+    
+    // React 19's preload API
+    if (typeof React.preload === 'function') {
+      React.preload('https://picsum.photos/800/600', { as: 'image' });
+      addLog('✅ Image preload initiated');
+    } else {
+      // Fallback for demo
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = 'https://picsum.photos/800/600';
+      document.head.appendChild(link);
+      addLog('✅ Image preload initiated (fallback)');
+    }
+  };
+
+  const handlePreconnect = () => {
+    addLog('Calling preconnect() for API domain...');
+    
+    if (typeof React.preconnect === 'function') {
+      React.preconnect('https://api.example.com');
+      addLog('✅ Preconnect initiated');
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = 'https://api.example.com';
+      document.head.appendChild(link);
+      addLog('✅ Preconnect initiated (fallback)');
+    }
+  };
+
+  const handlePrefetchDNS = () => {
+    addLog('Calling prefetchDNS() for CDN...');
+    
+    if (typeof React.prefetchDNS === 'function') {
+      React.prefetchDNS('https://cdn.example.com');
+      addLog('✅ DNS prefetch initiated');
+    } else {
+      const link = document.createElement('link');
+      link.rel = 'dns-prefetch';
+      link.href = 'https://cdn.example.com';
+      document.head.appendChild(link);
+      addLog('✅ DNS prefetch initiated (fallback)');
+    }
+  };
+
+  return (
+    <div>
+      <h4>📦 Asset Preloading APIs</h4>
+      
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+        <button onClick={handlePreload} style={btnStyle}>
+          preload() Image
+        </button>
+        <button onClick={handlePreconnect} style={btnStyle}>
+          preconnect() API
+        </button>
+        <button onClick={handlePrefetchDNS} style={btnStyle}>
+          prefetchDNS() CDN
+        </button>
+      </div>
+      
+      <div style={{
+        background: '#1e293b',
+        padding: '15px',
+        borderRadius: '8px',
+        maxHeight: '150px',
+        overflow: 'auto',
+        fontFamily: 'monospace',
+        fontSize: '12px'
+      }}>
+        {logs.length === 0 && (
+          <span style={{ color: '#64748b' }}>Click buttons to see preload actions...</span>
+        )}
+        {logs.map((log, i) => (
+          <div key={i} style={{ color: '#94a3b8', marginBottom: '4px' }}>
+            <span style={{ color: '#64748b' }}>[{log.time}]</span> {log.message}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const btnStyle = {
+  padding: '8px 16px',
+  background: '#6366f1',
+  color: 'white',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer'
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// 🌊 STREAMING SSR VISUALIZATION
+// ═══════════════════════════════════════════════════════════════════
+function StreamingVisualization() {
+  const [stage, setStage] = React.useState(0);
+  
+  const stages = [
+    { label: 'Initial Request', shell: false, content1: false, content2: false },
+    { label: 'Shell Ready (TTFB)', shell: true, content1: false, content2: false },
+    { label: 'Content 1 Streams', shell: true, content1: true, content2: false },
+    { label: 'Content 2 Streams', shell: true, content1: true, content2: true }
+  ];
+  
+  const current = stages[stage];
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setStage(s => (s + 1) % stages.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div>
+      <h4>🌊 Streaming SSR Timeline</h4>
+      <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '15px' }}>
+        Stage: <strong>{current.label}</strong>
+      </p>
+      
+      <div style={{
+        border: '2px solid #e2e8f0',
+        borderRadius: '8px',
+        overflow: 'hidden'
+      }}>
+        {/* Header/Shell */}
+        <div style={{
+          padding: '15px',
+          background: current.shell ? '#dbeafe' : '#f1f5f9',
+          borderBottom: '1px solid #e2e8f0',
+          transition: 'background 0.5s'
+        }}>
+          {current.shell ? '🏠 Header & Navigation (Shell)' : '⏳ Waiting...'}
+        </div>
+        
+        {/* Content Area 1 */}
+        <div style={{
+          padding: '15px',
+          background: current.content1 ? '#dcfce7' : '#f1f5f9',
+          borderBottom: '1px solid #e2e8f0',
+          transition: 'background 0.5s'
+        }}>
+          {current.content1 ? '📄 Main Content (Suspense Resolved)' : 
+           current.shell ? '⏳ Loading main content...' : '⏳ Waiting...'}
+        </div>
+        
+        {/* Content Area 2 */}
+        <div style={{
+          padding: '15px',
+          background: current.content2 ? '#fef9c3' : '#f1f5f9',
+          transition: 'background 0.5s'
+        }}>
+          {current.content2 ? '📊 Data Section (Suspense Resolved)' : 
+           current.shell ? '⏳ Loading data section...' : '⏳ Waiting...'}
+        </div>
+      </div>
+      
+      <p style={{ fontSize: '12px', color: '#64748b', marginTop: '10px' }}>
+        💡 User sees shell immediately, content streams in as ready
+      </p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 MAIN APP
+// ═══════════════════════════════════════════════════════════════════
+function App() {
+  return (
+    <div style={{ fontFamily: 'system-ui', padding: '20px', maxWidth: '600px' }}>
+      <h3>🌊 Streaming SSR & Asset Preloading</h3>
+      
+      <div style={{ display: 'grid', gap: '20px' }}>
+        <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px' }}>
+          <StreamingVisualization />
+        </div>
+        
+        <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px' }}>
+          <PreloadDemo />
+        </div>
+      </div>
+      
+      <div style={{
+        marginTop: '20px',
+        padding: '15px',
+        background: '#1e293b',
+        borderRadius: '8px',
+        color: '#94a3b8',
+        fontSize: '13px'
+      }}>
+        <strong style={{ color: '#22d3ee' }}>📚 Key Takeaways:</strong>
+        <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
+          <li><code>renderToPipeableStream</code>: Starts sending HTML immediately</li>
+          <li><code>onShellReady</code>: Shell (non-Suspense content) is ready to stream</li>
+          <li><code>onAllReady</code>: Use for crawlers that need complete HTML</li>
+          <li><code>preload()</code>: Preload fonts, images, scripts</li>
+          <li><code>preinit()</code>: Preload AND execute scripts/styles</li>
+        </ul>
+      </div>
+    </div>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ renderToString - Blocks until complete
+const html = renderToString(<App />);
+res.send(html); // User waits for entire page`,
+                    senior: `// ✅ renderToPipeableStream - Stream immediately
+const { pipe } = renderToPipeableStream(<App />, {
+  onShellReady() {
+    pipe(res); // Start streaming shell NOW
+  }
+});
+// Content inside Suspense streams as ready`
+                },
+                interview: {
+                    questions: [
+                        { q: "What's the difference between onShellReady and onAllReady?", a: "onShellReady fires when non-Suspense content is ready - use for humans (fast TTFB). onAllReady fires when ALL content including Suspense is ready - use for crawlers/bots that need complete HTML." },
+                        { q: "When would you use preload() vs preinit()?", a: "preload() fetches the resource and stores in cache. preinit() fetches AND executes immediately (for scripts) or applies immediately (for styles). Use preinit() for critical resources needed before hydration." },
+                        { q: "How does streaming SSR work with Suspense?", a: "React sends the shell (non-Suspense content) immediately. For Suspense boundaries, it sends a placeholder. When the suspended content resolves, React streams an inline script that replaces the placeholder with real content." }
+                    ]
+                }
+            },
+            {
+                day: 32,
+                title: 'System Design for React: Interview Mastery',
+                intro: "The ultimate interview prep. Design complex React applications like a senior architect.",
+                content: `
+<h3 class="text-xl font-bold text-white mb-4">🎯 What You'll Master</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Frontend system design methodology</li>
+    <li>Designing Twitter/Feed, E-commerce, Real-time Chat</li>
+    <li>State management architecture decisions</li>
+    <li>Performance budgets & optimization strategies</li>
+    <li>Error boundaries & graceful degradation</li>
+</ul>
+
+<div class="bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
+    <h4 class="text-yellow-400 font-bold mb-2">🏆 The RADIO Framework</h4>
+    <p class="text-light-300 font-mono">
+    <strong>R</strong>equirements → <strong>A</strong>rchitecture → <strong>D</strong>ata Model → <strong>I</strong>nterface (API) → <strong>O</strong>ptimizations
+    </p>
+</div>
+
+<h3 class="text-xl font-bold text-white mb-4">📋 Step 1: Requirements (2-3 min)</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li><strong>Functional:</strong> What can users do?</li>
+    <li><strong>Non-functional:</strong> Performance, accessibility, offline?</li>
+    <li><strong>Scale:</strong> How many users? Data volume?</li>
+    <li><strong>Scope:</strong> What's in/out for this interview?</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">🏗️ Step 2: Architecture (5-7 min)</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>Component hierarchy (draw boxes)</li>
+    <li>State management strategy</li>
+    <li>Data flow (props, context, global state)</li>
+    <li>Third-party integrations</li>
+</ul>
+
+<h3 class="text-xl font-bold text-white mb-4">📊 Step 3: Data Model (3-5 min)</h3>
+<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+    <li>What data entities exist?</li>
+    <li>Client state vs server state</li>
+    <li>Normalization strategy</li>
+</ul>
+                `,
+                code: `/*
+╔══════════════════════════════════════════════════════════════════════╗
+║  🏗️ SYSTEM DESIGN: TWITTER-LIKE FEED                                ║
+║  Comprehensive example using RADIO framework                         ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  This is a simplified implementation showing key architecture        ║
+║  decisions for a social media feed.                                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📋 REQUIREMENTS GATHERED:
+// ═══════════════════════════════════════════════════════════════════
+/*
+FUNCTIONAL:
+- View feed of tweets
+- Like/unlike tweets
+- Compose new tweet
+- Infinite scroll
+- Real-time updates for likes
+
+NON-FUNCTIONAL:
+- Initial load < 2s
+- Smooth scrolling (60fps)
+- Optimistic updates for likes
+- Offline: show cached tweets
+- Accessible
+
+SCALE:
+- 10K concurrent users
+- 1M+ tweets in system
+- 50 tweets per page
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 📊 DATA MODEL
+// ═══════════════════════════════════════════════════════════════════
+/*
+Tweet {
+  id: string
+  content: string
+  author: { id, name, avatar }
+  createdAt: timestamp
+  likeCount: number
+  isLikedByMe: boolean
+  replyCount: number
+}
+
+FeedState {
+  tweets: Map<id, Tweet>  // Normalized!
+  feedOrder: string[]     // Just IDs for ordering
+  isLoading: boolean
+  hasMore: boolean
+  cursor: string | null
+}
+*/
+
+// ═══════════════════════════════════════════════════════════════════
+// 🏗️ ARCHITECTURE IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════════════
+
+// Normalized store (like Redux/Zustand would have)
+const useFeedStore = () => {
+  const [state, setState] = React.useState({
+    tweetsById: {},
+    feedOrder: [],
+    isLoading: false,
+    hasMore: true,
+    cursor: null
+  });
+
+  const loadMore = async () => {
+    if (state.isLoading || !state.hasMore) return;
+    
+    setState(s => ({ ...s, isLoading: true }));
+    
+    // Simulate API
+    await new Promise(r => setTimeout(r, 500));
+    const newTweets = generateMockTweets(state.cursor, 10);
+    
+    setState(s => ({
+      ...s,
+      isLoading: false,
+      cursor: newTweets.nextCursor,
+      hasMore: newTweets.hasMore,
+      // Normalize into map
+      tweetsById: {
+        ...s.tweetsById,
+        ...Object.fromEntries(newTweets.items.map(t => [t.id, t]))
+      },
+      // Append IDs to order
+      feedOrder: [...s.feedOrder, ...newTweets.items.map(t => t.id)]
+    }));
+  };
+
+  const toggleLike = (tweetId) => {
+    // Optimistic update!
+    setState(s => ({
+      ...s,
+      tweetsById: {
+        ...s.tweetsById,
+        [tweetId]: {
+          ...s.tweetsById[tweetId],
+          isLikedByMe: !s.tweetsById[tweetId].isLikedByMe,
+          likeCount: s.tweetsById[tweetId].likeCount + 
+            (s.tweetsById[tweetId].isLikedByMe ? -1 : 1)
+        }
+      }
+    }));
+    
+    // Fire and forget API call (would handle errors in production)
+    // api.toggleLike(tweetId).catch(rollback);
+  };
+
+  return { ...state, loadMore, toggleLike };
+};
+
+// Mock data generator
+const generateMockTweets = (cursor, count) => {
+  const start = cursor ? parseInt(cursor) : 0;
+  const items = Array.from({ length: count }, (_, i) => ({
+    id: String(start + i),
+    content: \`Tweet #\${start + i + 1}: This is some interesting content about React, JavaScript, and web development. #coding #react\`,
+    author: {
+      id: \`user-\${(start + i) % 5}\`,
+      name: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'][(start + i) % 5],
+      avatar: \`https://i.pravatar.cc/40?img=\${(start + i) % 70}\`
+    },
+    createdAt: Date.now() - (start + i) * 60000,
+    likeCount: Math.floor(Math.random() * 100),
+    isLikedByMe: Math.random() > 0.7,
+    replyCount: Math.floor(Math.random() * 20)
+  }));
+  
+  return {
+    items,
+    nextCursor: String(start + count),
+    hasMore: start + count < 50 // Limit for demo
+  };
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// 🧩 COMPONENT: Tweet Card (Memoized for perf)
+// ═══════════════════════════════════════════════════════════════════
+const TweetCard = React.memo(function TweetCard({ tweet, onLike }) {
+  const timeAgo = React.useMemo(() => {
+    const mins = Math.floor((Date.now() - tweet.createdAt) / 60000);
+    if (mins < 60) return \`\${mins}m\`;
+    if (mins < 1440) return \`\${Math.floor(mins/60)}h\`;
+    return \`\${Math.floor(mins/1440)}d\`;
+  }, [tweet.createdAt]);
+
+  return (
+    <article style={{
+      padding: '15px',
+      borderBottom: '1px solid #e5e7eb',
+      background: 'white'
+    }}>
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <img 
+          src={tweet.author.avatar} 
+          alt=""
+          style={{ width: 48, height: 48, borderRadius: '50%' }}
+        />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <strong>{tweet.author.name}</strong>
+            <span style={{ color: '#6b7280', fontSize: '14px' }}>· {timeAgo}</span>
+          </div>
+          <p style={{ margin: '8px 0', lineHeight: 1.5 }}>{tweet.content}</p>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <button 
+              onClick={() => onLike(tweet.id)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: tweet.isLikedByMe ? '#f43f5e' : '#6b7280',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              {tweet.isLikedByMe ? '❤️' : '🤍'} {tweet.likeCount}
+            </button>
+            <button style={{ background: 'none', border: 'none', color: '#6b7280' }}>
+              💬 {tweet.replyCount}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// 🔍 COMPONENT: Feed with Infinite Scroll
+// ═══════════════════════════════════════════════════════════════════
+function Feed() {
+  const { tweetsById, feedOrder, isLoading, hasMore, loadMore, toggleLike } = useFeedStore();
+  const loaderRef = React.useRef(null);
+
+  // Intersection Observer for infinite scroll
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) loadMore(); },
+      { threshold: 0.1 }
+    );
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  // Load initial
+  React.useEffect(() => { loadMore(); }, []);
+
+  return (
+    <div style={{ 
+      maxWidth: '600px', 
+      margin: '0 auto',
+      background: '#f3f4f6',
+      minHeight: '100vh'
+    }}>
+      <header style={{
+        padding: '15px',
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10
+      }}>
+        <h1 style={{ margin: 0, fontSize: '20px' }}>Home</h1>
+      </header>
+
+      {feedOrder.map(id => (
+        <TweetCard 
+          key={id} 
+          tweet={tweetsById[id]} 
+          onLike={toggleLike}
+        />
+      ))}
+
+      <div ref={loaderRef} style={{ padding: '20px', textAlign: 'center' }}>
+        {isLoading && '⏳ Loading...'}
+        {!hasMore && '✅ You\\'ve seen all tweets'}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 🎮 APP WITH ERROR BOUNDARY
+// ═══════════════════════════════════════════════════════════════════
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          <h2>Something went wrong 😢</h2>
+          <button onClick={() => window.location.reload()}>Reload</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <Feed />
+    </ErrorBoundary>
+  );
+}`,
+                comparison: {
+                    junior: `// ❌ No structure, starts coding immediately
+function App() {
+  const [tweets, setTweets] = useState([]);
+  useEffect(() => {
+    fetch('/tweets').then(r => r.json()).then(setTweets);
+  }, []);
+  return tweets.map(t => <div>{t.text}</div>);
+}`,
+                    senior: `// ✅ RADIO Framework
+// 1. Requirements: clarify scope, scale, constraints
+// 2. Architecture: draw component hierarchy
+// 3. Data Model: normalize entities, client/server split
+// 4. Interface: API contract, optimistic updates
+// 5. Optimizations: virtualization, caching, code split`
+                },
+                interview: {
+                    questions: [
+                        { q: "How would you handle real-time updates in a feed?", a: "WebSocket connection for live updates. When a new tweet arrives, prepend to feedOrder array. For likes, use WebSocket or polling for live count. Consider optimistic updates with rollback on failure." },
+                        { q: "How would you implement offline support?", a: "1) Service Worker to cache the app shell. 2) IndexedDB to cache tweets locally. 3) Background Sync API to queue actions (likes, posts) when offline. 4) Show cached content with 'offline' indicator." },
+                        { q: "How do you decide between Context, Redux, and React Query?", a: "Context: Simple shared state (theme, auth). Redux/Zustand: Complex client state with many updaters. React Query/TanStack: Server state (caching, refetching, sync). Often combine: Context for UI state, React Query for server data." }
                     ]
                 }
             }

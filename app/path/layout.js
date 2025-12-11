@@ -8,3 +8,5 @@ export default function PathLayout({ children }) {
         </div>
     );
 }
+
+
