@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { COURSES } from '../../lib/courses';
+import { COURSES } from '../../lib/courses/index';
 import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale, Copy, Check, Play, RotateCcw } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import CompleteButton from '../../components/public/CompleteButton';

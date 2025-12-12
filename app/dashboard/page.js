@@ -10,6 +10,7 @@ const PATHS = [
     { id: 'react', title: 'React Mastery', icon: '⚛️', desc: 'Master React, Next.js, and Redux.' },
     { id: 'fullstack', title: 'Fullstack Zero to Hero', icon: '🚀', desc: 'Node.js, Express, MongoDB, and React.' },
     { id: 'javascript', title: 'Advanced JavaScript', icon: '📜', desc: 'Deep dive into closures, prototypes, and async.' },
+    { id: 'angular', title: 'Angular 21 Mastery', icon: '🅰️', desc: 'Angular 21, Signals, RxJS, Routing, SSR, and interview prep.' },
 ];
 
 export default function DashboardPage() {
@@ -110,7 +111,7 @@ export default function DashboardPage() {
                         <h2 className="text-2xl font-bold text-white mb-4">🎓 Select your Major</h2>
                         <p className="text-light-300 mb-8">As a Pro member, you get a structured, day-by-day learning path. Choose your focus:</p>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {PATHS.map((path) => (
                                 <button
                                     key={path.id}
@@ -135,9 +136,9 @@ export default function DashboardPage() {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                                 <CheckCircle className="text-brand-primary" />
-                                Daily Schedule: {stats.learningPath === 'react' ? 'React Mastery' : stats.learningPath === 'javascript' ? 'JS Advanced' : 'Fullstack'}
+                                Daily Schedule: {stats.learningPath === 'react' ? 'React Mastery' : stats.learningPath === 'javascript' ? 'JS Advanced' : stats.learningPath === 'angular' ? 'Angular 21 Mastery' : 'Fullstack'}
                             </h2>
-                            <span className="text-sm text-gray-400">Day 1 of 30</span>
+                            <span className="text-sm text-gray-400">Day 1</span>
                         </div>
                         
                         <div className="bg-dark-900 rounded-xl p-6 border border-dark-700 flex items-center justify-between">
