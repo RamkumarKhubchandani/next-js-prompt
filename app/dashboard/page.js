@@ -2,7 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings, Briefcase, Crown, ArrowRight, Users } from 'lucide-react';
+import { Trophy, BookOpen, Flame, Award, Zap, CheckCircle, Settings, Briefcase, Crown, ArrowRight, Users, Map } from 'lucide-react';
 import Link from 'next/link';
 import DailyChallengeCard from '../components/public/DailyChallengeCard';
 
@@ -149,6 +149,32 @@ export default function DashboardPage() {
                             <Link href={`/path/${stats.learningPath}`}>
                                 <button className="px-6 py-2 bg-brand-primary text-dark-900 font-bold rounded-lg hover:opacity-90 transition">
                                     Start Lesson
+                                </button>
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* PRO FEATURE: Living Roadmap */}
+                {isPro && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12 bg-dark-800 rounded-2xl p-8 border border-dark-700"
+                    >
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                                    <Map className="text-brand-primary" />
+                                    Living Roadmap 2025 (Pro)
+                                </h2>
+                                <p className="text-light-300 mt-2 max-w-2xl">
+                                    A clickable visual learning path (HTML → CSS → JS → React → Next.js). Each node includes a guided explanation and a Cursor demo media slot.
+                                </p>
+                            </div>
+                            <Link href="/roadmap">
+                                <button className="px-6 py-3 bg-brand-primary text-dark-900 font-bold rounded-lg hover:opacity-90 transition whitespace-nowrap">
+                                    Open Roadmap
                                 </button>
                             </Link>
                         </div>

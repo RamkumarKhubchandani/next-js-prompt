@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     // Pro Learning Path
     learningPath: {
         type: String,
-        enum: ['none', 'javascript', 'react', 'node', 'fullstack', 'python'],
+        enum: ['none', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python'],
         default: 'none'
     },
     
