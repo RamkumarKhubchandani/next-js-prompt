@@ -1,0 +1,54 @@
+# 🚀 PHASE 5: THE "BILLION USER" FEATURE (DevSim: The Career Simulator)
+
+## 🧠 The "Blue Ocean" Insight
+Everyone teaches "how to code" (Syntax). No one teaches "how to be a developer" (The Job).
+The #1 fear of beginners is: *"Am I ready for a job? What is it actually like?"*
+
+**The Trend:** Immersive Simulation. People love "Sim" games (Stardew Valley, Sims). We will apply this to coding.
+
+## 🎮 The Feature: "DevSim: Startup Career RPG"
+Instead of just tutorials, users enter a **Role-Playing Game** where they are a Junior Dev at a fictional startup (e.g., "NextCorp").
+
+### 1. The Mechanism (The Loop)
+1.  **The Inbox:** Users receive "Emails" or "Slack Messages" from the AI CTO.
+    *   *Example:* "Hey, the login button is broken on mobile. Can you fix it before the investor meeting at 5 PM?"
+2.  **The Workspace:** A simulated IDE (our Playground) + A simulated Browser Preview.
+3.  **The Task:** They must edit the code to fix the bug.
+4.  **The Code Review (AI Agent):** When they hit "Push Code", our AI Agent acts as the Senior Dev.
+    *   *AI Response:* "Good logic, but you hardcoded the API key. Fix that and re-submit." (This is the killer feature).
+5.  **The Reward:**
+    *   **Salary (XP):** Earn currency.
+    *   **Promotion:** Junior -> Mid -> Senior -> CTO.
+    *   **Office Upgrades:** Buy a better desk/laptop for your virtual office.
+
+### 2. Why This Wins
+*   **Immersion:** It feels like a job, not a class.
+*   **Safety:** They can screw up here, so they don't screw up in the real job.
+*   **Context:** They learn *why* `useEffect` matters (because the CEO complained about a flickering screen), not just the syntax.
+
+### 3. Technical Implementation Plan
+1.  **`Mission` Schema:** Defines the "Ticket" (Problem, Starter Code, Success Criteria, AI Prompt for grading).
+2.  **The Interface:** A "Desktop OS" view. Left side: Slack/Email app. Right side: VS Code (Sandpack).
+3.  **The Brain:** Use Vercel AI SDK to act as the "CTO". It checks the user's code against the requirements and gives persona-based feedback.
+
+---
+
+## 🛠️ EXECUTION STRATEGY
+
+### Step 1: The "Mission Control" (Dashboard Update)
+Add a "Career Mode" button.
+
+### Step 2: The "Virtual OS" Layout
+A new layout (`/career`) that looks like a desktop (MacOS/Windows style).
+Apps: "Chat" (Mission), "Code" (Editor), "Browser" (Preview).
+
+### Step 3: The First Mission ("Fix the Landing Page")
+We build **one** complete mission to prove the concept.
+*   **Scenario:** "Typo on the homepage."
+*   **Task:** Change `<h1>Welcom</h1>` to `<h1>Welcome</h1>`.
+*   **AI Review:** "LGTM! Merging."
+
+Shall we build **DevSim**?
+
+
+

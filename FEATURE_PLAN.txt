@@ -1,0 +1,100 @@
+# FEATURE ROADMAP: Next-JS Prompt -> The #1 Fullstack Learning Platform
+
+## 🎯 Executive Summary
+To transition from a content blog to a top-tier educational platform, we must shift focus from "passive reading" to "active learning". The top platforms (Codecademy, freeCodeCamp, Scrimba) succeed because they offer structured paths, instant feedback (interactive code), and gamification to keep users motivated.
+
+## 🏗️ Phase 1: Foundation & User Progress (The "Sticky" Factor)
+*Goal: Users should feel like they are building a profile, not just visiting a website.*
+
+### 1.1 Enhanced User Schema
+**Current:** Name, Email, Password.
+**New:** 
+- `completedTutorials`: Array of Tutorial IDs.
+- `inProgressTutorials`: Array of objects { tutorialId, scrollPercentage, lastAccessed }.
+- `xp`: Integer (Experience Points).
+- `streak`: { current: Number, lastLogin: Date }.
+- `role`: 'user' | 'pro' | 'admin'.
+
+### 1.2 Structured Learning Paths
+Instead of a flat list of posts, we need "Tracks".
+**New Model `LearningPath`:**
+- `title`: "Frontend Mastery"
+- `modules`: Ordered list of tutorials.
+- `certificate`: SVG template for completion.
+*Why?* Beginners don't know what to read next. We must guide them.
+
+### 1.3 Student Dashboard Overhaul
+**Current:** Empty "Welcome" screen.
+**New:**
+- **"Continue Learning":** Big button resuming the last tutorial.
+- **Progress Visualization:** Circular progress bars for current tracks.
+- **Activity Graph:** GitHub-style contribution grid for learning streaks.
+
+---
+
+## 💻 Phase 2: Interactive Learning (The "Wow" Factor)
+*Goal: Stop users from leaving the site to open VS Code.*
+
+### 2.1 Embedded Code Playground (Sandpack/Monaco)
+**Feature:** Replace static code blocks with editable, runnable sandboxes.
+**Tech:** `react-sandpack` (for React/Next.js examples) or `monaco-editor` + Piston API (for generic JS/Python).
+**User Story:** "As a student, I want to tweak the code example to see what happens without setting up a local environment."
+
+### 2.2 Interactive Quizzes (In-Tutorial)
+**Feature:** Small 3-question quizzes *inside* or *after* every tutorial to verify understanding before marking as "Complete".
+**Tech:** Update `Post` model to include `quiz` array.
+
+---
+
+## 🎮 Phase 3: Gamification & Community (The "Viral" Factor)
+*Goal: Make learning addictive.*
+
+### 3.1 XP & Leveling System
+- Read an article: +50 XP
+- Pass a quiz: +100 XP
+- Daily Login: +10 XP
+- **Levels:** "Novice", "Coder", "Hacker", "Architect" (display badge next to name).
+
+### 3.2 Daily Streaks
+- Show a "🔥 5 Day Streak" icon in the header.
+- Notification/Email if they are about to lose their streak.
+
+### 3.3 Leaderboards
+- Weekly top learners displayed on the Dashboard to encourage competition.
+
+---
+
+## 🤖 Phase 4: AI-Powered Personalization (The "Future" Factor)
+*Goal: Provide a private tutor for every student.*
+
+### 4.1 Context-Aware AI Tutor (RAG)
+**Feature:** A "Chat with Page" floating button.
+**Function:** Users can highlight a paragraph and ask "Explain this like I'm 5". The AI knows the specific context of the current tutorial.
+
+### 4.2 Dynamic Roadmap Generator
+**Feature:** "Generate my Path".
+**Input:** User goal ("I want to build an Uber clone").
+**Output:** AI generates a custom ordered list of *existing* tutorials + external resources.
+
+---
+
+## 💰 Phase 5: Monetization & Professional Tiers
+*Goal: Sustainable revenue.*
+
+### 5.1 Pro Projects
+- "Build a Netflix Clone" (Premium only).
+- These are long-form, multi-part series.
+
+### 5.2 Certification
+- Auto-generated PDF certificates upon completing a Learning Path.
+- Verifiable URL (e.g., `nextjsprompt.com/cert/12345`).
+
+---
+
+## 📝 Immediate Action Plan (Next 24 Hours)
+1.  **Schema Update:** Modify `User.js` to support progress tracking.
+2.  **UI Update:** Create the new Dashboard layout (mockup).
+3.  **Feature:** Implement "Mark as Complete" button on tutorials.
+
+
+

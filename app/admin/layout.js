@@ -1,8 +1,10 @@
+import { Header } from '../components/Header';
+
 export default function AdminLayout({ children }) {
     return (
-      <div className="flex min-h-screen">
-        
-        {children}
-      </div>
+        <>
+            <Header showNav={false} />
+            {children}
+        </>
     );
-  }
+}
