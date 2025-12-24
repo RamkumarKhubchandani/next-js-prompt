@@ -14,7 +14,7 @@ export async function GET(request) {
     try {
         await connectDB();
         const user = await User.findOne({ email: session.user.email })
-            .select('username bio links name')
+            .select('username bio links name phone')
             .lean();
 
         if (!user) {
@@ -37,7 +37,7 @@ export async function PUT(request) {
     }
 
     try {
-        const { username, bio, links, name } = await request.json();
+        const { username, bio, links, name, phone } = await request.json();
 
         await connectDB();
         const user = await User.findOne({ email: session.user.email });
@@ -58,10 +58,19 @@ export async function PUT(request) {
         if (name) user.name = name;
         if (bio !== undefined) user.bio = bio;
         if (links) user.links = links;
+        if (phone && typeof phone === 'object') {
+            user.phone = {
+                countryCode: phone.countryCode || user.phone?.countryCode || '',
+                number: phone.number || user.phone?.number || ''
+            };
+        }
 
         await user.save();
 
-        return NextResponse.json({ message: 'Profile updated successfully', user: { username: user.username, name: user.name } });
+        return NextResponse.json({
+            message: 'Profile updated successfully',
+            user: { username: user.username, name: user.name, phone: user.phone }
+        });
 
     } catch (error) {
         console.error('Error updating settings:', error);

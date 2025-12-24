@@ -10,17 +10,33 @@ export default function DailyChallengeCard() {
     useEffect(() => {
         // Fetch a random or "daily" challenge
         // For now just fetch the first one
-        fetch('/api/challenges')
+        const controller = new AbortController();
+        fetch('/api/challenges?limit=1', { signal: controller.signal })
             .then(res => res.json())
             .then(data => {
-                if (data && data.length > 0) {
-                    setChallenge(data[0]); // Just pick the first one for the homepage
-                }
+                if (Array.isArray(data) && data.length > 0) setChallenge(data[0]);
+                else if (data && data.slug) setChallenge(data); // allow single-object response
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                if (err?.name !== 'AbortError') console.error(err);
+            });
+        return () => controller.abort();
     }, []);
 
-    if (!challenge) return null;
+    if (!challenge) {
+        // Lightweight skeleton so the dashboard doesn't "jump" when this arrives later
+        return (
+            <div className="rounded-2xl bg-dark-800 border border-dark-700 p-6 animate-pulse">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="h-10 w-10 rounded-lg bg-dark-700" />
+                    <div className="h-6 w-24 rounded-full bg-dark-700" />
+                </div>
+                <div className="h-6 w-2/3 rounded bg-dark-700 mb-3" />
+                <div className="h-4 w-full rounded bg-dark-700 mb-2" />
+                <div className="h-4 w-5/6 rounded bg-dark-700" />
+            </div>
+        );
+    }
 
     return (
         <motion.div 

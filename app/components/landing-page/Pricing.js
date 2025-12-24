@@ -77,12 +77,12 @@ export const Pricing = () => {
                     <h2 className="text-base font-semibold leading-7 text-brand-primary">
                         Pricing
                     </h2>
-                    <p className="mt-2 text-4xl font-bold tracking-tight text-light-100 sm:text-5xl">
+                    <p className="mt-2 text-4xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-5xl">
                         Plans that scale with your ambition
                     </p>
                 </motion.div>
                 <div className="mt-16 flex items-center justify-center space-x-4">
-                    <span className={cn("text-lg font-medium", !isYearly ? "text-brand-primary" : "text-light-200")}>Monthly</span>
+                    <span className={cn("text-lg font-medium", !isYearly ? "text-brand-primary" : "text-dark-900/70 dark:text-light-200")}>Monthly</span>
                     <Switch
                         checked={isYearly}
                         onChange={setIsYearly}
@@ -99,7 +99,7 @@ export const Pricing = () => {
                             )}
                         />
                     </Switch>
-                    <span className={cn("text-lg font-medium", isYearly ? "text-brand-primary" : "text-light-200")}>Yearly</span>
+                    <span className={cn("text-lg font-medium", isYearly ? "text-brand-primary" : "text-dark-900/70 dark:text-light-200")}>Yearly</span>
                     {isYearly && (
                         <span className="ml-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                             Save 20%
@@ -116,19 +116,19 @@ export const Pricing = () => {
                             whileHover={{ scale: 1.05, zIndex: 20 }}
                             transition={{ duration: 0.5, type: 'spring' }}
                             className={cn(
-                                "relative rounded-2xl bg-dark-800 p-8 shadow-lg",
+                                "relative rounded-2xl bg-white/70 dark:bg-dark-800 p-8 shadow-lg border border-dark-700/10 dark:border-dark-700 backdrop-blur-lg",
                                 tier.featured 
                                     ? "border-2 border-brand-primary shadow-[0_0_30px_rgba(0,245,160,0.3)]" 
-                                    : "border border-dark-700"
+                                    : ""
                             )}
                         >
-                            <h3 className="text-lg font-semibold leading-8 text-light-100">{tier.name}</h3>
-                            <p className="mt-4 text-sm leading-6 text-light-200">{tier.description}</p>
+                            <h3 className="text-lg font-semibold leading-8 text-dark-900 dark:text-light-100">{tier.name}</h3>
+                            <p className="mt-4 text-sm leading-6 text-dark-900/70 dark:text-light-200">{tier.description}</p>
                             <p className="mt-6 flex items-baseline gap-x-1">
-                                <span className="text-4xl font-bold tracking-tight text-light-100">
+                                <span className="text-4xl font-bold tracking-tight text-dark-900 dark:text-light-100">
                                     {isYearly ? tier.price.yearly : tier.price.monthly}
                                 </span>
-                                <span className="text-sm font-semibold leading-6 text-light-200">
+                                <span className="text-sm font-semibold leading-6 text-dark-900/60 dark:text-light-200">
                                     /{isYearly ? 'year' : 'month'}
                                 </span>
                             </p>
@@ -137,12 +137,12 @@ export const Pricing = () => {
                                     "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 shadow-sm transition-all duration-300",
                                     tier.featured 
                                         ? "bg-brand-primary text-dark-900 hover:bg-brand-secondary" 
-                                        : "bg-dark-700 text-brand-primary hover:bg-dark-600"
+                                        : "bg-dark-900/5 dark:bg-dark-700 text-brand-primary hover:bg-dark-900/10 dark:hover:bg-dark-600 border border-dark-700/10 dark:border-dark-600"
                                 )}>
                                     Get started
                                 </button>
                             </Link>
-                            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-light-200 xl:mt-10">
+                            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-dark-900/70 dark:text-light-200 xl:mt-10">
                                 {tier.features.map((feature) => (
                                     <li key={feature} className="flex gap-x-3">
                                         <Check className="h-6 w-5 flex-none text-brand-primary" aria-hidden="true" />

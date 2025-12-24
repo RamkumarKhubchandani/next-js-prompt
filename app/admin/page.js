@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { Users, FileText, PlusCircle, BarChart, Settings, Shield } from 'lucide-react';
+import { Users, FileText, PlusCircle, BarChart, Settings, Shield, ClipboardList } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -25,6 +25,13 @@ export default function AdminDashboard() {
             icon: <FileText size={32} />,
             href: "/admin/posts", // Ensure this route exists or link to a listing
             color: "bg-purple-500"
+        },
+        {
+            title: "AI Quiz Reports",
+            desc: "See who attempted the AI quiz + full right/wrong answers.",
+            icon: <ClipboardList size={32} />,
+            href: "/admin/quiz-results",
+            color: "bg-teal-500"
         },
         {
             title: "Platform Settings",

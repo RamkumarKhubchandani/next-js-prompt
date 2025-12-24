@@ -6,7 +6,13 @@ import { CheckCircle, Circle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
-export default function CompleteButton({ postId, initialCompleted = false }) {
+export default function CompleteButton({
+    postId,
+    initialCompleted = false,
+    variant = 'default', // 'default' | 'compact'
+    className = '',
+    containerClassName = ''
+}) {
     const [completed, setCompleted] = useState(initialCompleted);
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
@@ -40,31 +46,44 @@ export default function CompleteButton({ postId, initialCompleted = false }) {
         }
     };
 
+    const isCompact = variant === 'compact';
+
+    const containerCls = isCompact
+        ? `flex ${containerClassName}`
+        : `my-8 flex justify-center ${containerClassName}`;
+
+    const buttonBase = isCompact
+        ? 'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all'
+        : 'flex items-center gap-3 px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all';
+
+    const iconCls = isCompact ? 'w-5 h-5' : 'w-6 h-6';
+
     return (
-        <div className="my-8 flex justify-center">
+        <div className={containerCls}>
             <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleComplete}
                 disabled={loading || completed}
                 className={`
-                    flex items-center gap-3 px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all
+                    ${buttonBase}
                     ${completed 
                         ? 'bg-green-500 text-white cursor-default' 
                         : 'bg-brand-primary text-dark-900 hover:bg-brand-primary/90'
                     }
                     ${loading ? 'opacity-70 cursor-wait' : ''}
+                    ${className}
                 `}
             >
                 {completed ? (
                     <>
-                        <CheckCircle className="w-6 h-6" />
-                        <span>Completed (+50 XP)</span>
+                        <CheckCircle className={iconCls} />
+                        <span>{isCompact ? 'Completed' : 'Completed (+50 XP)'}</span>
                     </>
                 ) : (
                     <>
-                        <Circle className="w-6 h-6" />
-                        <span>Mark as Complete</span>
+                        <Circle className={iconCls} />
+                        <span>{isCompact ? 'Mark complete' : 'Mark as Complete'}</span>
                     </>
                 )}
             </motion.button>

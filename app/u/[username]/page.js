@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import connectDB from '../../lib/mongodb';
 import User from '../../models/User';
+import QuizResult from '../../models/QuizResult';
 import { Trophy, Flame, BookOpen, Github, Twitter, Linkedin, Calendar, Award } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,6 +11,15 @@ async function getUser(username) {
         .select('name username bio links xp streak completedTutorials badges inventory createdAt')
         .lean();
     return user;
+}
+
+async function getLatestQuizResult(username) {
+    await connectDB();
+    const res = await QuizResult.findOne({ username: String(username).toLowerCase() })
+        .sort({ createdAt: -1 })
+        .select('technologies score total createdAt')
+        .lean();
+    return res;
 }
 
 export async function generateMetadata({ params }) {
@@ -25,6 +35,7 @@ export async function generateMetadata({ params }) {
 export default async function PublicProfilePage({ params }) {
     const { username } = await params;
     const user = await getUser(username);
+    const latestQuiz = await getLatestQuizResult(username);
 
     if (!user) {
         return notFound();
@@ -125,6 +136,29 @@ export default async function PublicProfilePage({ params }) {
                         </div>
                     </div>
                 </div>
+
+                {/* Latest AI Assessment */}
+                {latestQuiz && (
+                    <div className="bg-dark-800 rounded-2xl p-6 border border-dark-700 mb-8">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <h2 className="text-xl font-bold text-white">Latest AI Assessment</h2>
+                                <p className="text-light-400 mt-1">
+                                    {Array.isArray(latestQuiz.technologies) ? latestQuiz.technologies.join(' • ') : 'Assessment'} •{' '}
+                                    {new Date(latestQuiz.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <div className="flex items-baseline gap-3">
+                                <p className="text-4xl font-extrabold text-white">
+                                    {Math.round((latestQuiz.score / Math.max(1, latestQuiz.total)) * 100)}%
+                                </p>
+                                <p className="text-light-400">
+                                    ({latestQuiz.score}/{latestQuiz.total})
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Badges & Heatmap */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

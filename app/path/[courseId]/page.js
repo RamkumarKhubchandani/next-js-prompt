@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { COURSES } from '../../lib/courses/index';
-import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale, Copy, Check, Play, RotateCcw } from 'lucide-react';
+import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale, Copy, Check, Play, RotateCcw, ArrowLeftRight } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import CompleteButton from '../../components/public/CompleteButton';
 import CodeComparison from '../../components/public/CodeComparison';
+import HtmlCssPlayground from '../../components/public/HtmlCssPlayground';
+import ConnectOneToOneModal from '../../components/public/ConnectOneToOneModal';
+import AICodingTutorChat from '../../components/public/AICodingTutorChat';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 
 function progressKey(courseId, day) {
@@ -66,20 +69,51 @@ function getMasteryChecklistItems(dayObj) {
     return [];
 }
 
+function stripHtml(html) {
+    const s = String(html || '');
+    return s
+        .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+        .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function buildAiContext({ courseTitle, courseId, day, lessonTitle, activeContent }) {
+    const parts = [];
+    parts.push(`Course: ${courseTitle || courseId}`);
+    parts.push(`Day ${day}: ${lessonTitle}`);
+    if (activeContent?.intro) parts.push(`Intro: ${String(activeContent.intro)}`);
+
+    const recap = activeContent?.recap;
+    if (recap?.takeaways?.length) parts.push(`Key takeaways: ${recap.takeaways.slice(0, 6).join(' | ')}`);
+    if (recap?.commonMistakes?.length) parts.push(`Common mistakes: ${recap.commonMistakes.slice(0, 6).join(' | ')}`);
+    if (recap?.nextActions?.length) parts.push(`Next actions: ${recap.nextActions.slice(0, 6).join(' | ')}`);
+
+    const checkpoints = Array.isArray(activeContent?.checkpoints) ? activeContent.checkpoints : [];
+    if (checkpoints.length) parts.push(`Checkpoints: ${checkpoints.slice(0, 4).map(c => c?.prompt).filter(Boolean).join(' | ')}`);
+
+    // Keep a small excerpt of lesson body (HTML stripped)
+    const body = stripHtml(activeContent?.content || '');
+    if (body) parts.push(`Lesson excerpt: ${body.slice(0, 900)}`);
+
+    return parts.join('\n');
+}
+
 function MasteryChecklist({ items = [], progress, onProgress }) {
     if (!Array.isArray(items) || items.length === 0) return null;
     const doneCount = items.reduce((acc, it) => acc + (progress?.masteryChecklist?.[it.id] ? 1 : 0), 0);
 
     return (
         <div className="mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
                 <CheckCircle className="text-green-400" />
                 End-of-day mastery checklist
-                <span className="text-sm font-bold text-light-300 ml-2">
+                <span className="text-sm font-bold text-dark-900/60 dark:text-light-300 ml-2">
                     ({doneCount}/{items.length})
                 </span>
             </h3>
-            <div className="bg-dark-800 border border-dark-600 rounded-2xl p-5 space-y-3">
+            <div className="bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-600 rounded-2xl p-5 space-y-3 backdrop-blur-lg">
                 {items.map((it) => {
                     const checked = !!progress?.masteryChecklist?.[it.id];
                     return (
@@ -92,7 +126,7 @@ function MasteryChecklist({ items = [], progress, onProgress }) {
                                 }}
                                 className="mt-1 accent-green-400"
                             />
-                            <span className={`text-light-200 ${checked ? 'line-through opacity-80' : ''}`}>
+                            <span className={`text-dark-900/70 dark:text-light-200 ${checked ? 'line-through opacity-80' : ''}`}>
                                 {it.text}
                             </span>
                         </label>
@@ -110,7 +144,7 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
 
     return (
         <div className="mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
                 <HelpCircle className="text-yellow-400" />
                 Checkpoints: Prove You Understand
             </h3>
@@ -122,10 +156,10 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                     const isCorrect = isAnswered && selected === c.correctIndex;
 
                     return (
-                        <div key={idx} className="border border-dark-600 rounded-xl overflow-hidden bg-dark-800">
-                            <div className="p-5 border-b border-dark-700">
+                        <div key={idx} className="border border-dark-700/10 dark:border-dark-600 rounded-xl overflow-hidden bg-white/70 dark:bg-dark-800 backdrop-blur-lg">
+                            <div className="p-5 border-b border-dark-700/10 dark:border-dark-700">
                                 <div className="flex items-start justify-between gap-4">
-                                    <p className="font-bold text-light-100">
+                                    <p className="font-bold text-dark-900 dark:text-light-100">
                                         {idx + 1}. {c.prompt}
                                     </p>
                                     {isAnswered && (
@@ -166,7 +200,7 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                                 className={`text-left w-full p-3 rounded-xl border transition ${
                                                     picked
                                                         ? 'border-brand-primary/60 bg-brand-primary/10'
-                                                        : 'border-dark-600 bg-dark-900/30 hover:bg-dark-700'
+                                                        : 'border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-900/30 hover:bg-dark-900/5 dark:hover:bg-dark-700'
                                                 } ${showCorrect ? 'ring-1 ring-green-500/40' : ''} ${showWrongPicked ? 'ring-1 ring-red-500/40' : ''}`}
                                             >
                                                 <div className="flex items-start gap-3">
@@ -175,11 +209,11 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                                             ? 'border-green-500/40 text-green-300 bg-green-500/10'
                                                             : showWrongPicked
                                                                 ? 'border-red-500/40 text-red-300 bg-red-500/10'
-                                                                : 'border-dark-600 text-light-400 bg-dark-800'
+                                                                : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
                                                     }`}>
                                                         {String.fromCharCode(65 + optIdx)}
                                                     </span>
-                                                    <span className="text-light-200">{opt}</span>
+                                                    <span className="text-dark-900/70 dark:text-light-200">{opt}</span>
                                                 </div>
                                             </button>
                                         );
@@ -192,10 +226,10 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                             ? 'border-green-500/30 bg-green-500/5'
                                             : 'border-yellow-500/30 bg-yellow-500/5'
                                     }`}>
-                                        <p className="text-xs font-bold tracking-widest uppercase mb-2 text-light-300">
+                                        <p className="text-xs font-bold tracking-widest uppercase mb-2 text-dark-900/60 dark:text-light-300">
                                             Explanation
                                         </p>
-                                        <p className="text-light-200 leading-relaxed">
+                                        <p className="text-dark-900/70 dark:text-light-200 leading-relaxed">
                                             {c.explanation}
                                         </p>
                                     </div>
@@ -221,18 +255,18 @@ function GuidedLab({ steps = [], onLoad }) {
 
     return (
         <div className="mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
                 <PlayCircle className="text-green-400" />
                 Guided Lab: Bug → Observe → Fix (Like a Human Teacher)
             </h3>
-            <p className="text-sm text-light-400 mb-6">
+            <p className="text-sm text-dark-900/60 dark:text-light-400 mb-6">
                 This is optional, but it’s the fastest path. Load the buggy step, predict what happens, run it, then load the fix and explain why it works.
             </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-4">
-                    <div className="bg-dark-800 border border-dark-700 rounded-2xl p-4">
-                        <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-3">
+                    <div className="bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 rounded-2xl p-4 backdrop-blur-lg">
+                        <p className="text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-400 mb-3">
                             Steps
                         </p>
                         <div className="space-y-2">
@@ -243,21 +277,21 @@ function GuidedLab({ steps = [], onLoad }) {
                                     className={`w-full text-left p-3 rounded-xl border transition ${
                                         i === activeIdx
                                             ? 'border-green-500/40 bg-green-500/10'
-                                            : 'border-dark-700 bg-dark-900/20 hover:bg-dark-700'
+                                            : 'border-dark-700/10 dark:border-dark-700 bg-white/70 dark:bg-dark-900/20 hover:bg-dark-900/5 dark:hover:bg-dark-700'
                                     }`}
                                 >
                                     <div className="flex items-start gap-3">
                                         <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${
                                             i === activeIdx
                                                 ? 'border-green-500/40 text-green-300 bg-green-500/10'
-                                                : 'border-dark-600 text-light-400 bg-dark-800'
+                                                : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
                                         }`}>
                                             {i + 1}
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="font-bold text-light-100 truncate">{s.title}</p>
+                                            <p className="font-bold text-dark-900 dark:text-light-100 truncate">{s.title}</p>
                                             {s.subtitle && (
-                                                <p className="text-xs text-light-400 mt-1 truncate">{s.subtitle}</p>
+                                                <p className="text-xs text-dark-900/60 dark:text-light-400 mt-1 truncate">{s.subtitle}</p>
                                             )}
                                         </div>
                                     </div>
@@ -268,15 +302,15 @@ function GuidedLab({ steps = [], onLoad }) {
                 </div>
 
                 <div className="lg:col-span-8">
-                    <div className="bg-dark-800 border border-dark-700 rounded-2xl p-6">
+                    <div className="bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 rounded-2xl p-6 backdrop-blur-lg">
                         <div className="flex items-start justify-between gap-4 mb-4">
                             <div>
                                 <p className="text-xs font-bold tracking-widest uppercase text-green-300 mb-2">
                                     Step {activeIdx + 1} / {steps.length}
                                 </p>
-                                <h4 className="text-xl font-bold text-white">{active?.title}</h4>
+                                <h4 className="text-xl font-bold text-dark-900 dark:text-white">{active?.title}</h4>
                                 {active?.subtitle && (
-                                    <p className="text-sm text-light-400 mt-2">{active.subtitle}</p>
+                                    <p className="text-sm text-dark-900/60 dark:text-light-400 mt-2">{active.subtitle}</p>
                                 )}
                             </div>
                             <div className="flex gap-2">
@@ -285,8 +319,8 @@ function GuidedLab({ steps = [], onLoad }) {
                                     disabled={activeIdx === 0}
                                     className={`px-3 py-2 rounded-xl text-xs font-bold border ${
                                         activeIdx === 0
-                                            ? 'opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400'
-                                            : 'bg-dark-700 hover:bg-dark-600 border-dark-600 text-light-200'
+                                            ? 'opacity-50 cursor-not-allowed bg-dark-900/5 dark:bg-dark-700 border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400'
+                                            : 'bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border-dark-700/10 dark:border-dark-600 text-dark-900/70 dark:text-light-200'
                                     }`}
                                 >
                                     Prev
@@ -1030,6 +1064,10 @@ export default function LearningPathPage() {
     const { data: session } = useSession();
     const courseId = params.courseId;
     const course = COURSES[courseId];
+    const courseOptions = Object.entries(COURSES || {}).map(([id, c]) => ({
+        id,
+        title: c?.title ? String(c.title) : id
+    }));
 
     const initialDay =
         courseId && COURSES[courseId]?.days?.length
@@ -1041,6 +1079,40 @@ export default function LearningPathPage() {
     const liveLabEditorRef = useRef(null);
     const guidedLabEditorRef = useRef(null);
     const [progressByDay, setProgressByDay] = useState({});
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [sidebarWidth, setSidebarWidth] = useState(340);
+    const [connectOpen, setConnectOpen] = useState(false);
+    const lessonTopRef = useRef(null);
+    const didScrollOnMountRef = useRef(false);
+
+    const SIDEBAR_STORAGE_KEY = 'asio:path:sidebarWidth';
+    const SIDEBAR_MIN = 260;
+    const SIDEBAR_MAX = 520;
+
+    // Track when we're on a desktop breakpoint (tailwind lg = 1024px)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const mq = window.matchMedia('(min-width: 1024px)');
+        const apply = () => setIsDesktop(Boolean(mq.matches));
+        apply();
+        // Safari uses addListener/removeListener
+        if (mq.addEventListener) mq.addEventListener('change', apply);
+        else mq.addListener(apply);
+        return () => {
+            if (mq.removeEventListener) mq.removeEventListener('change', apply);
+            else mq.removeListener(apply);
+        };
+    }, []);
+
+    // Restore sidebar width (desktop only)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        if (!isDesktop) return;
+        const raw = window.localStorage.getItem(SIDEBAR_STORAGE_KEY);
+        const n = raw ? Number(raw) : NaN;
+        if (!Number.isFinite(n)) return;
+        setSidebarWidth(Math.max(SIDEBAR_MIN, Math.min(SIDEBAR_MAX, n)));
+    }, [isDesktop]);
 
     // If user navigates between courses, reset to the first available day for that course.
     useEffect(() => {
@@ -1061,9 +1133,17 @@ export default function LearningPathPage() {
         setProgressByDay(next);
     }, [courseId, course?.days?.length]);
 
-    if (!course) return <div className="text-white p-10">Course not found</div>;
+    if (!course) return <div className="text-dark-900 dark:text-white p-10">Course not found</div>;
 
     const activeContent = course.days.find(d => d.day === activeDay) || course.days[0];
+    const aiContextTitle = `${course?.title || courseId} — Day ${activeDay}: ${activeContent?.title || ''}`;
+    const aiContextText = buildAiContext({
+        courseTitle: course?.title,
+        courseId,
+        day: activeDay,
+        lessonTitle: activeContent?.title,
+        activeContent
+    });
 
     const isDayMastered = (dayNumber) => {
         const dayObj = course.days.find(d => d.day === dayNumber);
@@ -1131,32 +1211,104 @@ export default function LearningPathPage() {
         });
     }, [courseId, activeDay]);
 
+    // Allow opening the connect modal from the global header CTA.
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const handler = () => {
+            setConnectOpen(true);
+            // bring user back to the lesson header area
+            lessonTopRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+        };
+        window.addEventListener('open-connect-modal', handler);
+        return () => window.removeEventListener('open-connect-modal', handler);
+    }, []);
+
+    // When switching lessons (days), scroll the main lesson panel back to the top.
+    // This avoids landing in the middle of the page after selecting a different day.
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        // Skip initial mount scroll; only scroll after user changes day/course.
+        if (!didScrollOnMountRef.current) {
+            didScrollOnMountRef.current = true;
+            return;
+        }
+        // Prefer scrolling to the lesson anchor (accounts for sticky header better).
+        if (lessonTopRef.current?.scrollIntoView) {
+            lessonTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [courseId, activeDay]);
+
     return (
-        <div className="min-h-screen bg-dark-900 text-white pt-24 pb-12">
-            <div className="max-w-7xl mx-auto px-4">
+        <div className="min-h-screen bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100 pt-24 pb-12">
+            {/* Full-width layout (avoid centered max-width gutters) */}
+            <div className="w-full px-4 sm:px-6 lg:px-8">
                 
                 {/* Header */}
                 <div className="mb-12">
+                    {/* Course switcher + back */}
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+                        <button
+                            type="button"
+                            onClick={() => router.push('/dashboard')}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 hover:bg-dark-900/5 dark:hover:bg-dark-700 transition-colors text-dark-900/70 dark:text-light-200 w-fit backdrop-blur-lg"
+                        >
+                            <ArrowLeftRight size={18} className="text-brand-primary" />
+                            Switch courses / Dashboard
+                        </button>
+
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold tracking-widest uppercase text-dark-900/50 dark:text-light-400 hidden sm:inline">
+                                Current course
+                            </span>
+                            <div className="relative">
+                                <select
+                                    value={String(courseId)}
+                                    onChange={(e) => {
+                                        const next = e.target.value;
+                                        if (next && next !== courseId) router.push(`/path/${next}`);
+                                    }}
+                                    className="appearance-none bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 hover:border-brand-primary/60 text-dark-900 dark:text-light-100 rounded-xl px-4 py-2 pr-10 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary/40 backdrop-blur-lg"
+                                >
+                                    {courseOptions.map(opt => (
+                                        <option key={opt.id} value={opt.id}>
+                                            {opt.title}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-dark-900/50 dark:text-light-400">
+                                    <ChevronRight size={16} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-wider text-brand-primary uppercase bg-brand-primary/10 rounded-full border border-brand-primary/20">
                         Professional Track
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-blue-400 to-purple-500">
                         {course.title}
                     </h1>
-                    <p className="text-xl text-light-300 max-w-3xl leading-relaxed">{course.description}</p>
+                    <p className="text-xl text-dark-900/70 dark:text-light-300 leading-relaxed max-w-none lg:whitespace-nowrap">
+                        {course.description}
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="flex flex-col lg:flex-row gap-8">
                     
-                    {/* Sidebar: Timeline (3 Columns) */}
-                    <div className="lg:col-span-3">
-                        <div className="bg-dark-800 rounded-2xl border border-dark-700 p-6 h-[calc(100vh-120px)] sticky top-24 overflow-y-auto custom-scrollbar">
-                            <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-white">
+                    {/* Sidebar: Timeline (Resizable on desktop) */}
+                    <div
+                        className="lg:sticky lg:top-24 lg:self-start"
+                        style={isDesktop ? { width: `${sidebarWidth}px` } : undefined}
+                    >
+                        <div className="bg-white/70 dark:bg-dark-800 rounded-2xl border border-dark-700/10 dark:border-dark-700 p-6 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar backdrop-blur-lg">
+                            <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-dark-900 dark:text-white">
                                 <BookOpen className="text-brand-primary" size={20} /> Curriculum
                             </h3>
                             <div className="space-y-2 relative">
                                 {/* Connecting Line */}
-                                <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-dark-700 z-0"></div>
+                                <div className="absolute left-[15px] top-4 bottom-4 w-0.5 bg-dark-700/15 dark:bg-dark-700 z-0"></div>
 
                                 {course.days.map((day, idx) => (
                                     <React.Fragment key={day.day}>
@@ -1179,18 +1331,18 @@ export default function LearningPathPage() {
                                             className={`relative z-10 w-full flex items-center gap-4 p-3 rounded-xl transition-all text-left group ${
                                                 activeDay === day.day 
                                                     ? 'bg-brand-primary/10 border border-brand-primary/50 shadow-[0_0_15px_rgba(0,255,150,0.1)]' 
-                                                    : 'hover:bg-dark-700 border border-transparent'
+                                                    : 'hover:bg-dark-900/5 dark:hover:bg-dark-700 border border-transparent'
                                             }`}
                                         >
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm transition-colors ${
                                                 activeDay === day.day 
                                                     ? 'bg-brand-primary text-dark-900 shadow-lg shadow-brand-primary/50' 
-                                                    : 'bg-dark-600 text-light-400 group-hover:bg-dark-500'
+                                                    : 'bg-dark-900/5 dark:bg-dark-600 text-dark-900/60 dark:text-light-400 group-hover:bg-dark-900/10 dark:group-hover:bg-dark-500'
                                             }`}>
                                                 {day.day}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className={`font-bold text-sm truncate ${activeDay === day.day ? 'text-white' : 'text-light-300 group-hover:text-white'}`}>
+                                                <p className={`font-bold text-sm truncate ${activeDay === day.day ? 'text-dark-900 dark:text-white' : 'text-dark-900/70 dark:text-light-300 group-hover:text-dark-900 dark:group-hover:text-white'}`}>
                                                     {day.title}
                                                 </p>
                                             </div>
@@ -1213,8 +1365,58 @@ export default function LearningPathPage() {
                         </div>
                     </div>
 
-                    {/* Main Content (9 Columns) */}
-                    <div className="lg:col-span-9 space-y-8">
+                    {/* Drag handle */}
+                    {isDesktop && (
+                        <div
+                            className="hidden lg:block -mx-2 w-4 cursor-col-resize select-none"
+                            role="separator"
+                            aria-orientation="vertical"
+                            aria-label="Resize curriculum sidebar"
+                            onPointerDown={(e) => {
+                                // Drag-to-resize sidebar
+                                e.preventDefault();
+                                const startX = e.clientX;
+                                const startW = sidebarWidth;
+                                let lastW = startW;
+
+                                const cleanup = () => {
+                                    window.removeEventListener('pointermove', onMove);
+                                    window.removeEventListener('pointerup', onUp);
+                                    document.body.style.cursor = '';
+                                    document.body.style.userSelect = '';
+                                };
+
+                                const onMove = (ev) => {
+                                    const next = Math.max(
+                                        SIDEBAR_MIN,
+                                        Math.min(SIDEBAR_MAX, startW + (ev.clientX - startX))
+                                    );
+                                    lastW = next;
+                                    setSidebarWidth(next);
+                                    document.body.style.cursor = 'col-resize';
+                                    document.body.style.userSelect = 'none';
+                                };
+
+                                const onUp = () => {
+                                    try {
+                                        window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(lastW));
+                                    } catch {}
+                                    cleanup();
+                                };
+
+                                window.addEventListener('pointermove', onMove);
+                                window.addEventListener('pointerup', onUp);
+                            }}
+                        >
+                            <div className="h-full w-full flex items-stretch justify-center">
+                                <div className="w-px bg-dark-700/80" />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0 space-y-8">
+                        <div ref={lessonTopRef} className="scroll-mt-28" />
                         
                         {/* Lesson Header */}
                         <motion.div 
@@ -1222,42 +1424,66 @@ export default function LearningPathPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="bg-dark-800 rounded-2xl p-8 border border-dark-700 shadow-xl"
+                            className="bg-white/70 dark:bg-dark-800 rounded-2xl p-8 border border-dark-700/10 dark:border-dark-700 shadow-xl backdrop-blur-lg"
                         >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-8 border-b border-dark-700">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-8 border-b border-dark-700/10 dark:border-dark-700">
                                 <div>
                                     <span className="text-brand-primary font-mono text-xs font-bold tracking-widest uppercase bg-brand-primary/10 px-2 py-1 rounded">Day {activeDay}</span>
-                                    <h2 className="text-3xl font-bold text-white mt-3">{activeContent.title}</h2>
+                                    <h2 className="text-3xl font-bold text-dark-900 dark:text-white mt-3">{activeContent.title}</h2>
                                 </div>
-                                <CompleteButton postId={`${courseId}-day-${activeDay}`} />
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+                                    <div className="sm:hidden p-3 rounded-2xl border border-brand-primary/25 bg-brand-primary/10 text-xs text-dark-900/80 dark:text-light-200">
+                                        <span className="font-extrabold text-dark-900 dark:text-light-100">Stuck or leveling up?</span>{' '}
+                                        Book a 1:1 with an expert for live debugging, project help, and career guidance.
+                                    </div>
+                                    <button
+                                        onClick={() => setConnectOpen(true)}
+                                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-extrabold text-sm tracking-wide text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/20 border border-brand-primary/30 hover:shadow-brand-primary/35 hover:opacity-95 transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-brand-primary/40 focus:ring-offset-2 focus:ring-offset-dark-900"
+                                    >
+                                        1:1 Connect
+                                    </button>
+                                    <CompleteButton
+                                        variant="compact"
+                                        postId={`${courseId}-day-${activeDay}`}
+                                        className="w-full sm:w-auto justify-center !bg-dark-900/5 dark:!bg-dark-700 !text-dark-900 dark:!text-light-100 hover:!bg-dark-900/10 dark:hover:!bg-dark-600 border border-dark-700/10 dark:border-dark-600"
+                                    />
+                                    <div className="hidden sm:block max-w-[360px] p-3 rounded-2xl border border-brand-primary/20 bg-white/70 dark:bg-dark-900/40 text-xs text-dark-900/80 dark:text-light-200 backdrop-blur-lg">
+                                        <p className="font-extrabold text-dark-900 dark:text-light-100">
+                                            Stuck or leveling up?
+                                        </p>
+                                        <p className="mt-1">
+                                            Book a 1:1 with an expert for live debugging, project help, and career guidance.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
                             {(activeCheckpoints.length > 0 || activeLabSteps.length > 0) && (
-                                <div className="mb-8 bg-dark-900/30 border border-dark-700 rounded-2xl p-5">
-                                    <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-3">
+                                <div className="mb-8 bg-dark-900/5 dark:bg-dark-900/30 border border-dark-700/10 dark:border-dark-700 rounded-2xl p-5">
+                                    <p className="text-xs font-bold tracking-widest uppercase text-dark-900/50 dark:text-light-400 mb-3">
                                         Lesson Progress
                                     </p>
                                     <div className="flex flex-col md:flex-row gap-3">
                                         {activeCheckpoints.length > 0 && (
-                                            <div className="flex-1 p-4 rounded-xl border border-dark-600 bg-dark-800">
-                                                <p className="text-sm font-bold text-white">Checkpoints</p>
-                                                <p className="text-sm text-light-300 mt-1">
+                                            <div className="flex-1 p-4 rounded-xl border border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-800 backdrop-blur-lg">
+                                                <p className="text-sm font-bold text-dark-900 dark:text-white">Checkpoints</p>
+                                                <p className="text-sm text-dark-900/60 dark:text-light-300 mt-1">
                                                     {activeCheckpointsCorrectCount} / {activeCheckpoints.length} correct
                                                 </p>
                                             </div>
                                         )}
                                         {activeLabSteps.length > 0 && (
-                                            <div className="flex-1 p-4 rounded-xl border border-dark-600 bg-dark-800">
-                                                <p className="text-sm font-bold text-white">Guided Lab</p>
-                                                <p className="text-sm text-light-300 mt-1">
+                                            <div className="flex-1 p-4 rounded-xl border border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-800 backdrop-blur-lg">
+                                                <p className="text-sm font-bold text-dark-900 dark:text-white">Guided Lab</p>
+                                                <p className="text-sm text-dark-900/60 dark:text-light-300 mt-1">
                                                     {activeLabCompletedCount} / {activeLabSteps.length} steps completed (bug + fix)
                                                 </p>
                                             </div>
                                         )}
                                         {activeMasteryItems.length > 0 && (
-                                            <div className="flex-1 p-4 rounded-xl border border-dark-600 bg-dark-800">
-                                                <p className="text-sm font-bold text-white">Mastery checklist</p>
-                                                <p className="text-sm text-light-300 mt-1">
+                                            <div className="flex-1 p-4 rounded-xl border border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-800 backdrop-blur-lg">
+                                                <p className="text-sm font-bold text-dark-900 dark:text-white">Mastery checklist</p>
+                                                <p className="text-sm text-dark-900/60 dark:text-light-300 mt-1">
                                                     {activeMasteryDoneCount} / {activeMasteryItems.length} checked
                                                 </p>
                                             </div>
@@ -1272,7 +1498,7 @@ export default function LearningPathPage() {
                             )}
                             
                             <div className="p-6 bg-brand-primary/5 rounded-xl border-l-4 border-brand-primary mb-10">
-                                <p className="text-lg text-light-100 italic leading-relaxed">
+                                <p className="text-lg text-dark-900 dark:text-light-100 italic leading-relaxed">
                                     "{activeContent.intro}"
                                 </p>
                             </div>
@@ -1280,7 +1506,7 @@ export default function LearningPathPage() {
                             {/* Video Section (If Available) */}
                             {activeContent.video && (
                                 <div className="mb-12">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
                                         <Youtube className="text-red-500" /> 
                                         Video Guide
                                     </h3>
@@ -1299,18 +1525,18 @@ export default function LearningPathPage() {
                             )}
 
                             {/* Theory Content */}
-                            <div className="prose prose-invert max-w-none mb-12 text-light-200">
+                            <div className="prose dark:prose-invert max-w-none mb-12 text-dark-900/80 dark:text-light-200">
                                 <div dangerouslySetInnerHTML={{ __html: activeContent.content }} />
                             </div>
 
                             {/* AI vs Junior Comparison */}
                             {activeContent.comparison && (
                                 <div className="mb-12">
-                                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
                                         <Scale className="text-purple-400" /> 
                                         The "Zero to Architect" Diff
                                     </h3>
-                                    <p className="text-light-400 mb-6">
+                                    <p className="text-dark-900/60 dark:text-light-400 mb-6">
                                         See how a Junior Developer writes this vs. how an AI Architect refactors it for production.
                                     </p>
                                     <CodeComparison 
@@ -1375,16 +1601,25 @@ export default function LearningPathPage() {
                             )}
 
                             {/* Live Code Lab */}
-                            {activeContent.code && (
-                                courseId === 'react' 
-                                    ? <ReactLiveEditor initialCode={activeContent.code} />
-                                    : <LiveCodeEditor
-                                        ref={liveLabEditorRef}
-                                        initialCode={activeContent.code}
-                                        predictions={activeContent.predictions}
-                                        title="Live Lab: Try It Yourself"
-                                        subtitle="This is your main exercise sandbox. It won’t be overwritten by Guided Lab anymore."
-                                    />
+                            {(activeContent?.sandbox?.html || activeContent?.sandbox?.css) ? (
+                                <HtmlCssPlayground
+                                    initialHtml={activeContent?.sandbox?.html || ''}
+                                    initialCss={activeContent?.sandbox?.css || ''}
+                                    title="HTML/CSS Lab: Try It Yourself"
+                                    subtitle="Edit the HTML + CSS and verify the result in the preview (mobile-first)."
+                                />
+                            ) : (
+                                activeContent.code && (
+                                    courseId === 'react' 
+                                        ? <ReactLiveEditor initialCode={activeContent.code} />
+                                        : <LiveCodeEditor
+                                            ref={liveLabEditorRef}
+                                            initialCode={activeContent.code}
+                                            predictions={activeContent.predictions}
+                                            title="Live Lab: Try It Yourself"
+                                            subtitle="This is your main exercise sandbox. It won’t be overwritten by Guided Lab anymore."
+                                        />
+                                )
                             )}
 
                             {/* Interview Prep */}
@@ -1437,11 +1672,28 @@ export default function LearningPathPage() {
                                 }}
                             />
 
+                            {/* Bottom: AI Tutor */}
+                            <AICodingTutorChat
+                                contextTitle={aiContextTitle}
+                                contextText={aiContextText}
+                            />
+
                         </motion.div>
 
                     </div>
                 </div>
             </div>
+
+            {/* 1:1 Connect Modal */}
+            <ConnectOneToOneModal
+                open={connectOpen}
+                onClose={() => setConnectOpen(false)}
+                sessionUser={session?.user}
+                courseId={courseId}
+                courseTitle={course?.title}
+                day={activeDay}
+                lessonTitle={activeContent?.title}
+            />
         </div>
     );
 }

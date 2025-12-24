@@ -39,13 +39,13 @@ const FeatureCard = ({ title, description, icon, className }) => (
     }}
     transition={{ type: "spring", stiffness: 300 }}
     className={cn(
-      "p-8 rounded-2xl bg-dark-800 border border-dark-700",
+      "p-8 rounded-2xl bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 backdrop-blur-lg",
       className
     )}
   >
     <div className="mb-4">{icon}</div>
-    <h3 className="text-xl font-bold text-light-100">{title}</h3>
-    <p className="mt-2 text-light-200">{description}</p>
+    <h3 className="text-xl font-bold text-dark-900 dark:text-light-100">{title}</h3>
+    <p className="mt-2 text-dark-900/70 dark:text-light-200">{description}</p>
   </motion.div>
 );
 
@@ -63,7 +63,7 @@ export const Features = () => {
           <h2 className="text-base font-semibold leading-7 text-brand-primary">
             The Ultimate Learning Experience
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-light-100 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-4xl">
             Everything you need to become a top 1% developer
           </p>
         </motion.div>

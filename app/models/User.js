@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         twitter: String,
         linkedin: String
     },
+    phone: {
+        countryCode: { type: String }, // e.g. +91
+        number: { type: String },      // e.g. 9876543210 (store raw, format in UI)
+    },
     role: {
         type: String,
         enum: ['user', 'admin', 'pro'],
@@ -45,7 +49,7 @@ const userSchema = new mongoose.Schema({
     // Pro Learning Path
     learningPath: {
         type: String,
-        enum: ['none', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python'],
+        enum: ['none', 'html', 'css', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python'],
         default: 'none'
     },
     
@@ -72,11 +76,20 @@ const userSchema = new mongoose.Schema({
         icon: String,
         earnedAt: { type: Date, default: Date.now }
     }],
+    // Roadmap progress (Pro): persisted per user so they can resume across devices.
+    // Shape example:
+    // roadmapProgress: {
+    //   "frontend-roadmap-2025": { html: { status: "done", updatedAt: "..." }, react: { status: "doing", updatedAt: "..." } }
+    // }
+    roadmapProgress: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        next();
+        return next();
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

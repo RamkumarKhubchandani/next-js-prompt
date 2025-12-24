@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // ... your existing config
+  // (intentionally empty)
 };
 
 export default nextConfig;

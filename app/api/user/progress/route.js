@@ -60,6 +60,36 @@ export async function GET(request) {
 
     try {
         await connectDB();
+        const { searchParams } = new URL(request.url);
+        const summary = searchParams.get('summary') === '1';
+
+        // For dashboard-like views we want to avoid returning large arrays (e.g. completedTutorials).
+        // Use an aggregation to compute counts without fetching the whole array.
+        if (summary) {
+            const rows = await User.aggregate([
+                { $match: { email: session.user.email } },
+                {
+                    $project: {
+                        xp: 1,
+                        streak: 1,
+                        learningPath: 1,
+                        plan: 1,
+                        subscriptionEndDate: 1,
+                        completedTutorialsCount: {
+                            $size: { $ifNull: ['$completedTutorials', []] }
+                        }
+                    }
+                }
+            ]);
+
+            const user = rows?.[0];
+            if (!user) {
+                return NextResponse.json({ message: 'User not found' }, { status: 404 });
+            }
+
+            return NextResponse.json(user);
+        }
+
         const user = await User.findOne({ email: session.user.email })
             .select('completedTutorials xp streak learningPath plan subscriptionEndDate')
             .lean();

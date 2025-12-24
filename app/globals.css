@@ -8,6 +8,10 @@
   }
 }
 
+/* Hide scrollbars for horizontal nav overflow */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Light theme for prose */
 .prose {
   --tw-prose-body: #374151;

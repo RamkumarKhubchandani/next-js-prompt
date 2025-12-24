@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '../../components/ui/Input';
-import { Save, User, Link as LinkIcon, Github, Twitter, Linkedin, Loader2, ArrowLeft, Copy, Check } from 'lucide-react';
+import { Save, User, Link as LinkIcon, Github, Twitter, Linkedin, Loader2, ArrowLeft, Copy, Check, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
@@ -14,7 +14,8 @@ export default function SettingsPage() {
         name: '',
         username: '',
         bio: '',
-        links: { github: '', twitter: '', linkedin: '' }
+        links: { github: '', twitter: '', linkedin: '' },
+        phone: { countryCode: '+91', number: '' }
     });
     const [message, setMessage] = useState({ type: '', text: '' });
     const [copied, setCopied] = useState(false);
@@ -30,7 +31,8 @@ export default function SettingsPage() {
                         name: data.name || '',
                         username: data.username || '',
                         bio: data.bio || '',
-                        links: data.links || { github: '', twitter: '', linkedin: '' }
+                        links: data.links || { github: '', twitter: '', linkedin: '' },
+                        phone: data.phone || { countryCode: '+91', number: '' }
                     });
                     setLoading(false);
                 })
@@ -45,6 +47,12 @@ export default function SettingsPage() {
             setFormData(prev => ({
                 ...prev,
                 links: { ...prev.links, [linkKey]: value }
+            }));
+        } else if (name.startsWith('phone.')) {
+            const key = name.split('.')[1];
+            setFormData(prev => ({
+                ...prev,
+                phone: { ...prev.phone, [key]: value }
             }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
@@ -91,22 +99,22 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-dark-900 text-light-100">
+        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
             <div className="max-w-2xl mx-auto">
                 <div className="mb-8">
-                    <Link href="/dashboard" className="flex items-center text-light-300 hover:text-white mb-4 transition-colors">
+                    <Link href="/dashboard" className="flex items-center text-dark-900/70 dark:text-light-300 hover:text-brand-primary mb-4 transition-colors">
                         <ArrowLeft size={20} className="mr-2" />
                         Back to Dashboard
                     </Link>
                     <h1 className="text-3xl font-bold">Profile Settings</h1>
-                    <p className="text-light-200">Manage your public profile and personal details.</p>
+                    <p className="text-dark-900/70 dark:text-light-200">Manage your public profile and personal details.</p>
                 </div>
 
                 <motion.form 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     onSubmit={handleSubmit} 
-                    className="bg-dark-800 p-8 rounded-2xl border border-dark-700 space-y-6"
+                    className="bg-white/70 dark:bg-dark-800 p-8 rounded-2xl border border-dark-700/10 dark:border-dark-700 space-y-6 backdrop-blur-lg"
                 >
                     {message.text && (
                         <div className={`p-4 rounded-lg ${message.type === 'success' ? 'bg-green-900/20 text-green-400 border border-green-900' : 'bg-red-900/20 text-red-400 border border-red-900'}`}>
@@ -122,22 +130,22 @@ export default function SettingsPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-light-300 mb-1">Full Name</label>
+                                <label className="block text-sm font-medium text-dark-900/70 dark:text-light-300 mb-1">Full Name</label>
                                 <Input name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" required />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-light-300 mb-1">Username (Required)</label>
+                                <label className="block text-sm font-medium text-dark-900/70 dark:text-light-300 mb-1">Username (Required)</label>
                                 <Input name="username" value={formData.username} onChange={handleChange} placeholder="johndoe" required />
                                 
                                 {formData.username && (
-                                    <div className="mt-2 flex items-center justify-between p-2 bg-dark-900 rounded-lg border border-dark-700">
-                                        <p className="text-xs text-light-400 truncate mr-2">
+                                    <div className="mt-2 flex items-center justify-between p-2 bg-white/70 dark:bg-dark-900 rounded-lg border border-dark-700/10 dark:border-dark-700 backdrop-blur-lg">
+                                        <p className="text-xs text-dark-900/50 dark:text-light-400 truncate mr-2">
                                             {origin}/u/{formData.username}
                                         </p>
                                         <button 
                                             type="button"
                                             onClick={handleCopyLink} 
-                                            className="text-brand-primary hover:text-white transition-colors flex-shrink-0"
+                                            className="text-brand-primary hover:text-brand-secondary transition-colors flex-shrink-0"
                                             title="Copy Profile Link"
                                         >
                                             {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -148,18 +156,38 @@ export default function SettingsPage() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-light-300 mb-1">Bio</label>
+                            <label className="block text-sm font-medium text-dark-900/70 dark:text-light-300 mb-1">Bio</label>
                             <textarea 
                                 name="bio" 
                                 value={formData.bio} 
                                 onChange={handleChange}
-                                className="w-full bg-dark-800 border border-dark-700 text-light-100 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors h-24 resize-none"
+                                className="w-full bg-white/80 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 text-dark-900 dark:text-light-100 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors h-24 resize-none"
                                 placeholder="Tell the world about yourself..."
                             />
                         </div>
+
+                        <div className="pt-2">
+                            <h3 className="text-sm font-semibold flex items-center gap-2 text-dark-900/80 dark:text-light-200 mb-2">
+                                <Phone size={18} className="text-brand-primary" />
+                                Mobile number (for 1:1 calls)
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-dark-900/70 dark:text-light-300 mb-1">Country code</label>
+                                    <Input name="phone.countryCode" value={formData.phone.countryCode} onChange={handleChange} placeholder="+91" />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-dark-900/70 dark:text-light-300 mb-1">Phone number</label>
+                                    <Input name="phone.number" value={formData.phone.number} onChange={handleChange} placeholder="9876543210" />
+                                    <p className="text-xs text-dark-900/50 dark:text-light-400 mt-2">
+                                        Optional, but recommended so mentors can contact you quickly.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <hr className="border-dark-700 my-6" />
+                    <hr className="border-dark-700/10 dark:border-dark-700 my-6" />
 
                     <div className="space-y-4">
                         <h2 className="text-xl font-semibold flex items-center gap-2">

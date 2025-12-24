@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 
 export const AiQuizCta = () => {
     return (
-        <div className="relative bg-dark-800 py-24 sm:py-32">
+        <div className="relative bg-light-100 dark:bg-dark-800 py-24 sm:py-32">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -15,12 +15,12 @@ export const AiQuizCta = () => {
                     transition={{ duration: 0.8 }}
                     className="mx-auto max-w-2xl text-center"
                 >
-                    <h2 className="text-3xl font-bold tracking-tight text-light-100 sm:text-4xl">
+                    <h2 className="text-3xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-4xl">
                         Test Your Skills.
                         <br />
                         Discover Your Potential.
                     </h2>
-                    <p className="mt-6 text-lg leading-8 text-light-200">
+                    <p className="mt-6 text-lg leading-8 text-dark-900/70 dark:text-light-200">
                         Take our interactive AI-powered assessment to discover your strengths, identify weaknesses, and see where you stand against the world's top developers.
                     </p>
                     <div className="mt-10">

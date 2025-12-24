@@ -23,12 +23,13 @@ export default async function RoadmapPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-dark-900 text-light-100">
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-[1400px] mx-auto">
         <FrontendRoadmap roadmap={FRONTEND_ROADMAP_2025} />
       </div>
     </div>
   );
 }
+
 
 
 

@@ -33,7 +33,7 @@ const steps = [
 
 export const HowItWorks = () => {
   return (
-    <div id="how-it-works" className="py-24 sm:py-32 bg-dark-800">
+    <div id="how-it-works" className="py-24 sm:py-32 bg-light-100 dark:bg-dark-800">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -45,13 +45,13 @@ export const HowItWorks = () => {
           <h2 className="text-base font-semibold leading-7 text-brand-primary">
             Your Path to Mastery
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-light-100 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-4xl">
             A proven process for success
           </p>
         </motion.div>
         <div className="mx-auto mt-16 max-w-3xl">
           <div className="relative">
-            <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-dark-700" />
+            <div className="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-dark-700/20 dark:bg-dark-700" />
             {steps.map((step, index) => (
               <motion.div
                 key={step.name}
@@ -63,12 +63,12 @@ export const HowItWorks = () => {
               >
                 {/* Left Side Content */}
                 <div className={`w-1/2 pr-8 ${index % 2 !== 0 ? 'ml-auto text-left pl-16' : 'text-right'}`}>
-                    <h3 className="text-xl font-bold text-light-100">{step.name}</h3>
-                    <p className="mt-2 text-light-200">{step.description}</p>
+                    <h3 className="text-xl font-bold text-dark-900 dark:text-light-100">{step.name}</h3>
+                    <p className="mt-2 text-dark-900/70 dark:text-light-200">{step.description}</p>
                 </div>
                 
                 {/* Center Icon */}
-                <div className="absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-dark-900 border-2 border-brand-primary rounded-full flex items-center justify-center text-brand-primary">
+                <div className="absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-light-100 dark:bg-dark-900 border-2 border-brand-primary rounded-full flex items-center justify-center text-brand-primary shadow-sm">
                   {step.icon}
                 </div>
               </motion.div>

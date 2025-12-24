@@ -19,10 +19,10 @@ const testimonials = [
 ];
 
 const TestimonialCard = React.forwardRef(({ name, role, quote }, ref) => (
-    <div ref={ref} className="relative w-[380px] h-[200px] flex-shrink-0 rounded-2xl bg-dark-800 p-8 border border-dark-700 shadow-lg">
-        <p className="text-lg font-bold text-light-100">{name}</p>
+    <div ref={ref} className="relative w-[380px] h-[200px] flex-shrink-0 rounded-2xl bg-white/70 dark:bg-dark-800 p-8 border border-dark-700/10 dark:border-dark-700 shadow-lg backdrop-blur-lg">
+        <p className="text-lg font-bold text-dark-900 dark:text-light-100">{name}</p>
         <p className="text-sm text-brand-primary">{role}</p>
-        <p className="mt-4 text-light-200 leading-relaxed">"{quote}"</p>
+        <p className="mt-4 text-dark-900/70 dark:text-light-200 leading-relaxed">"{quote}"</p>
     </div>
 ));
 TestimonialCard.displayName = "TestimonialCard";
@@ -82,14 +82,17 @@ export const Testimonials = () => {
                     <h2 className="text-base font-semibold leading-7 text-brand-primary">
                         Voices of Success
                     </h2>
-                    <p className="mt-2 text-3xl font-bold tracking-tight text-light-100 sm:text-4xl">
+                    <p className="mt-2 text-3xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-4xl">
                         Hear from developers who transformed their careers with us.
                     </p>
                 </motion.div>
             </div>
             <div className="relative mt-16 h-[700px] w-full"> {/* Increased height */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-b from-dark-900 via-transparent to-dark-900" />
-                <OrbitalField />
+                {/* Fade overlay should sit BEHIND the cards (was covering them in dark mode) */}
+                <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-light-100 via-transparent to-light-100 dark:from-dark-900 dark:via-transparent dark:to-dark-900" />
+                <div className="relative z-10">
+                    <OrbitalField />
+                </div>
             </div>
         </section>
     );

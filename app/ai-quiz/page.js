@@ -7,6 +7,7 @@ import { Input } from "../components/ui/Input";
 import { getQuestionsForTech } from "../lib/ai";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const steps = [
     { id: 'lead-capture' },
@@ -15,10 +16,17 @@ const steps = [
     { id: 'results' },
 ];
 
-const LeadCaptureStep = ({ onNext }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+const LeadCaptureStep = ({ onNext, defaults }) => {
+    const [name, setName] = useState(defaults?.name || '');
+    const [email, setEmail] = useState(defaults?.email || '');
+    const [phone, setPhone] = useState(defaults?.phone || '');
+
+    useEffect(() => {
+        if (!defaults) return;
+        setName(prev => prev || defaults.name || '');
+        setEmail(prev => prev || defaults.email || '');
+        setPhone(prev => prev || defaults.phone || '');
+    }, [defaults?.name, defaults?.email, defaults?.phone]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -33,8 +41,8 @@ const LeadCaptureStep = ({ onNext }) => {
             transition={{ duration: 0.5 }}
             className="text-center"
         >
-            <h2 className="text-3xl font-bold text-light-100">Let's Get Started</h2>
-            <p className="mt-2 text-light-200">First, tell us a little about yourself.</p>
+            <h2 className="text-3xl font-bold text-dark-900 dark:text-light-100">Let's Get Started</h2>
+            <p className="mt-2 text-dark-900/70 dark:text-light-200">First, tell us a little about yourself.</p>
             <form onSubmit={handleSubmit} className="mt-8 max-w-md mx-auto space-y-4">
                 <Input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} required />
                 <Input type="email" placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -82,8 +90,8 @@ const TechSelectionStep = ({ onNext, onPrev }) => {
             transition={{ duration: 0.5 }}
             className="text-center"
         >
-            <h2 className="text-3xl font-bold text-light-100">Choose Your Arena</h2>
-            <p className="mt-2 text-light-200">Select the technologies you want to be assessed on.</p>
+            <h2 className="text-3xl font-bold text-dark-900 dark:text-light-100">Choose Your Arena</h2>
+            <p className="mt-2 text-dark-900/70 dark:text-light-200">Select the technologies you want to be assessed on.</p>
             <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-6">
                 {technologies.map(tech => (
                     <motion.div
@@ -94,10 +102,10 @@ const TechSelectionStep = ({ onNext, onPrev }) => {
                             borderColor: selectedTechs.includes(tech.name) ? "rgba(0, 245, 160, 1)" : "rgba(58, 58, 58, 1)",
                             boxShadow: selectedTechs.includes(tech.name) ? "0 0 15px rgba(0, 245, 160, 0.5)" : "none",
                         }}
-                        className="p-6 bg-dark-800 border rounded-lg cursor-pointer text-center"
+                        className="p-6 bg-white/70 dark:bg-dark-800 border border-dark-700/10 dark:border-dark-700 rounded-lg cursor-pointer text-center backdrop-blur-lg"
                     >
                         <img src={tech.logo} alt={tech.name} className="h-12 w-12 mx-auto" />
-                        <p className="mt-4 font-semibold text-light-100">{tech.name}</p>
+                        <p className="mt-4 font-semibold text-dark-900 dark:text-light-100">{tech.name}</p>
                     </motion.div>
                 ))}
             </div>
@@ -106,7 +114,7 @@ const TechSelectionStep = ({ onNext, onPrev }) => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={onPrev}
-                    className="w-1/2 mr-2 rounded-full bg-dark-700 px-8 py-3 text-base font-semibold text-light-100"
+                    className="w-1/2 mr-2 rounded-full bg-dark-900/5 dark:bg-dark-700 px-8 py-3 text-base font-semibold text-dark-900 dark:text-light-100 border border-dark-700/10 dark:border-dark-600 hover:bg-dark-900/10 dark:hover:bg-dark-600 transition-colors"
                 >
                     Back
                 </motion.button>
@@ -140,8 +148,11 @@ const QuizStep = ({ questions, onFinish, onPrev }) => {
         
         const newAnswers = [...answers, { 
             question: currentQuestion.question, 
-            answer: currentQuestion.options[optionIndex], // Corrected property name
-            isCorrect 
+            answer: currentQuestion.options[optionIndex], // user's answer
+            correctAnswer: currentQuestion.options[currentQuestion.answer],
+            explanation: currentQuestion.explanation,
+            technology: currentQuestion.technology,
+            isCorrect
         }];
 
         setTimeout(() => {
@@ -165,8 +176,8 @@ const QuizStep = ({ questions, onFinish, onPrev }) => {
             transition={{ duration: 0.5 }}
             className="text-center"
         >
-            <p className="text-light-200">Question {currentQuestionIndex + 1} of {questions.length}</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-light-100 my-6">{currentQuestion.question}</h2>
+            <p className="text-dark-900/70 dark:text-light-200">Question {currentQuestionIndex + 1} of {questions.length}</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-dark-900 dark:text-light-100 my-6">{currentQuestion.question}</h2>
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {currentQuestion.options.map((option, index) => {
                     const isSelected = selectedOption === index;
@@ -179,7 +190,7 @@ const QuizStep = ({ questions, onFinish, onPrev }) => {
                             className={`p-4 border rounded-lg text-left transition-all duration-300 ${
                                 isAnswered && isCorrect && isSelected ? 'bg-green-500 border-green-400' :
                                 isAnswered && !isCorrect && isSelected ? 'bg-red-500 border-red-400' :
-                                'bg-dark-800 border-dark-700 hover:bg-dark-700'
+                                'bg-white/70 border-dark-700/10 hover:bg-dark-900/5 dark:bg-dark-800 dark:border-dark-700 dark:hover:bg-dark-700 backdrop-blur-lg'
                             }`}
                         >
                             {option}
@@ -192,7 +203,7 @@ const QuizStep = ({ questions, onFinish, onPrev }) => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={onPrev}
-                    className="w-1/2 mr-2 rounded-full bg-dark-700 px-8 py-3 text-base font-semibold text-light-100"
+                    className="w-1/2 mr-2 rounded-full bg-dark-900/5 dark:bg-dark-700 px-8 py-3 text-base font-semibold text-dark-900 dark:text-light-100 border border-dark-700/10 dark:border-dark-600 hover:bg-dark-900/10 dark:hover:bg-dark-600 transition-colors"
                 >
                     Back
                 </motion.button>
@@ -210,7 +221,7 @@ const QuizStep = ({ questions, onFinish, onPrev }) => {
     );
 };
 
-const ResultsStep = ({ score, total }) => {
+const ResultsStep = ({ score, total, technologies }) => {
     const percentage = Math.round((score / total) * 100);
     return (
         <motion.div
@@ -219,8 +230,8 @@ const ResultsStep = ({ score, total }) => {
             transition={{ duration: 0.8 }}
             className="text-center"
         >
-            <h2 className="text-4xl font-bold text-light-100">Assessment Complete!</h2>
-            <p className="mt-4 text-lg text-light-200">You scored</p>
+            <h2 className="text-4xl font-bold text-dark-900 dark:text-light-100">Assessment Complete!</h2>
+            <p className="mt-4 text-lg text-dark-900/70 dark:text-light-200">You scored</p>
             <div className="my-8">
                 <motion.div
                     initial={{ strokeDashoffset: 1 }}
@@ -229,7 +240,7 @@ const ResultsStep = ({ score, total }) => {
                     className="relative w-48 h-48 mx-auto"
                 >
                     <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" className="stroke-dark-700" strokeWidth="10" fill="transparent" />
+                        <circle cx="50" cy="50" r="45" className="stroke-dark-700/20 dark:stroke-dark-700" strokeWidth="10" fill="transparent" />
                         <motion.circle
                             cx="50" cy="50" r="45"
                             className="stroke-brand-primary" strokeWidth="10" fill="transparent"
@@ -238,30 +249,66 @@ const ResultsStep = ({ score, total }) => {
                             transform="rotate(-90 50 50)"
                         />
                     </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-4xl font-bold">{percentage}%</span>
+                    <span className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-dark-900 dark:text-light-100">{percentage}%</span>
                 </motion.div>
             </div>
-            <p className="text-xl text-light-200">Ready to level up and close the gap? <br/> Let's build your personalized roadmap to success.</p>
-            <Link href="/contact-us">
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="mt-8 rounded-full bg-brand-primary px-8 py-4 text-lg font-semibold text-dark-900"
-                >
-                    Book Your Free Consultation
-                </motion.button>
-            </Link>
+            <p className="text-xl text-dark-900/70 dark:text-light-200">Ready to level up and close the gap? <br/> Let's build your personalized roadmap to success.</p>
+            <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="mt-8 rounded-full bg-brand-primary px-8 py-4 text-lg font-semibold text-dark-900"
+                onClick={() => {
+                    const techList = Array.isArray(technologies) ? technologies.join(', ') : '';
+                    const notes = `AI Assessment Result\n\nTechnologies: ${techList}\nScore: ${score}/${total} (${percentage}%)\n\nWhat I want help with:\n- Personalized roadmap based on my gaps\n- Next 7-day plan\n- Live debugging / project guidance\n\n`;
+                    try {
+                        window.dispatchEvent(new CustomEvent('open-connect-modal-global', {
+                            detail: {
+                                headline: 'Free Consultation (AI Assessment)',
+                                subhead: 'We’ll review your results and create a personalized roadmap + next 7-day plan.',
+                                ctaLabel: 'Request consultation',
+                                defaultNotes: notes,
+                            }
+                        }));
+                    } catch {}
+                }}
+            >
+                Book Your Free Consultation
+            </motion.button>
         </motion.div>
     );
 };
 
 export default function AiQuizPage() {
+    const { data: session } = useSession();
     const [currentStep, setCurrentStep] = useState(0);
     const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
     const [selectedTechs, setSelectedTechs] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [score, setScore] = useState(0);
+
+    // Prefill lead-capture details when logged in (name/email from session, phone from profile settings)
+    useEffect(() => {
+        if (!session?.user) return;
+        setUserData(prev => ({
+            name: prev.name || session.user.name || session.user.username || '',
+            email: prev.email || session.user.email || '',
+            phone: prev.phone || prev.phone
+        }));
+
+        (async () => {
+            try {
+                const res = await fetch('/api/user/settings');
+                if (!res.ok) return;
+                const data = await res.json();
+                const cc = String(data?.phone?.countryCode || '').trim();
+                const num = String(data?.phone?.number || '').trim();
+                const formatted = [cc, num].filter(Boolean).join(' ').trim();
+                if (!formatted) return;
+                setUserData(prev => ({ ...prev, phone: prev.phone || formatted }));
+            } catch {}
+        })();
+    }, [session?.user]);
 
     const goNext = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
     const goPrev = () => setCurrentStep(prev => Math.max(prev - 1, 0));
@@ -283,6 +330,7 @@ export default function AiQuizPage() {
 
         const resultData = {
             ...userData,
+            username: session?.user?.username,
             technologies: selectedTechs,
             score: finalScore,
             total: questions.length,
@@ -303,15 +351,15 @@ export default function AiQuizPage() {
     };
 
     return (
-        <div className="bg-dark-900 min-h-screen">
+        <div className="min-h-screen flex flex-col bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
             <Header />
-            <main className="py-24 sm:py-32">
+            <main className="flex-1 py-24 sm:py-32">
                 <div className="mx-auto max-w-4xl px-6 lg:px-8">
                     <AnimatePresence mode="wait">
-                        {steps[currentStep].id === 'lead-capture' && <LeadCaptureStep onNext={handleUserData} />}
+                        {steps[currentStep].id === 'lead-capture' && <LeadCaptureStep onNext={handleUserData} defaults={userData} />}
                         {steps[currentStep].id === 'tech-selection' && <TechSelectionStep onNext={handleStartQuiz} onPrev={goPrev} />}
                         {steps[currentStep].id === 'quiz' && <QuizStep questions={questions} onFinish={handleFinishQuiz} onPrev={goPrev} />}
-                        {steps[currentStep].id === 'results' && <ResultsStep score={score} total={questions.length} />}
+                        {steps[currentStep].id === 'results' && <ResultsStep score={score} total={questions.length} technologies={selectedTechs} />}
                     </AnimatePresence>
                 </div>
             </main>

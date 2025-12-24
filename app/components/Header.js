@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo"; 
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSession, signOut } from "next-auth/react";
+import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 
 const navigation = [
   { name: "Features", href: "/#features" },
@@ -23,9 +25,14 @@ const navigation = [
 
 export function Header({ showNav = true }) {
     const { data: session, status } = useSession();
+    const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [navLoading, setNavLoading] = useState(false);
+    const [navTarget, setNavTarget] = useState(null);
+    const [connectOpen, setConnectOpen] = useState(false);
+    const [connectConfig, setConnectConfig] = useState({ headline: '', subhead: '', defaultNotes: '', ctaLabel: '' });
     const menuRef = useRef(null);
 
     useEffect(() => {
@@ -46,6 +53,48 @@ export function Header({ showNav = true }) {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
+    }, []);
+
+    function startNavigate(href) {
+        if (!href) return;
+        const targetPath = String(href).split("?")[0].split("#")[0];
+        // Ignore same-page anchors like "/#features"
+        if (String(href).includes("#") && (targetPath === "" || targetPath === pathname)) return;
+        // If we're already there, don't show a loading indicator.
+        if (pathname === targetPath) {
+            setUserMenuOpen(false);
+            setMobileMenuOpen(false);
+            return;
+        }
+        setNavTarget(targetPath);
+        setNavLoading(true);
+        setUserMenuOpen(false);
+        setMobileMenuOpen(false);
+    }
+
+    // Clear nav loading once the route changes to the expected destination.
+    useEffect(() => {
+        if (!navLoading || !navTarget) return;
+        if (pathname === navTarget) {
+            setNavLoading(false);
+            setNavTarget(null);
+        }
+    }, [pathname, navLoading, navTarget]);
+
+    // Allow other pages to open the global connect modal with custom messaging.
+    useEffect(() => {
+        const handler = (e) => {
+            const detail = e?.detail && typeof e.detail === 'object' ? e.detail : {};
+            setConnectConfig({
+                headline: detail.headline || '',
+                subhead: detail.subhead || '',
+                defaultNotes: detail.defaultNotes || '',
+                ctaLabel: detail.ctaLabel || '',
+            });
+            setConnectOpen(true);
+        };
+        window.addEventListener('open-connect-modal-global', handler);
+        return () => window.removeEventListener('open-connect-modal-global', handler);
     }, []);
 
     // Loading state shell
@@ -69,12 +118,34 @@ export function Header({ showNav = true }) {
 
     return (
         <header className={cn(
-            "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-            isScrolled ? 'bg-light-100/80 dark:bg-dark-800/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
+            // Always keep header readable in both themes; use a glass look.
+            "fixed inset-x-0 top-0 z-50 transition-all duration-300 backdrop-blur-lg border-b",
+            isScrolled
+                ? "bg-light-100/80 dark:bg-dark-800/80 shadow-lg border-dark-700/20 dark:border-dark-700/60"
+                : "bg-light-100/60 dark:bg-dark-800/40 border-dark-700/10 dark:border-dark-700/40"
         )}>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-20 items-center justify-between">
-                    <div className="flex items-center">
+            {/* Route-loading indicator (helps users understand navigation is happening) */}
+            <AnimatePresence>
+                {navLoading && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-x-0 top-0 h-1 bg-dark-700/60 overflow-hidden"
+                    >
+                        <motion.div
+                            className="h-full w-1/3 bg-gradient-to-r from-transparent via-brand-primary to-transparent"
+                            initial={{ x: "-100%" }}
+                            animate={{ x: "300%" }}
+                            transition={{ duration: 1.1, ease: "linear", repeat: Infinity }}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            {/* Full-width header so logo can sit further left */}
+            <div className="w-full px-3 sm:px-4 lg:px-6">
+                <div className="grid grid-cols-[auto,1fr,auto] items-center h-20 gap-3">
+                    <div className="flex items-center pr-1">
                         <Link href="/">
                             <Logo />
                         </Link>
@@ -82,12 +153,17 @@ export function Header({ showNav = true }) {
                     
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
-                        <nav className="hidden lg:flex lg:gap-x-6 xl:gap-x-8">
+                        <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7 overflow-x-auto no-scrollbar">
                             {navigation.map((item) => (
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
+                                    onClick={() => {
+                                        // Only show loading for actual route navigations (not hash anchors).
+                                        if (String(item.href).startsWith("/#")) return;
+                                        startNavigate(item.href);
+                                    }}
+                                    className="text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
                                 >
                                     {item.name}
                                 </Link>
@@ -96,14 +172,41 @@ export function Header({ showNav = true }) {
                     )}
 
                     {/* Right Side - Always shown */}
-                    <div className="flex items-center gap-x-4">
+                    <div className="flex items-center gap-x-3 justify-end">
+                        {/* 1:1 Connect CTA in the top header (all pages) */}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                // On lesson pages, let the page-specific modal open (it has course/day context).
+                                if (pathname?.startsWith('/path/')) {
+                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch {}
+                                    return;
+                                }
+                                setConnectConfig({
+                                    headline: 'Book a 1:1 call',
+                                    subhead: 'Get live debugging, project help, and a clear next-step roadmap.',
+                                    defaultNotes: '',
+                                    ctaLabel: 'Send request',
+                                });
+                                setConnectOpen(true);
+                            }}
+                            className="hidden md:inline-flex items-center justify-center px-4 py-2 rounded-full font-extrabold text-xs tracking-wider text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/25 border border-brand-primary/30 hover:shadow-brand-primary/40 hover:opacity-95 transition-all active:scale-[0.98]"
+                        >
+                            1:1 CONNECT
+                        </button>
                         <ThemeSwitcher />
+                        {navLoading && (
+                            <div className="hidden sm:flex items-center gap-2 text-xs text-light-300">
+                                <Loader2 size={14} className="animate-spin text-light-300" />
+                                Loading…
+                            </div>
+                        )}
                         <div className="hidden md:flex items-center gap-x-4">
                             {session ? (
                                 <div className="relative" ref={menuRef}>
                                     <button 
                                         onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                        className="flex items-center gap-2 text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary transition-colors group"
+                                        className="flex items-center gap-2 text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors group"
                                     >
                                         <span className="bg-dark-700 text-brand-primary w-8 h-8 rounded-full flex items-center justify-center font-bold border border-dark-600 group-hover:border-brand-primary transition-colors">
                                             {session.user.name?.charAt(0).toUpperCase()}
@@ -128,11 +231,19 @@ export function Header({ showNav = true }) {
                                                 <div className="py-1">
                                                     <Link 
                                                         href="/dashboard" 
-                                                        onClick={() => setUserMenuOpen(false)}
-                                                        className="flex items-center px-4 py-3 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
+                                                        onClick={() => startNavigate("/dashboard")}
+                                                        className={cn(
+                                                            "flex items-center px-4 py-3 text-sm transition-colors",
+                                                            navLoading && navTarget === "/dashboard"
+                                                                ? "text-light-100 bg-dark-700/60 cursor-wait"
+                                                                : "text-light-200 hover:bg-dark-700 hover:text-white"
+                                                        )}
                                                     >
                                                         <LayoutDashboard size={16} className="mr-3 text-brand-primary" />
                                                         Dashboard
+                                                        {navLoading && navTarget === "/dashboard" && (
+                                                            <Loader2 size={16} className="ml-auto animate-spin text-light-300" />
+                                                        )}
                                                     </Link>
                                                     <Link 
                                                         href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'} 
@@ -156,7 +267,7 @@ export function Header({ showNav = true }) {
                                 </div>
                             ) : (
                                 <>
-                                    <Link href="/login" className="text-sm font-semibold leading-6 text-light-100 hover:text-brand-primary">
+                                    <Link href="/login" className="text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary">
                                         Log in
                                     </Link>
                                     <Link href="/register" className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-dark-900 hover:bg-brand-primary/90 transition-colors">
@@ -172,7 +283,7 @@ export function Header({ showNav = true }) {
                         <button
                             type="button"
                             onClick={() => setMobileMenuOpen(true)}
-                            className="inline-flex items-center justify-center rounded-md p-2.5 text-light-200 hover:bg-dark-800 transition-colors"
+                            className="inline-flex items-center justify-center rounded-md p-2.5 text-dark-900 dark:text-light-200 hover:bg-dark-800/10 dark:hover:bg-dark-800 transition-colors"
                         >
                             <Menu className="h-6 w-6" />
                         </button>
@@ -206,11 +317,41 @@ export function Header({ showNav = true }) {
                             <div className="mt-6 flow-root">
                                 <div className="-my-6 divide-y divide-dark-700">
                                     <div className="space-y-2 py-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (pathname?.startsWith('/path/')) {
+                                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch {}
+                                                    setMobileMenuOpen(false);
+                                                    return;
+                                                }
+                                                setMobileMenuOpen(false);
+                                                setConnectConfig({
+                                                    headline: 'Book a 1:1 call',
+                                                    subhead: 'Get live debugging, project help, and a clear next-step roadmap.',
+                                                    defaultNotes: '',
+                                                    ctaLabel: 'Send request',
+                                                });
+                                                setConnectOpen(true);
+                                            }}
+                                            className="w-full text-left -mx-3 block rounded-lg px-3 py-3 text-base font-extrabold leading-7 text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/20 border border-brand-primary/30"
+                                        >
+                                            1:1 Connect (Expert Help)
+                                            <span className="block mt-1 text-xs font-semibold text-dark-900/80">
+                                                Live debugging • Project help • Career guidance
+                                            </span>
+                                        </button>
                                         {showNav && navigation.map((item) => (
                                             <Link
                                                 key={item.name}
                                                 href={item.href}
-                                                onClick={() => setMobileMenuOpen(false)}
+                                                onClick={() => {
+                                                    if (String(item.href).startsWith("/#")) {
+                                                        setMobileMenuOpen(false);
+                                                        return;
+                                                    }
+                                                    startNavigate(item.href);
+                                                }}
                                                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
                                             >
                                                 {item.name}
@@ -233,11 +374,14 @@ export function Header({ showNav = true }) {
                                                 </div>
                                                 <Link
                                                     href="/dashboard"
-                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    onClick={() => startNavigate("/dashboard")}
                                                     className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
                                                 >
                                                     <LayoutDashboard size={20} className="mr-3 text-brand-primary" />
                                                     Dashboard
+                                                    {navLoading && navTarget === "/dashboard" && (
+                                                        <Loader2 size={18} className="ml-auto animate-spin text-light-300" />
+                                                    )}
                                                 </Link>
                                                 <Link
                                                     href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
@@ -283,6 +427,17 @@ export function Header({ showNav = true }) {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Global connect modal for non-lesson pages */}
+            <ConnectOneToOneModal
+                open={connectOpen}
+                onClose={() => setConnectOpen(false)}
+                sessionUser={session?.user}
+                headline={connectConfig.headline}
+                subhead={connectConfig.subhead}
+                defaultNotes={connectConfig.defaultNotes}
+                ctaLabel={connectConfig.ctaLabel}
+            />
         </header>
     );
 };

@@ -17,10 +17,15 @@ const config = {
           900: '#121212', // Near-black for main background
           800: '#1e1e1e', // Slightly lighter for cards/sections
           700: '#2a2a2a', // For borders and dividers
+          600: '#3a3a3a', // Hover surfaces
+          500: '#4a4a4a', // Active surfaces
         },
         light: {
           100: '#f5f5f5', // Off-white for text
           200: '#e0e0e0', // Lighter text
+          300: '#cfcfcf',
+          400: '#b0b0b0',
+          500: '#8a8a8a',
         },
       },
       fontFamily: {

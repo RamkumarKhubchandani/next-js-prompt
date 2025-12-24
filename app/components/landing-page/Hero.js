@@ -46,7 +46,7 @@ const NeuralCodeWeaver = () => {
 export const Hero = () => {
   return (
     <div className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-dark-900">
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-light-100 via-light-100 to-light-200 dark:from-dark-900 dark:via-dark-900 dark:to-dark-900">
             <Canvas camera={{ position: [0, 0, 5] }}>
                 <NeuralCodeWeaver />
             </Canvas>
@@ -58,12 +58,12 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <h1 className="text-5xl font-bold tracking-tight text-light-100 sm:text-7xl">
+          <h1 className="text-5xl font-bold tracking-tight text-dark-900 dark:text-light-100 sm:text-7xl">
             Become Agentic.
             <br />
             Command the Code.
           </h1>
-          <p className="mt-6 text-lg leading-8 text-light-200">
+          <p className="mt-6 text-lg leading-8 text-dark-900/70 dark:text-light-200">
             Stop just writing code. Start architecting the future. Our curriculum trains you in agentic workflows, transforming you from a developer into a hyper-productive AI-augmented engineer.
           </p>
           <div className="mt-10">
