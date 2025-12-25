@@ -61,11 +61,16 @@ export default function ChallengePage() {
     );
 
     return (
-        <div className="min-h-screen bg-dark-950 text-light-100 flex flex-col pt-20">
+        <div className="min-h-screen bg-dark-950 text-light-100">
             <Header showNav={true} />
-            
+
+            {/* Everything below the global header */}
+            <div
+                className="flex flex-col overflow-hidden"
+                style={{ height: '100vh', paddingTop: 80 }}
+            >
             {/* Challenge Toolbar */}
-            <div className="border-b border-dark-800 bg-dark-900/95 backdrop-blur p-4 flex items-center justify-between sticky top-20 z-40 shadow-md">
+            <div className="shrink-0 border-b border-dark-800 bg-dark-900/95 backdrop-blur p-4 flex items-center justify-between z-40 shadow-md">
                 <div className="flex items-center gap-4">
                     <Link 
                         href="/dashboard"
@@ -97,9 +102,9 @@ export default function ChallengePage() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+            <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
                 {/* Instructions Panel */}
-                <div className="w-full lg:w-1/3 p-6 overflow-y-auto border-r border-dark-800 bg-dark-900/30 scrollbar-thin scrollbar-thumb-dark-700">
+                <div className="w-full lg:w-1/3 min-h-0 p-6 overflow-y-auto border-r border-dark-800 bg-dark-900/30 scrollbar-thin scrollbar-thumb-dark-700">
                     <div className="prose prose-invert max-w-none mb-8">
                         <h3 className="text-lg font-bold text-white mb-2">The Mission</h3>
                         <p className="text-light-300 leading-relaxed">{challenge.description}</p>
@@ -169,32 +174,37 @@ export default function ChallengePage() {
                 </div>
 
                 {/* Editor Panel */}
-                <div className="w-full lg:w-2/3 h-[600px] lg:h-auto flex flex-col bg-dark-950">
-                    <SandpackProvider 
-                        template="react" 
-                        theme={atomDark}
-                        files={{
-                            "/App.js": userCode,
-                        }}
-                        options={{
-                            showNavigator: false, 
-                            showTabs: false,
-                        }}
-                    >
-                        <SandpackLayout className="h-full !border-none !rounded-none">
-                            <SandpackCodeEditor 
-                                className="h-full" 
-                                showLineNumbers 
-                                showInlineErrors 
-                            />
-                            <SandpackPreview 
-                                className="h-full border-l border-dark-800" 
-                                showOpenInCodeSandbox={false} 
-                                showRefreshButton={true}
-                            />
-                        </SandpackLayout>
-                    </SandpackProvider>
+                <div className="w-full lg:w-2/3 min-h-0 flex-1 flex flex-col bg-dark-950">
+                    <div className="flex-1 min-h-0">
+                        <SandpackProvider 
+                            template="react" 
+                            theme={atomDark}
+                            files={{
+                                "/App.js": userCode,
+                            }}
+                            options={{
+                                showNavigator: false, 
+                                showTabs: false,
+                            }}
+                        >
+                            <SandpackLayout className="h-full w-full !border-none !rounded-none" style={{ height: '100%' }}>
+                                <SandpackCodeEditor 
+                                    className="h-full border-r border-dark-800" 
+                                    showLineNumbers 
+                                    showInlineErrors 
+                                    style={{ height: '100%' }}
+                                />
+                                <SandpackPreview 
+                                    className="h-full border-l border-dark-800" 
+                                    showOpenInCodeSandbox={false} 
+                                    showRefreshButton={true}
+                                    style={{ height: '100%' }}
+                                />
+                            </SandpackLayout>
+                        </SandpackProvider>
+                    </div>
                 </div>
+            </div>
             </div>
         </div>
     );

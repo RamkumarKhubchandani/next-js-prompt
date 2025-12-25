@@ -4,6 +4,7 @@ const path = require('path');
 
 // Load env vars
 dotenv.config({ path: path.join(__dirname, '../.env.local') });
+dotenv.config(); // fallback for environments using .env
 
 // Challenge Schema (copied since we can't import ES modules easily in this script without babel)
 const challengeSchema = new mongoose.Schema({
@@ -21,7 +22,7 @@ const challengeSchema = new mongoose.Schema({
 
 const Challenge = mongoose.models.Challenge || mongoose.model('Challenge', challengeSchema);
 
-const challenges = [
+const baseChallenges = [
     {
         dayNumber: 1,
         slug: 'infinite-loop-useeffect',
@@ -456,16 +457,52 @@ export default function App() {
     }
 ];
 
+let extraChallenges = [];
+try {
+  // 100 additional challenges live here
+  extraChallenges = require('./challenges-data-100.js');
+  if (!Array.isArray(extraChallenges)) extraChallenges = [];
+} catch (e) {
+  extraChallenges = [];
+}
+
 async function seed() {
     try {
+        if (!process.env.MONGODB_URI) {
+          throw new Error('Missing MONGODB_URI. Add it to .env.local (or .env) before seeding.');
+        }
+
         await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to MongoDB');
 
-        await Challenge.deleteMany({});
-        console.log('Cleared existing challenges');
+        const existing = await Challenge.find({}).select('slug dayNumber').lean();
+        const existingSlugs = new Set(existing.map((c) => c.slug));
+        const maxDay = existing.reduce((m, c) => (typeof c.dayNumber === 'number' && c.dayNumber > m ? c.dayNumber : m), 0);
 
-        await Challenge.insertMany(challenges);
-        console.log(`Seeded ${challenges.length} challenges`);
+        // De-dup within seed payload by slug (keep first occurrence)
+        const payload = [...baseChallenges, ...extraChallenges];
+        const seen = new Set();
+        const toInsert = [];
+        let day = maxDay;
+
+        for (const ch of payload) {
+          if (!ch || typeof ch !== 'object') continue;
+          if (!ch.slug || typeof ch.slug !== 'string') continue;
+          if (seen.has(ch.slug)) continue;
+          seen.add(ch.slug);
+          if (existingSlugs.has(ch.slug)) continue;
+
+          day += 1;
+          toInsert.push({ ...ch, dayNumber: day });
+        }
+
+        if (toInsert.length === 0) {
+          console.log('No new challenges to insert. (All slugs already exist.)');
+          process.exit(0);
+        }
+
+        await Challenge.insertMany(toInsert, { ordered: false });
+        console.log(`Inserted ${toInsert.length} new challenges. Total payload=${payload.length}, existing=${existing.length}`);
 
         process.exit(0);
     } catch (error) {
