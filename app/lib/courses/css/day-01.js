@@ -4,32 +4,32 @@ export const day01 = {
   intro:
     "If CSS feels random, it’s because you don’t control the cascade. Today you’ll learn the real rules that decide which styles win—and how to debug them fast.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 “Why didn’t my style apply?” is the most common CSS question. The answer is always one of:
-<span class="text-yellow-400 font-bold">specificity</span>, <span class="text-yellow-400 font-bold">order</span>, or <span class="text-yellow-400 font-bold">inheritance</span>.
+<span class="text-yellow-600 dark:text-yellow-400 font-bold">specificity</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">order</span>, or <span class="text-yellow-600 dark:text-yellow-400 font-bold">inheritance</span>.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Order matters</span>: later rules can win when specificity is equal.</li>
-  <li><span class="text-yellow-400 font-bold">Specificity</span>: ID &gt; class/attr/pseudo-class &gt; element/pseudo-element.</li>
-  <li><span class="text-yellow-400 font-bold">Inheritance</span>: some properties inherit (color, font), some don’t (margin, padding).</li>
-  <li><span class="text-yellow-400 font-bold">Avoid</span> <code class="bg-dark-900 px-1 rounded">!important</code> unless you’re overriding third-party CSS.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Order matters</span>: later rules can win when specificity is equal.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Specificity</span>: ID &gt; class/attr/pseudo-class &gt; element/pseudo-element.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Inheritance</span>: some properties inherit (color, font), some don’t (margin, padding).</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Avoid</span> <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">!important</code> unless you’re overriding third-party CSS.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>In DevTools, inspect the “Primary” button and look at “Styles”.</li>
   <li>Notice which selector wins and why.</li>
-  <li>Fix the bug by changing the selector strategy (not by adding <code class="bg-dark-900 px-1 rounded">!important</code>).</li>
+  <li>Fix the bug by changing the selector strategy (not by adding <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">!important</code>).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Over-specific selectors like <code class="bg-dark-900 px-1 rounded">.page .header .nav a</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Over-specific selectors like <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">.page .header .nav a</code>.</li>
   <li>Styling by tag names only (too global).</li>
-  <li>Using <code class="bg-dark-900 px-1 rounded">!important</code> to “win” instead of designing selectors.</li>
+  <li>Using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">!important</code> to “win” instead of designing selectors.</li>
 </ul>
 `,
   sandbox: {

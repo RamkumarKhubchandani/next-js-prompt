@@ -4,12 +4,12 @@ export const day13 = {
   intro:
     "You’ll learn BEM as a practical convention that prevents collisions and makes components understandable in large codebases.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">BEM is naming as architecture: Block → Element → Modifier. It’s boring on purpose.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Add a new modifier (e.g. <code class="bg-dark-900 px-1 rounded">card--featured</code>) without changing base styles.</li>
-  <li>Add a new element class (e.g. <code class="bg-dark-900 px-1 rounded">card__meta</code>).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">BEM is naming as architecture: Block → Element → Modifier. It’s boring on purpose.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Add a new modifier (e.g. <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card--featured</code>) without changing base styles.</li>
+  <li>Add a new element class (e.g. <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card__meta</code>).</li>
 </ul>
 `,
   sandbox: {

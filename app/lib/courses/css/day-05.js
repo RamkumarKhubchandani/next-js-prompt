@@ -4,18 +4,18 @@ export const day05 = {
   intro:
     "You’ll build a color system that actually works: tokens, readable contrast, and UI states that remain accessible in dark mode.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">Beautiful UI that fails contrast is unusable UI. Contrast is a product requirement.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Beautiful UI that fails contrast is unusable UI. Contrast is a product requirement.</p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Use <span class="text-yellow-400 font-bold">tokens</span> (bg/surface/text/muted/border/brand).</li>
-  <li>Prefer <span class="text-yellow-400 font-bold">solid text colors</span> over low opacity on dark backgrounds.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Use <span class="text-yellow-600 dark:text-yellow-400 font-bold">tokens</span> (bg/surface/text/muted/border/brand).</li>
+  <li>Prefer <span class="text-yellow-600 dark:text-yellow-400 font-bold">solid text colors</span> over low opacity on dark backgrounds.</li>
   <li>Design states: hover/focus/disabled with readable contrast.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Adjust token values and ensure button text remains readable.</li>
   <li>Create a secondary button style with accessible contrast.</li>
   <li>Add a high-contrast mode token set (optional).</li>

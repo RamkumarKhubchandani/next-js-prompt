@@ -4,54 +4,54 @@ export const day01 = {
   intro:
     "Today you’ll learn how browsers, screen readers, and search engines understand your page: correct document structure, headings hierarchy, and landmarks that make navigation effortless.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most “broken” UIs aren’t broken visually — they’re broken structurally. When headings and landmarks are wrong, users using assistive tech get lost,
 and SEO signals become noisy.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">One H1</span>: the page topic.</li>
-  <li><span class="text-yellow-400 font-bold">H2/H3</span>: sections/subsections (in order).</li>
-  <li><span class="text-yellow-400 font-bold">Landmarks</span>: header, nav, main, footer (and optional aside).</li>
-  <li><span class="text-yellow-400 font-bold">Skip link</span>: keyboard users jump past navigation.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">One H1</span>: the page topic.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">H2/H3</span>: sections/subsections (in order).</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Landmarks</span>: header, nav, main, footer (and optional aside).</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Skip link</span>: keyboard users jump past navigation.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Small demo</h3>
-<p class="text-light-300 mb-4">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Small demo</h3>
+<p class="text-gray-600 dark:text-light-300 mb-4">
 You’ll build a mini “documentation” page with correct headings and landmarks.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Tab from the top: skip link should appear and move focus into main.</li>
   <li>Inspect headings in DevTools: verify order is H1 → H2 → H3.</li>
-  <li>Confirm only one <code class="bg-dark-900 px-1 rounded">&lt;main&gt;</code> exists.</li>
+  <li>Confirm only one <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;main&gt;</code> exists.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Add an <code class="bg-dark-900 px-1 rounded">&lt;aside&gt;</code> with “On this page” links (use meaningful link text).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Add an <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;aside&gt;</code> with “On this page” links (use meaningful link text).</li>
   <li>Add a second section and keep the heading order correct.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes (with fixes)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> skipping levels (H1 → H3). <span class="text-green-300 font-bold">Fix:</span> don’t jump levels.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> multiple mains. <span class="text-green-300 font-bold">Fix:</span> exactly one main landmark.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> “Read more” links everywhere. <span class="text-green-300 font-bold">Fix:</span> descriptive link text.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (with fixes)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> skipping levels (H1 → H3). <span class="text-green-300 font-bold">Fix:</span> don’t jump levels.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> multiple mains. <span class="text-green-300 font-bold">Fix:</span> exactly one main landmark.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> “Read more” links everywhere. <span class="text-green-300 font-bold">Fix:</span> descriptive link text.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li><span class="text-blue-300 font-bold">Keyboard:</span> skip link appears on focus and works.</li>
   <li><span class="text-blue-300 font-bold">Structure:</span> one H1, headings in order, one main.</li>
   <li><span class="text-blue-300 font-bold">SEO-ready:</span> title/meta description present in head (see code).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Summary + next steps</h3>
-<p class="text-light-300">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary + next steps</h3>
+<p class="text-gray-600 dark:text-light-300">
 You built a structurally correct page. Tomorrow: links, buttons, and accessible navigation patterns.
 </p>
 `,

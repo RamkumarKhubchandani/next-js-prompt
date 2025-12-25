@@ -4,12 +4,12 @@ export const day08 = {
   intro:
     "You’ll build a mobile-first layout that scales cleanly: sensible breakpoints, fluid containers, and zero magic numbers.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">Start with the smallest layout that works, then enhance. Don’t “undo” desktop assumptions on mobile.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Start with the smallest layout that works, then enhance. Don’t “undo” desktop assumptions on mobile.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Make the sidebar collapse to top on small screens.</li>
-  <li>Ensure cards wrap without overflow using <code class="bg-dark-900 px-1 rounded">minmax(0,1fr)</code> or flex-basis.</li>
+  <li>Ensure cards wrap without overflow using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">minmax(0,1fr)</code> or flex-basis.</li>
   <li>Use fluid spacing (clamp) for padding.</li>
 </ul>
 `,

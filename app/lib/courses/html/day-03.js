@@ -4,69 +4,69 @@ export const day03 = {
   intro:
     "Forms are where products win or lose. Today you’ll build accessible forms with correct labels, grouping, error messaging, and keyboard-first UX.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most form bugs are not “backend” bugs — they’re HTML structure bugs. If a screen reader can’t associate a label to an input, the form is broken.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Label → control</span>: use <code class="bg-dark-900 px-1 rounded">label for</code> + matching <code class="bg-dark-900 px-1 rounded">id</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Grouping</span>: use <code class="bg-dark-900 px-1 rounded">fieldset</code>/<code class="bg-dark-900 px-1 rounded">legend</code> for related controls.</li>
-  <li><span class="text-yellow-400 font-bold">Help + errors</span>: use <code class="bg-dark-900 px-1 rounded">aria-describedby</code> to connect messages.</li>
-  <li><span class="text-yellow-400 font-bold">Autocomplete</span>: help the user (and reduce errors) with <code class="bg-dark-900 px-1 rounded">autocomplete</code> attributes.</li>
-  <li><span class="text-yellow-400 font-bold">Keyboard UX</span>: visible focus, proper tab order, no fake inputs.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Label → control</span>: use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">label for</code> + matching <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">id</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Grouping</span>: use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">fieldset</code>/<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">legend</code> for related controls.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Help + errors</span>: use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-describedby</code> to connect messages.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Autocomplete</span>: help the user (and reduce errors) with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">autocomplete</code> attributes.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Keyboard UX</span>: visible focus, proper tab order, no fake inputs.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Small demo</h3>
-<p class="text-light-300 mb-4">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Small demo</h3>
+<p class="text-gray-600 dark:text-light-300 mb-4">
 You’ll build a “Profile settings” form: name, email, notification preference, and a consent checkbox.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Annotated code (why this works)</h3>
-<div class="bg-dark-900 p-5 rounded-xl border border-dark-600 mb-6 text-light-200">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Annotated code (why this works)</h3>
+<div class="bg-gray-100 dark:bg-dark-900 p-5 rounded-xl border border-gray-200 dark:border-dark-600 mb-6 text-gray-700 dark:text-light-200">
   <ul class="list-disc list-inside space-y-2">
     <li>Every input has a label (or explicit accessible name).</li>
     <li>Related radios are grouped with fieldset/legend.</li>
-    <li>Help/error text is linked with <code class="bg-dark-800 px-1 rounded">aria-describedby</code>.</li>
+    <li>Help/error text is linked with <code class="bg-white dark:bg-dark-800 px-1 rounded">aria-describedby</code>.</li>
   </ul>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Tab through the form: focus ring must be visible on every control.</li>
   <li>Click labels: focus should move to the matching input.</li>
   <li>Confirm grouped radios announce as one group (fieldset/legend).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Add a required “Role” select with <code class="bg-dark-900 px-1 rounded">required</code> and a help hint.</li>
-  <li>Add an error message area below email; connect it via <code class="bg-dark-900 px-1 rounded">aria-describedby</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Add a required “Role” select with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">required</code> and a help hint.</li>
+  <li>Add an error message area below email; connect it via <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-describedby</code>.</li>
   <li>Add a “danger zone” section with a destructive button and clear warning text.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes (with fixes)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> placeholder as label. <span class="text-green-300 font-bold">Fix:</span> placeholders are hints, not labels.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> radio buttons without fieldset/legend. <span class="text-green-300 font-bold">Fix:</span> group them semantically.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> error text not connected to input. <span class="text-green-300 font-bold">Fix:</span> add <code class="bg-dark-900 px-1 rounded">aria-describedby</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (with fixes)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> placeholder as label. <span class="text-green-300 font-bold">Fix:</span> placeholders are hints, not labels.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> radio buttons without fieldset/legend. <span class="text-green-300 font-bold">Fix:</span> group them semantically.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> error text not connected to input. <span class="text-green-300 font-bold">Fix:</span> add <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-describedby</code>.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints (auto-check)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints (auto-check)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li><span class="text-blue-300 font-bold">Label test:</span> clicking label moves focus to the input.</li>
   <li><span class="text-blue-300 font-bold">Keyboard:</span> tab order is logical and all focus is visible.</li>
   <li><span class="text-blue-300 font-bold">Semantics:</span> radios grouped with fieldset/legend.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Summary</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 You built a form that is usable without a mouse and understandable without sight — that’s the professional bar.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">
 Next: media (images/video), tables, and when ARIA is appropriate.
 </p>
 `,

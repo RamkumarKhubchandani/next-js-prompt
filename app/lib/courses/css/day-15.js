@@ -4,12 +4,12 @@ export const day15 = {
   intro:
     "You’ll add motion that feels premium: transitions, hover states, and focus states using GPU-friendly properties.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">Prefer <code class="bg-dark-900 px-1 rounded">transform</code> and <code class="bg-dark-900 px-1 rounded">opacity</code>. Avoid animating layout properties.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Prefer <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">transform</code> and <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">opacity</code>. Avoid animating layout properties.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Add a hover lift using transform.</li>
-  <li>Respect <code class="bg-dark-900 px-1 rounded">prefers-reduced-motion</code>.</li>
+  <li>Respect <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">prefers-reduced-motion</code>.</li>
 </ul>
 `,
   sandbox: {

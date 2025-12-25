@@ -29,13 +29,15 @@ export async function GET(req) {
         const q = searchParams.get('q') || '';
         const limitRaw = searchParams.get('limit');
         const limit = limitRaw ? Math.max(1, Math.min(50, Number(limitRaw) || 30)) : 30;
+        const debug = searchParams.get('debug') === '1';
+        const refresh = searchParams.get('refresh') === '1';
 
         const forcedCountry = searchParams.get('country');
         const country = resolveCountry(forcedCountry || getCountryFromRequest(req) || 'US');
         const dateKey = getUtcDateKey();
 
         // Check daily cache marker
-        const existingCache = await JobFetchCache.findOne({ dateKey, country }).lean();
+        const existingCache = refresh ? null : await JobFetchCache.findOne({ dateKey, country }).lean();
         const now = new Date();
 
         if (!existingCache) {
@@ -80,7 +82,10 @@ export async function GET(req) {
                             source: 'none',
                             fetchedAt: now,
                             expiresAt: new Date(now.getTime() + 60 * 60 * 1000),
-                            meta: { reason: 'no-results' },
+                            meta: {
+                                reason: 'no-results',
+                                hasAdzunaKeys: Boolean(process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY),
+                            },
                         },
                     },
                     { upsert: true }
@@ -104,6 +109,24 @@ export async function GET(req) {
                     : (process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY
                         ? undefined
                         : 'Remote-only fallback in use (set ADZUNA_APP_ID/ADZUNA_APP_KEY for country-specific onsite/hybrid listings).'),
+            ...(debug
+                ? {
+                    debug: {
+                        dateKey,
+                        country,
+                        hasAdzunaKeys: Boolean(process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY),
+                        cache: cache
+                            ? {
+                                source: cache.source,
+                                fetchedAt: cache.fetchedAt,
+                                expiresAt: cache.expiresAt,
+                                meta: cache.meta || {},
+                              }
+                            : null,
+                        refreshApplied: refresh,
+                    },
+                  }
+                : {}),
         });
     } catch (error) {
         console.error('GET /api/jobs failed:', error);

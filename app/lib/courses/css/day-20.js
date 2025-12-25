@@ -4,8 +4,8 @@ export const day20 = {
   intro:
     "You’ll add print CSS so pages export cleanly: remove nav, expand content, and improve readability on paper/PDF.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Practice</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Hide non-essential UI for print.</li>
   <li>Ensure links show their URL in print.</li>
 </ul>

@@ -4,13 +4,13 @@ export const day07 = {
   intro:
     "Grid is your 2D layout tool. Today you’ll build a dashboard layout that stays stable across breakpoints without hacks.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">Flexbox is great for rows. Grid is for pages. If you’re building layouts with nested divs, Grid is your upgrade.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Flexbox is great for rows. Grid is for pages. If you’re building layouts with nested divs, Grid is your upgrade.</p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><code class="bg-dark-900 px-1 rounded">grid-template-columns</code> + <code class="bg-dark-900 px-1 rounded">gap</code></li>
-  <li><code class="bg-dark-900 px-1 rounded">minmax(0, 1fr)</code> to prevent overflow</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">grid-template-columns</code> + <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">gap</code></li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">minmax(0, 1fr)</code> to prevent overflow</li>
   <li>Named areas for readability (optional)</li>
 </ul>
 `,

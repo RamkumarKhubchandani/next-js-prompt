@@ -4,9 +4,9 @@ export const day22 = {
   intro:
     "You’ll debug CSS like an engineer: computed styles, box model inspection, and identifying which layer/selector is winning.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Debug playbook</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
-  <li>Inspect element → check <span class="text-yellow-400 font-bold">Computed</span>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Debug playbook</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Inspect element → check <span class="text-yellow-600 dark:text-yellow-400 font-bold">Computed</span>.</li>
   <li>Find winning selector → fix specificity/order, not with !important.</li>
   <li>Check box model + overflow.</li>
 </ol>

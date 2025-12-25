@@ -163,11 +163,10 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                         {idx + 1}. {c.prompt}
                                     </p>
                                     {isAnswered && (
-                                        <span className={`text-xs font-bold px-2 py-1 rounded-full border ${
-                                            isCorrect
-                                                ? 'text-green-300 bg-green-500/10 border-green-500/30'
-                                                : 'text-red-300 bg-red-500/10 border-red-500/30'
-                                        }`}>
+                                        <span className={`text-xs font-bold px-2 py-1 rounded-full border ${isCorrect
+                                            ? 'text-green-300 bg-green-500/10 border-green-500/30'
+                                            : 'text-red-300 bg-red-500/10 border-red-500/30'
+                                            }`}>
                                             {isCorrect ? 'Correct' : 'Not quite'}
                                         </span>
                                     )}
@@ -197,20 +196,18 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                                         checkpointIndex: idx
                                                     });
                                                 }}
-                                                className={`text-left w-full p-3 rounded-xl border transition ${
-                                                    picked
-                                                        ? 'border-brand-primary/60 bg-brand-primary/10'
-                                                        : 'border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-900/30 hover:bg-dark-900/5 dark:hover:bg-dark-700'
-                                                } ${showCorrect ? 'ring-1 ring-green-500/40' : ''} ${showWrongPicked ? 'ring-1 ring-red-500/40' : ''}`}
+                                                className={`text-left w-full p-3 rounded-xl border transition ${picked
+                                                    ? 'border-brand-primary/60 bg-brand-primary/10'
+                                                    : 'border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-900/30 hover:bg-dark-900/5 dark:hover:bg-dark-700'
+                                                    } ${showCorrect ? 'ring-1 ring-green-500/40' : ''} ${showWrongPicked ? 'ring-1 ring-red-500/40' : ''}`}
                                             >
                                                 <div className="flex items-start gap-3">
-                                                    <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                                        showCorrect
-                                                            ? 'border-green-500/40 text-green-300 bg-green-500/10'
-                                                            : showWrongPicked
-                                                                ? 'border-red-500/40 text-red-300 bg-red-500/10'
-                                                                : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
-                                                    }`}>
+                                                    <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${showCorrect
+                                                        ? 'border-green-500/40 text-green-300 bg-green-500/10'
+                                                        : showWrongPicked
+                                                            ? 'border-red-500/40 text-red-300 bg-red-500/10'
+                                                            : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
+                                                        }`}>
                                                         {String.fromCharCode(65 + optIdx)}
                                                     </span>
                                                     <span className="text-dark-900/70 dark:text-light-200">{opt}</span>
@@ -221,11 +218,10 @@ function LearningCheckpoints({ courseId, day, checkpoints = [], progress, onProg
                                 </div>
 
                                 {isAnswered && (
-                                    <div className={`p-4 rounded-xl border ${
-                                        isCorrect
-                                            ? 'border-green-500/30 bg-green-500/5'
-                                            : 'border-yellow-500/30 bg-yellow-500/5'
-                                    }`}>
+                                    <div className={`p-4 rounded-xl border ${isCorrect
+                                        ? 'border-green-500/30 bg-green-500/5'
+                                        : 'border-yellow-500/30 bg-yellow-500/5'
+                                        }`}>
                                         <p className="text-xs font-bold tracking-widest uppercase mb-2 text-dark-900/60 dark:text-light-300">
                                             Explanation
                                         </p>
@@ -274,18 +270,16 @@ function GuidedLab({ steps = [], onLoad }) {
                                 <button
                                     key={s.id || i}
                                     onClick={() => setActiveIdx(i)}
-                                    className={`w-full text-left p-3 rounded-xl border transition ${
-                                        i === activeIdx
-                                            ? 'border-green-500/40 bg-green-500/10'
-                                            : 'border-dark-700/10 dark:border-dark-700 bg-white/70 dark:bg-dark-900/20 hover:bg-dark-900/5 dark:hover:bg-dark-700'
-                                    }`}
+                                    className={`w-full text-left p-3 rounded-xl border transition ${i === activeIdx
+                                        ? 'border-green-500/40 bg-green-500/10'
+                                        : 'border-dark-700/10 dark:border-dark-700 bg-white/70 dark:bg-dark-900/20 hover:bg-dark-900/5 dark:hover:bg-dark-700'
+                                        }`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                            i === activeIdx
-                                                ? 'border-green-500/40 text-green-300 bg-green-500/10'
-                                                : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
-                                        }`}>
+                                        <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${i === activeIdx
+                                            ? 'border-green-500/40 text-green-300 bg-green-500/10'
+                                            : 'border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800'
+                                            }`}>
                                             {i + 1}
                                         </span>
                                         <div className="min-w-0">
@@ -317,22 +311,20 @@ function GuidedLab({ steps = [], onLoad }) {
                                 <button
                                     onClick={() => setActiveIdx(i => Math.max(0, i - 1))}
                                     disabled={activeIdx === 0}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold border ${
-                                        activeIdx === 0
-                                            ? 'opacity-50 cursor-not-allowed bg-dark-900/5 dark:bg-dark-700 border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400'
-                                            : 'bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border-dark-700/10 dark:border-dark-600 text-dark-900/70 dark:text-light-200'
-                                    }`}
+                                    className={`px-3 py-2 rounded-xl text-xs font-bold border ${activeIdx === 0
+                                        ? 'opacity-50 cursor-not-allowed bg-dark-900/5 dark:bg-dark-700 border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400'
+                                        : 'bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border-dark-700/10 dark:border-dark-600 text-dark-900/70 dark:text-light-200'
+                                        }`}
                                 >
                                     Prev
                                 </button>
                                 <button
                                     onClick={() => setActiveIdx(i => Math.min(steps.length - 1, i + 1))}
                                     disabled={activeIdx === steps.length - 1}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold border ${
-                                        activeIdx === steps.length - 1
-                                            ? 'opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400'
-                                            : 'bg-dark-700 hover:bg-dark-600 border-dark-600 text-light-200'
-                                    }`}
+                                    className={`px-3 py-2 rounded-xl text-xs font-bold border ${activeIdx === steps.length - 1
+                                        ? 'opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400'
+                                        : 'bg-dark-700 hover:bg-dark-600 border-dark-600 text-light-200'
+                                        }`}
                                 >
                                     Next
                                 </button>
@@ -341,10 +333,10 @@ function GuidedLab({ steps = [], onLoad }) {
 
                         {active?.teacherNote && (
                             <div className="mb-5 p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
-                                <p className="text-xs font-bold tracking-widest uppercase text-blue-300 mb-2">
+                                <p className="text-xs font-bold tracking-widest uppercase text-blue-700 dark:text-blue-300 mb-2">
                                     Teacher Note
                                 </p>
-                                <p className="text-light-200 leading-relaxed">{active.teacherNote}</p>
+                                <p className="text-gray-700 dark:text-light-200 leading-relaxed">{active.teacherNote}</p>
                             </div>
                         )}
 
@@ -359,10 +351,10 @@ function GuidedLab({ steps = [], onLoad }) {
                                 })}
                                 className="p-4 rounded-2xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition"
                             >
-                                <p className="text-xs font-bold tracking-widest uppercase text-red-300 mb-2">
+                                <p className="text-xs font-bold tracking-widest uppercase text-red-700 dark:text-red-300 mb-2">
                                     Load Bug
                                 </p>
-                                <p className="text-light-200 text-sm leading-relaxed">
+                                <p className="text-gray-700 dark:text-light-200 text-sm leading-relaxed">
                                     Run it and observe the wrong output / crash.
                                 </p>
                             </button>
@@ -376,21 +368,21 @@ function GuidedLab({ steps = [], onLoad }) {
                                 })}
                                 className="p-4 rounded-2xl border border-green-500/30 bg-green-500/5 hover:bg-green-500/10 transition"
                             >
-                                <p className="text-xs font-bold tracking-widest uppercase text-green-300 mb-2">
+                                <p className="text-xs font-bold tracking-widest uppercase text-green-700 dark:text-green-300 mb-2">
                                     Load Fix
                                 </p>
-                                <p className="text-light-200 text-sm leading-relaxed">
+                                <p className="text-gray-700 dark:text-light-200 text-sm leading-relaxed">
                                     Compare the change, then run again.
                                 </p>
                             </button>
                         </div>
 
                         {active?.whatToNotice && (
-                            <div className="p-4 rounded-xl border border-dark-600 bg-dark-900/30">
-                                <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-2">
+                            <div className="p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-100 dark:bg-dark-900/30">
+                                <p className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-light-400 mb-2">
                                     What to notice
                                 </p>
-                                <ul className="list-disc list-inside space-y-2 text-light-200">
+                                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-light-200">
                                     {active.whatToNotice.map((x, i) => (
                                         <li key={i}>{x}</li>
                                     ))}
@@ -414,42 +406,42 @@ function LessonRecap({ recap }) {
 
     return (
         <div className="mt-10">
-            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-1 border border-brand-primary/25 shadow-lg">
-                <div className="bg-dark-800 rounded-xl p-8">
-                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-700 dark:to-dark-800 rounded-2xl p-1 border border-brand-primary/25 shadow-lg">
+                <div className="bg-white dark:bg-dark-800 rounded-xl p-8">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <CheckCircle className="text-brand-primary" />
                         Mini Recap (Teacher Summary)
                     </h3>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {takeaways.length > 0 && (
-                            <div className="lg:col-span-6 bg-dark-900/30 border border-dark-600 rounded-2xl p-6">
-                                <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-3">
+                            <div className="lg:col-span-6 bg-gray-50 dark:bg-dark-900/30 border border-gray-200 dark:border-dark-600 rounded-2xl p-6">
+                                <p className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-light-400 mb-3">
                                     Key takeaways
                                 </p>
-                                <ul className="list-disc list-inside space-y-2 text-light-200">
+                                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-light-200">
                                     {takeaways.slice(0, 8).map((t, i) => <li key={i}>{t}</li>)}
                                 </ul>
                             </div>
                         )}
 
                         {mistakes.length > 0 && (
-                            <div className="lg:col-span-6 bg-dark-900/30 border border-dark-600 rounded-2xl p-6">
-                                <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-3">
+                            <div className="lg:col-span-6 bg-gray-50 dark:bg-dark-900/30 border border-gray-200 dark:border-dark-600 rounded-2xl p-6">
+                                <p className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-light-400 mb-3">
                                     Common mistakes
                                 </p>
-                                <ul className="list-disc list-inside space-y-2 text-light-200">
+                                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-light-200">
                                     {mistakes.slice(0, 8).map((m, i) => <li key={i}>{m}</li>)}
                                 </ul>
                             </div>
                         )}
 
                         {next.length > 0 && (
-                            <div className="lg:col-span-12 bg-dark-900/30 border border-dark-600 rounded-2xl p-6">
-                                <p className="text-xs font-bold tracking-widest uppercase text-light-400 mb-3">
+                            <div className="lg:col-span-12 bg-gray-50 dark:bg-dark-900/30 border border-gray-200 dark:border-dark-600 rounded-2xl p-6">
+                                <p className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-light-400 mb-3">
                                     Next actions (10 minutes)
                                 </p>
-                                <ul className="list-disc list-inside space-y-2 text-light-200">
+                                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-light-200">
                                     {next.slice(0, 8).map((n, i) => <li key={i}>{n}</li>)}
                                 </ul>
                             </div>
@@ -464,59 +456,59 @@ function LessonRecap({ recap }) {
 // React Live Editor Component - Simple version
 function ReactLiveEditor({ initialCode }) {
     const [copied, setCopied] = useState(false);
-    
+
     const handleCopy = () => {
         navigator.clipboard.writeText(initialCode);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-    
+
     // Clean up any existing render calls
     let cleanCode = initialCode
         .replace(/ReactDOM\.createRoot.*render\(.*\);?/gs, '')
         .replace(/ReactDOM\.render\(.*\);?/gs, '')
         .replace(/render\s*\(\s*<App\s*\/>\s*\)\s*;?/g, '')
         .trim();
-    
+
     // Check if code has multiple top-level declarations (needs noInline)
     // Count function/const declarations at start of lines
     const hasMultipleDeclarations = (cleanCode.match(/^(const |function |class )/gm) || []).length > 1;
-    
+
     // If multiple declarations, add render() call for noInline mode
     if (hasMultipleDeclarations && !cleanCode.includes('render(')) {
         cleanCode = cleanCode + '\n\nrender(<App />);';
     }
-    
+
     return (
         <div className="mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Code className="text-blue-400" /> 
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <Code className="text-blue-400" />
                 Live Lab: Try It Yourself
                 <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/30">
                     React
                 </span>
             </h3>
-            <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
-                <LiveProvider 
-                    code={cleanCode} 
+            <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-dark-600 shadow-2xl">
+                <LiveProvider
+                    code={cleanCode}
                     noInline={hasMultipleDeclarations}
                     scope={{ React }}
                 >
                     {/* Toolbar */}
-                    <div className="flex items-center justify-between px-4 py-2 bg-dark-800 border-b border-dark-700">
-                        <span className="text-xs font-mono text-light-400">App.jsx</span>
+                    <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700">
+                        <span className="text-xs font-mono text-gray-500 dark:text-light-400">App.jsx</span>
                         <button
                             onClick={handleCopy}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-light-300 hover:text-gray-900 dark:hover:text-white bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 rounded-lg transition-colors"
                         >
                             {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
                             {copied ? 'Copied!' : 'Copy'}
                         </button>
                     </div>
-                    
+
                     {/* Code Editor */}
                     <div className="bg-[#1a1a2e] text-sm font-mono">
-                        <LiveEditor 
+                        <LiveEditor
                             style={{
                                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
                                 fontSize: '14px',
@@ -526,9 +518,9 @@ function ReactLiveEditor({ initialCode }) {
                             }}
                         />
                     </div>
-                    
+
                     {/* Error Display */}
-                    <LiveError 
+                    <LiveError
                         style={{
                             padding: '12px 16px',
                             backgroundColor: '#2d1f1f',
@@ -538,10 +530,10 @@ function ReactLiveEditor({ initialCode }) {
                             borderTop: '1px solid #4a3333',
                         }}
                     />
-                    
+
                     {/* Live Preview */}
-                    <div className="bg-dark-900 border-t border-dark-600">
-                        <div className="px-4 py-2 text-xs font-mono text-light-300 border-b border-dark-700 flex items-center gap-2 bg-dark-800">
+                    <div className="bg-gray-50 dark:bg-dark-900 border-t border-gray-200 dark:border-dark-600">
+                        <div className="px-4 py-2 text-xs font-mono text-gray-600 dark:text-light-300 border-b border-gray-200 dark:border-dark-700 flex items-center gap-2 bg-gray-100 dark:bg-dark-800">
                             <span className="text-blue-400">●</span> Live Preview
                         </div>
                         <div className="p-4 min-h-[120px] bg-white text-gray-900">
@@ -550,7 +542,7 @@ function ReactLiveEditor({ initialCode }) {
                     </div>
                 </LiveProvider>
             </div>
-            <p className="mt-3 text-sm text-light-400 flex items-center gap-2">
+            <p className="mt-3 text-sm text-gray-500 dark:text-light-400 flex items-center gap-2">
                 <span className="text-blue-400">⚡</span>
                 Edit the code above - changes appear instantly!
             </p>
@@ -577,21 +569,21 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
     const [predictionIndex, setPredictionIndex] = useState(0);
     const [predictionChoice, setPredictionChoice] = useState(null);
     const [predictionRevealed, setPredictionRevealed] = useState(false);
-    
+
     const handleCopy = () => {
         navigator.clipboard.writeText(code);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-    
+
     const handleReset = () => {
         setCode(baselineRef.current);
         setOutput([]);
     };
-    
+
     const execute = () => {
         setOutput([]);
-        
+
         const html = `
             <!DOCTYPE html>
             <html>
@@ -626,7 +618,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
             </body>
             </html>
         `;
-        
+
         if (iframeRef.current) {
             iframeRef.current.srcdoc = html;
         }
@@ -800,7 +792,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
         }
         execute();
     };
-    
+
     // Listen for console messages from iframe
     useEffect(() => {
         const handleMessage = (event) => {
@@ -811,19 +803,19 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                 }]);
             }
         };
-        
+
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
     }, []);
-    
+
     return (
         <div className="mb-12">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Code className="text-blue-400" /> 
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <Code className="text-blue-400" />
                 {title}
             </h3>
             {subtitle && (
-                <p className="text-sm text-light-400 -mt-2 mb-4">
+                <p className="text-sm text-gray-500 dark:text-light-400 -mt-2 mb-4">
                     {subtitle}
                 </p>
             )}
@@ -833,13 +825,13 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                 <div className="mb-6 border border-purple-500/30 bg-purple-500/5 rounded-2xl p-6">
                     <div className="flex items-start justify-between gap-4 mb-4">
                         <div>
-                            <p className="text-xs font-bold tracking-widest uppercase text-purple-300 mb-2">
+                            <p className="text-xs font-bold tracking-widest uppercase text-purple-700 dark:text-purple-300 mb-2">
                                 Prediction Check (before you run)
                             </p>
-                            <p className="text-lg font-bold text-white">
+                            <p className="text-lg font-bold text-gray-900 dark:text-white">
                                 {predictions[predictionIndex].prompt}
                             </p>
-                            <p className="text-sm text-light-400 mt-2">
+                            <p className="text-sm text-gray-500 dark:text-light-400 mt-2">
                                 Pick an answer, then we’ll reveal why. This is how you build real intuition.
                             </p>
                         </div>
@@ -849,7 +841,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                                 setPredictionChoice(null);
                                 setPredictionRevealed(false);
                             }}
-                            className="text-xs font-bold px-3 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 border border-dark-600 text-light-200"
+                            className="text-xs font-bold px-3 py-2 rounded-xl bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-light-200"
                         >
                             Close
                         </button>
@@ -866,21 +858,19 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                                 <button
                                     key={i}
                                     onClick={() => setPredictionChoice(i)}
-                                    className={`text-left w-full p-3 rounded-xl border transition ${
-                                        picked ? 'border-purple-400/60 bg-purple-500/10' : 'border-dark-600 bg-dark-900/30 hover:bg-dark-700'
-                                    } ${showCorrect ? 'ring-1 ring-green-500/40' : ''} ${showWrong ? 'ring-1 ring-red-500/40' : ''}`}
+                                    className={`text-left w-full p-3 rounded-xl border transition ${picked ? 'border-purple-400/60 bg-purple-500/10' : 'border-gray-200 dark:border-dark-600 bg-gray-100 dark:bg-dark-900/30 hover:bg-gray-200 dark:hover:bg-dark-700'
+                                        } ${showCorrect ? 'ring-1 ring-green-500/40' : ''} ${showWrong ? 'ring-1 ring-red-500/40' : ''}`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                            showCorrect
-                                                ? 'border-green-500/40 text-green-300 bg-green-500/10'
-                                                : showWrong
-                                                    ? 'border-red-500/40 text-red-300 bg-red-500/10'
-                                                    : 'border-dark-600 text-light-400 bg-dark-800'
-                                        }`}>
+                                        <span className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${showCorrect
+                                            ? 'border-green-500/40 text-green-300 bg-green-500/10'
+                                            : showWrong
+                                                ? 'border-red-500/40 text-red-300 bg-red-500/10'
+                                                : 'border-gray-200 dark:border-dark-600 text-gray-500 dark:text-light-400 bg-white dark:bg-dark-800'
+                                            }`}>
                                             {String.fromCharCode(65 + i)}
                                         </span>
-                                        <span className="text-light-200">{opt}</span>
+                                        <span className="text-gray-700 dark:text-light-200">{opt}</span>
                                     </div>
                                 </button>
                             );
@@ -892,11 +882,10 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                             <button
                                 onClick={() => setPredictionRevealed(true)}
                                 disabled={predictionChoice === null}
-                                className={`px-4 py-2 rounded-xl font-bold text-sm border ${
-                                    predictionChoice === null
-                                        ? 'opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400'
-                                        : 'bg-purple-500/20 border-purple-500/30 text-purple-200 hover:bg-purple-500/25'
-                                }`}
+                                className={`px-4 py-2 rounded-xl font-bold text-sm border ${predictionChoice === null
+                                    ? 'opacity-50 cursor-not-allowed bg-gray-200 dark:bg-dark-700 border-gray-300 dark:border-dark-600 text-gray-500 dark:text-light-400'
+                                    : 'bg-purple-500/20 border-purple-500/30 text-purple-700 dark:text-purple-200 hover:bg-purple-500/25'
+                                    }`}
                             >
                                 Reveal Explanation
                             </button>
@@ -912,11 +901,11 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                         </div>
                     ) : (
                         <div className="space-y-3">
-                            <div className="p-4 rounded-xl border border-purple-500/30 bg-dark-900/40">
-                                <p className="text-xs font-bold tracking-widest uppercase text-purple-300 mb-2">
+                            <div className="p-4 rounded-xl border border-purple-500/30 bg-gray-50 dark:bg-dark-900/40">
+                                <p className="text-xs font-bold tracking-widest uppercase text-purple-700 dark:text-purple-300 mb-2">
                                     Why
                                 </p>
-                                <p className="text-light-200 leading-relaxed">
+                                <p className="text-gray-700 dark:text-light-200 leading-relaxed">
                                     {predictions[predictionIndex].explanation}
                                 </p>
                             </div>
@@ -938,7 +927,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                                             setPredictionChoice(null);
                                             setPredictionRevealed(false);
                                         }}
-                                        className="px-4 py-2 rounded-xl font-bold text-sm bg-dark-700 hover:bg-dark-600 border border-dark-600 text-light-200"
+                                        className="px-4 py-2 rounded-xl font-bold text-sm bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-light-200"
                                     >
                                         Next Prediction
                                     </button>
@@ -949,7 +938,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                                             setPredictionChoice(null);
                                             setPredictionRevealed(false);
                                         }}
-                                        className="px-4 py-2 rounded-xl font-bold text-sm bg-dark-700 hover:bg-dark-600 border border-dark-600 text-light-200"
+                                        className="px-4 py-2 rounded-xl font-bold text-sm bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-light-200"
                                     >
                                         Done
                                     </button>
@@ -959,11 +948,11 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                     )}
                 </div>
             )}
-            <div className="rounded-xl overflow-hidden border border-dark-600 shadow-2xl">
+            <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-dark-600 shadow-2xl">
                 {/* Toolbar */}
-                <div className="flex items-center justify-between px-4 py-2 bg-dark-800 border-b border-dark-700">
+                <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-dark-800 border-b border-gray-200 dark:border-dark-700">
                     <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-xs font-mono text-light-400">index.js</span>
+                        <span className="text-xs font-mono text-gray-500 dark:text-light-400">index.js</span>
                         {lastLoadedLabel && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-dark-600 bg-dark-700/50 text-light-300 truncate">
                                 {lastLoadedLabel}
@@ -978,14 +967,14 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handleCopy}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-light-300 hover:text-gray-900 dark:hover:text-white bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 rounded-lg transition-colors"
                         >
                             {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
                             {copied ? 'Copied!' : 'Copy'}
                         </button>
                         <button
                             onClick={handleReset}
-                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-300 hover:text-white bg-dark-700 hover:bg-dark-600 rounded-lg transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-light-300 hover:text-gray-900 dark:hover:text-white bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 rounded-lg transition-colors"
                         >
                             <RotateCcw size={14} />
                             Reset
@@ -993,7 +982,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                         {isTyping && (
                             <button
                                 onClick={stopTyping}
-                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-light-200 bg-purple-500/20 hover:bg-purple-500/25 rounded-lg transition-colors border border-purple-500/30"
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-700 dark:text-light-200 bg-purple-500/20 hover:bg-purple-500/25 rounded-lg transition-colors border border-purple-500/30"
                             >
                                 Stop
                             </button>
@@ -1007,20 +996,19 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                         </button>
                     </div>
                 </div>
-                
+
                 {/* Code Editor (textarea) */}
                 <textarea
-                        ref={textareaRef}
+                    ref={textareaRef}
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     readOnly={isTyping}
                     spellCheck={false}
-                    className={`w-full h-64 p-4 bg-[#1a1a2e] text-light-100 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/50 ${
-                        teacherFocusPulse ? 'ring-2 ring-green-400/40 shadow-[0_0_0_4px_rgba(34,197,94,0.08)]' : ''
-                    }`}
+                    className={`w-full h-64 p-4 bg-[#1a1a2e] text-light-100 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/50 ${teacherFocusPulse ? 'ring-2 ring-green-400/40 shadow-[0_0_0_4px_rgba(34,197,94,0.08)]' : ''
+                        }`}
                     style={{ tabSize: 2 }}
                 />
-                
+
                 {/* Console Output */}
                 <div className="bg-dark-900 border-t border-dark-600">
                     <div className="px-4 py-2 text-xs font-mono text-light-300 border-b border-dark-700 flex items-center gap-2 bg-dark-800">
@@ -1031,13 +1019,12 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                             <span className="text-light-500 italic">Click "Run" to see output...</span>
                         ) : (
                             output.map((item, i) => (
-                                <div 
-                                    key={i} 
-                                    className={`${
-                                        item.method === 'error' ? 'text-red-400' :
+                                <div
+                                    key={i}
+                                    className={`${item.method === 'error' ? 'text-red-400' :
                                         item.method === 'warn' ? 'text-yellow-400' :
-                                        'text-green-300'
-                                    }`}
+                                            'text-green-300'
+                                        }`}
                                 >
                                     {item.content}
                                 </div>
@@ -1045,9 +1032,9 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                         )}
                     </div>
                 </div>
-                
+
                 {/* Hidden iframe for JS execution */}
-                <iframe 
+                <iframe
                     ref={iframeRef}
                     sandbox="allow-scripts"
                     style={{ display: 'none' }}
@@ -1075,7 +1062,7 @@ export default function LearningPathPage() {
             : 0;
 
     const [activeDay, setActiveDay] = useState(initialDay);
-    const [completedDays, setCompletedDays] = useState([]); 
+    const [completedDays, setCompletedDays] = useState([]);
     const liveLabEditorRef = useRef(null);
     const guidedLabEditorRef = useRef(null);
     const [progressByDay, setProgressByDay] = useState({});
@@ -1244,7 +1231,7 @@ export default function LearningPathPage() {
         <div className="min-h-screen bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100 pt-24 pb-12">
             {/* Full-width layout (avoid centered max-width gutters) */}
             <div className="w-full px-4 sm:px-6 lg:px-8">
-                
+
                 {/* Header */}
                 <div className="mb-12">
                     {/* Course switcher + back */}
@@ -1296,7 +1283,7 @@ export default function LearningPathPage() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
-                    
+
                     {/* Sidebar: Timeline (Resizable on desktop) */}
                     <div
                         className="lg:sticky lg:top-24 lg:self-start"
@@ -1328,17 +1315,15 @@ export default function LearningPathPage() {
                                         <button
                                             onClick={() => handleSelectDay(day.day)}
                                             title={`Open Day ${day.day}`}
-                                            className={`relative z-10 w-full flex items-center gap-4 p-3 rounded-xl transition-all text-left group ${
-                                                activeDay === day.day 
-                                                    ? 'bg-brand-primary/10 border border-brand-primary/50 shadow-[0_0_15px_rgba(0,255,150,0.1)]' 
-                                                    : 'hover:bg-dark-900/5 dark:hover:bg-dark-700 border border-transparent'
-                                            }`}
+                                            className={`relative z-10 w-full flex items-center gap-4 p-3 rounded-xl transition-all text-left group ${activeDay === day.day
+                                                ? 'bg-brand-primary/10 border border-brand-primary/50 shadow-[0_0_15px_rgba(0,255,150,0.1)]'
+                                                : 'hover:bg-dark-900/5 dark:hover:bg-dark-700 border border-transparent'
+                                                }`}
                                         >
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm transition-colors ${
-                                                activeDay === day.day 
-                                                    ? 'bg-brand-primary text-dark-900 shadow-lg shadow-brand-primary/50' 
-                                                    : 'bg-dark-900/5 dark:bg-dark-600 text-dark-900/60 dark:text-light-400 group-hover:bg-dark-900/10 dark:group-hover:bg-dark-500'
-                                            }`}>
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm transition-colors ${activeDay === day.day
+                                                ? 'bg-brand-primary text-dark-900 shadow-lg shadow-brand-primary/50'
+                                                : 'bg-dark-900/5 dark:bg-dark-600 text-dark-900/60 dark:text-light-400 group-hover:bg-dark-900/10 dark:group-hover:bg-dark-500'
+                                                }`}>
                                                 {day.day}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -1349,7 +1334,7 @@ export default function LearningPathPage() {
                                         </button>
                                     </React.Fragment>
                                 ))}
-                                
+
                                 {/* Locked Days Placeholder */}
                                 {Array.from({ length: 5 }).map((_, i) => (
                                     <div key={i} className="relative z-10 w-full flex items-center gap-4 p-3 rounded-xl opacity-40 cursor-not-allowed">
@@ -1400,7 +1385,7 @@ export default function LearningPathPage() {
                                 const onUp = () => {
                                     try {
                                         window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(lastW));
-                                    } catch {}
+                                    } catch { }
                                     cleanup();
                                 };
 
@@ -1417,9 +1402,9 @@ export default function LearningPathPage() {
                     {/* Main Content */}
                     <div className="flex-1 min-w-0 space-y-8">
                         <div ref={lessonTopRef} className="scroll-mt-28" />
-                        
+
                         {/* Lesson Header */}
-                        <motion.div 
+                        <motion.div
                             key={activeDay}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -1496,7 +1481,7 @@ export default function LearningPathPage() {
                                     )}
                                 </div>
                             )}
-                            
+
                             <div className="p-6 bg-brand-primary/5 rounded-xl border-l-4 border-brand-primary mb-10">
                                 <p className="text-lg text-dark-900 dark:text-light-100 italic leading-relaxed">
                                     "{activeContent.intro}"
@@ -1507,17 +1492,17 @@ export default function LearningPathPage() {
                             {activeContent.video && (
                                 <div className="mb-12">
                                     <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
-                                        <Youtube className="text-red-500" /> 
+                                        <Youtube className="text-red-500" />
                                         Video Guide
                                     </h3>
                                     <div className="aspect-video rounded-xl overflow-hidden border border-dark-600 shadow-2xl bg-black">
-                                        <iframe 
-                                            width="100%" 
-                                            height="100%" 
-                                            src={`https://www.youtube.com/embed/${activeContent.video}`} 
-                                            title="YouTube video player" 
-                                            frameBorder="0" 
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={`https://www.youtube.com/embed/${activeContent.video}`}
+                                            title="YouTube video player"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
                                         ></iframe>
                                     </div>
@@ -1533,15 +1518,15 @@ export default function LearningPathPage() {
                             {activeContent.comparison && (
                                 <div className="mb-12">
                                     <h3 className="text-xl font-bold text-dark-900 dark:text-white mb-4 flex items-center gap-2">
-                                        <Scale className="text-purple-400" /> 
+                                        <Scale className="text-purple-400" />
                                         The "Zero to Architect" Diff
                                     </h3>
                                     <p className="text-dark-900/60 dark:text-light-400 mb-6">
                                         See how a Junior Developer writes this vs. how an AI Architect refactors it for production.
                                     </p>
-                                    <CodeComparison 
-                                        juniorCode={activeContent.comparison.junior} 
-                                        seniorCode={activeContent.comparison.senior} 
+                                    <CodeComparison
+                                        juniorCode={activeContent.comparison.junior}
+                                        seniorCode={activeContent.comparison.senior}
                                     />
                                 </div>
                             )}
@@ -1610,7 +1595,7 @@ export default function LearningPathPage() {
                                 />
                             ) : (
                                 activeContent.code && (
-                                    courseId === 'react' 
+                                    courseId === 'react'
                                         ? <ReactLiveEditor initialCode={activeContent.code} />
                                         : <LiveCodeEditor
                                             ref={liveLabEditorRef}
@@ -1627,16 +1612,16 @@ export default function LearningPathPage() {
                                 <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-1 border border-purple-500/30 shadow-lg">
                                     <div className="bg-dark-800 rounded-xl p-8">
                                         <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                            <Brain className="text-purple-400" /> 
+                                            <Brain className="text-purple-400" />
                                             Senior Engineer Interview Prep
                                         </h3>
-                                        
+
                                         <div className="space-y-4">
                                             {activeContent.interview.questions.map((q, i) => (
                                                 <div key={i} className="border border-dark-600 rounded-xl overflow-hidden">
                                                     <details className="group">
                                                         <summary className="flex justify-between items-center p-4 cursor-pointer bg-dark-700/50 hover:bg-dark-700 transition">
-                                                            <span className="font-bold text-light-100 pr-4">Q{i+1}: {q.q}</span>
+                                                            <span className="font-bold text-light-100 pr-4">Q{i + 1}: {q.q}</span>
                                                             <ChevronRight className="text-brand-primary group-open:rotate-90 transition-transform shrink-0" />
                                                         </summary>
                                                         <div className="p-6 bg-dark-900/50 text-light-300 leading-relaxed border-t border-dark-600">

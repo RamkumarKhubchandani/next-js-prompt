@@ -4,64 +4,64 @@ export const day00 = {
   intro:
     "You don’t need a human teacher—you need a system. Today you’ll build a repeatable workflow: inspect → change → verify → explain, using semantic HTML as your foundation.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">🎯 Outcomes (What “Done” Looks Like)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">A testing loop</span>: <code class="bg-dark-900 px-1 rounded">Inspect → Change → Verify → Explain</code>.</li>
-  <li><span class="text-yellow-400 font-bold">A semantic baseline</span>: header / main / footer, headings in order, meaningful links.</li>
-  <li><span class="text-yellow-400 font-bold">A11y instincts</span>: label the UI, don’t “div soup” it.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 Outcomes (What “Done” Looks Like)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">A testing loop</span>: <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">Inspect → Change → Verify → Explain</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">A semantic baseline</span>: header / main / footer, headings in order, meaningful links.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">A11y instincts</span>: label the UI, don’t “div soup” it.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">1) Why semantics matters (the professional reason)</h3>
-<p class="text-light-300 mb-4">
-Semantic HTML is not “nice to have”. It’s the contract for <span class="text-yellow-400 font-bold">accessibility</span>, <span class="text-yellow-400 font-bold">SEO</span>, and
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Why semantics matters (the professional reason)</h3>
+<p class="text-gray-600 dark:text-light-300 mb-4">
+Semantic HTML is not “nice to have”. It’s the contract for <span class="text-yellow-600 dark:text-yellow-400 font-bold">accessibility</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">SEO</span>, and
 future maintainability. When your HTML is right, your CSS becomes easier.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">2) Micro-example: div soup vs. semantics</h3>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Micro-example: div soup vs. semantics</h3>
 <div class="grid md:grid-cols-2 gap-6 mb-6">
-  <div class="bg-dark-800 p-4 rounded-xl border border-dark-600">
+  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
     <p class="text-sm font-bold text-red-300 mb-2">❌ Div soup</p>
-    <pre class="text-xs text-light-200 overflow-x-auto"><code>&lt;div class="top"&gt;
+    <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;div class="top"&gt;
   &lt;div class="nav"&gt;...&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="content"&gt;...&lt;/div&gt;</code></pre>
   </div>
-  <div class="bg-dark-800 p-4 rounded-xl border border-dark-600">
+  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
     <p class="text-sm font-bold text-green-300 mb-2">✅ Semantic layout</p>
-    <pre class="text-xs text-light-200 overflow-x-auto"><code>&lt;header&gt;...&lt;/header&gt;
+    <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;header&gt;...&lt;/header&gt;
 &lt;main&gt;...&lt;/main&gt;
 &lt;footer&gt;...&lt;/footer&gt;</code></pre>
   </div>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">3) Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Open DevTools → Elements → verify landmarks exist.</li>
   <li>Change the heading structure to be logical (H1 once, then H2/H3).</li>
   <li>Ensure links have meaningful text (no “click here”).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes (and fixes)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> multiple H1s. <span class="text-green-300 font-bold">Fix:</span> one H1 per page section; use H2/H3 for subsections.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> using <code class="bg-dark-900 px-1 rounded">div</code> for buttons. <span class="text-green-300 font-bold">Fix:</span> use <code class="bg-dark-900 px-1 rounded">button</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> generic link text. <span class="text-green-300 font-bold">Fix:</span> descriptive link labels.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (and fixes)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> multiple H1s. <span class="text-green-300 font-bold">Fix:</span> one H1 per page section; use H2/H3 for subsections.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">div</code> for buttons. <span class="text-green-300 font-bold">Fix:</span> use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">button</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> generic link text. <span class="text-green-300 font-bold">Fix:</span> descriptive link labels.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints (auto-check)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints (auto-check)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li><span class="text-blue-300 font-bold">Visual:</span> Does the page have a clear header, main content, and footer?</li>
-  <li><span class="text-blue-300 font-bold">DevTools:</span> Can you find <code class="bg-dark-900 px-1 rounded">&lt;header&gt;</code>, <code class="bg-dark-900 px-1 rounded">&lt;main&gt;</code>, <code class="bg-dark-900 px-1 rounded">&lt;footer&gt;</code>?</li>
+  <li><span class="text-blue-300 font-bold">DevTools:</span> Can you find <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;header&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;main&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;footer&gt;</code>?</li>
   <li><span class="text-blue-300 font-bold">Keyboard:</span> Can you Tab to the CTA button and see a visible focus ring?</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Summary</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 You learned the professional learning loop and why semantic HTML is the base layer of every good UI system.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">
 Tomorrow you’ll build a correct document skeleton and accessible navigation.
 </p>
 `,

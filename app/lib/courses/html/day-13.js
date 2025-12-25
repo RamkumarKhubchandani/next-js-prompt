@@ -4,44 +4,44 @@ export const day13 = {
   intro:
     "You’re not done when you “read the lesson”. You’re done when you can predict and explain outcomes. Today you’ll validate mastery with a rubric and fix your weak spots without a human.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Your mastery rubric (no human required)</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Your mastery rubric (no human required)</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Use this rubric to evaluate any page you build. If you can do this consistently, you have professional HTML mastery.
 </p>
 
-<div class="bg-dark-800 border border-dark-600 rounded-2xl p-5 mb-6">
-  <h4 class="text-lg font-bold text-white mb-3">A) Structure (Semantics)</h4>
-  <ul class="list-disc list-inside space-y-2 text-light-300">
+<div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-600 rounded-2xl p-5 mb-6">
+  <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-3">A) Structure (Semantics)</h4>
+  <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
     <li>Landmarks exist: header/nav/main/footer (and aside when needed).</li>
     <li>One H1, nested H2/H3 outline.</li>
     <li>Articles used for standalone units; sections used with headings.</li>
   </ul>
 
-  <h4 class="text-lg font-bold text-white mb-3 mt-5">B) Accessibility</h4>
-  <ul class="list-disc list-inside space-y-2 text-light-300">
+  <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-3 mt-5">B) Accessibility</h4>
+  <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
     <li>Keyboard navigation works; focus is visible.</li>
     <li>Forms have real labels; groups use fieldset/legend.</li>
     <li>Alt text is meaningful (or empty for decorative).</li>
   </ul>
 
-  <h4 class="text-lg font-bold text-white mb-3 mt-5">C) Robustness</h4>
-  <ul class="list-disc list-inside space-y-2 text-light-300">
+  <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-3 mt-5">C) Robustness</h4>
+  <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
     <li>Tables use caption + th scope + responsive scrolling container.</li>
     <li>Content still reads logically without CSS.</li>
     <li>Print/export has a clean output.</li>
   </ul>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">How to self-debug (the 60-second loop)</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Inspect structure</span>: do I have the right tags?</li>
-  <li><span class="text-yellow-400 font-bold">Inspect naming</span>: does it have a clear label and role?</li>
-  <li><span class="text-yellow-400 font-bold">Test keyboard</span>: can I tab everything?</li>
-  <li><span class="text-yellow-400 font-bold">Explain</span>: can I explain why this is correct?</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">How to self-debug (the 60-second loop)</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Inspect structure</span>: do I have the right tags?</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Inspect naming</span>: does it have a clear label and role?</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Test keyboard</span>: can I tab everything?</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Explain</span>: can I explain why this is correct?</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">
 Move to CSS with the same mindset: build systems, not one-off styles.
 </p>
 `,

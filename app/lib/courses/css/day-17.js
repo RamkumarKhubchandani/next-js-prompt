@@ -4,11 +4,11 @@ export const day17 = {
   intro:
     "You’ll implement the CSS pieces of accessibility: visible focus, reduced motion, and theming hints to the browser.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Checklist</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><code class="bg-dark-900 px-1 rounded">:focus-visible</code> styled for all controls</li>
-  <li><code class="bg-dark-900 px-1 rounded">prefers-reduced-motion</code> respected</li>
-  <li><code class="bg-dark-900 px-1 rounded">color-scheme</code> set to support form controls</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checklist</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code> styled for all controls</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">prefers-reduced-motion</code> respected</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">color-scheme</code> set to support form controls</li>
 </ul>
 `,
   sandbox: {

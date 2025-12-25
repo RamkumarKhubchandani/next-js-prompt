@@ -21,11 +21,11 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
             {/* Junior Side */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="rounded-xl border border-red-900/30 bg-dark-800/50 overflow-hidden"
+                className="rounded-xl border border-red-900/30 bg-dark-900 overflow-hidden"
             >
                 <div className="bg-red-900/20 border-b border-red-900/30 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-red-200 font-bold">
@@ -37,8 +37,8 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
                     </span>
                 </div>
                 <div className="relative group">
-                    <SyntaxHighlighter 
-                        language={language} 
+                    <SyntaxHighlighter
+                        language={language}
                         style={atomDark}
                         customStyle={{
                             margin: 0,
@@ -66,11 +66,11 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
             </motion.div>
 
             {/* Senior/AI Side */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="rounded-xl border border-green-900/30 bg-dark-800/50 overflow-hidden flex flex-col"
+                className="rounded-xl border border-green-900/30 bg-dark-900 overflow-hidden flex flex-col"
             >
                 <div className="bg-green-900/20 border-b border-green-900/30 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-green-200 font-bold">
@@ -92,8 +92,8 @@ export default function CodeComparison({ juniorCode, seniorCode, language = "jav
                     </div>
                 </div>
                 <div className="relative flex-grow">
-                    <SyntaxHighlighter 
-                        language={language} 
+                    <SyntaxHighlighter
+                        language={language}
                         style={atomDark}
                         customStyle={{
                             margin: 0,

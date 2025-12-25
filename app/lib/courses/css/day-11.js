@@ -4,10 +4,10 @@ export const day11 = {
   intro:
     "You’ll use CSS variables to build a token system and component variants without duplicating styles.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">Tokens are the API of your design system. Components read tokens; themes swap tokens.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Tokens are the API of your design system. Components read tokens; themes swap tokens.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Add a danger button variant by overriding component variables.</li>
   <li>Add a light theme section by swapping tokens in a wrapper.</li>
 </ul>

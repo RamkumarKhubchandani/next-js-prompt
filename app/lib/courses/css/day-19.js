@@ -4,11 +4,11 @@ export const day19 = {
   intro:
     "You’ll learn the production concepts behind ‘fast CSS’: critical CSS, font loading strategies, and why `font-display: swap` matters.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">What to know</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Critical CSS</span>: inline the minimum required for above-the-fold content.</li>
-  <li><span class="text-yellow-400 font-bold">Fonts</span>: load responsibly; prefer system fonts unless brand requires otherwise.</li>
-  <li><code class="bg-dark-900 px-1 rounded">font-display: swap</code> prevents invisible text while fonts load.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">What to know</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Critical CSS</span>: inline the minimum required for above-the-fold content.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Fonts</span>: load responsibly; prefer system fonts unless brand requires otherwise.</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">font-display: swap</code> prevents invisible text while fonts load.</li>
 </ul>
 `,
   sandbox: {

@@ -4,23 +4,23 @@ export const day02 = {
   intro:
     "Today you’ll make spacing predictable: the box model, margin vs padding, border sizing, and why `box-sizing: border-box` is non-negotiable.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 If your layout “doesn’t fit” and you keep adding random margins, you’re fighting the box model. Professionals reason in boxes.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Content → Padding → Border → Margin</span> (in that order).</li>
-  <li><span class="text-yellow-400 font-bold">Sizing</span>: with <code class="bg-dark-900 px-1 rounded">border-box</code>, width includes padding/border.</li>
-  <li><span class="text-yellow-400 font-bold">Margin collapse</span>: vertical margins can collapse between blocks.</li>
-  <li><span class="text-yellow-400 font-bold">Modern spacing</span>: use <code class="bg-dark-900 px-1 rounded">gap</code> for flex/grid spacing.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Content → Padding → Border → Margin</span> (in that order).</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Sizing</span>: with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">border-box</code>, width includes padding/border.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Margin collapse</span>: vertical margins can collapse between blocks.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Modern spacing</span>: use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">gap</code> for flex/grid spacing.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Make both cards exactly equal width without overflow.</li>
-  <li>Replace margins between inline elements with <code class="bg-dark-900 px-1 rounded">gap</code>.</li>
+  <li>Replace margins between inline elements with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">gap</code>.</li>
   <li>Observe margin collapse by toggling the wrapper padding.</li>
 </ul>
 `,
