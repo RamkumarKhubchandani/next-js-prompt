@@ -15,7 +15,7 @@ export const day12 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Traditional approach requires manually tracking loading state:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ OLD WAY: Manual loading state everywhere
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ OLD WAY: Manual loading state everywhere
 function UserProfile() {
 const [user, setUser] = useState(null);
 const [loading, setLoading] = useState(true);  // Extra state
@@ -33,15 +33,15 @@ if (loading) return &lt;Spinner /&gt;;   // Handle loading
 if (error) return &lt;Error /&gt;;        // Handle error
 return &lt;Profile user={user} /&gt;;     // Finally render!
 }</pre>
-<p class="text-red-300 text-sm mt-2">❌ Every component has the same boilerplate!</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">❌ Every component has the same boilerplate!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✅ The Solution: Suspense</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Suspense lets you declaratively specify loading UI:</p>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ NEW WAY: Declarative with Suspense
-&lt;<span class="text-yellow-300">Suspense</span> fallback={&lt;Spinner /&gt;}&gt;
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ NEW WAY: Declarative with Suspense
+&lt;<span class="text-yellow-700 dark:text-yellow-300">Suspense</span> fallback={&lt;Spinner /&gt;}&gt;
 &lt;UserProfile /&gt;   {/* Just renders! No loading state needed */}
 &lt;/Suspense&gt;
 
@@ -50,7 +50,7 @@ return &lt;Profile user={user} /&gt;;     // Finally render!
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔧 How Suspense Works</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 1. Component "suspends" (throws a Promise)
 2. React catches the Promise
@@ -87,11 +87,11 @@ Timeline:
 <p class="mb-4 text-gray-600 dark:text-light-300">Split your bundle and load components on demand:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// ❌ Regular import: Component in main bundle
+<pre class="text-gray-800 dark:text-cyan-300">// ❌ Regular import: Component in main bundle
 import HeavyComponent from './HeavyComponent';
 
 // ✅ Lazy import: Separate chunk, loaded on demand
-const HeavyComponent = <span class="text-yellow-300">React.lazy</span>(() => import('./HeavyComponent'));
+const HeavyComponent = <span class="text-yellow-700 dark:text-yellow-300">React.lazy</span>(() => import('./HeavyComponent'));
 
 // Must wrap in Suspense!
 function App() {

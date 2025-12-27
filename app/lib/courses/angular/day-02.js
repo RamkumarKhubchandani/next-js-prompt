@@ -7,7 +7,7 @@ export const day02 = {
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Interfaces vs types, unions, discriminated unions.</li>
   <li>Typed forms and typed HTTP responses.</li>
-  <li>Never lie to the compiler: avoid <code class="bg-dark-700 px-1 rounded">any</code>.</li>
+  <li>Never lie to the compiler: avoid <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">any</code>.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Model UI State Explicitly</h3>

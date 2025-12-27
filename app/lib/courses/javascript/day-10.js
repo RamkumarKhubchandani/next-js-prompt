@@ -9,20 +9,55 @@ If you do heavy computation on the main thread, the UI freezes: clicks lag, anim
 Workers let you move CPU work off the main thread while keeping the UI responsive.
 </p>
 
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Waiter vs Chef" Mental Model</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Think of your browser tab as a restaurant.
+</p>
+<div class="grid md:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">The Waiter (Main Thread)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      There is only <strong>one</strong> waiter. Their job is to take orders (clicks) and serve food (update UI). If the waiter stops to chop onions (heavy math) for 5 seconds, the customers (users) get ignored. The restaurant freezes.
+    </p>
+  </div>
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-green-600 dark:text-green-400 mb-2">The Chef (Worker Thread)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      The Chef lives in the back. They chop onions, cook soup, and do the heavy lifting. They <strong>cannot</strong> talk to customers (no DOM access). They only talk to the waiter via a service window (postMessage).
+    </p>
+  </div>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Main Thread vs Worker Thread</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Workers run in parallel. They do not share memory with the main thread by default.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-green-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
-[ Main Thread (UI) ]        [ Worker Thread ]
+[ Main Thread (Waiter) ]        [ Worker Thread (Chef) ]
    │                           │
-   │  postMessage(data) ───▶   │
+   │  postMessage(order) ───▶  │
    │                           │
-   │                    (Heavy Calc)
+   │                    (Cooking / Heavy Calc)
    │                           │
-   │  ◀─── postMessage(res)    │
+   │  ◀─── postMessage(food)   │
    ▼                           ▼
 </pre>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
+  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Worker vs Microservice?
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    You might ask: "If I have heavy math, why not send it to a backend API?"
+  </p>
+  <ul class="list-disc list-inside text-sm text-gray-700 dark:text-light-200 space-y-2">
+    <li><span class="font-bold">Web Worker:</span> Best for <strong>client-side</strong> heavy lifting (image resizing, PDF generation, crypto) where data is already on the user's device. Zero network latency.</li>
+    <li><span class="font-bold">Microservice (Backend):</span> Best for <strong>secret</strong> algorithms or work requiring massive hardware (GPU clusters). High network latency.</li>
+  </ul>
+  <p class="mt-4 text-xs text-purple-800 dark:text-purple-200 font-bold">
+    Rule of Thumb: If the data is sensitive or needs 100GB RAM, send it to the server. If it's just "slow math" on user data, keep it local with a Worker to save server costs.
+  </p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) The Hidden Cost: Structured Cloning</h3>

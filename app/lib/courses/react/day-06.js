@@ -15,7 +15,7 @@ export const day06 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Sometimes you need to:</p>
 <div class="grid md:grid-cols-2 gap-4 mb-6">
 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl">
-    <p class="text-blue-300 font-bold mb-2">🎯 Access DOM Elements</p>
+    <p class="text-blue-700 dark:text-blue-300 font-bold mb-2">🎯 Access DOM Elements</p>
     <ul class="text-blue-800 dark:text-blue-200 text-sm space-y-1">
         <li>• Focus an input field</li>
         <li>• Scroll to a section</li>
@@ -25,7 +25,7 @@ export const day06 = {
 </div>
 <div class="bg-purple-900/20 border border-purple-500/30 p-4 rounded-xl">
     <p class="text-purple-700 dark:text-purple-300 font-bold mb-2">💾 Store Values Silently</p>
-    <ul class="text-purple-200 text-sm space-y-1">
+    <ul class="text-purple-800 dark:text-purple-200 text-sm space-y-1">
         <li>• Previous state values</li>
         <li>• Timer/interval IDs</li>
         <li>• Render count (debugging)</li>
@@ -36,7 +36,7 @@ export const day06 = {
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🧠 How useRef Works</h3>
 <div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
-<pre>
+<pre class="text-gray-800 dark:text-cyan-300">
 const myRef = useRef(initialValue);
 
 // myRef is an object: { current: initialValue }
@@ -60,35 +60,35 @@ const myRef = useRef(initialValue);
 <p class="mb-4 text-gray-600 dark:text-light-300">Attach a ref to any JSX element to access the actual DOM node:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// Step 1: Create a ref
-const inputRef = useRef(<span class="text-yellow-300">null</span>);
+<pre class="bg-gray-100 dark:bg-dark-900 text-gray-800 dark:text-cyan-300">// Step 1: Create a ref
+const inputRef = useRef(<span class="text-yellow-800 dark:text-yellow-300">null</span>);
 
 // Step 2: Attach to element
-&lt;input <span class="text-yellow-300">ref={inputRef}</span> /&gt;
+&lt;input <span class="text-yellow-800 dark:text-yellow-300">ref={inputRef}</span> /&gt;
 
 // Step 3: Access the DOM node!
-inputRef.<span class="text-green-300">current</span>.focus();  // Focus the input!
-inputRef.<span class="text-green-300">current</span>.value;   // Read the value
-inputRef.<span class="text-green-300">current</span>.style.background = 'yellow';</pre>
+inputRef.<span class="text-green-700 dark:text-green-300">current</span>.focus();  // Focus the input!
+inputRef.<span class="text-green-700 dark:text-green-300">current</span>.value;   // Read the value
+inputRef.<span class="text-green-700 dark:text-green-300">current</span>.style.background = 'yellow';</pre>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">💾 Use Case 2: Storing Values Without Re-renders</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Perfect for values you need to track but don't want to display:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">function Timer() {
-const intervalId = useRef(<span class="text-yellow-300">null</span>);
+<pre class="bg-gray-100 dark:bg-dark-900 text-gray-800 dark:text-cyan-300">function Timer() {
+const intervalId = useRef(<span class="text-yellow-800 dark:text-yellow-300">null</span>);
 
 const start = () => {
 // Store the interval ID (no re-render needed!)
-intervalId.<span class="text-green-300">current</span> = setInterval(() => {
+intervalId.<span class="text-green-700 dark:text-green-300">current</span> = setInterval(() => {
   console.log('tick');
 }, 1000);
 };
 
 const stop = () => {
 // Access the stored ID to clear
-clearInterval(intervalId.<span class="text-green-300">current</span>);
+clearInterval(intervalId.<span class="text-green-700 dark:text-green-300">current</span>);
 };
 }</pre>
 </div>
@@ -96,7 +96,7 @@ clearInterval(intervalId.<span class="text-green-300">current</span>);
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔑 Quick Reference: useState vs useRef</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Feature</th>
             <th class="p-3">useState</th>
@@ -130,13 +130,13 @@ clearInterval(intervalId.<span class="text-green-300">current</span>);
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common Mistakes</h3>
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<p class="text-red-300 font-bold mb-2">❌ Don't read/write ref.current during render!</p>
-<pre class="text-red-800 dark:text-red-200 text-sm mt-2">function Bad() {
+<p class="text-red-700 dark:text-red-300 font-bold mb-2">❌ Don't read/write ref.current during render!</p>
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm mt-2">function Bad() {
 const ref = useRef(0);
 ref.current++;  // ❌ Side effect during render!
 return &lt;p&gt;{ref.current}&lt;/p&gt;; // ❌ Won't update UI anyway
 }</pre>
-<pre class="text-green-800 dark:text-green-200 text-sm mt-2">function Good() {
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm mt-2">function Good() {
 const ref = useRef(0);
 useEffect(() => {
 ref.current++;  // ✅ Side effect in useEffect

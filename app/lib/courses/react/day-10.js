@@ -3,6 +3,34 @@ export const day10 = {
   title: "Patterns: HOCs vs Render Props",
   intro: "Historical patterns are still useful, but Hooks have replaced most of them.",
   content: `
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Snapshot" Mental Model (State Updates)</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+When you call <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">setCount(count + 1)</code>, React doesn't change the variable immediately.
+</p>
+<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-5 rounded-xl mb-8">
+  <h4 class="font-bold text-blue-800 dark:text-blue-200 mb-2">The Camera Analogy</h4>
+  <p class="text-sm text-gray-600 dark:text-light-300">
+    Each render is a <strong>photograph</strong> (snapshot) of the UI at a specific moment in time.
+    Your variables (<code class="bg-white dark:bg-dark-800 px-1 rounded">count</code>) are frozen in that photo.
+    Calling <code class="bg-white dark:bg-dark-800 px-1 rounded">setCount</code> tells React: "For the <strong>next</strong> photo, use a different number." It does NOT change the number in the <em>current</em> photo.
+  </p>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Where should state live?
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Junior devs put state everywhere. Senior devs put state in the <strong>highest necessary common ancestor</strong> (or move it out entirely).
+  </p>
+  <ul class="list-disc list-inside text-sm text-gray-700 dark:text-light-200 space-y-2">
+    <li><span class="font-bold">Local State (useState):</span> UI toggles, form inputs.</li>
+    <li><span class="font-bold">Context (useContext):</span> Theme, User Session, Language.</li>
+    <li><span class="font-bold">Server State (React Query):</span> API data (don't put this in Redux!).</li>
+    <li><span class="font-bold">URL State:</span> Search filters, pagination (so users can share links).</li>
+  </ul>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
 <li>What is a Higher Order Component (HOC)</li>
@@ -15,9 +43,9 @@ export const day10 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">An HOC is a function that takes a component and returns a NEW enhanced component:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// HOC Pattern: withSomething(Component) → EnhancedComponent
+<pre class="text-gray-800 dark:text-cyan-300">// HOC Pattern: withSomething(Component) → EnhancedComponent
 
-const <span class="text-yellow-300">EnhancedButton</span> = <span class="text-green-300">withLogging</span>(Button);
+const <span class="text-yellow-700 dark:text-yellow-300">EnhancedButton</span> = <span class="text-green-700 dark:text-green-300">withLogging</span>(Button);
 //                       ↑ HOC adds logging capability
 //                         to the original Button
 
@@ -53,9 +81,9 @@ const <span class="text-yellow-300">EnhancedButton</span> = <span class="text-gr
 <p class="mb-4 text-gray-600 dark:text-light-300">A component that takes a function as a prop and calls it to render UI:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// Render Props Pattern: A prop whose value is a function
+<pre class="text-gray-800 dark:text-cyan-300">// Render Props Pattern: A prop whose value is a function
 
-&lt;MouseTracker <span class="text-yellow-300">render</span>={(position) => (
+&lt;MouseTracker <span class="text-yellow-700 dark:text-yellow-300">render</span>={(position) => (
 &lt;p&gt;Mouse is at {position.x}, {position.y}&lt;/p&gt;
 )} /&gt;
 
@@ -63,14 +91,14 @@ const <span class="text-yellow-300">EnhancedButton</span> = <span class="text-gr
 function MouseTracker({ render }) {
 const [position, setPosition] = useState({ x: 0, y: 0 });
 // ... track mouse ...
-return <span class="text-yellow-300">render(position)</span>;  // Call the function!
+return <span class="text-yellow-700 dark:text-yellow-300">render(position)</span>;  // Call the function!
 }</pre>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚔️ HOC vs Render Props vs Hooks</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Pattern</th>
             <th class="p-3">Pros</th>
@@ -81,16 +109,16 @@ return <span class="text-yellow-300">render(position)</span>;  // Call the funct
         <tr class="border-b border-gray-200 dark:border-dark-600">
             <td class="p-3 font-bold">HOC</td>
             <td class="p-3 text-sm">Clean usage, props injection</td>
-            <td class="p-3 text-sm text-red-300">Wrapper hell, naming collisions</td>
+            <td class="p-3 text-sm text-red-700 dark:text-red-300">Wrapper hell, naming collisions</td>
         </tr>
         <tr class="border-b border-gray-200 dark:border-dark-600">
             <td class="p-3 font-bold">Render Props</td>
             <td class="p-3 text-sm">Explicit data flow, flexible</td>
-            <td class="p-3 text-sm text-red-300">Callback hell, harder to read</td>
+            <td class="p-3 text-sm text-red-700 dark:text-red-300">Callback hell, harder to read</td>
         </tr>
         <tr>
             <td class="p-3 rounded-bl-lg font-bold text-green-600 dark:text-green-400">Hooks ✓</td>
-            <td class="p-3 text-sm text-green-300">Simple, composable, no wrappers</td>
+            <td class="p-3 text-sm text-green-700 dark:text-green-300">Simple, composable, no wrappers</td>
             <td class="p-3 rounded-br-lg text-sm">Can't use in class components</td>
         </tr>
     </tbody>

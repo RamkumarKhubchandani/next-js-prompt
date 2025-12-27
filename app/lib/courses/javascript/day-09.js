@@ -20,7 +20,7 @@ If something is reachable from a root (global objects, active stack frames), it 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-500/30">
     <span class="text-red-600 dark:text-red-400 font-bold block mb-2">Global Variables</span>
-    Accidental <code class="bg-dark-700 text-brand-primary px-1 rounded">window.x = largeData</code> stays forever.
+    Accidental <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">window.x = largeData</code> stays forever.
 </div>
 <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-500/30">
     <span class="text-red-600 dark:text-red-400 font-bold block mb-2">Detached DOM</span>

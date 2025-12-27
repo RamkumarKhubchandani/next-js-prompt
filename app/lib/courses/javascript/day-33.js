@@ -6,14 +6,14 @@ export const day33 = {
 <div class="bg-gradient-to-r from-fuchsia-500/20 to-pink-500/20 border border-fuchsia-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-fuchsia-300 font-bold mb-2">🎯 Capstone Goal</h4>
   <p class="text-gray-600 dark:text-light-300">
-    You will build an <span class="text-yellow-300 font-bold">Autocomplete Controller</span> that:
+    You will build an <span class="text-yellow-700 dark:text-yellow-300 font-bold">Autocomplete Controller</span> that:
     debounces user input, aborts stale requests, caches results, and retries with backoff.
   </p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✅ What You Are Building</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">createAutocompleteController</code> that exposes <span class="text-yellow-300 font-bold">search(query)</span></li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">createAutocompleteController</code> that exposes <span class="text-yellow-700 dark:text-yellow-300 font-bold">search(query)</span></li>
   <li>Debounce to avoid calling the server on every keystroke</li>
   <li>Abort previous in-flight request when the user types again</li>
   <li>Cache (LRU) so repeated queries are instant</li>

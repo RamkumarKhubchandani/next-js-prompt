@@ -5,7 +5,7 @@ export const day39 = {
   content: `
 <div class="bg-gradient-to-r from-lime-500/20 to-emerald-500/20 border border-lime-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-lime-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-300 font-bold">createStore</span> with subscribe/unsubscribe and selector subscriptions (only re-run when selected state changes).</p>
+  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-700 dark:text-yellow-300 font-bold">createStore</span> with subscribe/unsubscribe and selector subscriptions (only re-run when selected state changes).</p>
 </div>
             `,
   masteryChecklist: [

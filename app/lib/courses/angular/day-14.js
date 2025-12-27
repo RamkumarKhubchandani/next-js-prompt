@@ -14,13 +14,13 @@ Request → Server renders HTML → Browser hydrates → App becomes interactive
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">First paint</span> and perceived performance.</li>
   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">SEO</span> for content-heavy pages.</li>
-  <li>It does <span class="text-red-300 font-bold">not</span> remove JS cost; hydration still runs.</li>
+  <li>It does <span class="text-red-700 dark:text-red-300 font-bold">not</span> remove JS cost; hydration still runs.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) SSR Safety Rules</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>Never assume <code class="bg-dark-700 px-1 rounded">window</code>/<code class="bg-dark-700 px-1 rounded">document</code> exist.</li>
-  <li>Prefer platform checks (<code class="bg-dark-700 px-1 rounded">isPlatformBrowser</code>).</li>
+  <li>Never assume <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">window</code>/<code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">document</code> exist.</li>
+  <li>Prefer platform checks (<code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">isPlatformBrowser</code>).</li>
   <li>Keep server rendering deterministic (no random IDs without seeding).</li>
 </ul>
             `,

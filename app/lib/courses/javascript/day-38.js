@@ -5,7 +5,7 @@ export const day38 = {
   content: `
 <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-amber-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-300 font-bold">createQueryClient</span> with TTL cache, in-flight dedupe, and SWR-style refresh.</p>
+  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-700 dark:text-yellow-300 font-bold">createQueryClient</span> with TTL cache, in-flight dedupe, and SWR-style refresh.</p>
 </div>
             `,
   masteryChecklist: [

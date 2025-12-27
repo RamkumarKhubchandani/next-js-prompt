@@ -23,7 +23,7 @@ export const day23 = {
 <h4 class="text-lg font-semibold text-cyan-400 mb-2">1. Debouncing: Don't Spam the API</h4>
 <p class="mb-4 text-gray-600 dark:text-light-300">Wait for the user to stop typing before making a request.</p>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">function useDebounce(value, delay) {
+<pre class="text-gray-800 dark:text-cyan-300">function useDebounce(value, delay) {
 const [debouncedValue, setDebouncedValue] = useState(value);
 
 useEffect(() => {

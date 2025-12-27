@@ -9,10 +9,52 @@ If you accept user input, you must decide how it is treated: as <span class="tex
 Most security incidents happen when code treats untrusted input as HTML/JS.
 </p>
 
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Hacker's Mindset</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Security isn't about "patching bugs". It's about thinking like a thief.
+A hacker looks at your input field and thinks: <em>"Can I make this execute code instead of just displaying text?"</em>
+</p>
+<div class="bg-red-50 dark:bg-red-900/20 p-5 rounded-xl border border-red-200 dark:border-red-500/30 mb-8">
+  <h4 class="font-bold text-red-700 dark:text-red-300 mb-2">The Golden Rule of Web Security</h4>
+  <p class="text-sm text-red-800 dark:text-red-200">
+    <strong>Never trust user input.</strong> Treat every input as if it contains a bomb (malicious script) until you have disarmed it (sanitization/escaping).
+  </p>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
+  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">⚔️</span> War Story: The Samy Worm (2005)
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Samy Kamkar found that MySpace allowed HTML in profile bios but blocked <code>&lt;script&gt;</code> tags. He bypassed it by putting JS inside CSS tags (<code>background: java\nscript...</code>).
+  </p>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    <strong>The Payload:</strong> Anyone who viewed Samy's profile automatically added Samy as a friend and updated <em>their own</em> profile to say "but most of all, Samy is my hero."
+  </p>
+  <p class="text-xs text-purple-800 dark:text-purple-200 font-bold">
+    Result: 1 million infections in 20 hours. MySpace went offline. This is why we sanitize *everything*.
+  </p>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Liability & Compliance
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200">
+    Security isn't just about code; it's about money. A single XSS vulnerability can violate GDPR/CCPA if it leaks user data.
+    <strong>The fine? Up to 4% of global revenue.</strong>
+    Sanitizing inputs is the cheapest insurance policy you will ever buy.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) XSS (Cross-Site Scripting)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">XSS happens when attacker-controlled content becomes executable code in your page.</p>
-<div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-500/30 mb-6">
-<code class="text-red-600 dark:text-red-400">INPUT: &lt;img src=x onerror=stealCookies()&gt;</code>
+<div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-600 mb-6 font-mono text-sm">
+  <div class="mb-2 text-gray-500">What you expect:</div>
+  <div class="text-green-600 dark:text-green-400 mb-4">"Hello World"</div>
+  
+  <div class="mb-2 text-gray-500">What the hacker sends:</div>
+  <div class="text-red-600 dark:text-red-400">&lt;img src=x onerror=stealCookies()&gt;</div>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) CSRF (Cross-Site Request Forgery)</h3>

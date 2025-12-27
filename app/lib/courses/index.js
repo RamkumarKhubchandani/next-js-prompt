@@ -4,6 +4,9 @@ import { fullStackContet } from './full-stack-course';
 import { angularContent } from './angular-course';
 import { htmlContent } from './html-course';
 import { cssContent } from './css-course';
+import { tsContent } from './typescript-course';
+import { zustandContent } from './zustand-course';
+import { reduxContent } from './redux-course';
 
 export const COURSES = {
     javascript: jsContent.javascript,
@@ -12,6 +15,9 @@ export const COURSES = {
     angular: angularContent.angular,
     html: htmlContent.html,
     css: cssContent.css,
+    typescript: tsContent.typescript,
+    zustand: zustandContent.zustand,
+    redux: reduxContent.redux,
 };
 
 

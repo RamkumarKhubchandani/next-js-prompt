@@ -13,7 +13,7 @@ A Proxy is a programmable layer between you and a target object. It can validate
 A Proxy sits between you and the target. Every operation can be intercepted by a trap (get/set/has/ownKeys/apply/construct…).
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-blue-700 dark:text-blue-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
    [ User ] ──▶ [ Proxy ] ──▶ [ Target Object ]
                    │

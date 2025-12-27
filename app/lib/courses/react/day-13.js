@@ -15,7 +15,7 @@ export const day13 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Config-based components are hard to customize:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ Configuration Prop Approach
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ Configuration Prop Approach
 &lt;Select 
 options={[
 { value: 'a', label: 'Option A', icon: '🍎', disabled: false },
@@ -35,7 +35,7 @@ optionClassName="..."        // What if I need different styles per option?
 <p class="mb-4 text-gray-600 dark:text-light-300">Let users compose UI naturally, like HTML's &lt;select&gt; and &lt;option&gt;:</p>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ Compound Component Approach (Like HTML!)
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ Compound Component Approach (Like HTML!)
 &lt;Select&gt;
 &lt;Select.Option value="a"&gt;🍎 Option A&lt;/Select.Option&gt;
 &lt;Select.Option value="b" disabled&gt;🍊 Option B&lt;/Select.Option&gt;
@@ -52,7 +52,7 @@ optionClassName="..."        // What if I need different styles per option?
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔧 How It Works: Implicit State Sharing</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 Parent Component (Tabs)              Child Components (Tab, Panel)
 ════════════════════════             ════════════════════════════
@@ -103,7 +103,7 @@ Parent Component (Tabs)              Child Components (Tab, Panel)
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔑 Two Implementation Approaches</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Approach</th>
             <th class="p-3">How</th>

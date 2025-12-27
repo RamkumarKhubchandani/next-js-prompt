@@ -15,7 +15,7 @@ export const day21 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">React 18 requires you to manually cache functions and objects to prevent children from re-rendering:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ Before Compiler: Dependency Hell
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ Before Compiler: Dependency Hell
 const handleClick = useCallback(() => {
 console.log(count);
 }, [count]); // Don't forget this!
@@ -23,14 +23,14 @@ console.log(count);
 const filtered = useMemo(() => {
 return items.filter(i => i > 10);
 }, [items]); // Or this!</pre>
-<p class="text-red-300 text-sm mt-2">Miss a dependency? Bugs. Add too many? Performance loss.</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">Miss a dependency? Bugs. Add too many? Performance loss.</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ The Solution: Auto-Memoization</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">The React Compiler analyzes your code at build time. It understands the data flow and caches <i>everything</i> automatically.</p>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ After Compiler: Just write JavaScript!
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ After Compiler: Just write JavaScript!
 const handleClick = () => {
 console.log(count);
 };
@@ -42,7 +42,7 @@ const filtered = items.filter(i => i > 10);</pre>
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔍 How it Works (Conceptual)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">The compiler wraps your component code in a specialized <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">useMemoCache</code> hook:</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 function Component(props) {
 const $ = useMemoCache(2); // React Internal Hook

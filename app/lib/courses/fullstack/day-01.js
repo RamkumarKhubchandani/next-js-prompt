@@ -3,13 +3,48 @@ export const day01 = {
   title: "Node.js Architecture & Event Loop",
   intro: "Node is Single-Threaded but Non-Blocking. Understand libuv and the thread pool.",
   content: `
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Restaurant" Mental Model</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Fullstack development is like running a restaurant.
+</p>
+<div class="grid md:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">Frontend (Dining Room)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      This is where the customer sits (Browser). It needs to look good and feel comfortable. The customer <strong>cannot</strong> walk into the kitchen.
+    </p>
+  </div>
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-orange-600 dark:text-orange-400 mb-2">Backend (Kitchen)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      This is where the raw ingredients (Database) live. It's messy, hot, and secure. The Chef (Server) cooks the food and hands it to the Waiter (API) to deliver to the customer.
+    </p>
+  </div>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Monolith vs Microservices
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Every startup wants to build Microservices. Most should build a Monolith.
+  </p>
+  <ul class="list-disc list-inside text-sm text-gray-700 dark:text-light-200 space-y-2">
+    <li><span class="font-bold">Monolith (The Food Truck):</span> One kitchen, one chef. Easy to manage, easy to deploy. Best for 0-50 engineers.</li>
+    <li><span class="font-bold">Microservices (The Food Court):</span> 20 different kitchens (Pizza, Sushi, Burgers). Hard to manage, complex network. Best for 100+ engineers.</li>
+  </ul>
+  <p class="mt-4 text-xs text-blue-800 dark:text-blue-200 font-bold">
+    Rule: Don't split your app until you have a team that can't fit in one room.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>What “single-threaded” <span class="text-yellow-600 dark:text-yellow-400 font-bold">really</span> means in Node.</li>
   <li>How Node is built: <span class="text-brand-primary font-bold">V8 + libuv</span> (and why that matters).</li>
   <li>Event Loop phases (timers, poll, check) + <span class="text-yellow-600 dark:text-yellow-400 font-bold">microtasks</span>.</li>
   <li>Threadpool: which APIs use it (and how you accidentally DDoS yourself).</li>
-  <li>Why “async” code can still be <span class="text-red-300 font-bold">blocking</span>.</li>
+  <li>Why “async” code can still be <span class="text-red-700 dark:text-red-300 font-bold">blocking</span>.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The Node Runtime: V8 + libuv</h3>
@@ -68,7 +103,7 @@ Microtasks (run between phases):
 
 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl mb-6">
   <p class="text-blue-800 dark:text-blue-200 text-sm">
-    <span class="text-yellow-600 dark:text-yellow-400 font-bold">Important:</span> <code class="bg-dark-700 px-1 rounded">process.nextTick</code> can starve the loop if abused (it runs before Promises and before moving to the next phase).
+    <span class="text-yellow-600 dark:text-yellow-400 font-bold">Important:</span> <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">process.nextTick</code> can starve the loop if abused (it runs before Promises and before moving to the next phase).
   </p>
 </div>
 

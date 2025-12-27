@@ -15,7 +15,7 @@ export const day08 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Imagine you need to pass user data from App to a deeply nested component:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ PROP DRILLING - Passing through every level!
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ PROP DRILLING - Passing through every level!
 
 &lt;App user={user}&gt;                    // Level 0: Has the data
 &lt;Layout user={user}&gt;               // Level 1: Just passes it
@@ -26,13 +26,13 @@ export const day08 = {
 &lt;/Sidebar&gt;
 &lt;/Layout&gt;
 &lt;/App&gt;</pre>
-<p class="text-red-300 text-sm mt-2">❌ Layout, Sidebar, Navigation don't even USE user - they just pass it through!</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">❌ Layout, Sidebar, Navigation don't even USE user - they just pass it through!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✅ The Solution: Context API</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Context creates a "portal" - data teleports directly to where it's needed:</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 ┌──────────────────────────────────────────────────────┐
 │  &lt;UserContext.Provider value={user}&gt;                 │  ← PROVIDE once
@@ -52,20 +52,20 @@ export const day08 = {
 <div class="space-y-4 mb-6">
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
     <p class="text-gray-900 dark:text-white font-bold">Step 1: CREATE the Context</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">const UserContext = React.createContext(null);
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">const UserContext = React.createContext(null);
 // The argument is the DEFAULT value (used when no Provider above)</pre>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-green-500">
     <p class="text-gray-900 dark:text-white font-bold">Step 2: PROVIDE the value</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">&lt;UserContext.Provider value={currentUser}&gt;
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">&lt;UserContext.Provider value={currentUser}&gt;
 &lt;App /&gt;   {/* Everything inside can access currentUser */}
 &lt;/UserContext.Provider&gt;</pre>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-purple-500">
     <p class="text-gray-900 dark:text-white font-bold">Step 3: CONSUME anywhere below</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">function UserMenu() {
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">function UserMenu() {
 const user = React.useContext(UserContext);
 return &lt;span&gt;Hello, {user.name}!&lt;/span&gt;;
 }</pre>
@@ -75,7 +75,7 @@ return &lt;span&gt;Hello, {user.name}!&lt;/span&gt;;
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Common Use Cases for Context</h3>
 <div class="grid md:grid-cols-2 gap-4 mb-6">
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl">
-    <p class="text-green-300 font-bold mb-2">✅ GOOD Use Cases</p>
+    <p class="text-green-700 dark:text-green-300 font-bold mb-2">✅ GOOD Use Cases</p>
     <ul class="text-green-800 dark:text-green-200 text-sm space-y-1">
         <li>• Theme (dark/light mode)</li>
         <li>• Current user / Auth state</li>
@@ -84,7 +84,7 @@ return &lt;span&gt;Hello, {user.name}!&lt;/span&gt;;
     </ul>
 </div>
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl">
-    <p class="text-red-300 font-bold mb-2">❌ BAD Use Cases</p>
+    <p class="text-red-700 dark:text-red-300 font-bold mb-2">❌ BAD Use Cases</p>
     <ul class="text-red-800 dark:text-red-200 text-sm space-y-1">
         <li>• Frequently changing data</li>
         <li>• Large objects (causes many re-renders)</li>
@@ -95,9 +95,9 @@ return &lt;span&gt;Hello, {user.name}!&lt;/span&gt;;
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Context Re-render Trap</h3>
-<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
-<p class="text-yellow-300 font-bold mb-2">🚨 When Provider value changes, ALL consumers re-render!</p>
-<pre class="text-yellow-200 text-sm mt-2">// ❌ BAD: New object every render!
+<div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-500/30 p-4 rounded-xl mb-6">
+<p class="text-yellow-700 dark:text-yellow-300 font-bold mb-2">🚨 When Provider value changes, ALL consumers re-render!</p>
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-yellow-800 dark:text-yellow-200 text-sm mt-2">// ❌ BAD: New object every render!
 &lt;UserContext.Provider value={{ user, theme }}&gt;
 
 // ✅ GOOD: Memoize or split contexts
@@ -108,7 +108,7 @@ const value = useMemo(() => ({ user, theme }), [user, theme]);
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔑 Context vs Redux vs Other State Management</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Feature</th>
             <th class="p-3">Context</th>

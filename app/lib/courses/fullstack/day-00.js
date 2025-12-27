@@ -37,7 +37,7 @@ npm -v
 
 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl mb-6">
   <p class="text-blue-800 dark:text-blue-200">
-    <span class="text-yellow-600 dark:text-yellow-400 font-bold">Pro move:</span> add a <code class="bg-dark-700 px-2 py-1 rounded">.nvmrc</code> file to every repo (example: <code class="bg-dark-700 px-2 py-1 rounded">lts/*</code> or <code class="bg-dark-700 px-2 py-1 rounded">20.11.1</code>).
+    <span class="text-yellow-600 dark:text-yellow-400 font-bold">Pro move:</span> add a <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-2 py-1 rounded">.nvmrc</code> file to every repo (example: <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-2 py-1 rounded">lts/*</code> or <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-2 py-1 rounded">20.11.1</code>).
   </p>
 </div>
 
@@ -106,7 +106,7 @@ docker compose down -v
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">4) Environment Variables & Secrets (No Leaks)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
-Use <code class="bg-dark-700 px-2 py-1 rounded">.env</code> locally, but <span class="text-yellow-600 dark:text-yellow-400 font-bold">never commit secrets</span>. In production, use a secret manager (AWS SSM/Secrets Manager, GCP Secret Manager, etc.).
+Use <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-2 py-1 rounded">.env</code> locally, but <span class="text-yellow-600 dark:text-yellow-400 font-bold">never commit secrets</span>. In production, use a secret manager (AWS SSM/Secrets Manager, GCP Secret Manager, etc.).
 </p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">

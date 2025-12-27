@@ -18,7 +18,7 @@ Tab order, Enter/Space activation, and visible focus are mandatory.
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) ARIA: Use Only When Needed</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
-Prefer semantic elements (<code class="bg-dark-700 px-1 rounded">&lt;button&gt;</code>, <code class="bg-dark-700 px-1 rounded">&lt;label&gt;</code>).
+Prefer semantic elements (<code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">&lt;button&gt;</code>, <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">&lt;label&gt;</code>).
 ARIA is for filling gaps, not for replacing HTML.
 </p>
 

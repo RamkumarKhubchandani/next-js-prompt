@@ -22,7 +22,7 @@ export const day29 = {
 
 <h4 class="text-lg font-semibold text-cyan-400 mb-2">1. React Portal</h4>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">ReactDOM.createPortal(
+<pre class="text-gray-800 dark:text-cyan-300">ReactDOM.createPortal(
 children,
 document.getElementById('modal-root')
 )</pre>

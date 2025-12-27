@@ -14,14 +14,14 @@ export const day17 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">In React 18, if you wanted to pass a ref to a child component, you had to wrap it in <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">forwardRef</code>. It was boilerplate-heavy and messed up type inference.</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ React 18: The Old Way
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ React 18: The Old Way
 const MyInput = forwardRef((props, ref) => {
 return &lt;input ref={ref} {...props} /&gt;;
 });</pre>
 </div>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ React 19: Just use props!
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ React 19: Just use props!
 function MyInput({ ref, ...props }) {
 return &lt;input ref={ref} {...props} /&gt;;
 }</pre>
@@ -31,7 +31,7 @@ return &lt;input ref={ref} {...props} /&gt;;
 <p class="mb-4 text-gray-600 dark:text-light-300">Ref callbacks can now return a cleanup function, just like <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">useEffect</code>. This is huge for managing DOM listeners or third-party libraries attached to nodes.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">&lt;div ref={(node) => {
+<pre class="text-gray-800 dark:text-cyan-300">&lt;div ref={(node) => {
 // Mount logic
 const observer = new ResizeObserver(...);
 observer.observe(node);

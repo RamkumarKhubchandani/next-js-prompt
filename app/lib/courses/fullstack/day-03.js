@@ -39,7 +39,7 @@ GET /users/:id/orders
     </ul>
   </div>
   <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl text-gray-700 dark:text-light-200">
-    <p class="font-bold text-red-300 mb-2">Client Errors</p>
+    <p class="font-bold text-red-700 dark:text-red-300 mb-2">Client Errors</p>
     <ul class="list-disc list-inside space-y-1">
       <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">400</code> bad request / validation</li>
       <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">401</code> unauthenticated</li>

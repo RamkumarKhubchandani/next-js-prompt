@@ -13,12 +13,12 @@ CDK provides primitives (overlay, a11y, drag-drop) so you can build reusable com
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
     <p class="font-bold text-gray-900 dark:text-white mb-1">CDK</p>
     <p>Behavior primitives (no styling).</p>
-    <p class="text-light-400">Overlay, portals, a11y, virtual scroll.</p>
+    <p class="text-gray-600 dark:text-gray-400">Overlay, portals, a11y, virtual scroll.</p>
   </div>
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
     <p class="font-bold text-gray-900 dark:text-white mb-1">Material</p>
     <p>Pre-built components + theming.</p>
-    <p class="text-light-400">Buttons, dialogs, tables, menus.</p>
+    <p class="text-gray-600 dark:text-gray-400">Buttons, dialogs, tables, menus.</p>
   </div>
 </div>
 

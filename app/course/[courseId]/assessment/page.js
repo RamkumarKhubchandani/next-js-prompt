@@ -7,7 +7,7 @@ import { reactAssessment } from '../../../lib/assessments/react';
 import { htmlAssessment } from '../../../lib/assessments/html';
 import { cssAssessment } from '../../../lib/assessments/css';
 import { fullstackAssessment } from '../../../lib/assessments/fullstack';
-import { jsAssessment } from '../../../lib/assessments/javascript';
+import { javascriptAssessment } from '../../../lib/assessments/javascript';
 import { angularAssessment } from '../../../lib/assessments/angular';
 import { Trophy, AlertCircle, CheckCircle, XCircle, ArrowRight, Loader2, Timer, Award } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -19,7 +19,7 @@ const ASSESSMENTS = {
     html: htmlAssessment,
     css: cssAssessment,
     fullstack: fullstackAssessment,
-    javascript: jsAssessment,
+    javascript: javascriptAssessment,
     angular: angularAssessment,
 };
 

@@ -5,7 +5,7 @@ export const day34 = {
   content: `
 <div class="bg-gradient-to-r from-sky-500/20 to-indigo-500/20 border border-sky-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-sky-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will be able to <span class="text-yellow-300 font-bold">predict</span> and <span class="text-yellow-300 font-bold">explain</span> async ordering and prevent race-condition UI bugs.</p>
+  <p class="text-gray-600 dark:text-light-300">You will be able to <span class="text-yellow-700 dark:text-yellow-300 font-bold">predict</span> and <span class="text-yellow-700 dark:text-yellow-300 font-bold">explain</span> async ordering and prevent race-condition UI bugs.</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🧠 The Rule (Say It Out Loud)</h3>
@@ -16,8 +16,8 @@ export const day34 = {
 </ul>
 
 <div class="bg-gray-100 dark:bg-dark-900 border border-dark-700 p-4 rounded-xl text-gray-600 dark:text-light-300">
-  <p class="mb-2"><span class="text-yellow-300 font-bold">Beginner tip:</span> When you're confused, write the queue order down on paper.</p>
-  <p><span class="text-yellow-300 font-bold">Interview tip:</span> Always mention microtasks before timeouts.</p>
+  <p class="mb-2"><span class="text-yellow-700 dark:text-yellow-300 font-bold">Beginner tip:</span> When you're confused, write the queue order down on paper.</p>
+  <p><span class="text-yellow-700 dark:text-yellow-300 font-bold">Interview tip:</span> Always mention microtasks before timeouts.</p>
 </div>
             `,
   masteryChecklist: [

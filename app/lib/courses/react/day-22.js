@@ -15,7 +15,7 @@ export const day22 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">A "Headless" component provides <strong>logic and accessibility</strong> but <strong>no styles</strong>. It gives you full control over the look and feel.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// 1. Headless Hook (Logic + A11y)
+<pre class="text-gray-800 dark:text-cyan-300">// 1. Headless Hook (Logic + A11y)
 function useSwitch() {
 const [on, setOn] = useState(false);
 const toggle = () => setOn(!on);
@@ -40,7 +40,7 @@ return <button className={isOn ? 'bg-green' : 'bg-gray'} {...switchProps} />;
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎰 2. The Slots Pattern</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Instead of <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">children</code>, allow users to inject content into specific "slots" of your layout.</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 // Flexible Layout
 function PageLayout({ header, sidebar, content }) {

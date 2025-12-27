@@ -14,7 +14,7 @@ export const day19 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">React 19 passes data to custom elements as properties if they exist, and attributes if they don't. It also handles events correctly.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// React 19 passes complex data correctly!
+<pre class="text-gray-800 dark:text-cyan-300">// React 19 passes complex data correctly!
 &lt;my-calendar
 date={new Date()}
 events={eventList} 

@@ -15,7 +15,7 @@ export const day09 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">You find yourself writing the same logic in multiple components:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ Component A - Fetch user data
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ Component A - Fetch user data
 function ProfilePage() {
 const [user, setUser] = useState(null);
 const [loading, setLoading] = useState(true);
@@ -32,15 +32,15 @@ useEffect(() => {
 fetch('/api/user').then(r => r.json()).then(setUser).finally(() => setLoading(false));
 }, []);
 }</pre>
-<p class="text-red-300 text-sm mt-2">❌ Copy-paste = bugs, inconsistency, hard to maintain!</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">❌ Copy-paste = bugs, inconsistency, hard to maintain!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✅ The Solution: Custom Hook</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Extract the logic into a reusable function that starts with "use":</p>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ Custom Hook - Single source of truth!
-function <span class="text-yellow-300">useUser</span>() {
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ Custom Hook - Single source of truth!
+function <span class="text-yellow-700 dark:text-yellow-300">useUser</span>() {
 const [user, setUser] = useState(null);
 const [loading, setLoading] = useState(true);
 
@@ -56,11 +56,11 @@ return { user, loading };
 
 // Now in ANY component:
 function ProfilePage() {
-const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // One line! ✨
+const { user, loading } = <span class="text-yellow-700 dark:text-yellow-300">useUser()</span>;  // One line! ✨
 }
 
 function SettingsPage() {
-const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // Same hook, same behavior!
+const { user, loading } = <span class="text-yellow-700 dark:text-yellow-300">useUser()</span>;  // Same hook, same behavior!
 }</pre>
 </div>
 
@@ -70,26 +70,26 @@ const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // Sa
     <p class="text-gray-900 dark:text-white font-bold">Rule 1: Name must start with "use"</p>
     <p class="text-gray-600 dark:text-light-300 text-sm mt-2">This tells React it's a hook and enables linting rules</p>
     <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-sm">
-<span class="text-green-300">✅ useCounter, useFetch, useLocalStorage</span>
-<span class="text-red-300">❌ getCounter, fetchData, withStorage</span></pre>
+<span class="text-green-700 dark:text-green-300">✅ useCounter, useFetch, useLocalStorage</span>
+<span class="text-red-700 dark:text-red-300">❌ getCounter, fetchData, withStorage</span></pre>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-yellow-500">
     <p class="text-gray-900 dark:text-white font-bold">Rule 2: Only call hooks at the TOP LEVEL</p>
     <p class="text-gray-600 dark:text-light-300 text-sm mt-2">Never inside loops, conditions, or nested functions</p>
     <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-sm">
-<span class="text-red-300">❌ if (condition) { useState(...) }</span>
-<span class="text-red-300">❌ for (let i...) { useEffect(...) }</span>
-<span class="text-green-300">✅ const [state, setState] = useState(...);</span></pre>
+<span class="text-red-700 dark:text-red-300">❌ if (condition) { useState(...) }</span>
+<span class="text-red-700 dark:text-red-300">❌ for (let i...) { useEffect(...) }</span>
+<span class="text-green-700 dark:text-green-300">✅ const [state, setState] = useState(...);</span></pre>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-purple-500">
     <p class="text-gray-900 dark:text-white font-bold">Rule 3: Only call hooks from React functions</p>
     <p class="text-gray-600 dark:text-light-300 text-sm mt-2">Components or other custom hooks only</p>
     <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-sm">
-<span class="text-red-300">❌ Regular function: function helper() { useState(...) }</span>
-<span class="text-green-300">✅ Component: function MyComponent() { useState(...) }</span>
-<span class="text-green-300">✅ Custom Hook: function useMyHook() { useState(...) }</span></pre>
+<span class="text-red-700 dark:text-red-300">❌ Regular function: function helper() { useState(...) }</span>
+<span class="text-green-700 dark:text-green-300">✅ Component: function MyComponent() { useState(...) }</span>
+<span class="text-green-700 dark:text-green-300">✅ Custom Hook: function useMyHook() { useState(...) }</span></pre>
 </div>
 </div>
 
@@ -124,7 +124,7 @@ const { user, loading } = <span class="text-yellow-300">useUser()</span>;  // Sa
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Custom Hook vs Regular Function</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Feature</th>
             <th class="p-3">Custom Hook</th>

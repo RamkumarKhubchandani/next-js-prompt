@@ -32,7 +32,7 @@ and <span class="text-yellow-600 dark:text-yellow-400 font-bold">queues of callb
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) The Chain Rule (The Most Important Rule)</h3>
-<p class="mb-4"><code class="bg-dark-700 text-brand-primary px-1 rounded">.then()</code> always returns a <span class="text-yellow-600 dark:text-yellow-400 font-bold">NEW Promise</span>. This is why you can chain them.</p>
+<p class="mb-4"><code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">.then()</code> always returns a <span class="text-yellow-600 dark:text-yellow-400 font-bold">NEW Promise</span>. This is why you can chain them.</p>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 bg-white dark:bg-dark-800 p-4 rounded-lg">
 <li>Return a value? ➞ Next Promise <span class="text-yellow-600 dark:text-yellow-400 font-bold">Fulfilled</span>.</li>
 <li>Return a Promise? ➞ Next Promise <span class="text-yellow-600 dark:text-yellow-400 font-bold">waits</span> for it.</li>

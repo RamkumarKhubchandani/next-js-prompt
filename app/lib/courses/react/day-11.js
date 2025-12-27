@@ -15,7 +15,7 @@ export const day11 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Normally, a child renders inside its parent's DOM node. But sometimes you need to break free:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<p class="text-red-300 font-bold mb-2">❌ The Problem: CSS Inheritance & Overflow</p>
+<p class="text-red-700 dark:text-red-300 font-bold mb-2">❌ The Problem: CSS Inheritance & Overflow</p>
 <pre class="text-red-800 dark:text-red-200 text-sm mt-2">&lt;div style={{ overflow: 'hidden' }}&gt;
 &lt;Modal /&gt;  {/* Modal gets clipped! Can't escape parent's overflow */}
 &lt;/div&gt;
@@ -26,20 +26,20 @@ export const day11 = {
 </div>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<p class="text-green-300 font-bold mb-2">✅ The Solution: Portal</p>
-<pre class="text-green-800 dark:text-green-200 text-sm mt-2">import { createPortal } from 'react-dom';
+<p class="text-green-700 dark:text-green-300 font-bold mb-2">✅ The Solution: Portal</p>
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm mt-2">import { createPortal } from 'react-dom';
 
 function Modal({ children }) {
 // Render directly into document.body, not parent!
-return <span class="text-yellow-300">createPortal</span>(
+return <span class="text-yellow-700 dark:text-yellow-300">createPortal</span>(
 &lt;div className="modal"&gt;{children}&lt;/div&gt;,
-<span class="text-yellow-300">document.body</span>  // Target DOM node
+<span class="text-yellow-700 dark:text-yellow-300">document.body</span>  // Target DOM node
 );
 }</pre>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Portal Behavior</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 DOM Tree (Visual):              React Tree (Logical):
 ═══════════════════════         ═════════════════════════
@@ -80,7 +80,7 @@ A click in the Modal still bubbles to Parent in React.
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🛡️ Error Boundaries: Catch Component Crashes</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Without Error Boundaries, one component crash = entire app white screen!</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 Without Error Boundary:         With Error Boundary:
 ════════════════════════        ═══════════════════════════
@@ -100,22 +100,22 @@ Without Error Boundary:         With Error Boundary:
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚙️ Error Boundary Implementation</h3>
-<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
-<p class="text-yellow-300 font-bold mb-2">⚠️ Error Boundaries MUST be class components!</p>
-<p class="text-yellow-200 text-sm">There's no hook equivalent for getDerivedStateFromError or componentDidCatch (yet).</p>
+<div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-500/30 p-4 rounded-xl mb-6">
+<p class="text-yellow-700 dark:text-yellow-300 font-bold mb-2">⚠️ Error Boundaries MUST be class components!</p>
+<p class="text-yellow-800 dark:text-yellow-200 text-sm">There's no hook equivalent for getDerivedStateFromError or componentDidCatch (yet).</p>
 </div>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">class ErrorBoundary extends React.Component {
+<pre class="text-gray-800 dark:text-cyan-300">class ErrorBoundary extends React.Component {
 state = { hasError: false, error: null };
 
 // Called when child throws - update state to show fallback
-static <span class="text-yellow-300">getDerivedStateFromError</span>(error) {
+static <span class="text-yellow-700 dark:text-yellow-300">getDerivedStateFromError</span>(error) {
 return { hasError: true, error };
 }
 
 // Called after error - log to error service
-<span class="text-yellow-300">componentDidCatch</span>(error, errorInfo) {
+<span class="text-yellow-700 dark:text-yellow-300">componentDidCatch</span>(error, errorInfo) {
 logErrorToService(error, errorInfo);
 }
 

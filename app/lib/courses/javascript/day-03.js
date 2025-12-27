@@ -15,7 +15,7 @@ When you create an inner function, JS stores a hidden link to the variables it n
 This is why the inner function can still access variables after the outer function returned.
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-yellow-300 mb-6 overflow-x-auto shadow-inner">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-yellow-700 dark:text-yellow-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
 function outer() {
   let data = "Secret";

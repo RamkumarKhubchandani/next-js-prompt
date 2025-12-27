@@ -13,9 +13,9 @@ export const day22 = {
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Logs: Make Them Queryable</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
-Logs should be structured JSON so you can filter by <code class="bg-dark-700 px-1 rounded">requestId</code>,
-<code class="bg-dark-700 px-1 rounded">userId</code>, <code class="bg-dark-700 px-1 rounded">route</code>,
-and <code class="bg-dark-700 px-1 rounded">errorCode</code>.
+Logs should be structured JSON so you can filter by <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">requestId</code>,
+<code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">userId</code>, <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">route</code>,
+and <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">errorCode</code>.
 </p>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) The Golden Signals</h3>

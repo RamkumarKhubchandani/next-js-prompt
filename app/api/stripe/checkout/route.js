@@ -1,13 +1,20 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '../../../lib/auth';
 
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Initialize Stripe (only if secret key is available)
+const stripe = process.env.STRIPE_SECRET_KEY
+    ? new Stripe(process.env.STRIPE_SECRET_KEY)
+    : null;
 
 export async function POST(req) {
     try {
+        // Check if Stripe is configured
+        if (!stripe) {
+            return NextResponse.json({ error: 'Payment system not configured' }, { status: 503 });
+        }
+
         const session = await getServerSession(authOptions);
 
         if (!session?.user) {

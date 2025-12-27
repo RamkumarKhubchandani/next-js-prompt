@@ -22,18 +22,18 @@ export const day03 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Props are <span class="text-yellow-600 dark:text-yellow-400 font-bold">read-only</span> values passed from parent to child:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// Parent passes data DOWN via props
-&lt;UserCard <span class="text-yellow-300">name="John"</span> <span class="text-yellow-300">age={25}</span> /&gt;
+<pre class="text-gray-800 dark:text-cyan-300">// Parent passes data DOWN via props
+&lt;UserCard <span class="text-yellow-700 dark:text-yellow-300">name="John"</span> <span class="text-yellow-700 dark:text-yellow-300">age={25}</span> /&gt;
 
 // Child RECEIVES props (read-only!)
-function UserCard(<span class="text-yellow-300">{ name, age }</span>) {
+function UserCard(<span class="text-yellow-700 dark:text-yellow-300">{ name, age }</span>) {
 return &lt;p&gt;{name} is {age} years old&lt;/p&gt;;
 }</pre>
 </div>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<p class="text-red-300 font-bold">⚠️ NEVER modify props!</p>
-<pre class="text-red-800 dark:text-red-200 text-sm mt-2">function Child({ name }) {
+<p class="text-red-700 dark:text-red-300 font-bold">⚠️ NEVER modify props!</p>
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm mt-2">function Child({ name }) {
 name = "Bob";  // ❌ WRONG! Props are read-only!
 }</pre>
 </div>
@@ -42,13 +42,13 @@ name = "Bob";  // ❌ WRONG! Props are read-only!
 <p class="mb-4 text-gray-600 dark:text-light-300">State is data that the component <span class="text-yellow-600 dark:text-yellow-400 font-bold">owns and can change</span>:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">function Counter() {
+<pre class="text-gray-800 dark:text-cyan-300">function Counter() {
 // 👇 State: internal memory that can change
-const [<span class="text-yellow-300">count</span>, <span class="text-green-300">setCount</span>] = React.useState(0);
+const [<span class="text-yellow-700 dark:text-yellow-300">count</span>, <span class="text-green-700 dark:text-green-300">setCount</span>] = React.useState(0);
 
 return (
-&lt;button onClick={() => <span class="text-green-300">setCount</span>(count + 1)}&gt;
-  Clicked {<span class="text-yellow-300">count</span>} times
+&lt;button onClick={() => <span class="text-green-700 dark:text-green-300">setCount</span>(count + 1)}&gt;
+  Clicked {<span class="text-yellow-700 dark:text-yellow-300">count</span>} times
 &lt;/button&gt;
 );
 }</pre>
@@ -57,7 +57,7 @@ return (
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔄 One-Way Data Flow</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Data flows DOWN. Events flow UP. This is React's golden rule!</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 ┌─────────────────────────────────────┐
 │           PARENT                    │
@@ -85,7 +85,7 @@ return (
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔑 Quick Reference</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Feature</th>
             <th class="p-3">Props</th>

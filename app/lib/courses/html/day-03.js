@@ -55,9 +55,9 @@ You’ll build a “Profile settings” form: name, email, notification preferen
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints (auto-check)</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><span class="text-blue-300 font-bold">Label test:</span> clicking label moves focus to the input.</li>
-  <li><span class="text-blue-300 font-bold">Keyboard:</span> tab order is logical and all focus is visible.</li>
-  <li><span class="text-blue-300 font-bold">Semantics:</span> radios grouped with fieldset/legend.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Label test:</span> clicking label moves focus to the input.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Keyboard:</span> tab order is logical and all focus is visible.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Semantics:</span> radios grouped with fieldset/legend.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary</h3>

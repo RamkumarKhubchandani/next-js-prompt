@@ -44,9 +44,9 @@ Users get stuck when interactive elements are built with the wrong tags. The rul
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><span class="text-blue-300 font-bold">Keyboard:</span> Can you navigate all interactive items in order?</li>
-  <li><span class="text-blue-300 font-bold">Semantics:</span> Links navigate; buttons act.</li>
-  <li><span class="text-blue-300 font-bold">A11y:</span> Focus is visible with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Keyboard:</span> Can you navigate all interactive items in order?</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Semantics:</span> Links navigate; buttons act.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">A11y:</span> Focus is visible with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>

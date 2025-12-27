@@ -5,7 +5,7 @@ export const day37 = {
   content: `
 <div class="bg-gradient-to-r from-violet-500/20 to-purple-500/20 border border-violet-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-violet-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will build a <span class="text-yellow-300 font-bold">priority queue</span> and a <span class="text-yellow-300 font-bold">scheduler</span> that runs work in small chunks.</p>
+  <p class="text-gray-600 dark:text-light-300">You will build a <span class="text-yellow-700 dark:text-yellow-300 font-bold">priority queue</span> and a <span class="text-yellow-700 dark:text-yellow-300 font-bold">scheduler</span> that runs work in small chunks.</p>
 </div>
             `,
   masteryChecklist: [

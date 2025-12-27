@@ -5,7 +5,7 @@ export const day36 = {
   content: `
 <div class="bg-gradient-to-r from-cyan-500/20 to-sky-500/20 border border-cyan-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-cyan-700 dark:text-cyan-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will write an <span class="text-yellow-300 font-bold">async generator</span>, process it with <span class="text-yellow-300 font-bold">for-await</span>, and build an <span class="text-yellow-300 font-bold">asyncMap</span> pipeline.</p>
+  <p class="text-gray-600 dark:text-light-300">You will write an <span class="text-yellow-700 dark:text-yellow-300 font-bold">async generator</span>, process it with <span class="text-yellow-700 dark:text-yellow-300 font-bold">for-await</span>, and build an <span class="text-yellow-700 dark:text-yellow-300 font-bold">asyncMap</span> pipeline.</p>
 </div>
             `,
   masteryChecklist: [

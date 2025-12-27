@@ -14,7 +14,7 @@ export const day06 = {
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The Handshake: HTTP → Upgrade → Persistent Connection</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
 WebSockets begin as an HTTP request, then the protocol upgrades to a persistent bi-directional channel.
-This is why proxies/load balancers must support <code class="bg-dark-700 px-1 rounded">Upgrade</code> headers.
+This is why proxies/load balancers must support <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">Upgrade</code> headers.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">

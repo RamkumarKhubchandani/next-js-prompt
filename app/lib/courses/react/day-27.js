@@ -20,7 +20,7 @@ export const day27 = {
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ Setup Steps</h3>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300"># Install dependencies
+<pre class="text-gray-800 dark:text-cyan-300"># Install dependencies
 npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
 
 # Add to vite.config.js

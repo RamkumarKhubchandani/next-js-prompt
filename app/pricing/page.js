@@ -66,29 +66,45 @@ export default function PricingPage() {
         }
     ];
 
-    const handleSubscribe = (planId) => {
+    const handleSubscribe = async (planId) => {
         if (!session) {
             router.push('/login?callbackUrl=/pricing');
             return;
         }
         if (planId === 'free') return;
-        
-        // Navigate to Checkout
-        router.push(`/checkout?plan=${planId}`);
+
+        setLoading(true);
+        try {
+            const res = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan: planId }),
+            });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Stripe checkout failed', data);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setLoading(false);
+        }
     };
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-dark-900 text-light-100">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                    <motion.h1 
+                    <motion.h1
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl md:text-5xl font-bold mb-6"
                     >
                         Invest in your <span className="text-brand-primary">Future</span>
                     </motion.h1>
-                    <motion.p 
+                    <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
@@ -105,11 +121,10 @@ export default function PricingPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className={`relative p-8 rounded-2xl border ${
-                                plan.highlight 
-                                    ? 'bg-dark-800 border-brand-primary ring-1 ring-brand-primary shadow-2xl shadow-brand-primary/20' 
+                            className={`relative p-8 rounded-2xl border ${plan.highlight
+                                    ? 'bg-dark-800 border-brand-primary ring-1 ring-brand-primary shadow-2xl shadow-brand-primary/20'
                                     : 'bg-dark-800 border-dark-700 hover:border-dark-600'
-                            } flex flex-col`}
+                                } flex flex-col`}
                         >
                             {plan.highlight && (
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-primary text-dark-900 px-4 py-1 rounded-full text-sm font-bold shadow-lg">
@@ -119,7 +134,7 @@ export default function PricingPage() {
 
                             <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                             <p className="text-gray-400 text-sm mb-6 h-10">{plan.description}</p>
-                            
+
                             <div className="mb-6">
                                 <span className="text-4xl font-bold text-white">${plan.price}</span>
                                 <span className="text-gray-400">/{plan.period}</span>
@@ -128,13 +143,12 @@ export default function PricingPage() {
                             <button
                                 onClick={() => handleSubscribe(plan.id)}
                                 disabled={plan.active || (plan.id === 'free' && session?.user?.plan !== 'free')}
-                                className={`w-full py-3 rounded-xl font-bold mb-8 transition-all flex items-center justify-center gap-2 ${
-                                    plan.active 
+                                className={`w-full py-3 rounded-xl font-bold mb-8 transition-all flex items-center justify-center gap-2 ${plan.active
                                         ? 'bg-green-600/20 text-green-500 cursor-default'
-                                        : plan.highlight 
+                                        : plan.highlight
                                             ? 'bg-brand-primary text-dark-900 hover:opacity-90 shadow-lg hover:shadow-brand-primary/30'
                                             : 'bg-dark-700 text-white hover:bg-dark-600'
-                                }`}
+                                    }`}
                             >
                                 {plan.active ? (
                                     <><Check size={18} /> Current Plan</>

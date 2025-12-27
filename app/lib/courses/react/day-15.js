@@ -15,7 +15,7 @@ export const day15 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Traditional React apps send ALL component JS to the browser:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ TRADITIONAL CLIENT COMPONENTS
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ TRADITIONAL CLIENT COMPONENTS
 // Every component = More JS to download
 
 function BlogPost({ id }) {
@@ -41,7 +41,7 @@ return &lt;article&gt;{post?.content}&lt;/article&gt;;
 <p class="mb-4 text-gray-600 dark:text-light-300">Components that run on the server and send ONLY HTML to the client:</p>
 
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// ✅ SERVER COMPONENT (Default in Next.js App Router)
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// ✅ SERVER COMPONENT (Default in Next.js App Router)
 // Zero JavaScript sent to client!
 
 async function BlogPost({ id }) {
@@ -59,7 +59,7 @@ return &lt;article&gt;{post.content}&lt;/article&gt;;
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🌊 The Waterline: Server vs Client</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 ┌─────────────────────────────────────────────────────────┐
 │                    🖥️ SERVER                           │
@@ -92,7 +92,7 @@ return &lt;article&gt;{post.content}&lt;/article&gt;;
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📜 The "use client" Directive</h3>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300"><span class="text-yellow-300">"use client"</span>  // This MUST be the first line!
+<pre class="text-gray-800 dark:text-cyan-300"><span class="text-yellow-700 dark:text-yellow-300">"use client"</span>  // This MUST be the first line!
 
 import { useState } from 'react';
 
@@ -111,7 +111,7 @@ return (
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 When to Use Server vs Client</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Feature</th>
             <th class="p-3">Server Component</th>

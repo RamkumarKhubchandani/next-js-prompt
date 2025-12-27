@@ -6,7 +6,7 @@ export const day19 = {
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>RBAC (roles) vs ABAC (attributes) vs ACLs (per-resource permissions).</li>
-  <li>How to avoid the #1 bug: <span class="text-red-300 font-bold">IDOR</span> (Insecure Direct Object Reference).</li>
+  <li>How to avoid the #1 bug: <span class="text-red-700 dark:text-red-300 font-bold">IDOR</span> (Insecure Direct Object Reference).</li>
   <li>Where to enforce authz: route middleware + service layer.</li>
   <li>How to model permissions and keep them maintainable.</li>
 </ul>

@@ -15,7 +15,7 @@ export const day07 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Every time a component re-renders, ALL code inside it runs again:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">function ProductList({ products }) {
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">function ProductList({ products }) {
 // ❌ This runs on EVERY render, even if products didn't change!
 const sortedProducts = products
 .filter(p => p.inStock)
@@ -24,17 +24,17 @@ const sortedProducts = products
 
 return sortedProducts.map(...);
 }</pre>
-<p class="text-red-300 text-sm mt-2">If parent re-renders 100 times, this calculation runs 100 times! 🐌</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">If parent re-renders 100 times, this calculation runs 100 times! 🐌</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🧮 Solution 1: useMemo - Cache Calculated Values</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">useMemo remembers the result and only recalculates when dependencies change:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">const memoizedValue = useMemo(() => {
+<pre class="text-gray-800 dark:text-cyan-300">const memoizedValue = useMemo(() => {
 // Expensive calculation here
 return expensiveCalculation(a, b);
-}, <span class="text-yellow-300">[a, b]</span>); // Only recalculates when a or b changes!
+}, <span class="text-yellow-700 dark:text-yellow-300">[a, b]</span>); // Only recalculates when a or b changes!
 
 // ═══════════════════════════════════════════════════
 // HOW IT WORKS:
@@ -49,7 +49,7 @@ return expensiveCalculation(a, b);
 <p class="mb-4 text-gray-600 dark:text-light-300">In JavaScript, functions are objects. A new function is created on every render:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// ❌ WITHOUT useCallback:
+<pre class="text-gray-800 dark:text-cyan-300">// ❌ WITHOUT useCallback:
 function Parent() {
 const handleClick = () => { ... };
 // handleClick is a NEW function on every render!
@@ -59,9 +59,9 @@ return &lt;Child onClick={handleClick} /&gt;;
 
 // ✅ WITH useCallback:
 function Parent() {
-const handleClick = <span class="text-yellow-300">useCallback</span>(() => {
+const handleClick = <span class="text-yellow-700 dark:text-yellow-300">useCallback</span>(() => {
 console.log('clicked');
-}, <span class="text-yellow-300">[]</span>); // Same function reference every render!
+}, <span class="text-yellow-700 dark:text-yellow-300">[]</span>); // Same function reference every render!
 
 return &lt;Child onClick={handleClick} /&gt;;
 }</pre>
@@ -70,7 +70,7 @@ return &lt;Child onClick={handleClick} /&gt;;
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 The Referential Equality Problem</h3>
 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl mb-6">
 <p class="text-blue-800 dark:text-blue-200 mb-2">In JavaScript, objects/arrays/functions are compared by <span class="text-yellow-600 dark:text-yellow-400 font-bold">reference</span>, not value:</p>
-<pre class="text-blue-300 text-sm bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2">
+<pre class="text-blue-700 dark:text-blue-300 text-sm bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2">
 {} === {}              // false (different references!)
 [] === []              // false
 (() => {}) === (() => {}) // false
@@ -84,7 +84,7 @@ obj === obj            // true (same reference!)
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Visual: When to Use What</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Scenario</th>
             <th class="p-3">Hook</th>
@@ -117,14 +117,14 @@ obj === obj            // true (same reference!)
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Don't Over-Optimize!</h3>
-<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
-<p class="text-yellow-300 font-bold mb-2">🛑 Memoization has a cost!</p>
-<ul class="text-yellow-200 text-sm space-y-1">
+<div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-500/30 p-4 rounded-xl mb-6">
+<p class="text-yellow-700 dark:text-yellow-300 font-bold mb-2">🛑 Memoization has a cost!</p>
+<ul class="text-yellow-800 dark:text-yellow-200 text-sm space-y-1">
     <li>• React must store the cached value in memory</li>
     <li>• React must compare dependencies on every render</li>
     <li>• For simple calculations, this overhead is MORE than just recalculating!</li>
 </ul>
-<p class="text-yellow-300 mt-3 font-bold">Rule: Profile first, optimize second. Don't guess!</p>
+<p class="text-yellow-700 dark:text-yellow-300 mt-3 font-bold">Rule: Profile first, optimize second. Don't guess!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">💡 Pro Tips</h3>

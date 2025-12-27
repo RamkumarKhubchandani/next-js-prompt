@@ -19,7 +19,7 @@ export const day30 = {
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔀 useTransition</h3>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">const [isPending, startTransition] = useTransition();
+<pre class="text-gray-800 dark:text-cyan-300">const [isPending, startTransition] = useTransition();
 
 // Urgent: Update input immediately
 setQuery(input);
@@ -32,7 +32,7 @@ setFilteredResults(expensiveFilter(input));
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⏳ useDeferredValue</h3>
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">const deferredQuery = useDeferredValue(query);
+<pre class="text-gray-800 dark:text-cyan-300">const deferredQuery = useDeferredValue(query);
 
 // query updates immediately (typing stays responsive)
 // deferredQuery lags behind (expensive render can wait)</pre>

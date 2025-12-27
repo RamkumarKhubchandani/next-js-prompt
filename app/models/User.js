@@ -40,19 +40,20 @@ const userSchema = new mongoose.Schema({
     // Subscription Details
     plan: {
         type: String,
-        enum: ['free', 'pro_weekly', 'pro_monthly', 'pro_yearly'],
+        enum: ['free', 'pro_trial', 'pro_weekly', 'pro_monthly', 'pro_yearly'],
         default: 'free'
     },
     subscriptionStartDate: { type: Date },
     subscriptionEndDate: { type: Date },
-    
+    trialEndsAt: { type: Date },
+
     // Pro Learning Path
     learningPath: {
         type: String,
         enum: ['none', 'html', 'css', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python'],
         default: 'none'
     },
-    
+
     // Gamification
     xp: {
         type: Number,
@@ -85,6 +86,13 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed,
         default: {}
     },
+    // Certificates
+    certificates: [{
+        courseId: { type: String, required: true }, // e.g., 'react', 'javascript'
+        certificateId: { type: String, required: true }, // Unique ID (UUID)
+        score: { type: Number, required: true }, // Percentage (0-100)
+        earnedAt: { type: Date, default: Date.now }
+    }],
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

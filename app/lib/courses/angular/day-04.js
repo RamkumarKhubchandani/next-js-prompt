@@ -35,17 +35,17 @@ User types → debounce → distinct → switchMap(API) → render result
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
     <p class="font-bold text-gray-900 dark:text-white mb-1">switchMap</p>
     <p>Latest wins. Cancels previous.</p>
-    <p class="text-light-400">Search, typeahead, route changes.</p>
+    <p class="text-gray-600 dark:text-gray-400">Search, typeahead, route changes.</p>
   </div>
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
     <p class="font-bold text-gray-900 dark:text-white mb-1">mergeMap</p>
     <p>Parallel. Order not guaranteed.</p>
-    <p class="text-light-400">Fire-and-forget tasks.</p>
+    <p class="text-gray-600 dark:text-gray-400">Fire-and-forget tasks.</p>
   </div>
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
     <p class="font-bold text-gray-900 dark:text-white mb-1">concatMap</p>
     <p>Queues. Preserves order.</p>
-    <p class="text-light-400">Sequential workflows.</p>
+    <p class="text-gray-600 dark:text-gray-400">Sequential workflows.</p>
   </div>
 </div>
             `,

@@ -20,17 +20,52 @@ sayHi();
 var a = 10;
 function sayHi() { console.log("hi"); }
     </code></pre></div>
-    <p class="text-light-400">Answer: you’ll confirm in the Live Lab below.</p>
+    <p class="text-gray-600 dark:text-gray-400">Answer: you’ll confirm in the Live Lab below.</p>
   </div>
 </details>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The Compilation Process (JIT)</h3>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Kitchen" Mental Model (How JS Works)</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Imagine a professional kitchen.
+</p>
+<div class="grid md:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">The Recipe (Source Code)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      This is the code you write. It's just text. It does nothing until someone reads and executes it.
+    </p>
+  </div>
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">The Chef (The Engine / V8)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      The Chef (V8) reads your recipe. They don't just read it line-by-line; they <strong>scan ahead</strong> (parsing), <strong>prep ingredients</strong> (memory creation), and then <strong>cook</strong> (execution).
+    </p>
+  </div>
+</div>
+
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The Ingredients (The 7 Primitives)</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300">
+Before we cook, you must know your ingredients. In JS, everything is either an <strong>Object</strong> or one of these 7 <strong>Primitives</strong> (immutable values):
+</p>
+<div class="bg-gray-100 dark:bg-dark-900 p-5 rounded-xl border border-gray-200 dark:border-dark-600 mb-8">
+  <ul class="grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-light-200">
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">string</span>: "hello"</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">number</span>: 42, 3.14</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">boolean</span>: true, false</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">null</span>: intentional empty</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">undefined</span>: unintentional empty</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">symbol</span>: unique ID</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">bigint</span>: huge numbers</li>
+  </ul>
+</div>
+
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) The Compilation Process (JIT)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
 JavaScript is <span class="text-yellow-600 dark:text-yellow-400 font-bold">Just‑In‑Time compiled</span>.
 V8 doesn’t naively “read a line and execute it.” It parses, builds an AST, and executes bytecode, then optimizes hot paths.
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-blue-300 mb-6 overflow-x-auto shadow-inner">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-blue-700 dark:text-blue-300 mb-6 overflow-x-auto shadow-inner">
 <pre>
 [ Source Code ] 
   │
@@ -63,6 +98,44 @@ V8 doesn’t naively “read a line and execute it.” It parses, builds an AST,
   </ul>
 </div>
 
+<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
+  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: The "Hidden Class" Cost
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Every time you add a property to an object, V8 creates a new "Hidden Class" (Shape). If you create objects inconsistently, V8 gives up on optimization.
+  </p>
+  
+  <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+    <div class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 rounded-lg">
+      <p class="text-red-700 dark:text-red-300 font-bold mb-2">❌ Slow (Polymorphic)</p>
+      <div class="text-gray-600 dark:text-light-300">
+        const a = {};<br/>
+        a.x = 1; <span class="text-gray-400">// Shape A</span><br/>
+        const b = {};<br/>
+        b.y = 2; <span class="text-gray-400">// Shape B</span><br/>
+        b.x = 1; <span class="text-gray-400">// Shape C</span>
+      </div>
+    </div>
+    <div class="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 rounded-lg">
+      <p class="text-green-700 dark:text-green-300 font-bold mb-2">✅ Fast (Monomorphic)</p>
+      <div class="text-gray-600 dark:text-light-300">
+        class Point {<br/>
+        &nbsp;&nbsp;constructor(x, y) {<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;this.x = x;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;this.y = y;<br/>
+        &nbsp;&nbsp;}<br/>
+        }<br/>
+        <span class="text-gray-400">// Always same shape</span>
+      </div>
+    </div>
+  </div>
+  
+  <p class="mt-4 text-xs text-purple-800 dark:text-purple-200 font-bold">
+    Business Impact: In Serverless (AWS Lambda), slow startup time = higher bills. Optimized V8 code warms up 30-50% faster.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Execution Contexts: Two Phases (Memory → Execution)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
 When a script (or a function) runs, JS creates an <span class="text-yellow-600 dark:text-yellow-400 font-bold">execution context</span>.
@@ -72,7 +145,7 @@ Each context is created in two phases:
 <div class="grid md:grid-cols-2 gap-6 mb-6">
 <div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-600">
     <h4 class="font-bold text-brand-primary mb-2">Phase 1: Memory Creation</h4>
-    <p class="text-sm text-light-400">The engine scans for declarations.</p>
+    <p class="text-sm text-gray-600 dark:text-gray-400">The engine scans for declarations.</p>
     <ul class="list-disc list-inside text-sm mt-2 space-y-1">
         <li>Allocates memory for <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">var</code> (sets to undefined).</li>
         <li>Allocates memory for <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">function</code> (stores code).</li>
@@ -81,7 +154,7 @@ Each context is created in two phases:
 </div>
 <div class="bg-white dark:bg-dark-800 p-4 rounded-lg border border-gray-200 dark:border-dark-600">
     <h4 class="font-bold text-green-600 dark:text-green-400 mb-2">Phase 2: Execution</h4>
-    <p class="text-sm text-light-400">The engine runs line-by-line.</p>
+    <p class="text-sm text-gray-600 dark:text-gray-400">The engine runs line-by-line.</p>
     <ul class="list-disc list-inside text-sm mt-2 space-y-1">
         <li>Assigns values (<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">a = 10</code>).</li>
         <li>Executes function calls.</li>
@@ -110,7 +183,7 @@ Different declaration types allocate memory differently:
       TDZ exists to prevent you from reading a variable before it’s initialized.
       That sounds strict—but it saves you from subtle bugs where code “works” with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">undefined</code>.
     </p>
-    <p class="text-light-400">
+    <p class="text-gray-600 dark:text-gray-400">
       In other words: TDZ turns “silent wrong output” into a loud error at the exact line.
     </p>
   </div>

@@ -20,7 +20,7 @@ future maintainability. When your HTML is right, your CSS becomes easier.
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Micro-example: div soup vs. semantics</h3>
 <div class="grid md:grid-cols-2 gap-6 mb-6">
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
-    <p class="text-sm font-bold text-red-300 mb-2">❌ Div soup</p>
+    <p class="text-sm font-bold text-red-700 dark:text-red-300 mb-2">❌ Div soup</p>
     <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;div class="top"&gt;
   &lt;div class="nav"&gt;...&lt;/div&gt;
 &lt;/div&gt;
@@ -50,9 +50,9 @@ future maintainability. When your HTML is right, your CSS becomes easier.
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints (auto-check)</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><span class="text-blue-300 font-bold">Visual:</span> Does the page have a clear header, main content, and footer?</li>
-  <li><span class="text-blue-300 font-bold">DevTools:</span> Can you find <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;header&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;main&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;footer&gt;</code>?</li>
-  <li><span class="text-blue-300 font-bold">Keyboard:</span> Can you Tab to the CTA button and see a visible focus ring?</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Visual:</span> Does the page have a clear header, main content, and footer?</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">DevTools:</span> Can you find <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;header&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;main&gt;</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;footer&gt;</code>?</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Keyboard:</span> Can you Tab to the CTA button and see a visible focus ring?</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary</h3>

@@ -3,10 +3,42 @@ export const day01 = {
   title: "Components & Templates (Bindings, Inputs/Outputs, Control Flow)",
   intro: "Angular is a component framework. Learn the template syntax, bindings, and the modern control flow style.",
   content: `
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Blueprint" Mental Model</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300">
+Think of an Angular Component as a building.
+</p>
+<div class="grid md:grid-cols-2 gap-6 mb-8">
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-brand-primary mb-2">The Class (The Logic)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      The TypeScript class is the "smart" part. It holds the data (residents) and methods (rules). But a class alone is just a script.
+    </p>
+  </div>
+  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
+    <h4 class="font-bold text-red-600 dark:text-red-400 mb-2">The Decorator (The Permit)</h4>
+    <p class="text-sm text-gray-600 dark:text-light-300">
+      The <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">@Component</code> decorator is the building permit. It tells Angular: "This isn't just a script; it's a UI Component with a template (HTML) and styles (CSS)."
+    </p>
+  </div>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Why Enterprise Loves Angular
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    React is flexible; Angular is strict. In a team of 100 developers, flexibility is chaos.
+  </p>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Angular forces everyone to write code the same way (Modules, Services, Dependency Injection).
+    This <strong>opinionated structure</strong> is why banks and large corps choose it. It scales socially, not just technically.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Property binding vs event binding vs two-way binding.</li>
-  <li><code class="bg-dark-700 px-1 rounded">@Input</code> and <code class="bg-dark-700 px-1 rounded">@Output</code> communication.</li>
+  <li><code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">@Input</code> and <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">@Output</code> communication.</li>
   <li>Template control flow (<span class="text-yellow-600 dark:text-yellow-400 font-bold">if/for</span> style) + trackBy mindset.</li>
 </ul>
 

@@ -15,7 +15,7 @@ export const day14 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Rendering thousands of elements destroys performance:</p>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<pre class="text-red-800 dark:text-red-200 text-sm">// ❌ Rendering 10,000 items directly
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-800 dark:text-red-200 text-sm">// ❌ Rendering 10,000 items directly
 function ProductList({ products }) {
 return (
 &lt;div&gt;
@@ -31,13 +31,13 @@ return (
 // • Browser freezes during initial render
 // • Scrolling is janky
 // • Memory usage skyrockets</pre>
-<p class="text-red-300 text-sm mt-2">❌ Each DOM node costs memory and painting time!</p>
+<p class="text-red-700 dark:text-red-300 text-sm mt-2">❌ Each DOM node costs memory and painting time!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">✅ The Solution: Virtualization (Windowing)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Only render items that are visible in the viewport:</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 REGULAR LIST (10,000 items):        VIRTUALIZED LIST:
 ════════════════════════════        ══════════════════════════
@@ -64,22 +64,22 @@ Total DOM nodes: 10,000 🐌             &lt;div style={{height: '9700px'}} /&gt
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl">
     <p class="text-brand-primary font-bold mb-2">react-window</p>
     <p class="text-gray-600 dark:text-light-300 text-sm">Lightweight, most popular choice</p>
-    <p class="text-light-400 text-xs mt-1">~6KB gzipped</p>
+    <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">~6KB gzipped</p>
 </div>
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl">
     <p class="text-brand-primary font-bold mb-2">react-virtualized</p>
     <p class="text-gray-600 dark:text-light-300 text-sm">Feature-rich, more complex</p>
-    <p class="text-light-400 text-xs mt-1">~35KB gzipped</p>
+    <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">~35KB gzipped</p>
 </div>
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl">
     <p class="text-brand-primary font-bold mb-2">@tanstack/react-virtual</p>
     <p class="text-gray-600 dark:text-light-300 text-sm">Headless, framework agnostic</p>
-    <p class="text-light-400 text-xs mt-1">~3KB gzipped</p>
+    <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">~3KB gzipped</p>
 </div>
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl">
     <p class="text-brand-primary font-bold mb-2">react-virtuoso</p>
     <p class="text-gray-600 dark:text-light-300 text-sm">Auto height, grouped items</p>
-    <p class="text-light-400 text-xs mt-1">~15KB gzipped</p>
+    <p class="text-gray-600 dark:text-gray-400 text-xs mt-1">~15KB gzipped</p>
 </div>
 </div>
 
@@ -87,7 +87,7 @@ Total DOM nodes: 10,000 🐌             &lt;div style={{height: '9700px'}} /&gt
 <p class="mb-4 text-gray-600 dark:text-light-300">Find performance bottlenecks without guessing:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">How to use:
+<pre class="text-gray-800 dark:text-cyan-300">How to use:
 1. Open React DevTools → "Profiler" tab
 2. Click "Record" 🔴
 3. Interact with your app
@@ -96,16 +96,16 @@ Total DOM nodes: 10,000 🐌             &lt;div style={{height: '9700px'}} /&gt
 
 What to look for:
 ───────────────────────────────
-<span class="text-yellow-300">• Long bars</span> = slow components (optimize these!)
-<span class="text-yellow-300">• Many re-renders</span> = missing memoization
-<span class="text-yellow-300">• "Why did this render?"</span> = enable in settings
+<span class="text-yellow-700 dark:text-yellow-300">• Long bars</span> = slow components (optimize these!)
+<span class="text-yellow-700 dark:text-yellow-300">• Many re-renders</span> = missing memoization
+<span class="text-yellow-700 dark:text-yellow-300">• "Why did this render?"</span> = enable in settings
 </pre>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Performance Optimization Checklist</h3>
 <div class="overflow-x-auto mb-6">
 <table class="w-full text-sm text-left">
-    <thead class="bg-dark-700 text-gray-700 dark:text-light-200">
+    <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-light-200">
         <tr>
             <th class="p-3 rounded-tl-lg">Issue</th>
             <th class="p-3">Solution</th>
@@ -143,15 +143,15 @@ What to look for:
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Don't Optimize Prematurely!</h3>
-<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
-<p class="text-yellow-300 font-bold mb-2">🎯 Optimization workflow:</p>
-<ol class="text-yellow-200 text-sm space-y-1 list-decimal list-inside">
+<div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-500/30 p-4 rounded-xl mb-6">
+<p class="text-yellow-700 dark:text-yellow-300 font-bold mb-2">🎯 Optimization workflow:</p>
+<ol class="text-yellow-800 dark:text-yellow-200 text-sm space-y-1 list-decimal list-inside">
     <li>Notice a performance problem (sluggish UI)</li>
     <li>Profile to find the actual bottleneck</li>
     <li>Apply targeted optimization</li>
     <li>Measure improvement</li>
 </ol>
-<p class="text-yellow-300 mt-2 text-sm">Never add useMemo/useCallback "just in case"!</p>
+<p class="text-yellow-700 dark:text-yellow-300 mt-2 text-sm">Never add useMemo/useCallback "just in case"!</p>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">💡 Pro Tips</h3>

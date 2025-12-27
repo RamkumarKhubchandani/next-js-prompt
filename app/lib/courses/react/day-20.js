@@ -10,11 +10,40 @@ export const day20 = {
 <li>Conditional Context usage</li>
 </ul>
 
+<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
+  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">⚔️</span> War Story: The Infinite Loop
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    A junior dev once wrote: <code>useEffect(() => setCount(count + 1))</code> without a dependency array.
+  </p>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    <strong>The Result:</strong> The component rendered, triggered the effect, updated state, triggered a re-render, triggered the effect... infinite loop.
+    This crashed the user's browser tab instantly.
+  </p>
+  <p class="text-xs text-purple-800 dark:text-purple-200 font-bold">
+    Lesson: Always check your dependency arrays. If you update state inside an effect, ensure the condition is stable.
+  </p>
+</div>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: The Cost of a Render
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    React is fast, but not magic. Every render runs JavaScript.
+    If your component takes 2ms to render and you render a list of 10,000 items, that's 20 seconds of frozen UI.
+  </p>
+  <p class="text-sm text-gray-700 dark:text-light-200">
+    <strong>Virtualization</strong> (rendering only what's visible) is the Architect's solution to big lists.
+  </p>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔮 1. use(Context)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300"><code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">useContext</code> must be at the top level. <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">use(Context)</code> can be inside loops and conditionals!</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">if (isDark) {
+<pre class="text-gray-800 dark:text-cyan-300">if (isDark) {
 // ✅ Allowed with use()
 const theme = use(ThemeContext);
 return &lt;DarkButton theme={theme} /&gt;;

@@ -19,7 +19,7 @@ It shines when many clients (web/mobile) need different shapes of the same data.
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Resolvers + Context</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">
-Resolvers are functions that fetch data for schema fields. <code class="bg-dark-700 px-1 rounded">context</code> carries auth/session,
+Resolvers are functions that fetch data for schema fields. <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">context</code> carries auth/session,
 DB clients, and request-scoped utilities (like DataLoader).
 </p>
 

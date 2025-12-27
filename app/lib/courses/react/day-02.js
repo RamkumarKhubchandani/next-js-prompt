@@ -13,12 +13,12 @@ export const day02 = {
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📚 The Big Secret: JSX = JavaScript</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">When you write this:</p>
-<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-4 font-mono text-sm text-cyan-700 dark:text-cyan-300">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>&lt;h1 className="title"&gt;Hello&lt;/h1&gt;</pre>
 </div>
 
 <p class="mb-4 text-gray-600 dark:text-light-300">Babel (a compiler) transforms it into this:</p>
-<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-yellow-300">
+<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-yellow-700 dark:text-yellow-300">
 <pre>React.createElement('h1', { className: 'title' }, 'Hello')</pre>
 </div>
 
@@ -27,7 +27,7 @@ export const day02 = {
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚙️ The Transformation Process</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
 ─────────────────                  ────────────────────────
@@ -46,7 +46,7 @@ YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-red-500">
     <p class="text-gray-900 dark:text-white font-bold">Rule 1: Return ONE parent element</p>
     <div class="grid md:grid-cols-2 gap-4 mt-2">
-        <div class="text-red-300 text-sm">
+        <div class="text-red-700 dark:text-red-300 text-sm">
             <p>❌ Wrong:</p>
             <pre class="bg-gray-100 dark:bg-dark-900 p-2 rounded mt-1">return (
 &lt;h1&gt;Title&lt;/h1&gt;
@@ -67,7 +67,7 @@ YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-yellow-500">
     <p class="text-gray-900 dark:text-white font-bold">Rule 2: Use className, not class</p>
-    <p class="text-gray-600 dark:text-light-300 text-sm mt-2"><code class="bg-dark-700 text-brand-primary px-1 rounded">class</code> is a reserved word in JavaScript, so JSX uses <code class="bg-dark-700 text-brand-primary px-1 rounded">className</code></p>
+    <p class="text-gray-600 dark:text-light-300 text-sm mt-2"><code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">class</code> is a reserved word in JavaScript, so JSX uses <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">className</code></p>
     <pre class="bg-gray-100 dark:bg-dark-900 p-2 rounded mt-2 text-green-300 text-sm">&lt;div className="container"&gt;...&lt;/div&gt;</pre>
 </div>
 
@@ -91,24 +91,24 @@ YOUR CODE (JSX)                    AFTER BABEL (JavaScript)
 <p class="mb-4 text-gray-600 dark:text-light-300">Use <span class="text-yellow-600 dark:text-yellow-400 font-bold">curly braces { }</span> to embed any JavaScript expression:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">const name = "John";
+<pre class="text-gray-800 dark:text-cyan-300">const name = "John";
 const age = 25;
 
 return (
 &lt;div&gt;
-&lt;p&gt;Name: <span class="text-yellow-300">{name}</span>&lt;/p&gt;           {/* Variable */}
-&lt;p&gt;Age: <span class="text-yellow-300">{age}</span>&lt;/p&gt;             {/* Variable */}
-&lt;p&gt;Next year: <span class="text-yellow-300">{age + 1}</span>&lt;/p&gt;   {/* Expression */}
-&lt;p&gt;Adult: <span class="text-yellow-300">{age >= 18 ? 'Yes' : 'No'}</span>&lt;/p&gt;  {/* Ternary */}
+&lt;p&gt;Name: <span class="text-yellow-700 dark:text-yellow-300">{name}</span>&lt;/p&gt;           {/* Variable */}
+&lt;p&gt;Age: <span class="text-yellow-700 dark:text-yellow-300">{age}</span>&lt;/p&gt;             {/* Variable */}
+&lt;p&gt;Next year: <span class="text-yellow-700 dark:text-yellow-300">{age + 1}</span>&lt;/p&gt;   {/* Expression */}
+&lt;p&gt;Adult: <span class="text-yellow-700 dark:text-yellow-300">{age >= 18 ? 'Yes' : 'No'}</span>&lt;/p&gt;  {/* Ternary */}
 &lt;/div&gt;
 );</pre>
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">💡 Pro Tips</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-<li>Use <code class="bg-dark-700 text-brand-primary px-1 rounded">&lt;&gt;...&lt;/&gt;</code> (Fragment) instead of div when you don't need a wrapper</li>
-<li>Inline styles use double curly braces: <code class="bg-dark-700 text-brand-primary px-1 rounded">style={{ color: 'red' }}</code></li>
-<li>Comments in JSX: <code class="bg-dark-700 text-brand-primary px-1 rounded">{/* comment */}</code></li>
+<li>Use <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">&lt;&gt;...&lt;/&gt;</code> (Fragment) instead of div when you don't need a wrapper</li>
+<li>Inline styles use double curly braces: <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">style={{ color: 'red' }}</code></li>
+<li>Comments in JSX: <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">{/* comment */}</code></li>
 </ul>
             `,
   code: `/*

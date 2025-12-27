@@ -14,7 +14,7 @@ export const day14 = {
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Hashing vs Encryption</h3>
 <div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
   <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl text-gray-700 dark:text-light-200">
-    <p class="font-bold text-red-300 mb-2">Encryption (reversible)</p>
+    <p class="font-bold text-red-700 dark:text-red-300 mb-2">Encryption (reversible)</p>
     <p>If you can decrypt it, attackers can too if keys leak.</p>
   </div>
   <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl text-gray-700 dark:text-light-200">

@@ -16,16 +16,16 @@ export const day05 = {
 
 <div class="grid md:grid-cols-2 gap-4 mb-6">
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl">
-    <p class="text-green-300 font-bold mb-2">✅ Rendering (Pure)</p>
+    <p class="text-green-700 dark:text-green-300 font-bold mb-2">✅ Rendering (Pure)</p>
     <ul class="text-green-800 dark:text-green-200 text-sm space-y-1">
         <li>• Calculating what to display</li>
         <li>• Returning JSX</li>
         <li>• Transforming data</li>
     </ul>
 </div>
-<div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl">
-    <p class="text-yellow-300 font-bold mb-2">⚡ Side Effects</p>
-    <ul class="text-yellow-200 text-sm space-y-1">
+<div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-500/30 p-4 rounded-xl">
+    <p class="text-yellow-700 dark:text-yellow-300 font-bold mb-2">⚡ Side Effects</p>
+    <ul class="text-yellow-800 dark:text-yellow-200 text-sm space-y-1">
         <li>• Fetching data from API</li>
         <li>• Setting up timers</li>
         <li>• Subscribing to events</li>
@@ -39,28 +39,28 @@ export const day05 = {
 <div class="space-y-4 mb-6">
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-red-500">
     <p class="text-gray-900 dark:text-white font-bold">Type 1: Run on EVERY render</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">useEffect(() => {
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">useEffect(() => {
 console.log('I run after EVERY render');
 }); // ← No dependency array!</pre>
-    <p class="text-light-400 text-sm mt-2">⚠️ Use rarely - can cause performance issues</p>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mt-2">⚠️ Use rarely - can cause performance issues</p>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-green-500">
     <p class="text-gray-900 dark:text-white font-bold">Type 2: Run ONCE on mount</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">useEffect(() => {
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">useEffect(() => {
 console.log('I run ONCE when component mounts');
 fetchData(); // Perfect for initial API calls!
-}, <span class="text-yellow-300">[]</span>); // ← Empty array = mount only</pre>
-    <p class="text-light-400 text-sm mt-2">✅ Most common - use for initial data fetching</p>
+}, <span class="text-yellow-800 dark:text-yellow-300">[]</span>); // ← Empty array = mount only</pre>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mt-2">✅ Most common - use for initial data fetching</p>
 </div>
 
 <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border-l-4 border-blue-500">
     <p class="text-gray-900 dark:text-white font-bold">Type 3: Run when DEPENDENCIES change</p>
-    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-cyan-700 dark:text-cyan-300 text-sm">useEffect(() => {
+    <pre class="bg-gray-100 dark:bg-dark-900 p-3 rounded mt-2 text-gray-800 dark:text-cyan-300 text-sm">useEffect(() => {
 console.log('userId changed to:', userId);
 fetchUser(userId);
-}, <span class="text-yellow-300">[userId]</span>); // ← Runs when userId changes</pre>
-    <p class="text-light-400 text-sm mt-2">✅ Use when effect depends on specific values</p>
+}, <span class="text-yellow-800 dark:text-yellow-300">[userId]</span>); // ← Runs when userId changes</pre>
+    <p class="text-gray-600 dark:text-gray-400 text-sm mt-2">✅ Use when effect depends on specific values</p>
 </div>
 </div>
 
@@ -68,26 +68,26 @@ fetchUser(userId);
 <p class="mb-4 text-gray-600 dark:text-light-300">The <span class="text-yellow-600 dark:text-yellow-400 font-bold">return function</span> runs BEFORE the effect re-runs or when component unmounts:</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">useEffect(() => {
+<pre class="bg-gray-100 dark:bg-dark-900 text-gray-800 dark:text-cyan-300">useEffect(() => {
 // ✅ Setup: Subscribe to something
 const subscription = someAPI.subscribe(data);
 
 // 🧹 Cleanup: Unsubscribe when done
-<span class="text-yellow-300">return () => {
+<span class="text-yellow-800 dark:text-yellow-300">return () => {
 subscription.unsubscribe();
 };</span>
 }, []);</pre>
 </div>
 
 <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-<p class="text-red-300 font-bold">⚠️ Common Memory Leak:</p>
-<pre class="text-red-800 dark:text-red-200 text-sm mt-2">useEffect(() => {
+<p class="text-red-700 dark:text-red-300 font-bold">⚠️ Common Memory Leak:</p>
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-red-900 dark:text-red-200 text-sm mt-2">useEffect(() => {
 setInterval(() => {
 setCount(c => c + 1);
 }, 1000);
 // ❌ Interval keeps running even after unmount!
 }, []);</pre>
-<pre class="text-green-800 dark:text-green-200 text-sm mt-2">// ✅ Fixed:
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm mt-2">// ✅ Fixed:
 useEffect(() => {
 const id = setInterval(() => setCount(c => c + 1), 1000);
 return () => clearInterval(id); // 🧹 Cleanup!
@@ -95,7 +95,7 @@ return () => clearInterval(id); // 🧹 Cleanup!
 </div>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📊 Visual: Effect Lifecycle</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 Component Mounts
    │

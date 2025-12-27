@@ -14,7 +14,7 @@ export const day18 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">You can now render <code>&lt;title&gt;</code> and <code>&lt;meta&gt;</code> tags <i>anywhere</i> in your component tree. React will automatically hoist them to the <code>&lt;head&gt;</code>.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">function BlogPost({ title }) {
+<pre class="text-gray-800 dark:text-cyan-300">function BlogPost({ title }) {
 return (
 &lt;article&gt;
   {/* Automatically moved to &lt;head&gt;! */}

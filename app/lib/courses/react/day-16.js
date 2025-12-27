@@ -15,7 +15,7 @@ export const day16 = {
 <p class="mb-4 text-gray-600 dark:text-light-300">Forget <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">onSubmit</code>, <code class="bg-gray-100 dark:bg-dark-900 text-cyan-400 px-2 py-1 rounded">e.preventDefault()</code>, and manual loading states.</p>
 
 <div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm">
-<pre class="text-cyan-700 dark:text-cyan-300">// ❌ React 18: Manual Everything
+<pre class="text-gray-800 dark:text-cyan-300">// ❌ React 18: Manual Everything
 function Form() {
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState(null);
@@ -52,7 +52,7 @@ return (
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🚀 2. Optimistic UI Updates</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Show the new value <i>instantly</i>, before the server responds.</p>
 
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
+<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-gray-800 dark:text-cyan-300 mb-6 overflow-x-auto">
 <pre>
 const [optimisticName, setOptimisticName] = useOptimistic(currentName);
 
@@ -71,7 +71,7 @@ await updateNameOnServer(newName);
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔮 3. The "use" API</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">Read Promises and Context directly in render.</p>
 <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
-<pre class="text-green-800 dark:text-green-200 text-sm">// Read a Promise (suspends automatically!)
+<pre class="bg-white dark:bg-dark-900 p-2 rounded text-green-800 dark:text-green-200 text-sm">// Read a Promise (suspends automatically!)
 const comments = use(commentsPromise);
 
 // Read Context (conditional!)

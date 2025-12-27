@@ -10,6 +10,19 @@ Most “broken” UIs aren’t broken visually — they’re broken structurally
 and SEO signals become noisy.
 </p>
 
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: Semantics = Revenue
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    Why do we care about <code>&lt;h1&gt;</code> vs <code>&lt;div&gt;</code>?
+  </p>
+  <ul class="list-disc list-inside text-sm text-gray-700 dark:text-light-200 space-y-2">
+    <li><span class="font-bold">SEO:</span> Google ranks pages higher when they understand the structure. Higher rank = more traffic = more money.</li>
+    <li><span class="font-bold">Accessibility (A11y):</span> If your site isn't accessible, you can be sued (ADA compliance). Domino's Pizza lost a lawsuit because their website wasn't accessible.</li>
+  </ul>
+</div>
+
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">One H1</span>: the page topic.</li>
@@ -45,9 +58,9 @@ You’ll build a mini “documentation” page with correct headings and landmar
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><span class="text-blue-300 font-bold">Keyboard:</span> skip link appears on focus and works.</li>
-  <li><span class="text-blue-300 font-bold">Structure:</span> one H1, headings in order, one main.</li>
-  <li><span class="text-blue-300 font-bold">SEO-ready:</span> title/meta description present in head (see code).</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Keyboard:</span> skip link appears on focus and works.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Structure:</span> one H1, headings in order, one main.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">SEO-ready:</span> title/meta description present in head (see code).</li>
 </ul>
 
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Summary + next steps</h3>

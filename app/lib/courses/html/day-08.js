@@ -22,7 +22,7 @@ If your page is confusing, no “SEO trick” will save it.
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Micro-example: bad vs good link strategy</h3>
 <div class="grid md:grid-cols-2 gap-6 mb-6">
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
-    <p class="text-sm font-bold text-red-300 mb-2">❌ Bad</p>
+    <p class="text-sm font-bold text-red-700 dark:text-red-300 mb-2">❌ Bad</p>
     <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code></pre>
   </div>
   <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">

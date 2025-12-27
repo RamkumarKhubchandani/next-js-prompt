@@ -5,7 +5,7 @@ export const day35 = {
   content: `
 <div class="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-emerald-300 font-bold mb-2">🎯 Outcome</h4>
-  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-300 font-bold">pLimit</span> and <span class="text-yellow-300 font-bold">pMap</span> (concurrency-limited mapping), and add cancellation.</p>
+  <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-700 dark:text-yellow-300 font-bold">pLimit</span> and <span class="text-yellow-700 dark:text-yellow-300 font-bold">pMap</span> (concurrency-limited mapping), and add cancellation.</p>
 </div>
             `,
   masteryChecklist: [

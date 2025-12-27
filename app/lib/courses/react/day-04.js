@@ -4,7 +4,7 @@ export const day04 = {
   intro: "React 18 batches state updates automatically to prevent unnecessary renders.",
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1. Automatic Batching</h3>
-<p>Multiple <code class="bg-dark-700 text-brand-primary px-1 rounded">setState</code> calls are grouped into one render.</p>
+<p>Multiple <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">setState</code> calls are grouped into one render.</p>
             `,
   code: `function App() {
 const [count, setCount] = React.useState(0);
