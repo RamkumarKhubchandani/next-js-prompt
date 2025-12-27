@@ -4,10 +4,10 @@ export const day10 = {
   intro:
     "You’ll make components responsive to their container, not the viewport—so they work in sidebars, modals, and grids without extra breakpoints.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">Viewport breakpoints are page-level. Container queries are component-level.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Viewport breakpoints are page-level. Container queries are component-level.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Make the card switch layout when its container grows.</li>
   <li>Do not use media queries for the component behavior.</li>
 </ul>

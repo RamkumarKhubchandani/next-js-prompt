@@ -4,33 +4,33 @@ export const day10 = {
   intro:
     "Great frontends work globally by default. Today you’ll learn RTL basics, neutral content patterns, and how HTML structure supports internationalization without extra humans.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Internationalization isn’t a later feature. It’s a structural choice. If you design layout and content assuming only LTR and English, you will pay later.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Core ideas</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Neutral copy</span>: avoid culturally specific metaphors; write clear actions.</li>
-  <li><span class="text-yellow-400 font-bold">Direction</span>: HTML supports direction via <code class="bg-dark-900 px-1 rounded">dir="rtl"</code>.</li>
-  <li><span class="text-yellow-400 font-bold">DOM order</span>: keep logical reading order; don’t depend on visual-only position.</li>
-  <li><span class="text-yellow-400 font-bold">Icons</span>: arrows may need mirroring in RTL (design consideration).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core ideas</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Neutral copy</span>: avoid culturally specific metaphors; write clear actions.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Direction</span>: HTML supports direction via <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">dir="rtl"</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">DOM order</span>: keep logical reading order; don’t depend on visual-only position.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Icons</span>: arrows may need mirroring in RTL (design consideration).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
-  <li>Switch the page direction to RTL by adding <code class="bg-dark-900 px-1 rounded">dir="rtl"</code> on the root container.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Switch the page direction to RTL by adding <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">dir="rtl"</code> on the root container.</li>
   <li>Ensure navigation and content still make sense in reading order.</li>
   <li>Replace any direction-specific words (“left/right”) with neutral language (“start/end”).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Junior: hardcodes left/right. Senior: designs in terms of start/end and lets direction flow naturally.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: capstone—build a complete, accessible landing page skeleton using everything so far.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: capstone—build a complete, accessible landing page skeleton using everything so far.</p>
 `,
   comparison: {
     junior: `<!-- ❌ Junior: direction-coupled -->

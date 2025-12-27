@@ -4,12 +4,12 @@ export const day12 = {
   intro:
     "You’ll implement theming correctly: default tokens, light/dark variants, and a high-contrast mode that keeps UI readable.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">Don’t restyle every component. Swap tokens at the root and let components inherit.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Don’t restyle every component. Swap tokens at the root and let components inherit.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Add a high-contrast mode wrapper that increases border/foreground contrast.</li>
-  <li>Respect <code class="bg-dark-900 px-1 rounded">prefers-color-scheme</code> for defaults.</li>
+  <li>Respect <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">prefers-color-scheme</code> for defaults.</li>
 </ul>
 `,
   sandbox: {

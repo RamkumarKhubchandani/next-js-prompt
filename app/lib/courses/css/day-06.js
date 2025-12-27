@@ -4,13 +4,13 @@ export const day06 = {
   intro:
     "You’ll learn the real reasons overlays break: positioning, stacking context, and how to build a modal/tooltip layer predictably.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">If you “increase z-index until it works,” you don’t understand stacking contexts yet. Today you will.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">If you “increase z-index until it works,” you don’t understand stacking contexts yet. Today you will.</p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><code class="bg-dark-900 px-1 rounded">position</code>: static/relative/absolute/fixed.</li>
-  <li><span class="text-yellow-400 font-bold">Stacking context</span> can be created by transforms/opacity/position+z-index.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">position</code>: static/relative/absolute/fixed.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Stacking context</span> can be created by transforms/opacity/position+z-index.</li>
   <li>Use a dedicated overlay layer (one place for z-index tokens).</li>
 </ul>
 `,

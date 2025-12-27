@@ -4,51 +4,51 @@ export const day07 = {
   intro:
     "ARIA is powerful—and dangerous. Today you’ll learn the rules of ARIA, when to use it, and how to build accessible components without turning your HTML into an ARIA soup.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most ARIA is added to fix problems caused by incorrect HTML. The professional move is to start with correct semantic elements.
 ARIA is the supplement—not the base.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">The 3 rules of ARIA (memorize these)</h3>
-<div class="bg-dark-800 border border-dark-600 rounded-2xl p-5 mb-6">
-  <ol class="list-decimal list-inside space-y-2 text-light-200">
-    <li><span class="text-yellow-400 font-bold">Don’t use ARIA</span> if native HTML can do it.</li>
-    <li><span class="text-yellow-400 font-bold">Don’t change native semantics</span> unless absolutely necessary.</li>
-    <li><span class="text-yellow-400 font-bold">All ARIA must be correct</span> (wrong ARIA is worse than no ARIA).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">The 3 rules of ARIA (memorize these)</h3>
+<div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-600 rounded-2xl p-5 mb-6">
+  <ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-light-200">
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Don’t use ARIA</span> if native HTML can do it.</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Don’t change native semantics</span> unless absolutely necessary.</li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">All ARIA must be correct</span> (wrong ARIA is worse than no ARIA).</li>
   </ol>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">Accessible naming (what screen readers announce)</h3>
-<p class="text-light-300 mb-4">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Accessible naming (what screen readers announce)</h3>
+<p class="text-gray-600 dark:text-light-300 mb-4">
 An element’s accessible name comes from labels, text content, aria-label, aria-labelledby (in that order of “preferability”).
 </p>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Prefer visible label text over aria-label.</li>
-  <li>Use <code class="bg-dark-900 px-1 rounded">aria-labelledby</code> when you have a visible heading.</li>
-  <li>Use <code class="bg-dark-900 px-1 rounded">aria-describedby</code> for hints/errors.</li>
+  <li>Use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-labelledby</code> when you have a visible heading.</li>
+  <li>Use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-describedby</code> for hints/errors.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Focus management (no human required)</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Focus management (no human required)</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 If a UI opens/closes content (like a disclosure), keyboard users need a predictable focus path.
-We’ll model a disclosure pattern using <code class="bg-dark-900 px-1 rounded">&lt;details&gt;</code> + <code class="bg-dark-900 px-1 rounded">&lt;summary&gt;</code> (native, accessible).
+We’ll model a disclosure pattern using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;details&gt;</code> + <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;summary&gt;</code> (native, accessible).
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Junior: adds roles everywhere. Senior: uses native elements and only adds ARIA when required.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>role="button" on a div instead of using a button.</li>
   <li>aria-label that contradicts visible text.</li>
   <li>Adding aria-hidden to focusable content (breaks keyboard).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: SEO-ready HTML—metadata, titles, headings, and link strategy.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: SEO-ready HTML—metadata, titles, headings, and link strategy.</p>
 `,
   comparison: {
     junior: `<!-- ❌ Junior: ARIA soup -->

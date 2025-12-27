@@ -1,11 +1,20 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 import connectDB from './mongodb';
 import User from '../models/User';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { getEffectivePlanAndRole } from './subscription';
 
 export const authOptions = {
     providers: [
+        ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+            ? [
+                GoogleProvider({
+                    clientId: process.env.GOOGLE_CLIENT_ID,
+                    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                }),
+            ]
+            : []),
         CredentialsProvider({
             name: 'credentials',
             credentials: {},
@@ -18,6 +27,9 @@ export const authOptions = {
                     if (!user) {
                         return null;
                     }
+
+                    // OAuth-only users won't have a password set.
+                    if (!user.password) return null;
 
                     const passwordsMatch = await bcrypt.compare(password, user.password);
 
@@ -41,7 +53,7 @@ export const authOptions = {
         signIn: "/login",
     },
     callbacks: {
-        async jwt({ token, user, trigger, session }) {
+        async jwt({ token, user, account, trigger, session }) {
             // Initial sign in
             if (user) {
                 token.id = user._id;
@@ -49,6 +61,23 @@ export const authOptions = {
                 token.plan = user.plan;
                 token.learningPath = user.learningPath;
                 token.role = user.role;
+            }
+
+            // OAuth sign-in (Google): map to our Mongo user record
+            if (account?.provider === 'google') {
+                try {
+                    await connectDB();
+                    const dbUser = await User.findOne({ email: token.email }).select('_id username plan learningPath role').lean();
+                    if (dbUser) {
+                        token.id = dbUser._id;
+                        token.username = dbUser.username;
+                        token.plan = dbUser.plan;
+                        token.learningPath = dbUser.learningPath;
+                        token.role = dbUser.role;
+                    }
+                } catch (e) {
+                    console.log('jwt google mapping failed:', e);
+                }
             }
             // Handle session update (when client calls update())
             if (trigger === "update" && session) {
@@ -60,6 +89,46 @@ export const authOptions = {
                 if (session.role) token.role = session.role;
             }
             return token;
+        },
+        async signIn({ user, account }) {
+            // Ensure Google users exist in our DB so we can attach plan/xp/etc.
+            if (account?.provider === 'google') {
+                try {
+                    await connectDB();
+                    const email = user?.email;
+                    if (!email) return false;
+
+                    const existing = await User.findOne({ email }).select('_id').lean();
+                    if (existing) return true;
+
+                    const base = String(email).split('@')[0] || 'user';
+                    const safeBase = base.toLowerCase().replace(/[^a-z0-9_]+/g, '').slice(0, 16) || 'user';
+                    let username = safeBase;
+
+                    // Ensure username uniqueness
+                    for (let i = 0; i < 5; i++) {
+                        // eslint-disable-next-line no-await-in-loop
+                        const taken = await User.findOne({ username }).select('_id').lean();
+                        if (!taken) break;
+                        username = `${safeBase}${Math.floor(1000 + Math.random() * 9000)}`;
+                    }
+
+                    await User.create({
+                        name: user?.name || safeBase,
+                        email,
+                        username,
+                        plan: 'free',
+                        role: 'user',
+                        learningPath: 'none',
+                        password: undefined,
+                    });
+                    return true;
+                } catch (e) {
+                    console.log('signIn google create user failed:', e);
+                    return false;
+                }
+            }
+            return true;
         },
         async session({ session, token }) {
             if (session?.user) {

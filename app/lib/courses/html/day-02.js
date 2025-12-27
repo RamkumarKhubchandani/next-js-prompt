@@ -4,53 +4,53 @@ export const day02 = {
   intro:
     "Today you’ll stop guessing semantics: when it’s a link vs a button, how to build nav that’s tabbable, and how to avoid the classic accessibility traps.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Users get stuck when interactive elements are built with the wrong tags. The rule is simple:
-<span class="text-yellow-400 font-bold">links navigate</span>, <span class="text-yellow-400 font-bold">buttons act</span>.
+<span class="text-yellow-600 dark:text-yellow-400 font-bold">links navigate</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">buttons act</span>.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><code class="bg-dark-900 px-1 rounded">&lt;a&gt;</code> changes URL / location (including in-page anchors).</li>
-  <li><code class="bg-dark-900 px-1 rounded">&lt;button&gt;</code> performs an action (submit, open menu, toggle theme).</li>
-  <li>Use <code class="bg-dark-900 px-1 rounded">aria-current="page"</code> for the active nav item.</li>
-  <li>Don’t remove outlines; use <code class="bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;a&gt;</code> changes URL / location (including in-page anchors).</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;button&gt;</code> performs an action (submit, open menu, toggle theme).</li>
+  <li>Use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-current="page"</code> for the active nav item.</li>
+  <li>Don’t remove outlines; use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Small demo</h3>
-<p class="text-light-300 mb-4">Build a header with navigation and a “toggle theme” button (visual-only in this sandbox).</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Small demo</h3>
+<p class="text-gray-600 dark:text-light-300 mb-4">Build a header with navigation and a “toggle theme” button (visual-only in this sandbox).</p>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Tab through the header: focus ring must always be visible.</li>
-  <li>Ensure active nav item uses <code class="bg-dark-900 px-1 rounded">aria-current</code>.</li>
+  <li>Ensure active nav item uses <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aria-current</code>.</li>
   <li>Confirm the “Toggle theme” is a button, not a link.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Add a “Skip to main” link that appears on focus.</li>
   <li>Add a secondary nav (footer) with meaningful link text.</li>
   <li>Create a disabled button state that is still readable (contrast).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes (with fixes)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> clickable divs. <span class="text-green-300 font-bold">Fix:</span> use real buttons/links.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> removing focus outlines. <span class="text-green-300 font-bold">Fix:</span> style focus, don’t remove it.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> link that submits forms. <span class="text-green-300 font-bold">Fix:</span> use <code class="bg-dark-900 px-1 rounded">button type="submit"</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (with fixes)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> clickable divs. <span class="text-green-300 font-bold">Fix:</span> use real buttons/links.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> removing focus outlines. <span class="text-green-300 font-bold">Fix:</span> style focus, don’t remove it.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> link that submits forms. <span class="text-green-300 font-bold">Fix:</span> use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">button type="submit"</code>.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-blue-300 font-bold">Keyboard:</span> Can you navigate all interactive items in order?</li>
-  <li><span class="text-blue-300 font-bold">Semantics:</span> Links navigate; buttons act.</li>
-  <li><span class="text-blue-300 font-bold">A11y:</span> Focus is visible with <code class="bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Keyboard:</span> Can you navigate all interactive items in order?</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">Semantics:</span> Links navigate; buttons act.</li>
+  <li><span class="text-blue-700 dark:text-blue-300 font-bold">A11y:</span> Focus is visible with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: forms that are actually usable (labels, errors, and field grouping).</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: forms that are actually usable (labels, errors, and field grouping).</p>
 `,
   checkpoints: [
     {

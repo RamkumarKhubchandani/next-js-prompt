@@ -4,19 +4,19 @@ export const day04 = {
   intro:
     "You’ll build readable UI: a type scale, comfortable line length, and safe font loading patterns (with `font-display: swap`).",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">Typography is UI. If text is hard to read, everything feels low quality—even with perfect layout.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Typography is UI. If text is hard to read, everything feels low quality—even with perfect layout.</p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Use a consistent <span class="text-yellow-400 font-bold">type scale</span> (base + headings).</li>
-  <li>Keep line length ~<span class="text-yellow-400 font-bold">45–75 characters</span>.</li>
-  <li>Use <code class="bg-dark-900 px-1 rounded">clamp()</code> for responsive font sizes.</li>
-  <li>Font loading: in real apps use <code class="bg-dark-900 px-1 rounded">font-display: swap</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Use a consistent <span class="text-yellow-600 dark:text-yellow-400 font-bold">type scale</span> (base + headings).</li>
+  <li>Keep line length ~<span class="text-yellow-600 dark:text-yellow-400 font-bold">45–75 characters</span>.</li>
+  <li>Use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">clamp()</code> for responsive font sizes.</li>
+  <li>Font loading: in real apps use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">font-display: swap</code>.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Adjust the base size and verify headings scale consistently.</li>
   <li>Change max line length and feel the readability difference.</li>
   <li>Add a “muted” text style that still passes contrast.</li>

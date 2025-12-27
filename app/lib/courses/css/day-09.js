@@ -4,12 +4,12 @@ export const day09 = {
   intro:
     "You’ll stop hardcoding px. Today you’ll build a fluid spacing + sizing system that adapts to devices (including mobile browser UI).",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Why this matters</h3>
-<p class="text-light-300 mb-6">Fluid systems reduce breakpoints and create consistency across device sizes and zoom levels.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Make padding fluid with <code class="bg-dark-900 px-1 rounded">clamp()</code>.</li>
-  <li>Use <code class="bg-dark-900 px-1 rounded">svh</code> for stable viewport sections.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Why this matters</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Fluid systems reduce breakpoints and create consistency across device sizes and zoom levels.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Make padding fluid with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">clamp()</code>.</li>
+  <li>Use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">svh</code> for stable viewport sections.</li>
   <li>Use rem for typography and spacing tokens.</li>
 </ul>
 `,

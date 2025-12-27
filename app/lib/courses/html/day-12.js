@@ -4,35 +4,35 @@ export const day12 = {
   intro:
     "Today you’ll make the capstone production-ready: performance-safe media decisions, print/export support, and structure that survives copy/paste and rendering changes.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Why this matters</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Why this matters</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Real users copy content, print invoices, and view pages on slow devices. If your HTML isn’t robust, it breaks in real life.
-This day is about <span class="text-yellow-400 font-bold">robustness</span>.
+This day is about <span class="text-yellow-600 dark:text-yellow-400 font-bold">robustness</span>.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Performance checklist (HTML layer)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Performance checklist (HTML layer)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Hero image above-the-fold: eager, decoding async.</li>
   <li>Everything else: lazy.</li>
   <li>Don’t autoplay video with audio.</li>
   <li>Use meaningful headings and link text so content is portable.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Print/export mindset</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Print/export mindset</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Even if your product is digital, users print receipts, share pages, and export to PDF.
 Your HTML should be printable without rewriting structure.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Add a “Print” button (semantic button).</li>
   <li>Use CSS print rules to hide navigation and keep the content readable.</li>
   <li>Ensure content reads well if CSS is stripped (headings + lists).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: final review + personal rubric—what “mastery” means for HTML.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: final review + personal rubric—what “mastery” means for HTML.</p>
 `,
   checkpoints: [
     {

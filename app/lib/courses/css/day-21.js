@@ -4,8 +4,8 @@ export const day21 = {
   intro:
     "You’ll ensure layouts work in RTL with minimal changes by using logical properties and avoiding left/right assumptions.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Practice</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Use margin-inline/padding-inline instead of left/right.</li>
   <li>Center nav with margin-inline:auto (works in RTL).</li>
 </ul>

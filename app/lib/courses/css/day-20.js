@@ -4,11 +4,28 @@ export const day20 = {
   intro:
     "You’ll add print CSS so pages export cleanly: remove nav, expand content, and improve readability on paper/PDF.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Practice</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Hide non-essential UI for print.</li>
   <li>Ensure links show their URL in print.</li>
 </ul>
+
+<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
+  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+    <span class="text-xl">🏛️</span> Architect's Note: The CSS Wars
+  </h4>
+  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
+    How do you scale CSS to 100 developers?
+  </p>
+  <ul class="list-disc list-inside text-sm text-gray-700 dark:text-light-200 space-y-2">
+    <li><span class="font-bold">BEM (Block Element Modifier):</span> The old king. Great for strict naming conventions.</li>
+    <li><span class="font-bold">CSS-in-JS (Styled Components):</span> Great for component isolation, but adds runtime cost.</li>
+    <li><span class="font-bold">Utility-First (Tailwind):</span> The modern winner. Fast dev speed, small bundle size, but "ugly" HTML.</li>
+  </ul>
+  <p class="mt-4 text-xs text-blue-800 dark:text-blue-200 font-bold">
+    Verdict: Most new startups choose Tailwind. Most legacy enterprises use BEM/SASS.
+  </p>
+</div>
 `,
   sandbox: {
     html: `<header class="nav">Navbar</header><main class="page"><h1>Printable Article</h1><p>Try printing in your browser: nav should disappear.</p><a href="https://example.com">Reference link</a></main>`,

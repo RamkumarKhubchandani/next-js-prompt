@@ -4,28 +4,28 @@ export const day00 = {
   intro:
     "CSS becomes easy when you stop writing random styles and start building a system: tokens, layout rules, then components. Today you’ll set the foundation.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 CSS feels “hard” when everything is global and accidental. Professionals treat CSS like an architecture: predictable layers and reusable tokens.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Design tokens</span>: colors, spacing, radii, type scale via CSS variables.</li>
-  <li><span class="text-yellow-400 font-bold">Mobile-first</span>: base styles for small screens, enhance for larger.</li>
-  <li><span class="text-yellow-400 font-bold">Focus</span>: never remove outlines; style <code class="bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Reduced motion</span>: respect user preference.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Design tokens</span>: colors, spacing, radii, type scale via CSS variables.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mobile-first</span>: base styles for small screens, enhance for larger.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Focus</span>: never remove outlines; style <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">:focus-visible</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Reduced motion</span>: respect user preference.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
-  <li>Tweak the token <code class="bg-dark-900 px-1 rounded">--brand</code> and watch UI update.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Tweak the token <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">--brand</code> and watch UI update.</li>
   <li>Change the spacing token and verify consistent spacing changes.</li>
-  <li>Enable <code class="bg-dark-900 px-1 rounded">prefers-reduced-motion</code> (browser devtools) and confirm animations stop.</li>
+  <li>Enable <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">prefers-reduced-motion</code> (browser devtools) and confirm animations stop.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>All colors/spacing come from tokens (no random hex in component rules).</li>
   <li>Focus styles are visible.</li>
   <li>Reduced motion is respected.</li>

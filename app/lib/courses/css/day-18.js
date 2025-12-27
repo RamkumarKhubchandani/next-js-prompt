@@ -4,8 +4,8 @@ export const day18 = {
   intro:
     "You’ll learn how CSS can cause jank, and how to keep interactions fast by avoiding layout-triggering animations.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Rule of thumb</h3>
-<p class="text-light-300 mb-6">If you animate width/height/top/left, you’re likely triggering layout. Prefer transform.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Rule of thumb</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">If you animate width/height/top/left, you’re likely triggering layout. Prefer transform.</p>
 `,
   sandbox: {
     html: `<main class="page"><div class="tile">Hover</div></main>`,

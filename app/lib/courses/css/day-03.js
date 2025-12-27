@@ -4,25 +4,25 @@ export const day03 = {
   intro:
     "Flexbox is your daily driver for UI alignment. Today you’ll build a responsive navbar + card row with correct wrapping, spacing, and alignment.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most “layout bugs” come from misusing width/margins instead of using flex rules. Flexbox solves alignment and spacing—when you use it intentionally.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><code class="bg-dark-900 px-1 rounded">display: flex</code>: one-dimensional layout.</li>
-  <li><code class="bg-dark-900 px-1 rounded">gap</code>: spacing between items (prefer over margins).</li>
-  <li><code class="bg-dark-900 px-1 rounded">justify-content</code> vs <code class="bg-dark-900 px-1 rounded">align-items</code>.</li>
-  <li><code class="bg-dark-900 px-1 rounded">flex: 1</code> and <code class="bg-dark-900 px-1 rounded">min-width: 0</code> for truncation.</li>
-  <li>Wrapping: <code class="bg-dark-900 px-1 rounded">flex-wrap</code> + responsive patterns.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">display: flex</code>: one-dimensional layout.</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">gap</code>: spacing between items (prefer over margins).</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">justify-content</code> vs <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">align-items</code>.</li>
+  <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">flex: 1</code> and <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">min-width: 0</code> for truncation.</li>
+  <li>Wrapping: <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">flex-wrap</code> + responsive patterns.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Make the navbar wrap nicely on small screens.</li>
   <li>Ensure cards are equal height and don’t overflow.</li>
-  <li>Add an RTL demo: set <code class="bg-dark-900 px-1 rounded">dir="rtl"</code> on <code class="bg-dark-900 px-1 rounded">&lt;html&gt;</code> and verify layout still works.</li>
+  <li>Add an RTL demo: set <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">dir="rtl"</code> on <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;html&gt;</code> and verify layout still works.</li>
 </ul>
 `,
   sandbox: {

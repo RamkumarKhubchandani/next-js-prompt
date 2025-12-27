@@ -71,7 +71,7 @@ const OrbitalField = () => {
 export const Testimonials = () => {
     return (
         <section id="testimonials" className="py-24 sm:py-32 overflow-hidden">
-            <div className="mx-auto max-w-7xl px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -87,8 +87,8 @@ export const Testimonials = () => {
                     </p>
                 </motion.div>
             </div>
-            <div className="relative mt-16 h-[700px] w-full"> {/* Increased height */}
-                {/* Fade overlay should sit BEHIND the cards (was covering them in dark mode) */}
+            <div className="relative z-0 mt-16 h-[700px] w-full overflow-hidden"> {/* clip cards so they never overlap header */}
+                {/* Fade overlay should sit BEHIND the cards */}
                 <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-light-100 via-transparent to-light-100 dark:from-dark-900 dark:via-transparent dark:to-dark-900" />
                 <div className="relative z-10">
                     <OrbitalField />

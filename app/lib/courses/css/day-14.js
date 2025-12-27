@@ -4,10 +4,10 @@ export const day14 = {
   intro:
     "You’ll organize CSS like a system: ITCSS layers (settings → tools → generic → elements → objects → components → utilities).",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Core idea</h3>
-<p class="text-light-300 mb-6">ITCSS reduces specificity wars by controlling what’s allowed in each layer.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core idea</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">ITCSS reduces specificity wars by controlling what’s allowed in each layer.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Identify which rules are tokens (settings) vs components.</li>
   <li>Keep utilities single-purpose and last.</li>
 </ul>

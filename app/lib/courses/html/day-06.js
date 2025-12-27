@@ -4,42 +4,42 @@ export const day06 = {
   intro:
     "Today you’ll learn how to structure real pages: when to use section vs article, how to design scalable content blocks, and how semantics reduces CSS complexity.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most apps fail structurally because they don’t have a consistent content model.
 If your page is a pile of divs, your CSS becomes a pile of exceptions.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Core mental model</h3>
-<div class="bg-dark-800 border border-dark-600 rounded-2xl p-5 mb-6">
-  <ul class="list-disc list-inside space-y-2 text-light-300">
-    <li><code class="bg-dark-900 px-1 rounded">article</code> is a standalone unit (a post, a card, a result, a comment).</li>
-    <li><code class="bg-dark-900 px-1 rounded">section</code> groups related content with a heading (a page section).</li>
-    <li><code class="bg-dark-900 px-1 rounded">aside</code> is complementary content (sidebar, tips, TOC).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core mental model</h3>
+<div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-600 rounded-2xl p-5 mb-6">
+  <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
+    <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">article</code> is a standalone unit (a post, a card, a result, a comment).</li>
+    <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">section</code> groups related content with a heading (a page section).</li>
+    <li><code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aside</code> is complementary content (sidebar, tips, TOC).</li>
   </ul>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
-  <li>Convert “feature cards” into <code class="bg-dark-900 px-1 rounded">article</code> elements.</li>
-  <li>Ensure each <code class="bg-dark-900 px-1 rounded">section</code> has a heading (H2).</li>
-  <li>Add an <code class="bg-dark-900 px-1 rounded">aside</code> that contains “tips” and is still readable in DOM order.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Convert “feature cards” into <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">article</code> elements.</li>
+  <li>Ensure each <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">section</code> has a heading (H2).</li>
+  <li>Add an <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aside</code> that contains “tips” and is still readable in DOM order.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Juniors use semantics after styling. Seniors start with a content model (semantics), then style becomes straightforward.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Using section without a heading (it becomes meaningless).</li>
   <li>Using article for everything (loses meaning).</li>
   <li>Putting aside first visually but last in DOM without thinking about reading order.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: accessibility essentials (landmarks, ARIA rules of use, and focus).</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: accessibility essentials (landmarks, ARIA rules of use, and focus).</p>
 `,
   comparison: {
     junior: `<!-- ❌ Junior: no content model -->

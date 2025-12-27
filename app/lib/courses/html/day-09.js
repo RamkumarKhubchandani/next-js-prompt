@@ -4,42 +4,42 @@ export const day09 = {
   intro:
     "Today you’ll learn the HTML side of component systems: predictable structure, BEM naming, and patterns you can reuse without rewriting CSS for every screen.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Most teams fail at “design systems” because their HTML is inconsistent. If every card has a different structure, your CSS becomes a patchwork.
-We fix that by designing components as repeatable <span class="text-yellow-400 font-bold">structures</span>.
+We fix that by designing components as repeatable <span class="text-yellow-600 dark:text-yellow-400 font-bold">structures</span>.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">The BEM rules (simple version)</h3>
-<div class="bg-dark-800 border border-dark-600 rounded-2xl p-5 mb-6">
-  <ul class="list-disc list-inside space-y-2 text-light-300">
-    <li><span class="text-yellow-400 font-bold">Block</span>: <code class="bg-dark-900 px-1 rounded">card</code></li>
-    <li><span class="text-yellow-400 font-bold">Element</span>: <code class="bg-dark-900 px-1 rounded">card__title</code>, <code class="bg-dark-900 px-1 rounded">card__meta</code></li>
-    <li><span class="text-yellow-400 font-bold">Modifier</span>: <code class="bg-dark-900 px-1 rounded">card--featured</code>, <code class="bg-dark-900 px-1 rounded">badge--pro</code></li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">The BEM rules (simple version)</h3>
+<div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-600 rounded-2xl p-5 mb-6">
+  <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Block</span>: <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card</code></li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Element</span>: <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card__title</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card__meta</code></li>
+    <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Modifier</span>: <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card--featured</code>, <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">badge--pro</code></li>
   </ul>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Ensure every card uses the same DOM shape: header → body → actions.</li>
-  <li>Convert “special” styling into modifiers (e.g. <code class="bg-dark-900 px-1 rounded">card--featured</code>).</li>
+  <li>Convert “special” styling into modifiers (e.g. <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card--featured</code>).</li>
   <li>Make list items consistent: same order and same label/value pattern.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Junior: copies HTML and tweaks it per page. Senior: designs a reusable component structure and composes it everywhere.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>BEM names that encode layout (e.g. <code class="bg-dark-900 px-1 rounded">card__left</code>) instead of meaning.</li>
-  <li>Modifiers used as separate blocks (e.g. <code class="bg-dark-900 px-1 rounded">featured-card</code>).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>BEM names that encode layout (e.g. <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">card__left</code>) instead of meaning.</li>
+  <li>Modifiers used as separate blocks (e.g. <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">featured-card</code>).</li>
   <li>Inconsistent nesting: titles sometimes inside links, sometimes not.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: internationalization basics—RTL and logical properties mindset (HTML layer).</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: internationalization basics—RTL and logical properties mindset (HTML layer).</p>
 `,
   comparison: {
     junior: `<!-- ❌ Junior: inconsistent structure -->

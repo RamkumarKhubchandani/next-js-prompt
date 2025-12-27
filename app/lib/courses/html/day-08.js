@@ -4,48 +4,48 @@ export const day08 = {
   intro:
     "SEO isn’t magic—it’s structure. Today you’ll learn the HTML signals that make pages understandable to crawlers and humans: metadata, headings, link text, and content hierarchy.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Search engines reward clarity. If your page is semantically correct and readable, you get SEO benefits as a side effect.
 If your page is confusing, no “SEO trick” will save it.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Core SEO signals (HTML layer)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">&lt;title&gt;</span>: the most important on-page metadata.</li>
-  <li><span class="text-yellow-400 font-bold">Meta description</span>: influences click-through, not ranking directly.</li>
-  <li><span class="text-yellow-400 font-bold">Heading outline</span>: helps crawlers infer structure.</li>
-  <li><span class="text-yellow-400 font-bold">Meaningful links</span>: descriptive anchor text and internal linking.</li>
-  <li><span class="text-yellow-400 font-bold">Images</span>: alt text for meaning and accessibility.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Core SEO signals (HTML layer)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">&lt;title&gt;</span>: the most important on-page metadata.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Meta description</span>: influences click-through, not ranking directly.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Heading outline</span>: helps crawlers infer structure.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Meaningful links</span>: descriptive anchor text and internal linking.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Images</span>: alt text for meaning and accessibility.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Micro-example: bad vs good link strategy</h3>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Micro-example: bad vs good link strategy</h3>
 <div class="grid md:grid-cols-2 gap-6 mb-6">
-  <div class="bg-dark-800 p-4 rounded-xl border border-dark-600">
-    <p class="text-sm font-bold text-red-300 mb-2">❌ Bad</p>
-    <pre class="text-xs text-light-200 overflow-x-auto"><code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code></pre>
+  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
+    <p class="text-sm font-bold text-red-700 dark:text-red-300 mb-2">❌ Bad</p>
+    <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;a href="/pricing"&gt;Click here&lt;/a&gt;</code></pre>
   </div>
-  <div class="bg-dark-800 p-4 rounded-xl border border-dark-600">
+  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600">
     <p class="text-sm font-bold text-green-300 mb-2">✅ Good</p>
-    <pre class="text-xs text-light-200 overflow-x-auto"><code>&lt;a href="/pricing"&gt;View pricing plans&lt;/a&gt;</code></pre>
+    <pre class="text-xs text-gray-700 dark:text-light-200 overflow-x-auto"><code>&lt;a href="/pricing"&gt;View pricing plans&lt;/a&gt;</code></pre>
   </div>
 </div>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Junior: keyword-stuffing. Senior: clear headings, clear links, clear structure, clear intent.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided practice</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Write a title that reads like a product page headline.</li>
   <li>Write a meta description that explains value in one sentence.</li>
   <li>Replace every “Learn more” link with descriptive link text.</li>
   <li>Ensure headings reflect structure (H1 once, then H2/H3).</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: components in HTML—cards, lists, and reusable patterns with BEM naming.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: components in HTML—cards, lists, and reusable patterns with BEM naming.</p>
 `,
   comparison: {
     junior: `<!-- ❌ Junior SEO -->

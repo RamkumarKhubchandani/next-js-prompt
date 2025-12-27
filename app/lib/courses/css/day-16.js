@@ -4,12 +4,12 @@ export const day16 = {
   intro:
     "You’ll create a tiny loading indicator using keyframes, and learn what not to animate for performance.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Rule</h3>
-<p class="text-light-300 mb-6">Animate <code class="bg-dark-900 px-1 rounded">transform</code>/<code class="bg-dark-900 px-1 rounded">opacity</code>, not layout properties.</p>
-<h3 class="text-xl font-bold text-white mb-4">Practice</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Rule</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">Animate <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">transform</code>/<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">opacity</code>, not layout properties.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Make the dots animation smooth.</li>
-  <li>Disable it for <code class="bg-dark-900 px-1 rounded">prefers-reduced-motion</code>.</li>
+  <li>Disable it for <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">prefers-reduced-motion</code>.</li>
 </ul>
 `,
   sandbox: {

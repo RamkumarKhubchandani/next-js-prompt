@@ -4,15 +4,15 @@ export const day11 = {
   intro:
     "Today you’ll assemble everything into a real page: header/nav, hero, sections, cards, pricing, FAQ, and footer—using semantic structure that makes styling easy.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">The goal</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">The goal</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Build a complete landing page skeleton that is:
-<span class="text-yellow-400 font-bold">semantic</span>, <span class="text-yellow-400 font-bold">accessible</span>, and
-<span class="text-yellow-400 font-bold">ready for CSS</span>.
+<span class="text-yellow-600 dark:text-yellow-400 font-bold">semantic</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">accessible</span>, and
+<span class="text-yellow-600 dark:text-yellow-400 font-bold">ready for CSS</span>.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Required sections (minimum)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Required sections (minimum)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Header with nav + skip link</li>
   <li>Hero section with primary/secondary actions</li>
   <li>Features as cards (articles)</li>
@@ -21,21 +21,21 @@ Build a complete landing page skeleton that is:
   <li>Footer with secondary navigation</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Verify one H1 and logical H2 sections.</li>
   <li>Verify landmarks: header/nav/main/footer.</li>
   <li>Tab through: focus visible everywhere, skip link works.</li>
   <li>Make sure every section has a heading and meaningful link text.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Junior vs Senior</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Junior builds a page that looks right. Senior builds a page that can be styled, tested, navigated, and extended without breaking.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">
 Tomorrow we’ll add polish: meta strategy, performance-safe media, and export/print readiness.
 </p>
 `,

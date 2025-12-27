@@ -4,37 +4,37 @@
 //   intro:
 //     "Today you’ll learn to ship media that’s accessible and fast: meaningful alt text, responsive images, lazy loading, and the common mistakes that quietly ruin UX.",
 //   content: `
-// <h3 class="text-xl font-bold text-white mb-4">🎯 Outcomes (What “Done” Looks Like)</h3>
-// <ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-//   <li>You can write <span class="text-yellow-400 font-bold">correct alt text</span> (and know when alt should be empty).</li>
-//   <li>You can build a <span class="text-yellow-400 font-bold">responsive image</span> with <code class="bg-dark-900 px-1 rounded">srcset</code>/<code class="bg-dark-900 px-1 rounded">sizes</code>.</li>
-//   <li>You can explain <span class="text-yellow-400 font-bold">loading priority</span>: when to use eager vs lazy.</li>
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 Outcomes (What “Done” Looks Like)</h3>
+// <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+//   <li>You can write <span class="text-yellow-600 dark:text-yellow-400 font-bold">correct alt text</span> (and know when alt should be empty).</li>
+//   <li>You can build a <span class="text-yellow-600 dark:text-yellow-400 font-bold">responsive image</span> with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">srcset</code>/<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">sizes</code>.</li>
+//   <li>You can explain <span class="text-yellow-600 dark:text-yellow-400 font-bold">loading priority</span>: when to use eager vs lazy.</li>
 //   <li>You can ship a video with accessible controls and motion-respecting defaults.</li>
 // </ul>
 
-// <h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-// <p class="text-light-300 mb-6">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+// <p class="text-gray-600 dark:text-light-300 mb-6">
 // Media is where product quality becomes visible. But it’s also where teams accidentally ship slow pages and inaccessible content.
-// Your job as an engineer is to make media <span class="text-yellow-400 font-bold">useful</span>, <span class="text-yellow-400 font-bold">fast</span>, and <span class="text-yellow-400 font-bold">understandable</span>.
+// Your job as an engineer is to make media <span class="text-yellow-600 dark:text-yellow-400 font-bold">useful</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">fast</span>, and <span class="text-yellow-600 dark:text-yellow-400 font-bold">understandable</span>.
 // </p>
 
-// <h3 class="text-xl font-bold text-white mb-4">1) Alt text: the professional rules</h3>
-// <div class="bg-dark-800 border border-dark-600 rounded-2xl p-5 mb-6">
-//   <p class="text-light-200 mb-3">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Alt text: the professional rules</h3>
+// <div class="bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-600 rounded-2xl p-5 mb-6">
+//   <p class="text-gray-700 dark:text-light-200 mb-3">
 //     Alt text is not “describe the pixels”. It’s “describe the meaning”.
 //   </p>
-//   <ul class="list-disc list-inside space-y-2 text-light-300">
+//   <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300">
 //     <li><span class="text-green-300 font-bold">Informative image</span>: alt explains the information.</li>
-//     <li><span class="text-green-300 font-bold">Decorative image</span>: alt should be empty (<code class="bg-dark-900 px-1 rounded">alt=""</code>) so it is skipped.</li>
+//     <li><span class="text-green-300 font-bold">Decorative image</span>: alt should be empty (<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">alt=""</code>) so it is skipped.</li>
 //     <li><span class="text-green-300 font-bold">Functional image</span> (icon button): alt describes the action, or put text in the button and hide the icon.</li>
 //   </ul>
 // </div>
 
-// <h3 class="text-xl font-bold text-white mb-4">2) Responsive images (srcset + sizes)</h3>
-// <p class="text-light-300 mb-4">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Responsive images (srcset + sizes)</h3>
+// <p class="text-gray-600 dark:text-light-300 mb-4">
 // The browser picks the best image based on viewport and density. You provide options; the browser chooses.
 // </p>
-// <div class="bg-dark-900 p-5 rounded-xl border border-dark-600 mb-6 font-mono text-xs md:text-sm text-light-200 overflow-x-auto">
+// <div class="bg-gray-100 dark:bg-dark-900 p-5 rounded-xl border border-gray-200 dark:border-dark-600 mb-6 font-mono text-xs md:text-sm text-gray-700 dark:text-light-200 overflow-x-auto">
 // <pre><code>&lt;img
 //   src="hero-800.jpg"
 //   srcset="hero-480.jpg 480w, hero-800.jpg 800w, hero-1200.jpg 1200w"
@@ -45,34 +45,34 @@
 // /&gt;</code></pre>
 // </div>
 
-// <h3 class="text-xl font-bold text-white mb-4">3) Video (accessible + respectful)</h3>
-// <ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) Video (accessible + respectful)</h3>
+// <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
 //   <li>Provide controls (don’t trap users).</li>
 //   <li>Don’t autoplay audio.</li>
 //   <li>For motion sensitivity: default to muted and avoid aggressive animations around video.</li>
 // </ul>
 
-// <h3 class="text-xl font-bold text-white mb-4">Guided practice (do this now)</h3>
-// <ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided practice (do this now)</h3>
+// <ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
 //   <li>Write alt text for each image in the sandbox. Decide: informative vs decorative.</li>
-//   <li>Change the product screenshot to <code class="bg-dark-900 px-1 rounded">loading="lazy"</code> and keep hero as eager.</li>
-//   <li>Add a <code class="bg-dark-900 px-1 rounded">figure</code> + <code class="bg-dark-900 px-1 rounded">figcaption</code> for the screenshot.</li>
+//   <li>Change the product screenshot to <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">loading="lazy"</code> and keep hero as eager.</li>
+//   <li>Add a <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">figure</code> + <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">figcaption</code> for the screenshot.</li>
 // </ol>
 
-// <h3 class="text-xl font-bold text-white mb-4">Junior vs Senior (same UI, different thinking)</h3>
-// <p class="text-light-300 mb-4">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Junior vs Senior (same UI, different thinking)</h3>
+// <p class="text-gray-600 dark:text-light-300 mb-4">
 // Juniors often write “something that works”. Seniors write “something that works for everyone and scales”.
 // </p>
 
-// <h3 class="text-xl font-bold text-white mb-4">Common mistakes (with fixes)</h3>
-// <ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-//   <li><span class="text-yellow-400 font-bold">Mistake:</span> alt="image". <span class="text-green-300 font-bold">Fix:</span> alt describes meaning or empty for decorative.</li>
-//   <li><span class="text-yellow-400 font-bold">Mistake:</span> huge images always loaded eagerly. <span class="text-green-300 font-bold">Fix:</span> eager only for above-the-fold.</li>
-//   <li><span class="text-yellow-400 font-bold">Mistake:</span> autoplay with audio. <span class="text-green-300 font-bold">Fix:</span> no autoplay audio; allow user control.</li>
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (with fixes)</h3>
+// <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+//   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> alt="image". <span class="text-green-300 font-bold">Fix:</span> alt describes meaning or empty for decorative.</li>
+//   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> huge images always loaded eagerly. <span class="text-green-300 font-bold">Fix:</span> eager only for above-the-fold.</li>
+//   <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> autoplay with audio. <span class="text-green-300 font-bold">Fix:</span> no autoplay audio; allow user control.</li>
 // </ul>
 
-// <h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-// <p class="text-light-300">
+// <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+// <p class="text-gray-600 dark:text-light-300">
 // Tomorrow: tables and structured data—how to mark up information so it’s readable and scannable.
 // </p>
 // `,
@@ -256,54 +256,54 @@ export const day04 = {
   intro:
     "You’ll ship media like a pro: meaningful alt text, responsive images, safe aspect ratios, and accessible video/audio patterns—without layout jumps.",
   content: `
-<h3 class="text-xl font-bold text-white mb-4">Problem framing</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 Media is a UX trap: broken layouts, missing alt text, autoplay chaos. Professionals treat media as content + performance + accessibility.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Concepts</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Alt text</span>: describe purpose, not pixels. Decorative images use <code class="bg-dark-900 px-1 rounded">alt=""</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Aspect ratio</span>: prevent layout shift with CSS <code class="bg-dark-900 px-1 rounded">aspect-ratio</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Responsive images</span>: use <code class="bg-dark-900 px-1 rounded">srcset</code> and <code class="bg-dark-900 px-1 rounded">sizes</code> when you have multiple assets.</li>
-  <li><span class="text-yellow-400 font-bold">Video</span>: avoid autoplay; include controls; consider captions (outside this sandbox).</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Concepts</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Alt text</span>: describe purpose, not pixels. Decorative images use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">alt=""</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Aspect ratio</span>: prevent layout shift with CSS <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">aspect-ratio</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Responsive images</span>: use <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">srcset</code> and <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">sizes</code> when you have multiple assets.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Video</span>: avoid autoplay; include controls; consider captions (outside this sandbox).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Small demo (working first)</h3>
-<p class="text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Small demo (working first)</h3>
+<p class="text-gray-600 dark:text-light-300 mb-6">
 You’ll build a responsive “project card” grid with images that never stretch and a video section with safe defaults.
 </p>
 
-<h3 class="text-xl font-bold text-white mb-4">Guided steps</h3>
-<ol class="list-decimal list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Guided steps</h3>
+<ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Resize the viewport: images must crop nicely, not distort.</li>
   <li>Confirm decorative icon uses empty alt, while content image has meaningful alt.</li>
   <li>Ensure video has controls and doesn’t autoplay.</li>
 </ol>
 
-<h3 class="text-xl font-bold text-white mb-4">Practice tasks</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li>Add a “hero image” with <code class="bg-dark-900 px-1 rounded">loading="lazy"</code> for below-the-fold media.</li>
-  <li>Add a figure caption using <code class="bg-dark-900 px-1 rounded">&lt;figure&gt;</code> / <code class="bg-dark-900 px-1 rounded">&lt;figcaption&gt;</code>.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Practice tasks</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li>Add a “hero image” with <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">loading="lazy"</code> for below-the-fold media.</li>
+  <li>Add a figure caption using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;figure&gt;</code> / <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">&lt;figcaption&gt;</code>.</li>
   <li>Add a placeholder background for missing images (graceful failure).</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Common mistakes (and fixes)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> alt text like “image1”. <span class="text-green-300 font-bold">Fix:</span> describe what the image adds to the page.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> stretched images. <span class="text-green-300 font-bold">Fix:</span> <code class="bg-dark-900 px-1 rounded">object-fit: cover</code>.</li>
-  <li><span class="text-yellow-400 font-bold">Mistake:</span> layout shift from unknown sizes. <span class="text-green-300 font-bold">Fix:</span> reserve space with aspect ratio.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Common mistakes (and fixes)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> alt text like “image1”. <span class="text-green-300 font-bold">Fix:</span> describe what the image adds to the page.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> stretched images. <span class="text-green-300 font-bold">Fix:</span> <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">object-fit: cover</code>.</li>
+  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Mistake:</span> layout shift from unknown sizes. <span class="text-green-300 font-bold">Fix:</span> reserve space with aspect ratio.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Checkpoints (auto-check)</h3>
-<ul class="list-disc list-inside space-y-2 text-light-300 mb-6">
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Checkpoints (auto-check)</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
   <li>Images never look squished at any width.</li>
-  <li>Every meaningful image has meaningful alt; decorative images have <code class="bg-dark-900 px-1 rounded">alt=""</code>.</li>
+  <li>Every meaningful image has meaningful alt; decorative images have <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">alt=""</code>.</li>
   <li>Video does not autoplay and has controls.</li>
 </ul>
 
-<h3 class="text-xl font-bold text-white mb-4">Next steps</h3>
-<p class="text-light-300">Tomorrow: lists, tables, and “data UI” semantics.</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Next steps</h3>
+<p class="text-gray-600 dark:text-light-300">Tomorrow: lists, tables, and “data UI” semantics.</p>
 `,
   sandbox: {
     html: `<!-- Day 4: media patterns -->
