@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { COURSES } from '../../lib/courses/index';
 import { Lock, CheckCircle, PlayCircle, ChevronRight, HelpCircle, BookOpen, Code, Brain, Youtube, Scale, Copy, Check, Play, RotateCcw, ArrowLeftRight } from 'lucide-react';
@@ -1048,6 +1048,7 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
 export default function LearningPathPage() {
     const params = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { data: session } = useSession();
     const courseId = params.courseId;
     const course = COURSES[courseId];
@@ -1061,9 +1062,30 @@ export default function LearningPathPage() {
             ? COURSES[courseId].days[0].day
             : 0;
 
-    const [activeDay, setActiveDay] = useState(initialDay);
+    const [activeDay, setActiveDay] = useState(() => {
+        const paramDay = searchParams.get('day');
+        if (paramDay) {
+            const num = Number(paramDay);
+            if (!isNaN(num)) return num;
+        }
+        return initialDay;
+    });
     const [completedDays, setCompletedDays] = useState([]);
+    const [serverCompleted, setServerCompleted] = useState([]);
     const liveLabEditorRef = useRef(null);
+
+    useEffect(() => {
+        if (session?.user?.email) {
+            fetch('/api/user/progress')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.completedTutorials) {
+                        setServerCompleted(data.completedTutorials);
+                    }
+                })
+                .catch(err => console.error('Failed to fetch progress:', err));
+        }
+    }, [session]);
     const guidedLabEditorRef = useRef(null);
     const [progressByDay, setProgressByDay] = useState({});
     const [isDesktop, setIsDesktop] = useState(false);
@@ -1120,9 +1142,56 @@ export default function LearningPathPage() {
         setProgressByDay(next);
     }, [courseId, course?.days?.length]);
 
-    if (!course) return <div className="text-dark-900 dark:text-white p-10">Course not found</div>;
 
-    const activeContent = course.days.find(d => d.day === activeDay) || course.days[0];
+
+    // Sync activeDay with URL searchParams (handles client-side navigation)
+    useEffect(() => {
+        const paramDay = searchParams.get('day');
+        if (paramDay) {
+            const num = Number(paramDay);
+            if (!isNaN(num) && num !== activeDay) {
+                setActiveDay(num);
+                // Also ensure we scroll to top if needed
+                if (!didScrollOnMountRef.current) {
+                    didScrollOnMountRef.current = true;
+                }
+            }
+        }
+    }, [searchParams, activeDay]);
+
+    // Auto-Resume / Smart Deep Link (Fallback if no query param)
+    // If we haven't auto-resumed yet and no param provided, pick the first incomplete day.
+    useEffect(() => {
+        if (!courseId || !course?.days?.length) return;
+        if (!didScrollOnMountRef.current && !searchParams.get('day')) {
+            // Find first incomplete day logic...
+            const firstIncomplete = course.days.find(d => {
+                const p = progressByDay?.[d.day]; // Use progressByDay from state
+                if (!p) return true;
+                // ... (mastery logic)
+                const checkpoints = Array.isArray(d.checkpoints) ? d.checkpoints : [];
+                const needsCheckpoints = checkpoints.length > 0;
+                const checkpointsOk = !needsCheckpoints
+                    ? true
+                    : checkpoints.every((_, idx) => p.checkpointsCorrect?.[idx] === true);
+
+                const steps = Array.isArray(d.labSteps) ? d.labSteps : [];
+                const needsLabs = steps.length > 0;
+                const labsOk = !needsLabs
+                    ? true
+                    : steps.every(s => p.lab?.[s.id]?.bug === true && p.lab?.[s.id]?.fix === true);
+
+                return !(checkpointsOk && labsOk);
+            });
+
+            if (firstIncomplete) {
+                setActiveDay(firstIncomplete.day);
+            }
+            didScrollOnMountRef.current = true;
+        }
+    }, [courseId, course?.days?.length, searchParams, progressByDay]); // Add progressByDay to dependencies
+
+    const activeContent = course?.days?.find(d => d.day === activeDay) || course?.days?.[0] || {};
     const aiContextTitle = `${course?.title || courseId} — Day ${activeDay}: ${activeContent?.title || ''}`;
     const aiContextText = buildAiContext({
         courseTitle: course?.title,
@@ -1133,7 +1202,7 @@ export default function LearningPathPage() {
     });
 
     const isDayMastered = (dayNumber) => {
-        const dayObj = course.days.find(d => d.day === dayNumber);
+        const dayObj = course?.days?.find(d => d.day === dayNumber);
         if (!dayObj) return false;
         const p = progressByDay?.[dayNumber] || { checkpointsCorrect: {}, lab: {}, masteryChecklist: {} };
 
@@ -1187,7 +1256,7 @@ export default function LearningPathPage() {
         ? course.days.findIndex((d) => Number(d?.day ?? 0) >= jsBonusStartDay)
         : -1;
 
-    // Reset the guided sandbox when changing lessons (so it doesn't carry code across days)
+    // Reset the guided sandbox when changing lessons
     useEffect(() => {
         const placeholder = `// Guided Lab Sandbox\n// Use "Load Bug" / "Load Fix" above to load code here.\nconsole.clear();\n`;
         guidedLabEditorRef.current?.loadStep({
@@ -1198,34 +1267,32 @@ export default function LearningPathPage() {
         });
     }, [courseId, activeDay]);
 
-    // Allow opening the connect modal from the global header CTA.
+    // Allow opening the connect modal
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const handler = () => {
             setConnectOpen(true);
-            // bring user back to the lesson header area
             lessonTopRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
         };
         window.addEventListener('open-connect-modal', handler);
         return () => window.removeEventListener('open-connect-modal', handler);
     }, []);
 
-    // When switching lessons (days), scroll the main lesson panel back to the top.
-    // This avoids landing in the middle of the page after selecting a different day.
+    // Scroll to top on day change
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        // Skip initial mount scroll; only scroll after user changes day/course.
         if (!didScrollOnMountRef.current) {
             didScrollOnMountRef.current = true;
             return;
         }
-        // Prefer scrolling to the lesson anchor (accounts for sticky header better).
         if (lessonTopRef.current?.scrollIntoView) {
             lessonTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }, [courseId, activeDay]);
+
+    if (!course) return <div className="text-dark-900 dark:text-white p-10">Course not found</div>;
 
     return (
         <div className="min-h-screen bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100 pt-24 pb-12">
@@ -1322,9 +1389,11 @@ export default function LearningPathPage() {
                                         >
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm transition-colors ${activeDay === day.day
                                                 ? 'bg-brand-primary text-dark-900 shadow-lg shadow-brand-primary/50'
-                                                : 'bg-dark-900/5 dark:bg-dark-600 text-dark-900/60 dark:text-light-400 group-hover:bg-dark-900/10 dark:group-hover:bg-dark-500'
+                                                : serverCompleted.includes(`${courseId}-day-${day.day}`)
+                                                    ? 'bg-green-500/20 text-green-500 ring-1 ring-green-500/50'
+                                                    : 'bg-dark-900/5 dark:bg-dark-600 text-dark-900/60 dark:text-light-400 group-hover:bg-dark-900/10 dark:group-hover:bg-dark-500'
                                                 }`}>
-                                                {day.day}
+                                                {serverCompleted.includes(`${courseId}-day-${day.day}`) ? <Check size={16} /> : day.day}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className={`font-bold text-sm truncate ${activeDay === day.day ? 'text-dark-900 dark:text-white' : 'text-dark-900/70 dark:text-light-300 group-hover:text-dark-900 dark:group-hover:text-white'}`}>
@@ -1430,6 +1499,7 @@ export default function LearningPathPage() {
                                     <CompleteButton
                                         variant="compact"
                                         postId={`${courseId}-day-${activeDay}`}
+                                        initialCompleted={serverCompleted.includes(`${courseId}-day-${activeDay}`)}
                                         className="w-full sm:w-auto justify-center !bg-dark-900/5 dark:!bg-dark-700 !text-dark-900 dark:!text-light-100 hover:!bg-dark-900/10 dark:hover:!bg-dark-600 border border-dark-700/10 dark:border-dark-600"
                                     />
                                     <div className="hidden sm:block max-w-[360px] p-3 rounded-2xl border border-brand-primary/20 bg-white/70 dark:bg-dark-900/40 text-xs text-dark-900/80 dark:text-light-200 backdrop-blur-lg">

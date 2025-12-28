@@ -18,6 +18,10 @@ export default function CompleteButton({
     const { data: session } = useSession();
     const router = useRouter();
 
+    useEffect(() => {
+        setCompleted(initialCompleted);
+    }, [initialCompleted]);
+
     const handleComplete = async () => {
         if (!session) {
             router.push(`/login?callbackUrl=${window.location.pathname}`);
@@ -67,8 +71,8 @@ export default function CompleteButton({
                 disabled={loading || completed}
                 className={`
                     ${buttonBase}
-                    ${completed 
-                        ? 'bg-green-500 text-white cursor-default' 
+                    ${completed
+                        ? 'bg-green-500 text-white cursor-default'
                         : 'bg-brand-primary text-dark-900 hover:bg-brand-primary/90'
                     }
                     ${loading ? 'opacity-70 cursor-wait' : ''}
