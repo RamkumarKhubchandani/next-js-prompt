@@ -11,7 +11,10 @@ export async function POST(request) {
     await connectDB();
     try {
         const { path } = await request.json();
-        await User.findByIdAndUpdate(session.user.id, { learningPath: path });
+        await User.findOneAndUpdate(
+            { email: session.user.email },
+            { learningPath: path }
+        );
         return NextResponse.json({ message: 'Path updated', path });
     } catch (error) {
         return NextResponse.json({ message: 'Error' }, { status: 500 });

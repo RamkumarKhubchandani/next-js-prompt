@@ -7,7 +7,7 @@ import { isSubscriptionActive, isProPlan } from '../../../lib/subscription';
 
 export async function GET(request) {
     const session = await getServerSession(authOptions);
-    
+
     // Security: Ensure only admins can access
     // For now, we will allow 'user' role if email is admin@example.com (or you can manually set role: 'admin' in DB)
     if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
@@ -27,7 +27,7 @@ export async function GET(request) {
             },
             { $set: { plan: 'free', role: 'user' } }
         );
-        
+
         const users = await User.find({})
             .select('-password') // Exclude password
             .sort({ createdAt: -1 })
@@ -64,9 +64,11 @@ export async function PUT(request) {
             user.plan = planType || 'pro_monthly';
             user.role = 'pro';
             user.subscriptionStartDate = new Date();
-            
+
             // Set expiry based on plan
             const expiry = new Date();
+            if (user.plan === 'pro_1_day') expiry.setDate(expiry.getDate() + 1);
+            if (user.plan === 'pro_2_days') expiry.setDate(expiry.getDate() + 2);
             if (user.plan === 'pro_weekly') expiry.setDate(expiry.getDate() + 7);
             if (user.plan === 'pro_monthly') expiry.setMonth(expiry.getMonth() + 1);
             if (user.plan === 'pro_yearly') expiry.setFullYear(expiry.getFullYear() + 1);

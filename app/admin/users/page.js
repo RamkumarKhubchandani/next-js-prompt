@@ -65,8 +65,8 @@ export default function AdminUsersPage() {
         fetchUsers();
     };
 
-    const filteredUsers = users.filter(u => 
-        u.name.toLowerCase().includes(search.toLowerCase()) || 
+    const filteredUsers = users.filter(u =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
         u.email.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -98,9 +98,9 @@ export default function AdminUsersPage() {
                 {/* Search */}
                 <div className="mb-6 relative">
                     <Search className="absolute left-4 top-3.5 text-gray-500" size={20} />
-                    <input 
-                        type="text" 
-                        placeholder="Search users by name or email..." 
+                    <input
+                        type="text"
+                        placeholder="Search users by name or email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-dark-800 border border-dark-700 rounded-xl focus:border-brand-primary focus:outline-none text-white"
@@ -156,7 +156,7 @@ export default function AdminUsersPage() {
                                         {user.role !== 'admin' && (
                                             <div className="flex justify-end gap-2">
                                                 {isActivePro(user) ? (
-                                                    <button 
+                                                    <button
                                                         onClick={(e) => { e.stopPropagation(); handleRevokePro(user._id); }}
                                                         className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
                                                     >
@@ -164,7 +164,7 @@ export default function AdminUsersPage() {
                                                     </button>
                                                 ) : (
                                                     <div className="relative inline-block">
-                                                        <button 
+                                                        <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 setSelectedUser(selectedUser === user._id ? null : user._id);
@@ -173,28 +173,40 @@ export default function AdminUsersPage() {
                                                         >
                                                             Grant Pro <ChevronDown size={14} />
                                                         </button>
-                                                        
+
                                                         <AnimatePresence>
                                                             {selectedUser === user._id && (
-                                                                <motion.div 
+                                                                <motion.div
                                                                     initial={{ opacity: 0, y: 5, scale: 0.95 }}
                                                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                                                     exit={{ opacity: 0, y: 5, scale: 0.95 }}
                                                                     className="absolute right-0 mt-2 w-40 bg-dark-800 border border-dark-600 rounded-lg shadow-2xl z-50 overflow-hidden"
                                                                 >
-                                                                    <button 
+                                                                    <button
+                                                                        onClick={() => handleGrantPro(user._id, 'pro_1_day')}
+                                                                        className="w-full text-left px-4 py-2 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
+                                                                    >
+                                                                        1 Day
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleGrantPro(user._id, 'pro_2_days')}
+                                                                        className="w-full text-left px-4 py-2 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
+                                                                    >
+                                                                        2 Days
+                                                                    </button>
+                                                                    <button
                                                                         onClick={() => handleGrantPro(user._id, 'pro_weekly')}
                                                                         className="w-full text-left px-4 py-2 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
                                                                     >
                                                                         1 Week
                                                                     </button>
-                                                                    <button 
+                                                                    <button
                                                                         onClick={() => handleGrantPro(user._id, 'pro_monthly')}
                                                                         className="w-full text-left px-4 py-2 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
                                                                     >
                                                                         1 Month
                                                                     </button>
-                                                                    <button 
+                                                                    <button
                                                                         onClick={() => handleGrantPro(user._id, 'pro_yearly')}
                                                                         className="w-full text-left px-4 py-2 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
                                                                     >

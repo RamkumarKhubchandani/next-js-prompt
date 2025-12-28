@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     // Subscription Details
     plan: {
         type: String,
-        enum: ['free', 'pro_trial', 'pro_weekly', 'pro_monthly', 'pro_yearly'],
+        enum: ['free', 'pro_trial', 'pro_weekly', 'pro_monthly', 'pro_yearly', 'pro_1_day', 'pro_2_days'],
         default: 'free'
     },
     subscriptionStartDate: { type: Date },
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
     // Pro Learning Path
     learningPath: {
         type: String,
-        enum: ['none', 'html', 'css', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python'],
+        enum: ['none', 'html', 'css', 'javascript', 'react', 'angular', 'node', 'fullstack', 'python', 'typescript', 'zustand', 'redux'],
         default: 'none'
     },
 
@@ -60,8 +60,7 @@ const userSchema = new mongoose.Schema({
         default: 0,
     },
     completedTutorials: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
+        type: String,
     }],
     streak: {
         count: { type: Number, default: 0 },
@@ -106,5 +105,11 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
+
+// Force model recompilation in dev to ensure schema updates (like new enums) are applied
+// Force model recompilation to ensure schema updates (like new enums) are applied
+if (mongoose.models.User) {
+    delete mongoose.models.User;
+}
 
 export default mongoose.models.User || mongoose.model('User', userSchema);
