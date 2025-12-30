@@ -20,5 +20,7 @@ const RoomSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Room || mongoose.model('Room', RoomSchema);
+// TTL Index: Delete documents 24 hours (86400 seconds) after 'lastUpdated'
+RoomSchema.index({ lastUpdated: 1 }, { expireAfterSeconds: 86400 });
 
+export default mongoose.models.Room || mongoose.model('Room', RoomSchema);

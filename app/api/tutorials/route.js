@@ -1,21 +1,28 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../lib/mongodb';
 import Tutorial from '../../models/Tutorial';
+import { getAllTutorials } from '../../lib/tutorials';
 
-// Named export for POST method
+// Named export for POST method (Admin Creation)
 export async function POST(request) {
   try {
     await connectDB();
     const data = await request.json();
 
     // Basic validation
-    if (!data.title || !data.leftMenu || !data.slug || !data.category) {
+    if (!data.title || !data.slug) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
-    
+
+    // Ensure slug is unique
+    const existing = await Tutorial.findOne({ slug: data.slug });
+    if (existing) {
+      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 });
+    }
+
     const tutorial = await Tutorial.create(data);
     return NextResponse.json(tutorial);
   } catch (error) {
@@ -26,20 +33,10 @@ export async function POST(request) {
   }
 }
 
-// If you need other HTTP methods, export them like this:
+// GET all tutorials (Hybrid: Static + Dynamic)
 export async function GET(request) {
   try {
-    await connectDB();
-    const { searchParams } = new URL(request.url);
-    // const category = searchParams.get('category');
-    const slug = searchParams.get('slug');
-     
-    const query = {};
-    if (slug) query.slug = slug;
-    console.log(query, "query");
-    const tutorials = await Tutorial.find(query)
-      .sort({ createdAt: -1 });
-      
+    const tutorials = await getAllTutorials();
     return NextResponse.json(tutorials);
   } catch (error) {
     return NextResponse.json(
