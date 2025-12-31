@@ -7,7 +7,7 @@ import TutorialGraphics from './TutorialGraphics';
 export default function TutorialCard({ tutorial, index }) {
     return (
         <Link
-            href={`/tutorials/${tutorial.slug}`}
+            href={`/blogs/${tutorial.slug}`}
             className="group relative flex flex-col h-full bg-white dark:bg-[#0a0a0a] rounded-3xl overflow-hidden border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl hover:shadow-brand-primary/10 hover:-translate-y-2"
         >
             {/* Image / Thumbnail Container */}

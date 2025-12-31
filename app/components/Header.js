@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Logo } from "./Logo"; 
+import { Logo } from "./Logo";
 import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -11,16 +11,16 @@ import { useSession, signOut } from "next-auth/react";
 import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 
 const navigation = [
-  { name: "Features", href: "/#features" },
-  { name: "How It Works", href: "/#how-it-works" },
-  { name: "Pricing", href: "/#pricing" },
-  { name: "Testimonials", href: "/#testimonials" },
-  { name: "Community", href: "/showcase" },
-  { name: "Shop", href: "/shop" },
-  { name: "DevRooms", href: "/pair" },
-  { name: "Jobs", href: "/jobs" },
-  { name: "AI Assessment", href: "/ai-quiz" },
-  { name: "Tutorials", href: "/tutorials" },
+    { name: "Features", href: "/#features" },
+    { name: "How It Works", href: "/#how-it-works" },
+    { name: "Pricing", href: "/#pricing" },
+    { name: "Testimonials", href: "/#testimonials" },
+    { name: "Community", href: "/showcase" },
+    { name: "Shop", href: "/shop" },
+    { name: "DevRooms", href: "/pair" },
+    { name: "Jobs", href: "/jobs" },
+    { name: "AI Assessment", href: "/ai-quiz" },
+    { name: "Tutorials", href: "/blogs" },
 ];
 
 export function Header({ showNav = true }) {
@@ -36,11 +36,11 @@ export function Header({ showNav = true }) {
     const menuRef = useRef(null);
 
     useEffect(() => {
-      const handleScroll = () => {
-        setIsScrolled(window.scrollY > 10);
-      };
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 10);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     useEffect(() => {
@@ -103,7 +103,7 @@ export function Header({ showNav = true }) {
             <header className={cn(
                 "fixed inset-x-0 top-0 z-50 transition-all duration-300 bg-transparent"
             )}>
-                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
                         <div className="flex items-center">
                             <Link href="/">
@@ -111,7 +111,7 @@ export function Header({ showNav = true }) {
                             </Link>
                         </div>
                     </div>
-                 </div>
+                </div>
             </header>
         );
     }
@@ -150,7 +150,7 @@ export function Header({ showNav = true }) {
                             <Logo />
                         </Link>
                     </div>
-                    
+
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
                         <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7 overflow-x-auto no-scrollbar">
@@ -179,7 +179,7 @@ export function Header({ showNav = true }) {
                             onClick={() => {
                                 // On lesson pages, let the page-specific modal open (it has course/day context).
                                 if (pathname?.startsWith('/path/')) {
-                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch {}
+                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch { }
                                     return;
                                 }
                                 setConnectConfig({
@@ -204,7 +204,7 @@ export function Header({ showNav = true }) {
                         <div className="hidden md:flex items-center gap-x-4">
                             {session ? (
                                 <div className="relative" ref={menuRef}>
-                                    <button 
+                                    <button
                                         onClick={() => setUserMenuOpen(!userMenuOpen)}
                                         className="flex items-center gap-2 text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors group"
                                     >
@@ -229,8 +229,8 @@ export function Header({ showNav = true }) {
                                                     <p className="text-sm font-medium text-white truncate">{session.user.email}</p>
                                                 </div>
                                                 <div className="py-1">
-                                                    <Link 
-                                                        href="/dashboard" 
+                                                    <Link
+                                                        href="/dashboard"
                                                         onClick={() => startNavigate("/dashboard")}
                                                         className={cn(
                                                             "flex items-center px-4 py-3 text-sm transition-colors",
@@ -245,8 +245,8 @@ export function Header({ showNav = true }) {
                                                             <Loader2 size={16} className="ml-auto animate-spin text-light-300" />
                                                         )}
                                                     </Link>
-                                                    <Link 
-                                                        href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'} 
+                                                    <Link
+                                                        href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
                                                         onClick={() => setUserMenuOpen(false)}
                                                         className="flex items-center px-4 py-3 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
                                                     >
@@ -321,7 +321,7 @@ export function Header({ showNav = true }) {
                                             type="button"
                                             onClick={() => {
                                                 if (pathname?.startsWith('/path/')) {
-                                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch {}
+                                                    try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch { }
                                                     setMobileMenuOpen(false);
                                                     return;
                                                 }

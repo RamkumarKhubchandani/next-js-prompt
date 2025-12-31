@@ -50,7 +50,7 @@ export default function Milestones({ stats }) {
                     <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Continue Learning</h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-8">Jump back into the tutorials and keep your streak alive!</p>
                     <div className="flex gap-4">
-                        <Link href="/tutorials">
+                        <Link href="/blogs">
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}

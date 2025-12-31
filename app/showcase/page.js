@@ -22,13 +22,13 @@ export default function ShowcasePage() {
             });
     }, []);
 
-    const filteredProjects = projects.filter(p => 
-        p.title.toLowerCase().includes(filter.toLowerCase()) || 
+    const filteredProjects = projects.filter(p =>
+        p.title.toLowerCase().includes(filter.toLowerCase()) ||
         p.user?.name?.toLowerCase().includes(filter.toLowerCase())
     );
 
     const ProjectCard = ({ project, index }) => (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -48,7 +48,7 @@ export default function ShowcasePage() {
                     <div>
                         <h3 className="text-xl font-bold text-white mb-1 line-clamp-1">{project.title}</h3>
                         <p className="text-xs text-gray-400 flex items-center gap-1">
-                             by <span className="text-brand-primary">{project.user?.name || 'Anonymous'}</span>
+                            by <span className="text-brand-primary">{project.user?.name || 'Anonymous'}</span>
                         </p>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-gray-500 bg-dark-900 px-2 py-1 rounded-lg">
@@ -56,7 +56,7 @@ export default function ShowcasePage() {
                         {new Date(project.createdAt).toLocaleDateString()}
                     </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between text-sm text-gray-400 mt-4 pt-4 border-t border-dark-700">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1 hover:text-pink-500 transition cursor-pointer">
@@ -80,14 +80,14 @@ export default function ShowcasePage() {
         <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-dark-900 text-light-100">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                    <motion.h1 
+                    <motion.h1
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-blue-500"
                     >
                         Community Showcase
                     </motion.h1>
-                    <motion.p 
+                    <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
@@ -95,12 +95,12 @@ export default function ShowcasePage() {
                     >
                         Discover amazing projects built by developers just like you. Clone, learn, and share your own creations.
                     </motion.p>
-                    
+
                     <div className="max-w-md mx-auto relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-                        <input 
-                            type="text" 
-                            placeholder="Search projects..." 
+                        <input
+                            type="text"
+                            placeholder="Search projects..."
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
                             className="w-full bg-dark-800 border border-dark-700 rounded-full py-3 pl-12 pr-4 text-white focus:outline-none focus:border-brand-primary transition shadow-lg"
@@ -123,7 +123,7 @@ export default function ShowcasePage() {
                         ) : (
                             <div className="col-span-full text-center py-20">
                                 <p className="text-gray-500 text-xl">No projects found yet. Be the first to deploy!</p>
-                                <Link href="/tutorials">
+                                <Link href="/blogs">
                                     <button className="mt-4 px-6 py-2 bg-brand-primary text-dark-900 rounded-full font-bold">
                                         Start Building
                                     </button>

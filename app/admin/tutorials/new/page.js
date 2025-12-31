@@ -58,7 +58,7 @@ export default function NewTutorialPage() {
                 tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
             };
 
-            const res = await fetch('/api/tutorials', {
+            const res = await fetch('/api/blogs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -69,7 +69,7 @@ export default function NewTutorialPage() {
             }
 
             const data = await res.json();
-            router.push(`/tutorials/${data.slug}`);
+            router.push(`/blogs/${data.slug}`);
             router.refresh();
 
         } catch (error) {
