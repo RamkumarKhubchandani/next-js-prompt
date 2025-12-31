@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, CalendarClock, Mail, User, MessageSquare, Phone } from 'lucide-react';
+import { X, CalendarClock, Mail, User, MessageSquare, Phone, FileText } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -75,7 +75,7 @@ export default function ConnectOneToOneModal({
             phoneNumber: phone.number || p.phoneNumber,
           }));
         }
-      } catch {}
+      } catch { }
     })();
   }, [open, initialEmail, initialName, timezone]);
 
@@ -131,187 +131,174 @@ export default function ConnectOneToOneModal({
   return (
     mounted
       ? createPortal(
-          <AnimatePresence>
-            {open && (
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              // Center alignment 
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
+              onMouseDown={(e) => {
+                // click outside closes
+                if (e.target === e.currentTarget) onClose?.();
+              }}
+            >
+              <div className="absolute inset-0 bg-black/20 dark:bg-black/80 backdrop-blur-sm transition-opacity" />
+
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                // Use scrollable overlay + top padding so tall modals never render off-screen.
-                className="fixed inset-0 z-[9999] flex items-start justify-center p-4 sm:p-6 overflow-y-auto"
-                onMouseDown={(e) => {
-                  // click outside closes
-                  if (e.target === e.currentTarget) onClose?.();
-                }}
+                initial={{ opacity: 0, y: 300, scale: 0.2, borderRadius: "100%" }}
+                animate={{ opacity: 1, y: 0, scale: 1, borderRadius: "32px" }}
+                exit={{ opacity: 0, y: 300, scale: 0.2, borderRadius: "100%" }}
+                transition={{ type: "spring", stiffness: 220, damping: 25 }}
+                style={{ transformOrigin: "bottom center" }}
+                className="relative w-full max-w-2xl bg-white dark:bg-[#111] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
               >
-                <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-sm" />
-
-                <motion.div
-                  initial={{ opacity: 0, y: 12, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.98 }}
-                  className="relative w-full max-w-2xl rounded-2xl border border-dark-700/10 dark:border-dark-700 bg-white dark:bg-dark-800 shadow-2xl overflow-hidden flex flex-col my-6 sm:my-10 max-h-[calc(100vh-2rem)]"
-                >
-                  <div className="p-6 border-b border-dark-700/10 dark:border-dark-700 flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold tracking-widest uppercase text-brand-primary">
-                        1:1 Connect
-                      </p>
-                      <h3 className="text-2xl font-bold text-dark-900 dark:text-white mt-2">
-                        {headline || 'Book a 1:1 call'}
-                      </h3>
-                      <p className="text-sm text-dark-900/60 dark:text-light-100/70 mt-2">
-                        {subhead || 'We’ll email you to confirm.'}
-                        {(courseId && lessonTitle && typeof day === 'number') ? (
-                          <>
-                            {' '}Context is auto-attached:
-                            <span className="text-dark-900 dark:text-light-200 font-semibold"> {courseTitle || courseId}</span>, Day{' '}
-                            <span className="text-dark-900 dark:text-light-200 font-semibold">{day}</span> —{' '}
-                            <span className="text-dark-900 dark:text-light-200 font-semibold">{lessonTitle}</span>
-                          </>
-                        ) : (
-                          <>
-                            {' '}This request will be sent as a general 1:1 help request (no specific lesson selected).
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => onClose?.()}
-                      className="shrink-0 w-10 h-10 rounded-xl bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border border-dark-700/10 dark:border-dark-600 flex items-center justify-center"
-                      aria-label="Close"
-                    >
-                      <X size={18} className="text-dark-900/70 dark:text-light-200" />
-                    </button>
+                {/* Premium Gradient Topbar (No text, just vibe) */}
+                <div className="h-2 w-full bg-gradient-to-r from-brand-primary via-blue-500 to-purple-500" />
+                <div className="px-8 pt-8 pb-4 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {headline || 'Book a 1:1 call'}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {subhead || 'Direct line to your mentor.'}
+                    </p>
                   </div>
+                  <button
+                    onClick={() => onClose?.()}
+                    className="p-2 rounded-full bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
+                  >
+                    <X size={20} className="text-gray-900 dark:text-white" />
+                  </button>
+                </div>
 
-                  {/* Scrollable body so the footer stays visible on small screens */}
-                  <div className="p-6 space-y-4 overflow-y-auto flex-1">
-                    {status === 'ok' && (
-                      <div className="p-4 rounded-xl border border-green-500/30 bg-green-500/10 text-green-200">
-                        Request sent. Check your inbox for confirmation.
+                {/* Scrollable body so the footer stays visible on small screens */}
+                {/* Clean Form Body */}
+                <div className="px-8 space-y-5 overflow-y-auto flex-1 custom-scrollbar pb-4">
+                  {status === 'ok' && (
+                    <div className="p-4 rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-medium text-center">
+                      Request sent! check your inbox.
+                    </div>
+                  )}
+                  {status === 'err' && (
+                    <div className="p-4 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 text-sm font-medium text-center">
+                      {error || 'Failed to send request.'}
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+
+                    {/* Session Context Badge */}
+                    {(courseId || lessonTitle) && (
+                      <div className="p-3 rounded-2xl bg-brand-primary/5 border border-brand-primary/10 flex items-center gap-3">
+                        <div className="p-2 bg-white dark:bg-black rounded-xl text-brand-primary shadow-sm">
+                          <FileText size={18} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-[10px] font-bold text-brand-primary uppercase tracking-widest leading-none mb-1">Current Session</div>
+                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                            {courseTitle || courseId} • Day {day}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {lessonTitle}
+                          </div>
+                        </div>
                       </div>
                     )}
-                    {status === 'err' && (
-                      <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-200">
-                        {error || 'Failed to send request.'}
-                      </div>
-                    )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <label className="block">
-                        <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                          <Mail size={14} /> Your email
-                        </div>
-                        <input
-                          value={form.email}
-                          onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-                          className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-                          placeholder="you@gmail.com"
-                        />
-                      </label>
-                      <label className="block">
-                        <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                          <User size={14} /> Name (optional)
-                        </div>
-                        <input
-                          value={form.name}
-                          onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                          className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-                          placeholder="Your name"
-                        />
-                      </label>
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Contact</label>
+                      <input
+                        value={form.email}
+                        onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                        placeholder="Email"
+                      />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <label className="block">
-                        <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                          <Phone size={14} /> Country code
-                        </div>
+                    <div className="grid grid-cols-[80px,1fr] gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Code</label>
                         <input
                           value={form.phoneCountryCode}
                           onChange={(e) => setForm((p) => ({ ...p, phoneCountryCode: e.target.value }))}
-                          className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-                          placeholder="+91"
+                          className="w-full px-3 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium text-center"
                         />
-                      </label>
-                      <label className="block md:col-span-2">
-                        <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                          <Phone size={14} /> Mobile number (required)
-                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Mobile</label>
                         <input
                           value={form.phoneNumber}
                           onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
-                          className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-                          placeholder="9876543210"
+                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                          placeholder="Mobile Number"
                         />
-                      </label>
+                      </div>
                     </div>
 
-                    <label className="block">
-                      <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                        <CalendarClock size={14} /> Preferred timing
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Name (Optional)</label>
+                      <input
+                        value={form.name}
+                        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                        placeholder="Your Name"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Preferred Time</label>
                         <input
                           type="datetime-local"
                           value={form.preferredTime}
                           onChange={(e) => setForm((p) => ({ ...p, preferredTime: e.target.value }))}
-                          className="md:col-span-2 w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
+                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium text-sm"
                         />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Timezone</label>
                         <input
                           value={form.timezone}
                           onChange={(e) => setForm((p) => ({ ...p, timezone: e.target.value }))}
-                          className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
-                          placeholder="Timezone (e.g. Asia/Kolkata)"
+                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                          placeholder="Asia/Kolkata"
                         />
                       </div>
-                    </label>
+                    </div>
 
-                    <label className="block">
-                      <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-dark-900/60 dark:text-light-100/70 mb-2">
-                        <MessageSquare size={14} /> What do you need help with?
-                      </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Message</label>
                       <textarea
                         value={form.notes}
                         onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
-                        rows={5}
-                        className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-600 text-dark-900 dark:text-white placeholder:text-dark-900/40 dark:placeholder:text-light-100/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/40 resize-none"
-                        placeholder="Describe your blocker, errors, what you tried, etc."
+                        rows={4}
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium resize-none"
+                        placeholder="What's blocking you?"
                       />
-                    </label>
-                  </div>
-
-                  <div className="p-6 border-t border-dark-700/10 dark:border-dark-700 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-                    <p className="text-xs text-dark-900/60 dark:text-light-100/70">
-                      This sends an email to <span className="text-dark-900 dark:text-light-200 font-semibold">ramkumarkhub@gmail.com</span> and to you.
-                    </p>
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => onClose?.()}
-                        className="px-4 py-2 rounded-xl border border-dark-700/10 dark:border-dark-600 bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 text-dark-900 dark:text-light-200 font-bold text-sm"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={submit}
-                        disabled={submitting || status === 'ok'}
-                        className={`px-4 py-2 rounded-xl font-bold text-sm ${
-                          submitting || status === 'ok'
-                            ? 'opacity-60 cursor-not-allowed bg-brand-primary text-dark-900'
-                            : 'bg-brand-primary hover:opacity-90 text-dark-900'
-                        }`}
-                      >
-                        {submitting ? 'Sending…' : status === 'ok' ? 'Sent' : (ctaLabel || 'Send request')}
-                      </button>
                     </div>
                   </div>
-                </motion.div>
+                </div>
+
+                <div className="p-8 pt-2 flex items-center justify-end gap-3">
+                  <button
+                    onClick={submit}
+                    disabled={submitting || status === 'ok'}
+                    className={`w-full py-4 rounded-2xl font-bold text-base transition-all transform active:scale-95 shadow-lg ${submitting || status === 'ok'
+                      ? 'opacity-60 cursor-not-allowed bg-gray-200 text-gray-500'
+                      : 'bg-black dark:bg-white text-white dark:text-black hover:shadow-xl'
+                      }`}
+                  >
+                    {submitting ? 'Sending...' : status === 'ok' ? 'Sent!' : (ctaLabel || 'Send Request')}
+                  </button>
+                </div>
               </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )
       : null
   );
 }

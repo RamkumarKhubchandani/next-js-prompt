@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bot, Send, Loader2, Sparkles, StopCircle, Cpu } from "lucide-react";
+import { Bot, Send, Loader2, Sparkles, StopCircle, Cpu, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 
 function truncate(s, n) {
@@ -63,7 +63,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
       id: safeNowId(),
       role: "assistant",
       content:
-        "Ask me anything about today’s lesson. I’ll behave like a human tutor (debugging steps, code examples, best practices).",
+        "Ask me anything about today’s lesson. I am your AI-powered human tutor (debugging steps, code examples, best practices).",
     },
   ]);
   const [input, setInput] = useState("");
@@ -258,7 +258,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
     abortRef.current = true;
     try {
       await engineRef.current?.interruptGenerate?.();
-    } catch {}
+    } catch { }
     setStreaming(false);
   };
 
@@ -299,7 +299,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
       // We keep our own chat history and always send it explicitly.
       try {
         await engineRef.current?.resetChat?.(true);
-      } catch {}
+      } catch { }
 
       const history = buildHistory();
 
@@ -339,7 +339,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
         abortRef.current = true;
         try {
           await engineRef.current?.interruptGenerate?.();
-        } catch {}
+        } catch { }
 
         const msg =
           "The free on-device model seems stuck (no tokens received). I cancelled it.\n\n" +
@@ -389,28 +389,30 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
   };
 
   return (
-    <div className="mt-14">
-      <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-2xl p-1 border border-brand-primary/20 shadow-lg">
-        <div className="bg-dark-800 rounded-xl p-8">
+    <div className="mt-8">
+      <div className="bg-white dark:bg-[#0A0A0C] rounded-[24px] overflow-hidden border border-gray-200 dark:border-white/5 shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="bg-white dark:bg-[#0A0A0C] p-8">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
             <div className="min-w-0">
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <Sparkles className="text-brand-primary" />
-                Ask the AI Tutor (Free Chat)
+                AI Coding Companion (Premium)
               </h3>
-              <p className="text-sm text-light-400 mt-2">
-                Runs locally in the learner’s browser (WebGPU). Best for coding guidance.
+              <p className="text-sm text-gray-500 dark:text-light-400 mt-2">
+                Your personal intelligent coding assistant. debugging, optimization, and architecture guidance.
               </p>
               {contextTitle && (
-                <p className="mt-3 text-xs text-light-400">
-                  <span className="font-bold tracking-widest uppercase text-light-500">Context</span>{" "}
-                  <span className="text-light-200">— {contextTitle}</span>
-                </p>
+                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-[#1A1A1E] border border-gray-200 dark:border-white/10 text-xs shadow-sm">
+                  <FileText size={12} className="text-brand-primary" />
+                  <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px]">Context Active</span>
+                  <div className="w-px h-3 bg-gray-300 dark:bg-white/10" />
+                  <span className="font-medium text-gray-700 dark:text-gray-300 truncate max-w-[280px]">{contextTitle}</span>
+                </div>
               )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-end">
-              <div className="px-3 py-2 rounded-xl border border-dark-600 bg-dark-900/40 text-xs text-light-300 flex items-center gap-2">
+              <div className="px-3 py-2 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900/40 text-xs text-gray-600 dark:text-light-300 flex items-center gap-2">
                 <Bot size={16} className="text-brand-primary" />
                 {engineStatus === "loading" ? (
                   <>
@@ -431,7 +433,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
                 value={modelId}
                 onChange={(e) => reloadModel(e.target.value)}
                 disabled={engineStatus === "loading" || streaming}
-                className="px-3 py-2 rounded-xl border border-dark-600 bg-dark-900/40 text-xs text-light-200"
+                className="px-3 py-2 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900/40 text-xs text-gray-700 dark:text-light-200"
               >
                 {(availableModels.length ? availableModels : preferredModelIds.map((id) => ({ model_id: id }))).map(
                   (m) => (
@@ -445,32 +447,32 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
           </div>
 
           {progressText && engineStatus === "loading" && (
-            <div className="mb-6 p-4 rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-100">
+            <div className="mb-6 p-4 rounded-2xl border border-gray-200 dark:border-blue-500/30 bg-gray-50 dark:bg-blue-500/10 text-gray-900 dark:text-blue-100">
               <p className="font-bold text-sm">Loading AI model…</p>
-              <p className="text-xs text-light-200 mt-2 whitespace-pre-wrap">{progressText}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-wrap font-mono">{progressText}</p>
               {typeof progressPct === "number" && (
                 <div className="mt-3">
-                  <div className="h-2 rounded-full bg-dark-900/40 border border-dark-700 overflow-hidden">
+                  <div className="h-2 rounded-full bg-gray-200 dark:bg-dark-900/40 border border-gray-300 dark:border-dark-700 overflow-hidden">
                     <div
                       className="h-full bg-brand-primary"
                       style={{ width: `${Math.max(1, Math.min(100, progressPct))}%` }}
                     />
                   </div>
-                  <p className="mt-2 text-xs text-light-300">
+                  <p className="mt-2 text-xs font-bold text-gray-500 dark:text-gray-400">
                     {Math.round(progressPct)}%
                   </p>
                 </div>
               )}
-              <p className="text-xs text-light-300 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 If this is your first time on this device, it will download model files once. Next time it loads from cache (no re-download).
               </p>
             </div>
           )}
 
           {needsDownload && engineStatus !== "loading" && (
-            <div className="mb-6 p-4 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-100">
+            <div className="mb-6 p-4 rounded-2xl border border-purple-200 dark:border-purple-500/30 bg-purple-50 dark:bg-purple-500/10 text-purple-900 dark:text-purple-100">
               <p className="font-bold text-sm">One-time AI download required</p>
-              <p className="text-xs text-light-200 mt-2">
+              <p className="text-xs text-purple-800 dark:text-purple-200 mt-2">
                 To use the free AI tutor, we need to download the model to your browser (this can be large). It will be cached on this device, so next time it won’t download again.
               </p>
               <div className="mt-3 flex flex-col sm:flex-row gap-2">
@@ -479,7 +481,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
                     const webllm = await import("@mlc-ai/web-llm");
                     await startDownloadAndLoad({ webllm, id: pendingModelId || modelId });
                   }}
-                  className="px-4 py-2 rounded-xl font-bold text-sm bg-brand-primary text-dark-900 hover:opacity-90"
+                  className="px-4 py-2 rounded-xl font-bold text-sm bg-brand-primary text-dark-900 hover:opacity-90 shadow-sm"
                 >
                   Download & enable AI tutor
                 </button>
@@ -488,7 +490,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
                     setNeedsDownload(false);
                     setPendingModelId(null);
                   }}
-                  className="px-4 py-2 rounded-xl font-bold text-sm bg-dark-700 hover:bg-dark-600 border border-dark-600 text-light-200"
+                  className="px-4 py-2 rounded-xl font-bold text-sm bg-gray-200 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600 border border-gray-300 dark:border-dark-600 text-gray-700 dark:text-light-200"
                 >
                   Not now
                 </button>
@@ -497,28 +499,28 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
           )}
 
           {showCachedNotice && (
-            <div className="mb-6 p-4 rounded-2xl border border-green-500/30 bg-green-500/10 text-green-100">
+            <div className="mb-6 p-4 rounded-2xl border border-green-200 dark:border-green-500/30 bg-green-50 dark:bg-green-500/10 text-green-900 dark:text-green-100">
               <p className="font-bold text-sm">AI tutor is ready</p>
-              <p className="text-xs text-light-200 mt-2">
+              <p className="text-xs text-green-800 dark:text-green-200 mt-2">
                 The model is now cached on this device. Next time it will load without downloading again.
               </p>
             </div>
           )}
 
           {engineStatus === "error" && (
-            <div className="mb-6 p-4 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-100">
+            <div className="mb-6 p-4 rounded-2xl border border-yellow-200 dark:border-yellow-500/30 bg-yellow-50 dark:bg-yellow-500/10 text-yellow-900 dark:text-yellow-100">
               <p className="font-bold text-sm">AI chat can’t run on this device/browser.</p>
-              <p className="text-xs text-light-200 mt-2 whitespace-pre-wrap">{engineError}</p>
-              <p className="text-xs text-light-300 mt-2">
+              <p className="text-xs text-yellow-800 dark:text-yellow-200 mt-2 whitespace-pre-wrap">{engineError}</p>
+              <p className="text-xs text-yellow-800/80 dark:text-yellow-200/80 mt-2">
                 Use Chrome/Edge desktop with WebGPU enabled. Meanwhile, the fallback will still help using lesson context.
               </p>
             </div>
           )}
 
-          <div className="border border-dark-700 rounded-2xl overflow-hidden">
+          <div className="border border-gray-200 dark:border-dark-700 rounded-2xl overflow-hidden">
             <div
               ref={scrollBoxRef}
-              className="max-h-[360px] overflow-y-auto p-5 space-y-4 bg-dark-900/30"
+              className="max-h-[400px] overflow-y-auto p-6 space-y-6 bg-gray-50 dark:bg-[#050505]"
             >
               {messages.map((m) => (
                 <motion.div
@@ -528,11 +530,10 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[90%] rounded-2xl px-4 py-3 border ${
-                      m.role === "user"
-                        ? "bg-brand-primary/15 border-brand-primary/30 text-light-100"
-                        : "bg-dark-800 border-dark-700 text-light-200"
-                    }`}
+                    className={`max-w-[90%] rounded-2xl px-4 py-3 border ${m.role === "user"
+                      ? "bg-brand-primary text-dark-900 font-medium"
+                      : "bg-white dark:bg-[#1A1A1E] text-gray-800 dark:text-gray-200 border-gray-200 dark:border-white/5"
+                      }`}
                   >
                     <pre className="whitespace-pre-wrap text-sm leading-relaxed font-sans">{m.content}</pre>
                   </div>
@@ -541,14 +542,14 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
 
               {streaming && (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl px-4 py-3 border bg-dark-800 border-dark-700 text-light-200 flex items-center gap-2 text-sm">
+                  <div className="rounded-2xl px-4 py-3 border bg-white dark:bg-dark-800 border-gray-200 dark:border-dark-700 text-gray-500 dark:text-light-200 flex items-center gap-2 text-sm">
                     <Loader2 size={14} className="animate-spin" /> Thinking…
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="p-4 bg-dark-800 border-t border-dark-700">
+            <div className="p-4 bg-white dark:bg-[#0A0A0C] border-t border-gray-200 dark:border-white/5">
               <div className="flex gap-2">
                 <input
                   value={input}
@@ -560,7 +561,7 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
                     }
                   }}
                   placeholder="Ask a coding question… paste your error + code for best help"
-                  className="flex-1 px-4 py-3 rounded-xl bg-dark-900 border border-dark-600 text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
+                  className="flex-1 px-4 py-3.5 rounded-xl bg-gray-50 dark:bg-[#1A1A1E] border border-gray-200 dark:border-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary/40 placeholder:text-gray-400 dark:placeholder:text-gray-500 font-medium"
                 />
 
                 {streaming ? (
@@ -591,5 +592,3 @@ export default function AICodingTutorChat({ contextTitle, contextText }) {
     </div>
   );
 }
-
-

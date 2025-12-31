@@ -3,7 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, useSandpack } from "@codesandbox/sandpack-react";
 import { atomDark } from "@codesandbox/sandpack-themes";
-import { Copy, Check, Mic, Video, Save, Lock, ArrowDownCircle, Users, UserPlus, RefreshCw } from 'lucide-react';
+import { Copy, Check, Mic, MicOff, Video, Save, Lock, ArrowDownCircle, Users, UserPlus, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 // --- STRICT MANUAL SYNC ---
@@ -104,6 +104,7 @@ export default function RoomPage() {
     const router = useRouter();
     const roomId = params.roomId;
     const [copied, setCopied] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const [externalCode, setExternalCode] = useState(null);
 
     const copyLink = () => {
@@ -232,7 +233,12 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="p-3 bg-dark-800 hover:bg-dark-700 rounded-full hover:text-white transition-all"><Mic size={18} /></button>
+                    <button
+                        onClick={() => setIsMuted(!isMuted)}
+                        className={`p-3 rounded-full transition-all ${isMuted ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-dark-800 hover:bg-dark-700 hover:text-white'}`}
+                    >
+                        {isMuted ? <MicOff size={18} /> : <Mic size={18} />}
+                    </button>
                     <button className="p-3 bg-dark-800 hover:bg-dark-700 rounded-full hover:text-white transition-all"><Video size={18} /></button>
                 </div>
             </div>

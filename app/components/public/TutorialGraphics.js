@@ -78,9 +78,7 @@ export default function TutorialGraphics({ slug, tags, image }) {
     if (slug === 'temporal-api-js') {
         return <TemporalGraphic />;
     }
-    if (slug === 'temporal-api-js') {
-        return <TemporalGraphic />;
-    }
+
 
 
     // Generic/Tag based fallbacks AFTER specific slugs
