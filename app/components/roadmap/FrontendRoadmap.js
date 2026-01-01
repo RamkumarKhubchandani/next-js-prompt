@@ -380,8 +380,8 @@ export default function FrontendRoadmap({ roadmap }) {
                 status === 'done'
                   ? 'shadow-[0_0_0_4px_rgba(34,197,94,0.12),0_0_30px_rgba(34,197,94,0.18)]'
                   : status === 'doing'
-                  ? 'shadow-[0_0_0_4px_rgba(0,255,150,0.12),0_0_30px_rgba(0,255,150,0.16)]'
-                  : 'shadow-[0_0_0_4px_rgba(59,130,246,0.08)]';
+                    ? 'shadow-[0_0_0_4px_rgba(0,255,150,0.12),0_0_30px_rgba(0,255,150,0.16)]'
+                    : 'shadow-[0_0_0_4px_rgba(59,130,246,0.08)]';
 
               return (
                 <motion.button
@@ -392,11 +392,10 @@ export default function FrontendRoadmap({ roadmap }) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   whileHover={locked ? undefined : { scale: 1.02 }}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 w-[270px] rounded-2xl border p-4 text-left transition ${
-                    locked
+                  className={`absolute -translate-x-1/2 -translate-y-1/2 w-[270px] rounded-2xl border p-4 text-left transition ${locked
                       ? 'bg-dark-800/40 border-dark-700 text-light-400 cursor-not-allowed opacity-60'
                       : 'bg-dark-800 border-dark-700 hover:border-brand-primary/50'
-                  } ${glow}`}
+                    } ${glow}`}
                   style={{ left: pos.x, top: pos.y }}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -559,7 +558,7 @@ export default function FrontendRoadmap({ roadmap }) {
                           </Link>
                         ) : (
                           <Link
-                            href="/tutorials"
+                            href="/blogs"
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-dark-700 border border-dark-600 text-light-100 font-bold hover:bg-dark-600"
                           >
                             Browse Tutorials <ArrowRight size={16} />

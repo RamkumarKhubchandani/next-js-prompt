@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Trigger restart for schema update - try 5 (cached version purge)
+  // Renamed tutorials to blogs to avoid slug conflict - build 8
 };
 
 export default nextConfig;

@@ -118,7 +118,7 @@ const TutorialAdmin = () => {
     };
 
     try {
-      const response = await fetch("/api/tutorials", {
+      const response = await fetch("/api/blogs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(tutorialData),

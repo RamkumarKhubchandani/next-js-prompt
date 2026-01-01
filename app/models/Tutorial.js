@@ -1,79 +1,48 @@
 import mongoose from 'mongoose';
 
-// Schema for SEO metadata
-const seoSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  keywords: [String],
-  ogImage: String,
-});
-
-// Schema for content versions
-const versionSchema = new mongoose.Schema({
-  content: [{
-    type: { type: String, enum: ['text', 'code', 'tip', 'image'] },
-    content: String,
-    imageUrl: String,
-  }],
-  createdAt: { type: Date, default: Date.now },
-  publishedAt: Date,
-  versionNumber: Number,
-});
-
-// Main Tutorial Schema
 const tutorialSchema = new mongoose.Schema({
-  title: { 
-    type: String, 
-    required: true,
-    index: true 
+  title: {
+    type: String,
+    required: [true, 'Please provide a title'],
+    trim: true,
   },
-  leftMenu: {
-    type: String, 
-    required: true,
-    unique: true
+  slug: {
+    type: String,
+    required: [true, 'Please provide a slug'],
+    unique: true,
+    trim: true,
   },
-  
-  slug: { 
-    type: String, 
-    required: true, 
-    unique: true 
+  content: {
+    type: String, // HTML content from TipTap
+    required: [true, 'Please add content'],
   },
-  category: { 
-    type: String, 
-    required: true,
-    index: true 
+  description: {
+    type: String,
+    required: [true, 'Please add a meta description'],
   },
-  status: { 
-    type: String, 
-    enum: ['draft', 'published'], 
-    default: 'draft' 
+  tags: {
+    type: [String],
+    default: [],
   },
   author: {
-    name: String,
-    email: String,
+    type: String,
+    default: 'Admin', // Can be linked to User model if needed later
   },
-  content: [{
-    type: { type: String, enum: ['text', 'code', 'tip', 'image'] },
-    content: String,
-    imageUrl: String,
-  }],
-  seo: seoSchema,
-  versions: [versionSchema],
-  tags: [String],
-  readTime: Number,
-  views: { type: Number, default: 0 },
-  likes: { type: Number, default: 0 },
-  shares: { type: Number, default: 0 },
-  featuredImage: String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-}, {
-  timestamps: true,
-});
-
-// Add indexes for better performance
-tutorialSchema.index({ tags: 1 });
-tutorialSchema.index({ createdAt: -1 });
-tutorialSchema.index({ views: -1 });
+  isPublished: {
+    type: Boolean,
+    default: true,
+  },
+  difficulty: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Intermediate',
+  },
+  readTime: {
+    type: String, // e.g., "5 min read"
+  },
+  image: {
+    type: String, // URL to cover image
+  },
+}, { timestamps: true });
 
 export default mongoose.models.Tutorial || mongoose.model('Tutorial', tutorialSchema);

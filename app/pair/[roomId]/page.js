@@ -1,119 +1,111 @@
 "use client";
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview, useSandpack } from "@codesandbox/sandpack-react";
 import { atomDark } from "@codesandbox/sandpack-themes";
-import { Copy, Check, Users, Mic, Video, Monitor, MessageSquare, Cloud, Wifi, WifiOff } from 'lucide-react';
+import { Copy, Check, Mic, MicOff, Video, Save, Lock, ArrowDownCircle, Users, UserPlus, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import io from 'socket.io-client';
 
-// GLOBAL SOCKET SINGLETON
-let socket;
+// --- STRICT MANUAL SYNC ---
+// Logic:
+// 1. User types -> Nothing happens (local only).
+// 2. User clicks "SAVE" -> Pushes to DB.
+// 3. User clicks "REFRESH" -> Pulls from DB.
+// 4. No auto-saving, no auto-polling.
 
-const getSocket = () => {
-    if (!socket) {
-        socket = io({
-            path: '/socket.io',
-            transports: ['websocket'], // Force Websocket for speed
-        });
-    }
-    return socket;
-};
-
-// Helper component to handle code syncing
-function SyncManager({ roomId, onCodeChange, externalCode, isConnected }) {
+function ManualSyncControls({ roomId, setExternalCode }) {
     const { sandpack } = useSandpack();
-    const [isTyping, setIsTyping] = useState(false);
-    const timeoutRef = useRef(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
+    const [lastAction, setLastAction] = useState(null);
 
-    // 1. Listen for internal changes (User Typing)
-    useEffect(() => {
-        const code = sandpack.files["App.js"]?.code || sandpack.files["/App.js"]?.code;
-        if (!code) return;
-
-        // Avoid echo
-        if (code === externalCode) return;
-
-        // Debounce emission
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        
-        setIsTyping(true);
-        timeoutRef.current = setTimeout(() => {
-            setIsTyping(false);
-            if (isConnected) {
-                console.log('SYNC: Sending...');
-                onCodeChange(code);
-            }
-        }, 100); // Ultra fast debounce (100ms)
-
-    }, [sandpack.files, onCodeChange, isConnected, externalCode]);
-
-    // 2. Listen for external changes (Socket Updates)
-    useEffect(() => {
-        const currentCode = sandpack.files["App.js"]?.code || sandpack.files["/App.js"]?.code;
-        if (externalCode && externalCode !== currentCode) {
-            console.log('SYNC: Receiving...');
-            sandpack.updateFile("App.js", externalCode);
+    const handleSave = async () => {
+        setIsSaving(true);
+        const code = sandpack.files["App.js"]?.code;
+        try {
+            await fetch(`/api/pair/${roomId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            setLastAction(`Saved at ${new Date().toLocaleTimeString()}`);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to save changes.");
+        } finally {
+            setIsSaving(false);
         }
-    }, [externalCode, sandpack, isTyping]); // Update even if typing to force sync
+    };
+
+    const handleFetch = async () => {
+        setIsFetching(true);
+        try {
+            const res = await fetch(`/api/pair/${roomId}`);
+            const data = await res.json();
+
+            if (data.code) {
+                const currentCode = sandpack.files["App.js"]?.code;
+                if (currentCode !== data.code) {
+                    setExternalCode(data.code);
+                    setLastAction(`Updated at ${new Date().toLocaleTimeString()}`);
+                } else {
+                    setLastAction("You are already up to date.");
+                }
+            } else {
+                setLastAction("No saved code found.");
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsFetching(false);
+        }
+    };
 
     return (
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-dark-800 rounded-lg border border-dark-700 text-xs font-mono text-light-400">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            {isTyping ? 'Typing...' : (isConnected ? 'Live' : 'Disconnected')}
+        <div className="flex items-center gap-3">
+            <span className="hidden md:inline text-xs text-gray-500 mr-2">{lastAction}</span>
+
+            <button
+                onClick={handleFetch}
+                disabled={isFetching}
+                className="flex items-center gap-2 px-3 py-1.5 bg-dark-800 hover:bg-dark-700 text-white rounded-lg border border-dark-600 transition-colors text-xs font-medium"
+            >
+                <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
+                Load Friend's Code
+            </button>
+
+            <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors text-xs font-bold shadow-lg shadow-blue-600/20"
+            >
+                <Save size={14} />
+                {isSaving ? 'Saving...' : 'Save My Changes'}
+            </button>
         </div>
     );
 }
 
+// Internal sandbox component to receive updates
+function EditorController({ externalCode }) {
+    const { sandpack } = useSandpack();
+
+    useEffect(() => {
+        if (externalCode !== null) {
+            sandpack.updateFile("App.js", externalCode);
+        }
+    }, [externalCode, sandpack]);
+
+    return null;
+}
+
 export default function RoomPage() {
     const params = useParams();
+    const router = useRouter();
     const roomId = params.roomId;
     const [copied, setCopied] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
     const [externalCode, setExternalCode] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
-
-    // Initial Load & Socket Connection
-    useEffect(() => {
-        const s = getSocket();
-
-        const onConnect = () => {
-            console.log(`Socket Connected: ${s.id}`);
-            setIsConnected(true);
-            s.emit('join-room', roomId);
-        };
-
-        const onDisconnect = () => {
-            console.log('Socket Disconnected');
-            setIsConnected(false);
-        };
-
-        const onCodeUpdate = (newCode) => {
-            console.log('Received Update from Server');
-            setExternalCode(newCode);
-        };
-
-        s.on('connect', onConnect);
-        s.on('disconnect', onDisconnect);
-        s.on('code-update', onCodeUpdate);
-
-        // If already connected (re-render)
-        if (s.connected) {
-            onConnect();
-        }
-
-        return () => {
-            s.off('connect', onConnect);
-            s.off('disconnect', onDisconnect);
-            s.off('code-update', onCodeUpdate);
-        };
-    }, [roomId]);
-
-    const handleEmitCode = (newCode) => {
-        const s = getSocket();
-        if (s) {
-            s.emit('code-change', { roomId, code: newCode });
-        }
-    };
 
     const copyLink = () => {
         navigator.clipboard.writeText(window.location.href);
@@ -128,42 +120,73 @@ export default function App() {
     <div className="h-screen w-full flex items-center justify-center bg-gray-900 text-white">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">
-          Hello from Room ${roomId}
+          DevRoom: ${roomId} 
         </h1>
-        <p className="text-gray-400">Start typing to see real-time magic!</p>
+        <p className="text-gray-400 mb-8">Manual Sync Mode Active</p>
+        
+        <div className="p-6 bg-gray-800 rounded-xl border border-gray-700 max-w-sm mx-auto">
+           <p className="font-mono text-blue-400">1. Type Code</p>
+           <p className="font-mono text-green-400 mt-2">2. Click 'Save My Changes'</p>
+           <p className="font-mono text-yellow-400 mt-2">3. Friend clicks 'Load'</p>
+        </div>
       </div>
     </div>
   );
 }`;
 
+    // On initial load, fetch the code ONCE so the user sees the saved state.
+    useEffect(() => {
+        const init = async () => {
+            try {
+                // console.log("Fetching initial room state...");
+                const res = await fetch(`/api/pair/${roomId}`);
+                if (!res.ok) throw new Error("Failed to fetch");
+                const data = await res.json();
+                if (data.code) {
+                    setExternalCode(data.code);
+                }
+            } catch (e) {
+                console.error("Initial load failed:", e);
+            }
+        };
+        init();
+    }, []); // Empty dependency array = Runs once on mount only.
+
+
     return (
-        <div className="h-screen flex flex-col bg-dark-900 overflow-hidden">
+        <div className="h-screen flex flex-col bg-dark-900 overflow-hidden font-sans">
             {/* Header */}
-            <header className="h-14 bg-dark-800 border-b border-dark-700 flex items-center justify-between px-4">
-                <div className="flex items-center gap-4">
-                    <Link href="/pair" className="text-light-400 hover:text-white">
-                        &larr; Leave
-                    </Link>
-                    <div className="h-6 w-px bg-dark-700"></div>
-                    <div className="flex items-center gap-2">
-                        {isConnected ? <Wifi size={16} className="text-green-500" /> : <WifiOff size={16} className="text-red-500" />}
-                        <span className="text-white font-bold text-sm">Room: {roomId}</span>
+            <header className="h-16 bg-dark-800 border-b border-dark-700 flex items-center justify-between px-6 shadow-sm z-50">
+                <div className="flex items-center gap-6">
+                    <button onClick={() => router.push('/pair')} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 font-medium">
+                        &larr; Exit
+                    </button>
+
+                    <div className="h-8 w-px bg-dark-700"></div>
+
+                    <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                            <span className="text-white font-bold text-sm tracking-tight leading-none mb-1">Room {roomId}</span>
+                            <span className="text-xs text-gray-400 leading-none flex items-center gap-1 font-mono">
+                                <Lock size={10} /> Secure & Ephemeral (24h)
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button 
+                <div className="flex items-center gap-4">
+                    <button
                         onClick={copyLink}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-brand-primary/10 text-brand-primary rounded-lg hover:bg-brand-primary/20 transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-all text-xs font-bold border border-dark-600"
                     >
-                        {copied ? <Check size={14} /> : <Copy size={14} />}
-                        {copied ? 'Copied!' : 'Invite Link'}
+                        {copied ? <Check size={14} /> : <UserPlus size={14} />}
+                        {copied ? 'Copied!' : 'Invite'}
                     </button>
                 </div>
             </header>
 
             {/* Main Editor Area */}
-            <div className="flex-1 flex">
+            <div className="flex-1 flex relative">
                 <SandpackProvider
                     template="react"
                     theme={atomDark}
@@ -171,40 +194,53 @@ export default function App() {
                         externalResources: ["https://cdn.tailwindcss.com"]
                     }}
                     files={{
-                        "App.js": initialCode, // Initial load only
+                        "App.js": initialCode,
                     }}
                 >
-                    <SandpackLayout className="h-full w-full border-none rounded-none !bg-dark-900">
-                        <SandpackCodeEditor 
+                    <div className="absolute top-4 right-4 z-50">
+                        <ManualSyncControls
+                            roomId={roomId}
+                            setExternalCode={setExternalCode}
+                        />
+                    </div>
+
+                    <EditorController externalCode={externalCode} />
+
+                    <SandpackLayout className="h-full w-full border-none rounded-none !bg-dark-900 grid grid-cols-1 lg:grid-cols-2">
+                        <SandpackCodeEditor
                             showLineNumbers
                             showInlineErrors
                             wrapContent
                             closableTabs
-                            className="h-full border-r border-dark-700"
+                            className="h-full border-b lg:border-b-0 lg:border-r border-dark-700"
                             style={{ height: '100%' }}
                         />
-                        <SandpackPreview 
+                        <SandpackPreview
                             className="h-full"
                             showNavigator={true}
                             style={{ height: '100%' }}
                         />
-                        <div className="absolute bottom-4 right-4 z-50">
-                             <SyncManager 
-                                roomId={roomId} 
-                                onCodeChange={handleEmitCode} 
-                                externalCode={externalCode}
-                                isConnected={isConnected}
-                             />
-                        </div>
                     </SandpackLayout>
                 </SandpackProvider>
             </div>
 
-            <div className="h-12 bg-dark-900 border-t border-dark-700 flex items-center justify-center gap-6 text-light-400">
-                <button className="p-2 hover:bg-dark-800 rounded-full hover:text-white transition-colors"><Mic size={20} /></button>
-                <button className="p-2 hover:bg-dark-800 rounded-full hover:text-white transition-colors"><Video size={20} /></button>
-                <button className="p-2 hover:bg-dark-800 rounded-full hover:text-white transition-colors"><Monitor size={20} /></button>
-                <button className="p-2 hover:bg-dark-800 rounded-full hover:text-white transition-colors"><MessageSquare size={20} /></button>
+            {/* Bottom Bar */}
+            <div className="h-16 bg-dark-900 border-t border-dark-700 flex items-center justify-between px-8 text-gray-400">
+                <div className="flex items-center gap-4">
+                    <span className="text-xs text-gray-500">
+                        Collaborating? Please save your changes manually to share them.
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsMuted(!isMuted)}
+                        className={`p-3 rounded-full transition-all ${isMuted ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'bg-dark-800 hover:bg-dark-700 hover:text-white'}`}
+                    >
+                        {isMuted ? <MicOff size={18} /> : <Mic size={18} />}
+                    </button>
+                    <button className="p-3 bg-dark-800 hover:bg-dark-700 rounded-full hover:text-white transition-all"><Video size={18} /></button>
+                </div>
             </div>
         </div>
     );
