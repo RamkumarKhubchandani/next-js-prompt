@@ -6,7 +6,7 @@ import { Save, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 // Dynamically import Editor to avoid SSR issues with TipTap
-const TutorialEditor = dynamic(() => import('../../../../components/admin/TutorialEditor'), {
+const TutorialEditor = dynamic(() => import('../../../components/admin/TutorialEditor'), {
     ssr: false,
     loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-lg"></div>
 });
