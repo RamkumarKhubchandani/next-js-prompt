@@ -45,13 +45,33 @@ export const angularTestingSignals = {
                     No subscription needed. Just call the signal function.
                 </p>
             </div>
-             <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// counter.component.spec.ts</div>
                  <div class="text-purple-400">it</div>(<span class="text-green-400">'should double the count'</span>, () => {'{'} <br/>
                  &nbsp;&nbsp;component.count.set(2); <br/>
                  &nbsp;&nbsp;TestBed.flushEffects(); <span class="text-gray-500">// Run effect() blocks</span> <br/>
                  &nbsp;&nbsp;<div class="text-purple-400">expect</div>(component.doubleCount()).toBe(4); <br/>
                  {'}'});
+            </div>
+        </section>
+
+        <!-- 03. Mocks -->
+        <section id="mocks" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-green-600 dark:text-green-500">03.</span>
+                Mocking Signals
+            </h2>
+            <div class="bg-green-900/10 border-l-4 border-green-500 p-6 mt-6">
+                 <h4 class="font-bold text-green-800 dark:text-green-200 mb-2">Deep Dive: Mocking Read-Only Signals</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     Often you need to mock a Service that exposes a read-only <code>Signal&lt;T&gt;</code>.
+                     <br/><br/>
+                     <strong>Technique:</strong> Just create a writable signal and cast it!
+                     <br/>
+                     <code>userService.currentUser = signal(mockUser) as unknown as Signal&lt;User&gt;;</code>
+                     <br/>
+                     Now your test can control the value by calling <code>.set()</code> on the underlying writable signal, even though the component sees it as read-only.
+                 </p>
             </div>
         </section>
 
@@ -73,7 +93,6 @@ export const angularTestingSignals = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Play, CheckCircle, Clock } from 'lucide-react';
 
 // 🧪 Test Runner Visualizer
 
@@ -116,7 +135,7 @@ export default function TestDemo() {
                 <div className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                     {state === 'idle' && (
                          <div className="text-center">
-                             <Play size={48} className="mx-auto text-gray-300 mb-4" />
+                             <div className="mx-auto text-4xl mb-4 text-gray-300">▶️</div>
                              <button onClick={runTest} className="px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition">
                                  Run Test
                              </button>
@@ -124,13 +143,13 @@ export default function TestDemo() {
                     )}
                     {state === 'running' && (
                          <div className="text-center">
-                             <Clock size={48} className="mx-auto text-yellow-500 animate-spin mb-4" />
+                             <div className="mx-auto text-4xl mb-4 animate-spin">⏳</div>
                              <p className="font-bold text-gray-700 dark:text-white">Executing...</p>
                          </div>
                     )}
                     {state === 'passed' && (
                          <div className="text-center animate-in zoom-in">
-                             <CheckCircle size={64} className="mx-auto text-green-500 mb-4" />
+                             <div className="mx-auto text-6xl mb-4 text-green-500">✅</div>
                              <p className="font-bold text-2xl text-green-600 dark:text-green-400">PASSED</p>
                              <p className="text-sm text-gray-400 mt-2">Duration: 4ms</p>
                              <button onClick={() => setState('idle')} className="mt-6 text-xs text-gray-500 underline">Reset</button>

@@ -44,7 +44,7 @@ export const jsExplicitResourceManagement = {
              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="p-6 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20">
                     <h3 class="text-xl font-bold text-red-700 dark:text-red-400 mb-4">Old Way (Try/Finally)</h3>
-                    <pre class="text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    <pre class="text-xs font-mono text-gray-800 dark:text-white whitespace-pre-wrap">
 const conn = await db.connect();
 try {
   await conn.query(...);
@@ -55,7 +55,7 @@ try {
                 </div>
                 <div class="p-6 rounded-xl bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20">
                     <h3 class="text-xl font-bold text-teal-700 dark:text-teal-400 mb-4">New Way (Scope-Based)</h3>
-                    <pre class="text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    <pre class="text-xs font-mono text-gray-800 dark:text-white whitespace-pre-wrap">
 {
   using conn = await db.connect();
   await conn.query(...);
@@ -70,18 +70,52 @@ try {
         <section id="symbol-dispose" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-teal-600 dark:text-teal-500">03.</span>
-                Implementing It
+                Implementing It: The Internals
             </h2>
             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
                 <p>
-                    To make your own classes compatible with <code>using</code>, you implement the <code>Symbol.dispose</code> (sync) or <code>Symbol.asyncDispose</code> (async) method.
+                    JavaScript didn't just add a keyword; it added a protocol. Objects become "disposable" by implementing a specific method keyed by a global <strong>Symbo</strong>.
                 </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
+                     <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl">
+                        <h4 class="font-bold mb-2">Sync Disposal</h4>
+                        <code class="text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Symbol.dispose</code>
+                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-400">For closing file handles, stopping timers, or releasing memory buffers immediately.</p>
+                     </div>
+                     <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl">
+                        <h4 class="font-bold mb-2">Async Disposal</h4>
+                        <code class="text-sm bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Symbol.asyncDispose</code>
+                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-400">For closing DB connections, flushing logs to disk, or network socket termination (returns a Promise).</p>
+                     </div>
+                </div>
+                <p>
+                    When you use the <code>using</code> keyword (or <code>await using</code>), the JavaScript engine does the following invisibly:
+                </p>
+                <ol class="list-decimal pl-6 space-y-2">
+                    <li>Creates a hidden <code>try/finally</code> block around the current scope.</li>
+                    <li>Inside <code>finally</code>, checks if the object has the disposal symbol.</li>
+                    <li>Calls that method primarily to clean up artifacts.</li>
+                </ol>
             </div>
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto text-blue-100">
+
+            <div class="bg-teal-900/10 border-l-4 border-teal-500 p-6 my-8">
+                 <h4 class="font-bold text-teal-800 dark:text-teal-200 mb-2">Deep Dive: Stack Unwinding</h4>
+                 <p class="text-gray-700 dark:text-gray-300">
+                     Just like C++ destructors, resources are disposed in <strong>Reverse Order</strong> of their creation (LIFO - Last In, First Out). 
+                     <br/>
+                     If you open <code>Connection A</code> then <code>Connection B</code>, <code>Connection B</code> will always close first. This is critical for preventing dependency errors during shutdown.
+                 </p>
+            </div>
+
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto text-blue-100 shadow-2xl">
+                 <span class="text-gray-500">// Custom Class Implementation</span><br/>
                  <span class="text-purple-400">class</span> DatabaseConnection {'{'} <br/>
+                 &nbsp;&nbsp;<span class="text-blue-400">constructor</span>(id) {'{'} this.id = id; {'}'} <br/>
+                 <br/>
+                 &nbsp;&nbsp;<span class="text-gray-500">// The magic method</span><br/>
                  &nbsp;&nbsp;[<span class="text-yellow-400">Symbol.asyncDispose</span>]() {'{'} <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">await</span> this.close(); <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;console.log(<span class="text-green-400">'Connection closed automatically.'</span>); <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-blue-400">await</span> this.disconnect(); <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;console.log(<span class="text-green-400">\`Disposed Connection \${this.id}\`</span>); <br/>
                  &nbsp;&nbsp;{'}'} <br/>
                  {'}'}
             </div>
@@ -93,19 +127,28 @@ try {
                 <span class="text-teal-600 dark:text-teal-500">04.</span>
                 The Senior Engineer's Take
             </h2>
-            <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-teal-500">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">RAII comes to JavaScript</h3>
-                <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    This pattern is known as <strong>RAII (Resource Acquisition Is Initialization)</strong> in C++ and Rust. It is the gold standard for resource safety. 
-                    <br/><br/>
-                    Use this for: Temporary files, Mutex locks, Database Transactions, and WebSocket subscriptions.
-                </p>
+            <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-teal-500 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">RAII comes to JavaScript</h3>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        This pattern is known as <strong>RAII (Resource Acquisition Is Initialization)</strong> in C++ and Rust. It is the gold standard for resource safety. 
+                    </p>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Killer Use Case: DB Transactions</h3>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        Ever locked a database row because an error occurred before you could call <code>COMMIT</code> or <code>ROLLBACK</code>? 
+                        With explicit management, you can create a <code>TransactionHandle</code> that automatically rolls back if the scope exits with an error. No more deadlocks.
+                    </p>
+                </div>
+                 <div class="text-xs font-mono text-gray-500 bg-gray-200 dark:bg-black p-4 rounded-lg">
+                    ⚠️ Note: Requires TypeScript 5.2+ and a polyfill for <code>Symbol.dispose</code> in older environments (e.g., core-js).
+                </div>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Trash2, Database, Clock, RefreshCw, AlertTriangle } from 'lucide-react';
 
 // 🗑️ Garbage Collection Visualizer
 
@@ -151,7 +194,7 @@ export default function DisposalDemo() {
                 <div className="space-y-6">
                      <div className="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                         <h4 className="font-bold mb-4 flex items-center gap-2">
-                            <AlertTriangle size={18} className="text-red-500" /> Legacy (Manual)
+                            <span className="mr-2">⚠️</span> Legacy (Manual)
                         </h4>
                         <button 
                             onClick={() => openConnection('manual')}
@@ -164,7 +207,7 @@ export default function DisposalDemo() {
 
                      <div className="p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                         <h4 className="font-bold mb-4 flex items-center gap-2">
-                            <RefreshCw size={18} className="text-teal-500" /> Modern (Using)
+                            <span className="mr-2">🔄</span> Modern (Using)
                         </h4>
                         <button 
                             onClick={() => openConnection('using')}
@@ -190,7 +233,7 @@ export default function DisposalDemo() {
                         {connections.map(c => (
                             <div key={c.id} className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-slate-700 animate-in slide-in-from-left-2">
                                 <div className="flex items-center gap-3">
-                                    <Database size={16} className={c.type === 'using' ? 'text-teal-400' : 'text-red-400'} />
+                                    <span className="mr-3">🗄️</span>
                                     <div>
                                         <div className="text-sm font-bold text-white">ID: {c.id}</div>
                                         <div className="text-[10px] text-gray-400 uppercase">{c.type === 'using' ? 'Auto-Managed' : 'Manual'}</div>

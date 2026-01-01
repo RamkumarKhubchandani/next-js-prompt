@@ -44,6 +44,14 @@ export const aiVectorDbFrontend = {
                 <p>
                     Orama (formerly Lyra) is a pure JS, immutable vector database. It supports fuzzy search, faceting, and vector embeddings out of the box.
                 </p>
+                <div class="bg-teal-900/10 border-l-4 border-teal-500 p-6 my-6">
+                     <h4 class="font-bold text-teal-800 dark:text-teal-200 mb-2">Deep Dive: Memory Constraints & Quantization</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Browser tabs crash if you use too much RAM (~2-4GB limit). 
+                         <br/><br/>
+                         To store 100k vectors locally, use <strong>Quantization</strong>. Converting 32-bit float vectors (<code>float32</code>) to 8-bit integers (<code>int8</code>) reduces memory usage by 75% with barely any loss in search accuracy.
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// search.ts</div>
@@ -70,12 +78,15 @@ export const aiVectorDbFrontend = {
                     <br/><br/>
                     <strong>Pattern:</strong> Use CRDTs (Yjs/Automerge) for the data propagation, and re-index the Vector DB on change events.
                 </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-6">Zero-Latency UX</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    With local vector search, you can remove the "Debounce" (waiting 300ms for user to stop typing). Search on every keystroke. It feels magical and responsive compared to server-side search.
+                </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Search, Database, HardDrive, Cpu, Clock } from 'lucide-react';
 
 // 🔍 Local Vector Search Visualizer
 
@@ -121,7 +132,7 @@ export default function LocalVectorDemo() {
                 {/* Search Area */}
                 <div className="flex-1 flex flex-col gap-4">
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
                         <input 
                             value={query}
                             onChange={e => handleSearch(e.target.value)}
@@ -158,7 +169,7 @@ export default function LocalVectorDemo() {
                     <div className="w-full h-px bg-gray-400 dark:bg-slate-700"></div>
 
                     <div className="flex items-center gap-3 opacity-50">
-                        <HardDrive size={24} />
+                        <span className="text-2xl">💾</span>
                         <div className="text-xs">IndexedDB (Persisted)</div>
                     </div>
 

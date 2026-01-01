@@ -107,7 +107,6 @@ export const wasmJsPerformance = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Cpu, Image as ImageIcon, Zap, Layers, Play } from 'lucide-react';
 
 // 🦀 Wasm Transformation Playground
 
@@ -189,7 +188,7 @@ export default function WasmDemo() {
                              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white">
                                 <div className="text-3xl font-black mb-2">{Math.round(progress)}%</div>
                                 {method === 'js' && <div className="text-red-400 text-sm font-bold animate-bounce">⚠️ Blocking UI Thread</div>}
-                                {method === 'wasm' && <div className="text-green-400 text-sm font-bold flex items-center gap-1"><Zap size={14} /> Hardware Accelerated</div>}
+                                {method === 'wasm' && <div className="text-green-400 text-sm font-bold flex items-center gap-1"><span>⚡</span> Hardware Accelerated</div>}
                              </div>
                          )}
                          
@@ -198,7 +197,7 @@ export default function WasmDemo() {
                                 onClick={processImage}
                                 className="absolute bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/30 text-white rounded-full p-6 transition-all transform hover:scale-110 active:scale-95"
                             >
-                                <Play size={32} fill="currentColor" />
+                                <span>▶️</span>
                             </button>
                          )}
                          
@@ -234,7 +233,7 @@ export default function WasmDemo() {
                     
                     <div className="p-6 bg-slate-900 rounded-2xl text-slate-300 font-mono text-sm leading-6 border border-slate-800">
                          <div className="mb-2 text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                             <Cpu size={14} /> Thread Activity
+                             <span>💾</span> Thread Activity
                          </div>
                          {method === 'js' ? (
                              <>

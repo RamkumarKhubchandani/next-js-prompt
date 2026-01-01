@@ -286,7 +286,6 @@ export default async function BlogPost({ id }) {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Leaf, Info } from 'lucide-react';
 
 // 🌿 Sustainable Component: Carbon Footprint Calculator
 // Estimates CO2 based on transferred data (Network API)
@@ -337,7 +336,7 @@ export default function CarbonAwareBadge() {
   return (
     <div className="bg-white dark:bg-slate-900 border border-emerald-100 dark:border-emerald-900/30 rounded-full p-1 pr-4 inline-flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow">
       <div className={\`p-2 rounded-full \${rating.color} text-white\`}>
-        <Leaf size={16} fill="currentColor" />
+        <span>🍃</span>
       </div>
       <div>
         <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Session Impact</div>

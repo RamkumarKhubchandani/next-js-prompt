@@ -104,6 +104,14 @@ function UserProfile({ userPromise }) {
                 <li>When the promise <strong>Resolves</strong>: React re-renders the component. This time, <code>use(promise)</code> returns the resolved value immediately.</li>
                 <li>If the promise <strong>Rejects</strong>: React throws the error, which bubbles up to the nearest Error Boundary.</li>
             </ul>
+            <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                 <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Error Boundaries</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     Because rejecting promises are thrown as errors, <strong>Error Boundaries are no longer optional</strong>.
+                     <br/><br/>
+                     If you don't wrap a component that uses \`use(promise)\` in an Error Boundary, a single network failure will crash your entire application (White Screen of Death).
+                 </p>
+            </div>
         </section>
 
         <!-- 03. Context Revolution -->
@@ -260,8 +268,7 @@ function Component({ dataPromise }) {
         </section>
     </div>
     `,
-    code: `import React, { useState, Suspense, use } from 'react';
-import { Loader2 } from 'lucide-react';
+    code: `import React, { useState, Suspense } from 'react';
 
 // 🔮 MOCKING THE USE HOOK BEHAVIOR 
 // NOTE: Since 'use' is a React 19 feature, this demo simulates 
@@ -315,7 +322,7 @@ function SimulatedDataView({ id }) {
        // This mimics what Suspense does while 'use' waits
        return (
            <div className="h-48 bg-gray-100 dark:bg-slate-800 rounded-xl animate-pulse flex items-center justify-center border border-gray-200 dark:border-slate-700">
-               <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+               <span className="w-8 h-8 text-4xl animate-spin">🌀</span>
                <span className="ml-2 text-gray-400 font-bold">Suspending...</span>
            </div>
        )

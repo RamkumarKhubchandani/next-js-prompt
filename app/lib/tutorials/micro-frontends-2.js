@@ -41,7 +41,7 @@ export const microFrontends2 = {
                 <span class="text-indigo-600 dark:text-indigo-500">02.</span>
                 Module Federation 2.0
             </h2>
-             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
                 <p>
                     <strong>Federation</strong> allows a JavaScript application to dynamically load code from another application—at runtime.
                     Unlike npm packages, which are baked in at build time, Federated Modules are "Live." If the Checkout Team deploys a fix to the <code>CartWidget</code>, the Main App gets that fix instantly on the next refresh, without rebuilding.
@@ -124,7 +124,6 @@ export const microFrontends2 = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Package, Globe, Layers, DownloadCloud, Activity } from 'lucide-react';
 
 // 🧩 Micro-Frontend Simulator
 
@@ -149,7 +148,7 @@ export default function MFEDemo() {
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-3">
                         <div className="bg-blue-500 text-white p-2 rounded-lg">
-                            <Globe size={24} />
+                            <span className="text-xl">🌐</span>
                         </div>
                         <div>
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Host Application (Main)</h3>
@@ -173,7 +172,7 @@ export default function MFEDemo() {
                      <span className="text-xs font-bold text-indigo-500 uppercase bg-white dark:bg-black px-2 py-1 rounded shadow-sm border border-indigo-100 dark:border-indigo-900">
                         Federation Slot
                     </span>
-                    {remoteStatus === 'ready' && <span className="text-xs font-bold text-green-500 uppercase bg-white dark:bg-black px-2 py-1 rounded shadow-sm border border-green-100 dark:border-green-900 flex items-center gap-1"><Activity size={10} /> Live</span>}
+                    {remoteStatus === 'ready' && <span className="text-xs font-bold text-green-500 uppercase bg-white dark:bg-black px-2 py-1 rounded shadow-sm border border-green-100 dark:border-green-900 flex items-center gap-1"><span>⚡</span> Live</span>}
                 </div>
 
                 {remoteStatus === 'idle' && (
@@ -182,7 +181,7 @@ export default function MFEDemo() {
                             onClick={loadRemote}
                             className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-indigo-500/20 transition-transform active:scale-95 flex items-center gap-2 mx-auto"
                         >
-                            <DownloadCloud /> Load Remote Widget
+                            <span>☁️</span> Load Remote Widget
                         </button>
                         <p className="mt-4 text-sm text-gray-500 max-w-xs mx-auto">
                             Click to dynamically fetch bundle \`http://localhost:3001/remoteEntry.js\`
@@ -215,7 +214,7 @@ function RemoteWidget({ cartCount, setCartCount }) {
             <div className="flex justify-between items-start mb-6">
                 <div>
                     <h4 className="text-2xl font-bold flex items-center gap-2">
-                        <Package /> Cart Widget
+                        <span>📦</span> Cart Widget
                     </h4>
                     <p className="text-xs text-white/70 uppercase font-bold mt-1">
                         Origin: Port 3001 • Team Checkout

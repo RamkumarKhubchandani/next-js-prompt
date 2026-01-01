@@ -42,7 +42,7 @@ export const patternMatchingJs = {
                 <span class="text-indigo-600 dark:text-indigo-500">02.</span>
                 The Match Syntax
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
                 <p>
                     Unlike <code>switch</code>, the <code>match</code> construct is an expression. It returns a value. It matches based on the <strong>shape</strong> and <strong>content</strong> of data, not just equality.
                 </p>
@@ -86,6 +86,54 @@ const result = match (response) {
                     </ul>
                 </div>
             </div>
+
+            <div class="mt-12 border-t border-gray-200 dark:border-gray-800 pt-8">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Real-World Refactor: User Reducer</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Switch -->
+                    <div class="bg-gray-100 dark:bg-[#1a1c1e] p-6 rounded-xl border border-gray-200 dark:border-gray-800">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Legacy (Switch)</h4>
+                        <pre class="text-xs font-mono text-gray-800 dark:text-gray-300 overflow-x-auto">
+function reducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_SUCCESS':
+      return { 
+        ...state, 
+        loading: false, 
+        data: action.payload 
+      };
+    case 'FETCH_ERROR':
+      return { 
+        ...state, 
+        loading: false, 
+        error: action.error 
+      };
+    default:
+      return state;
+  }
+}</pre>
+                    </div>
+
+                    <!-- Match -->
+                    <div class="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-xl border border-indigo-200 dark:border-indigo-900/20 relative group">
+                        <h4 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-4">Modern (Match)</h4>
+                        <pre class="text-xs font-mono text-gray-800 dark:text-gray-300 overflow-x-auto">
+const reducer = (state, action) => match (action) {
+  { type: 'FETCH_SUCCESS', payload } => ({ 
+    ...state, 
+    loading: false, 
+    data: payload 
+  }),
+  { type: 'FETCH_ERROR', error } => ({ 
+    ...state, 
+    loading: false, 
+    error 
+  }),
+  _ => state
+};</pre>
+                    </div>
+                </div>
+            </div>
         </section>
 
          <!-- 04. Redux Reducers -->
@@ -94,7 +142,7 @@ const result = match (response) {
                 <span class="text-indigo-600 dark:text-indigo-500">04.</span>
                 Redux Reducers Reimagined
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
                 <p>
                    One of the best use cases for Pattern Matching is in state reducers. Gone are the days of massive switch statements with block scoping issues.
                 </p>
@@ -131,7 +179,7 @@ const result = match (response) {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { GitBranch, CheckCircle, AlertOctagon, ArrowRight, Box } from 'lucide-react';
+
 
 // 🧬 Pattern Matching Operator Playground
 
@@ -149,11 +197,11 @@ export default function PatternMatchingDemo() {
         // }
         
         switch (state) {
-            case 'idle': return { text: "System Standby", color: "text-gray-500", bg: "bg-gray-100 dark:bg-gray-800", icon: <Box /> };
-            case 'loading': return { text: "Processing Data...", color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-900/30", icon: <GitBranch className="animate-spin" /> };
-            case 'success': return { text: "Action Completed", color: "text-green-500", bg: "bg-green-100 dark:bg-green-900/30", icon: <CheckCircle /> };
-            case 'error': return { text: "Critical Failure", color: "text-red-500", bg: "bg-red-100 dark:bg-red-900/30", icon: <AlertOctagon /> };
-            default: return { text: "Unknown", color: "text-gray-500", bg: "bg-gray-100", icon: <Box /> };
+            case 'idle': return { text: "System Standby", color: "text-gray-500", bg: "bg-gray-100 dark:bg-gray-800", icon: <span className="text-2xl">📦</span> };
+            case 'loading': return { text: "Processing Data...", color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-900/30", icon: <span className="text-2xl animate-spin">⚡</span> };
+            case 'success': return { text: "Action Completed", color: "text-green-500", bg: "bg-green-100 dark:bg-green-900/30", icon: <span className="text-2xl">✅</span> };
+            case 'error': return { text: "Critical Failure", color: "text-red-500", bg: "bg-red-100 dark:bg-red-900/30", icon: <span className="text-2xl">🛑</span> };
+            default: return { text: "Unknown", color: "text-gray-500", bg: "bg-gray-100", icon: <span className="text-2xl">❓</span> };
         }
     };
 
@@ -166,7 +214,7 @@ export default function PatternMatchingDemo() {
                 {/* Input Side (The State) */}
                 <div className="w-full md:w-1/3 space-y-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Box size={20} className="text-indigo-500" /> Input State
+                        <span className="text-2xl">📦</span> Input State
                     </h3>
                     
                     <div className="grid grid-cols-1 gap-3">
@@ -182,7 +230,7 @@ export default function PatternMatchingDemo() {
                             >
                                 <div className="flex justify-between items-center">
                                     <span className="capitalize">{s}</span>
-                                    {requestState === s && <ArrowRight size={16} />}
+                                    {requestState === s && <span>→</span>}
                                 </div>
                             </button>
                         ))}
@@ -192,7 +240,7 @@ export default function PatternMatchingDemo() {
                 {/* Match Expression Visualization */}
                 <div className="flex-1 space-y-6">
                      <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <GitBranch size={20} className="text-purple-500" /> Pattern Matcher
+                        <span className="text-2xl">⚡</span> Pattern Matcher
                     </h3>
                     
                     {/* Code Block Representation */}

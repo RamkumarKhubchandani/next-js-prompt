@@ -72,7 +72,7 @@ export default async function TutorialPage({ params }) {
                 }}>
             </div>
 
-            <div className="fixed inset-0 z-0 pointer-events-none opacity-20 hidden dark:block"
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.04] hidden dark:block"
                 style={{
                     backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)',
                     backgroundSize: '24px 24px'
@@ -120,13 +120,15 @@ export default async function TutorialPage({ params }) {
                     </div>
 
                     <div className="relative mb-4 flex justify-center items-center gap-4 overflow-visible px-4">
-                        <h1 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-tight drop-shadow-2xl flex flex-wrap items-center justify-center gap-x-3 gap-y-2 md:gap-x-6">
+                        <h1 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-tight drop-shadow-2xl text-center">
                             <span className="text-slate-900 dark:text-white filter-none inline-block transform hover:scale-110 transition-transform">
                                 {tutorial.title.split(' ')[0]}
                             </span>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 pb-2 text-center">
+                            {' '}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 pb-2">
                                 {tutorial.title.split(' ').slice(1, -1).join(' ')}
                             </span>
+                            {' '}
                             <span className="text-slate-900 dark:text-white filter-none inline-block transform hover:scale-110 transition-transform">
                                 {tutorial.title.split(' ').slice(-1)}
                             </span>

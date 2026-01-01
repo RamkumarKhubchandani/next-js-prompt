@@ -56,6 +56,15 @@ export const nodeSecurityFirst = {
              <div class="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg text-sm border-l-4 border-red-500">
                 ⚠️ If <code>index.js</code> tries to read <code>/etc/passwd</code>, it crashes immediately.
             </div>
+            <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl mt-6">
+                 <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Deep Dive: Wildcards are Evil</h4>
+                 <p class="text-sm text-gray-700 dark:text-gray-300">
+                     Be incredibly careful with wildcards (`* `). 
+                     <br/><br/>
+                     Granting <code>--allow-fs-read="/home/*"</code> allows access to <code>/home/user/.ssh/id_rsa</code>. 
+                     Always scope permissions to the <strong>exact</strong> directory required (e.g., <code>./dist/</code>).
+                 </p>
+            </div>
         </section>
 
         <!-- 04. Senior Take -->
@@ -76,7 +85,6 @@ export const nodeSecurityFirst = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Shield, ShieldAlert, FileText, Globe, Key, Lock } from 'lucide-react';
 
 // 🔒 Security Simulator
 
@@ -137,25 +145,25 @@ export default function SecurityDemo() {
                             onClick={() => attemptAction('READ_FILE', '/app/config/settings.json')}
                             className="w-full text-left p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition flex items-center gap-2 text-sm font-bold text-blue-700 dark:text-blue-400"
                         >
-                            <FileText size={16} /> Read Config (Valid)
+                            <span>📄</span> Read Config (Valid)
                         </button>
                         <button 
                             onClick={() => attemptAction('NET_REQ', 'https://api.stripe.com/v1')}
                             className="w-full text-left p-3 rounded-lg bg-green-50 dark:bg-green-900/20 hover:bg-green-100 transition flex items-center gap-2 text-sm font-bold text-green-700 dark:text-green-400"
                         >
-                            <Globe size={16} /> Stripe API (Valid)
+                            <span>Globe</span> Stripe API (Valid)
                         </button>
                          <button 
                             onClick={() => attemptAction('READ_FILE', '/etc/shadow')}
                             className="w-full text-left p-3 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition flex items-center gap-2 text-sm font-bold text-red-700 dark:text-red-400"
                         >
-                            <Key size={16} /> Read /etc/shadow (Malware)
+                            <span>🔑</span> Read /etc/shadow (Malware)
                         </button>
                          <button 
                             onClick={() => attemptAction('NET_REQ', 'http://hackerserver.com/leak')}
                             className="w-full text-left p-3 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition flex items-center gap-2 text-sm font-bold text-red-700 dark:text-red-400"
                         >
-                            <Globe size={16} /> Exfiltrate Data (Malware)
+                            <span>🌐</span> Exfiltrate Data (Malware)
                         </button>
                     </div>
                 </div>
@@ -163,7 +171,7 @@ export default function SecurityDemo() {
                 {/* Simulated Runtime Console */}
                 <div className="flex-1 bg-black rounded-xl p-6 font-mono text-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-50">
-                        {policy === 'strict' ? <Lock size={48} className="text-green-500" /> : <ShieldAlert size={48} className="text-red-500" />}
+                        {policy === 'strict' ? <span className="text-5xl">🔒</span> : <span className="text-5xl">🛑</span>}
                     </div>
                     
                     <div className="text-gray-500 border-b border-gray-800 pb-2 mb-4">

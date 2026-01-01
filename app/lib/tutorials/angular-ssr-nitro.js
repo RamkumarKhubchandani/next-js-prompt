@@ -83,6 +83,14 @@ export const angularSsrNitro = {
                  &nbsp;&nbsp;{'}'} <br/>
                  {'}'}
             </div>
+            <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                 <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Edge Caching (SWR)</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     The killer feature is <strong>SWR</strong> (Stale-While-Revalidate). 
+                     <br/><br/>
+                     Nitro can serve a "stale" (cached) version of your SSR page instantly (10ms) while simultaneously fetching fresh data in the background to update the cache for the <em>next</em> user. Speed + Freshness.
+                 </p>
+            </div>
         </section>
 
         <!-- 04. Senior Take -->
@@ -103,7 +111,6 @@ export const angularSsrNitro = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Rocket, Server, Globe, MapPin } from 'lucide-react';
 
 // 🚀 Nitro SSR Visualizer
 
@@ -136,14 +143,14 @@ export default function NitroDemo() {
                 
                 {/* World Map Background (Abstract) */}
                 <div className="absolute inset-0 opacity-10 flex items-center justify-center pointer-events-none">
-                    <Globe size={400} />
+                    <span className="text-[200px] grayscale opacity-20">🌍</span>
                 </div>
 
                 {deployedLocation === 'central' ? (
                     <div className="relative h-full flex items-center justify-center">
                          <div className="flex flex-col items-center animate-in zoom-in duration-500">
                              <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(220,38,38,0.5)] z-10">
-                                <Server size={40} className="text-white" />
+                                <span className="text-4xl text-white">🖥️</span>
                              </div>
                              <div className="mt-4 font-bold text-red-600 bg-white dark:bg-slate-900 px-4 py-2 rounded-full border border-red-200 shadow-lg">
                                  Single Origin
@@ -170,7 +177,7 @@ export default function NitroDemo() {
                                 style={{ top: node.top, left: node.left, animationDelay: \`\${i * 100}ms\` }}
                              >
                                 <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.5)] z-10">
-                                    <Rocket size={20} className="text-white" />
+                                    <span className="text-white">🚀</span>
                                 </div>
                                 <div className="mt-2 font-bold text-[10px] text-green-600 bg-white dark:bg-slate-900 px-2 py-1 rounded-full border border-green-200 shadow-sm">
                                     {node.name}

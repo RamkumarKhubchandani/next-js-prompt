@@ -27,9 +27,25 @@ export const jsConstIsKing = {
                     Delete <code>var</code>.
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-800 dark:text-gray-200 font-light leading-relaxed">
-                    It hoists. It leaks scope. It's confusing. There is literally zero reason to use <code>var</code> in 2026. If you see it in a PR, reject it.
+                    It hoists. It leaks scope. It's confusing. There is literally zero reason to use <code>var</code> in 2026. If you see it in a PR, reject it immediately.
                 </p>
              </div>
+
+             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                 <h3 class="text-2xl font-bold">The \`var\` Disaster</h3>
+                 <p>
+                     <code>var</code> doesn't respect code blocks. It "hoists" itself to the top of the function or global scope, leading to variables existing before you declare them.
+                 </p>
+             </div>
+             <pre class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto text-gray-100">
+<span class="text-gray-500">// ❌ The Hoisting Nightmare</span>
+console.log(x); <span class="text-gray-500">// undefined (Not ReferenceError!)</span>
+<span class="text-purple-400">var</span> x = 5;
+
+<span class="text-purple-400">if</span> (true) {
+  <span class="text-purple-400">var</span> y = 10;
+}
+console.log(y); <span class="text-gray-500">// 10 (Leaked out of the if block!)</span></pre>
         </section>
 
         <!-- 02. let is retired -->
@@ -38,23 +54,77 @@ export const jsConstIsKing = {
                 <span class="text-gray-600 dark:text-gray-500">02.</span>
                 Avoid <code>let</code>
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                <h3 class="text-2xl font-bold">The \`let\` Trap</h3>
                 <p>
-                    "But I need to change the value loop!" <br/>
-                    Do you? Or do you need <code>map()</code> or <code>reduce()</code>?
+                    "But I need to change the value in a loop!" <br/>
+                    Do you? Or do you actually need <code>map()</code> or <code>reduce()</code>?
                     <br/><br/>
-                    Every time you use <code>let</code>, you introduce state mutation. Mutation is the root of complex bugs.
+                    Every time you use <code>let</code>, you introduce <strong>state mutation</strong>. The value changes over time. This forces your brain to track the state history of a variable as you read the code.
                 </p>
             </div>
-             <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
-                 <div class="text-gray-500 mb-2">// ❌ Bad (Mutation)</div>
-                 <div class="text-purple-400">let</div> total = 0; <br/>
-                 <div class="text-purple-400">for</div> (<div class="text-purple-400">const</div> x <div class="text-purple-400">of</div> items) {'{'} <br/>
-                 &nbsp;&nbsp;total += x.price; <br/>
-                 {'}'} <br/><br/>
-                 
-                 <div class="text-gray-500">// ✅ Good (Immutable Expression)</div>
-                 <div class="text-purple-400">const</div> total = items.reduce((acc, x) => acc + x.price, 0);
+             <pre class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto text-gray-100">
+<span class="text-gray-500">// ❌ Bad (Imperative Mutation)</span>
+<span class="text-purple-400">let</span> total = 0;
+<span class="text-purple-400">for</span> (<span class="text-purple-400">const</span> x <span class="text-purple-400">of</span> items) {
+  total += x.price; <span class="text-gray-500">// State changes N times!</span>
+}
+
+<span class="text-gray-500">// ✅ Good (Declarative Expression)</span>
+<span class="text-purple-400">const</span> total = items.reduce((acc, x) => acc + x.price, 0);</pre>
+            <div class="bg-yellow-900/10 border-l-4 border-yellow-500 p-6 mt-6">
+                 <h4 class="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Deep Dive: Temporal Dead Zone (TDZ)</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     Unlike <code>var</code>, which hoists as <code>undefined</code>, <code>let</code> and <code>const</code> hoist but are placed in the <strong>TDZ</strong> until the execution reaches their declaration line.
+                     <br/><br/>
+                     Accessing them early throws a <code>ReferenceError</code>. This "fail-fast" behavior prevents subtle bugs caused by using variables before they exist.
+                 </p>
+            </div>
+        </section>
+
+        <!-- 03. const Mindset -->
+        <section id="const-mindset" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-gray-600 dark:text-gray-500">03.</span>
+                The <code>const</code> Kingdom
+            </h2>
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                <p>
+                    <code>const</code> is a signal to other developers: "This reference will never change." It reduces cognitive load. You define it, assign it, and trust it forever.
+                </p>
+                <h3 class="text-xl font-bold mt-6 mb-4">Comparison Table</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <th class="p-4 font-black">Keyword</th>
+                                <th class="p-4 font-black">Reassignable?</th>
+                                <th class="p-4 font-black">Scope</th>
+                                <th class="p-4 font-black">Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-red-50 dark:bg-red-900/10">
+                                <td class="p-4 font-mono text-red-600">var</td>
+                                <td class="p-4">Yes</td>
+                                <td class="p-4">Function</td>
+                                <td class="p-4 text-red-600 font-bold">DELETE</td>
+                            </tr>
+                            <tr class="bg-yellow-50 dark:bg-yellow-900/10">
+                                <td class="p-4 font-mono text-yellow-600">let</td>
+                                <td class="p-4">Yes</td>
+                                <td class="p-4">Block</td>
+                                <td class="p-4 text-yellow-600 font-bold">USE RARELY</td>
+                            </tr>
+                            <tr class="bg-green-50 dark:bg-green-900/10">
+                                <td class="p-4 font-mono text-green-600">const</td>
+                                <td class="p-4">No</td>
+                                <td class="p-4">Block</td>
+                                <td class="p-4 text-green-600 font-bold">DEFAULT</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -66,18 +136,21 @@ export const jsConstIsKing = {
             </h2>
             <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-gray-500">
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Reassignment != Mutation</h3>
-                <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    Remember: <code>const</code> prevents reassignment, not mutation of the object content. 
-                    <br/><br/>
-                    <code>const x = []</code> means you can't say <code>x = somethingElse</code>, but you CAN say <code>x.push(1)</code>.
-                    For true immutability, use <code>Object.freeze()</code> or the new Records & Tuples.
-                </p>
+                <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-4 leading-relaxed">
+                    <p>
+                        Remember: <code>const</code> prevents reassignment, not mutation of the object content. 
+                        <br/>
+                        <code>const x = []</code> means you can't say <code>x = somethingElse</code>, but you CAN say <code>x.push(1)</code>.
+                    </p>
+                    <p>
+                        For true immutability, use <code>Object.freeze()</code> or the new Records & Tuples.
+                    </p>
+                </div>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Lock, Unlock, AlertTriangle, CheckCircle } from 'lucide-react';
 
 // 🔒 Const Visualizer
 
@@ -94,20 +167,20 @@ export default function ConstDemo() {
                 
                 <div className="p-6 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/20 rounded-xl relative overflow-hidden group">
                     <div className="absolute top-4 right-4 text-red-300 group-hover:text-red-500 transition-colors">
-                        <Unlock size={32} />
+                        <span className="text-3xl">🔓</span>
                     </div>
                     <div className="font-mono text-xl font-bold text-red-600 mb-2">var</div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                         Function scoped. Hoisted. Can be re-declared.
                     </p>
                     <div className="mt-4 text-xs font-bold text-red-500 flex items-center gap-2">
-                        <AlertTriangle size={14} /> DANGER: SCOPE LEAK
+                        <span>⚠️</span> DANGER: SCOPE LEAK
                     </div>
                 </div>
 
                 <div className="p-6 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-900/20 rounded-xl relative overflow-hidden">
                      <div className="absolute top-4 right-4 text-yellow-300">
-                        <Unlock size={32} />
+                        <span className="text-3xl">🔓</span>
                     </div>
                     <div className="font-mono text-xl font-bold text-yellow-600 mb-2">let</div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -120,14 +193,14 @@ export default function ConstDemo() {
 
                 <div className="p-6 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/20 rounded-xl relative overflow-hidden shadow-lg scale-105 ring-2 ring-green-500 ring-opacity-50">
                      <div className="absolute top-4 right-4 text-green-500">
-                        <Lock size={32} />
+                        <span className="text-3xl">🔒</span>
                     </div>
                     <div className="font-mono text-xl font-bold text-green-600 mb-2">const</div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                         Block scoped. Cannot be re-assigned. The default choice.
                     </p>
                     <div className="mt-4 text-xs font-bold text-green-600 flex items-center gap-2">
-                        <CheckCircle size={14} /> PREFERRED: 99%
+                        <span>✅</span> PREFERRED: 99%
                     </div>
                 </div>
 

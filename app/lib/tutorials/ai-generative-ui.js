@@ -44,6 +44,14 @@ export const aiGenerativeUi = {
                 <p>
                     Using React Server Components (RSC), we can stream a serialized React Component tree from the server to the client. The LLM acts as the router and the prop-builder.
                 </p>
+                <div class="bg-blue-900/10 border-l-4 border-blue-500 p-6 my-6">
+                     <h4 class="font-bold text-blue-800 dark:text-blue-200 mb-2">Deep Dive: The Wire Format</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm font-mono">
+                         RSC payload looks like JSON: <br/>
+                         <code>1:I["./app/components/StockCard.tsx", "client", "default"]</code><br/>
+                         It's safe. We aren't injecting raw HTML strings (XSS risk). We are injecting <strong>Component References</strong> that Hydrate on the client.
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// actions.tsx</div>
@@ -59,6 +67,19 @@ export const aiGenerativeUi = {
                  &nbsp;&nbsp;<div class="text-purple-400">return</div> ui; <br/>
                  {'}'}
             </div>
+        </section>
+
+        <!-- 02.1 Accessibility -->
+         <section id="accessibility" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-pink-600 dark:text-pink-500">03.</span>
+                Accessibility Challenges
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Dynamic UI is a nightmare for Screen Readers if you aren't careful. Since the user doesn't know <em>what</em> will appear, you must ensure every generated component announces itself.
+                <br/><br/>
+                <strong>Rule:</strong> Enforce <code>aria-label</code> in your Zod schemas so the LLM <em>must</em> generate a description.
+            </p>
         </section>
 
         <!-- 04. Senior Take -->
@@ -79,7 +100,6 @@ export const aiGenerativeUi = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Send, Sparkles, Loader, BarChart, PieChart, CreditCard, Calendar } from 'lucide-react';
 
 // ✨ Generative UI Visualizer
 
@@ -128,21 +148,21 @@ export default function GenUIDemo() {
                 
                 {isGenerating ? (
                     <div className="flex flex-col items-center animate-pulse">
-                        <Sparkles className="text-pink-500 mb-4 animate-spin-slow" size={48} />
+                        <span className="text-4xl mb-4 animate-spin">✨</span>
                         <div className="text-gray-400 font-mono text-sm">Generating Component Tree...</div>
                     </div>
                 ) : (
                     <div className="w-full max-w-md animate-in zoom-in fade-in duration-500">
                         {uiState.type === 'empty' && (
                             <div className="text-center text-gray-400">
-                                <Sparkles size={48} className="mx-auto mb-4 opacity-50" />
+                                <span className="text-6xl mx-auto mb-4 block opacity-50">✨</span>
                                 <p>Ask for a UI and I will build it.</p>
                             </div>
                         )}
 
                         {uiState.type === 'chart' && (
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg">
-                                <h4 className="font-bold mb-4 flex items-center gap-2"><BarChart className="text-blue-500"/> Q1 Sales Performance</h4>
+                                <h4 className="font-bold mb-4 flex items-center gap-2"><span>📊</span> Q1 Sales Performance</h4>
                                 <div className="h-32 flex items-end gap-2">
                                     <div className="flex-1 bg-blue-100 dark:bg-blue-900/30 h-[60%] rounded-t"></div>
                                     <div className="flex-1 bg-blue-500 h-[80%] rounded-t shadow-lg shadow-blue-500/50"></div>
@@ -154,7 +174,7 @@ export default function GenUIDemo() {
 
                         {uiState.type === 'calendar' && (
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg">
-                                <h4 className="font-bold mb-4 flex items-center gap-2"><Calendar className="text-purple-500"/> Schedule Meeting</h4>
+                                <h4 className="font-bold mb-4 flex items-center gap-2"><span>📅</span> Schedule Meeting</h4>
                                 <div className="grid grid-cols-7 gap-2 mb-4">
                                     {[...Array(7)].map((_, i) => <div key={i} className="text-center text-xs text-gray-400">D</div>)}
                                     {[...Array(7)].map((_, i) => (
@@ -170,7 +190,7 @@ export default function GenUIDemo() {
 
                         {uiState.type === 'payment' && (
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg">
-                                <h4 className="font-bold mb-4 flex items-center gap-2"><CreditCard className="text-green-500"/> Update Method</h4>
+                                <h4 className="font-bold mb-4 flex items-center gap-2"><span>💳</span> Update Method</h4>
                                 <div className="space-y-3">
                                     <input disabled placeholder="**** **** **** 4242" className="w-full p-2 bg-gray-50 dark:bg-slate-800 rounded border border-gray-200 dark:border-slate-700 text-sm" />
                                     <div className="flex gap-2">
@@ -220,7 +240,7 @@ export default function GenUIDemo() {
                         disabled={!prompt.trim() || isGenerating}
                         className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-pink-500 text-white rounded-lg hover:bg-pink-600 disabled:opacity-50 transition"
                     >
-                        <Send size={16} />
+                        <span>⬆️</span>
                     </button>
                 </div>
             </div>

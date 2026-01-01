@@ -44,6 +44,18 @@ export const aiSelfHealing = {
                 <p>
                     The keys is to pass the <em>file content</em> and the <em>error message</em>. The LLM returns a git-patch.
                 </p>
+                <div class="bg-red-900/10 border-l-4 border-red-500 p-6 my-6">
+                     <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: The Agent's Prompt</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         You must constrain the agent to be chirurgic.
+                         <br/><br/>
+                         <code>
+                             System: You are a CI Repair Bot. <br/>
+                             Input: [Bad Code] + [Stack Trace] <br/>
+                             Output: ONLY the unified diff patch. Do not output markdown. Do not rewrite the whole file.
+                         </code>
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// ci-healer.ts</div>
@@ -71,12 +83,15 @@ export const aiSelfHealing = {
                     <br/><br/>
                     <strong>Rule:</strong> The AI commits the fix as a "Suggestion" commit. A human must still press the "Merge" button.
                 </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-6">The Flaky Test Trap</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    If your test suite is flaky (fails 1% of the time randomly), do <strong>not</strong> use self-healing agents. The agent will hallucinate a "fix" for code that wasn't broken, introducing zombie code into your repo. Fix the tests first.
+                </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { AlertCircle, CheckCircle, GitCommit, Play, RefreshCw, Terminal } from 'lucide-react';
 
 // 🩹 Self-Healing Viz
 
@@ -108,7 +123,7 @@ export default function HealerDemo() {
                     disabled={step > 0 && step < 5}
                     className="bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white font-bold px-6 py-2 rounded-xl transition-all flex items-center gap-2"
                 >
-                    {step > 0 && step < 5 ? <RefreshCw className="animate-spin"/> : <Play />}
+                    {step > 0 && step < 5 ? <span className="animate-spin">⏳</span> : <span>▶️</span>}
                     {step > 0 && step < 5 ? 'Running...' : 'Break Build'}
                 </button>
             </div>
@@ -126,7 +141,7 @@ export default function HealerDemo() {
                 {/* Console Output */}
                 <div className="flex-1 bg-black rounded-xl p-6 font-mono text-xs overflow-hidden flex flex-col">
                     <div className="flex items-center gap-2 text-gray-500 border-b border-gray-800 pb-2 mb-4">
-                        <Terminal size={14} /> /bin/zsh
+                        <span>💻</span> /bin/zsh
                     </div>
                     
                     <div className="space-y-2 text-gray-300">
@@ -182,9 +197,9 @@ function StepItem({ active, done, label, error, success }) {
         }\`}>
             <div className="flex items-center gap-3">
                 {done ? (
-                     <CheckCircle size={20} className="text-green-500" />
+                     <span className="text-2xl">✅</span>
                 ) : active ? (
-                    error ? <AlertCircle size={20} className="text-red-500" /> : <RefreshCw size={20} className="animate-spin text-blue-500" />
+                    error ? <span className="text-2xl">❌</span> : <span className="text-2xl animate-spin">⏳</span>
                 ) : (
                     <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
                 )}

@@ -31,6 +31,19 @@ export const jsSharedMemory = {
                     <br/><br/>
                     <strong>SharedArrayBuffer</strong> allows the Main Thread and Worker Threads to read/write the <em>exact same memory address</em>. Zero copy.
                 </p>
+                <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                     <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Generic Security Headers</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         To use <code>SharedArrayBuffer</code>, your server must send strict security headers to prevent Spectre/Meltdown attacks:
+                         <br/><br/>
+                         <code>Cross-Origin-Opener-Policy: same-origin</code><br/>
+                         <code>Cross-Origin-Embedder-Policy: require-corp</code>
+                         <br/><br/>
+                         Without these, the browser will not define <code>SharedArrayBuffer</code> on the window object.
+                     </p>
+                </div>
+             </div>
+        </section>
              </div>
         </section>
 
@@ -68,6 +81,14 @@ export const jsSharedMemory = {
             <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 border border-indigo-200 dark:border-indigo-800 rounded-lg">
                 <code class="text-indigo-700 dark:text-indigo-300 font-bold">Atomics.add(view, 0, 1); // Thread-safe increment</code>
             </div>
+            <div class="bg-cyan-900/10 border-l-4 border-cyan-500 p-6 mt-6">
+                 <h4 class="font-bold text-cyan-800 dark:text-cyan-200 mb-2">Deep Dive: Compare-Exchange</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     The holy grail of concurrency is <code>Atomics.compareExchange(view, index, oldVal, newVal)</code>. 
+                     <br/><br/>
+                     It says: "Only update this memory if it currently equals <code>oldVal</code>." This instruction is atomic at the CPU hardware level and is used to build Mutexes and Semaphores in JS.
+                 </p>
+            </div>
         </section>
 
         <!-- 04. Senior Take -->
@@ -88,7 +109,6 @@ export const jsSharedMemory = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Cpu, Layers, Zap, Grip } from 'lucide-react';
 
 // 🧠 Shared Memory Visualizer
 
@@ -135,13 +155,13 @@ export default function MemoryDemo() {
                 {/* Threads */}
                 <div className="space-y-4 w-full md:w-1/3">
                      <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow flex items-center gap-3 opacity-50">
-                        <Cpu size={24} className="text-gray-400" /> Main Thread (UI)
+                        <span>💻</span> Main Thread (UI)
                      </div>
                      <div className={\`p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow flex items-center gap-3 transition-all \${isSharing ? 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : ''}\`}>
-                        <Zap size={24} className={isSharing ? "text-cyan-500" : "text-gray-400"} /> Worker Thread 1
+                        <span className={isSharing ? "text-cyan-500" : "text-gray-400"}>⚡</span> Worker Thread 1
                      </div>
                      <div className={\`p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow flex items-center gap-3 transition-all \${isSharing ? 'border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : ''}\`}>
-                        <Zap size={24} className={isSharing ? "text-purple-500" : "text-gray-400"} /> Worker Thread 2
+                        <span className={isSharing ? "text-purple-500" : "text-gray-400"}>⚡</span> Worker Thread 2
                      </div>
                 </div>
 

@@ -31,6 +31,16 @@ export const angularDevtools2026 = {
                     <br/><br/>
                     If you see a long red bar, it means Angular spent too much time checking your templates. Usually, this means you are binding a heavy function like <code>{{ calculateFactorial() }}</code> directly in the HTML.
                 </p>
+                <div class="bg-violet-900/10 border-l-4 border-violet-500 p-6 mt-6">
+                     <h4 class="font-bold text-violet-800 dark:text-violet-200 mb-2">Deep Dive: Tick vs DetectChanges</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         <strong>ApplicationRef.tick():</strong> Checks the <em>entire</em> application tree (Root to leaves). Happens automatically on events/XHR.
+                         <br/>
+                         <strong>ChangeDetectorRef.detectChanges():</strong> Checks <em>only</em> the current component and its children. Use this for manual fine-grained control.
+                     </p>
+                </div>
+             </div>
+        </section>
              </div>
         </section>
 
@@ -75,7 +85,6 @@ export const angularDevtools2026 = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Activity, BarChart2, Layers } from 'lucide-react';
 
 // 📊 Profiler Visualizer
 

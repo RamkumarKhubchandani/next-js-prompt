@@ -113,7 +113,6 @@ export const vibeCoding = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Bot, ShieldCheck, Sparkles, AlertTriangle, Code2 } from 'lucide-react';
 
 // 🤖 AI Strategy Configurator
 
@@ -137,7 +136,7 @@ export default function AIConfigurator() {
             <div className="z-10 w-full max-w-3xl relative">
                 
                 <h3 className="text-3xl font-black text-center mb-8 flex items-center justify-center gap-3">
-                    <Bot className={mode === 'vibe' ? 'text-fuchsia-400' : 'text-blue-400'} size={32} />
+                    <span className="text-3xl">🤖</span>
                     AI Agent Config
                 </h3>
 
@@ -148,13 +147,13 @@ export default function AIConfigurator() {
                         onClick={() => setMode('vibe')}
                         className="flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 relative z-10 transition-colors"
                     >
-                        <Sparkles size={18} /> Vibe Coding
+                        <span>✨</span> Vibe Coding
                     </button>
                      <button
                         onClick={() => setMode('engineer')}
                         className="flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 relative z-10 transition-colors"
                     >
-                        <ShieldCheck size={18} /> Engineering
+                        <span>🛡️</span> Engineering
                     </button>
                 </div>
 
@@ -162,7 +161,7 @@ export default function AIConfigurator() {
                 <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative group">
                      <div className="bg-slate-800 px-4 py-3 text-xs font-mono text-slate-400 flex justify-between items-center border-b border-slate-700">
                          <div className="flex items-center gap-2">
-                             <Code2 size={14} />
+                             <span>💻</span>
                              <span>agent_response.ts</span>
                          </div>
                          <span className={\`uppercase px-2 py-0.5 rounded text-[10px] font-bold \${mode === 'vibe' ? 'bg-fuchsia-500/20 text-fuchsia-400' : 'bg-blue-500/20 text-blue-400'}\`}>
@@ -180,7 +179,7 @@ export default function AIConfigurator() {
                                  );<br/>
                                  <br/>
                                  <div className="bg-red-500/10 text-red-400 p-2 mt-4 rounded border border-red-500/20 flex gap-2 items-start text-xs">
-                                     <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                                     <span className="mt-0.5 shrink-0">⚠️</span>
                                      <div>
                                          <strong>Audit Log:</strong><br/>
                                          • No accessibility (aria-label)<br/>
@@ -207,7 +206,7 @@ export default function AIConfigurator() {
                                  &nbsp;&nbsp;&lt;/<span className="text-yellow-400">button</span>&gt;<br/>
                                  );
                                   <div className="bg-green-500/10 text-green-400 p-2 mt-4 rounded border border-green-500/20 flex gap-2 items-start text-xs">
-                                     <ShieldCheck size={14} className="mt-0.5 shrink-0" />
+                                     <span className="mt-0.5 shrink-0">🛡️</span>
                                      <div>
                                          <strong>Audit Log:</strong><br/>
                                          • Type Safe (TypeScript)<br/>

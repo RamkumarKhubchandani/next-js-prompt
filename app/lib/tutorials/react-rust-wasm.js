@@ -55,6 +55,14 @@ export const reactRustWasm = {
                     <strong>SIMD (Single Instruction, Multiple Data):</strong> This is the secret weapon. Rust Wasm can use processor instructions (SSE/AVX) to process 128 bits of data at once. That means calculating 4 pixels simultaneously. JS cannot do this reliably.
                 </p>
             </div>
+             <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                 <h4 class="font-bold text-gray-900 dark:text-white mb-2">Deep Dive: Wasm Garbage Collection (WasmGC)</h4>
+                 <p class="text-sm text-gray-700 dark:text-gray-300">
+                     Historically, Wasm couldn't access the host GC, so languages like Kotlin or Dart had to ship their own GC (heavy!). 
+                     <br/>
+                     With <strong>WasmGC</strong> (now standard), high-level languages can compile to Wasm and reuse the browser's optimized Garbage Collector. Rust doesn't need this (it has no GC), but it's huge for the ecosystem.
+                 </p>
+            </div>
         </section>
 
         <!-- 04. The Rust-React Bridge -->
@@ -202,7 +210,6 @@ export default function ImageEditor({ data }) {
     </div>
     `,
     code: `import React, { useState, useEffect, useRef } from "react";
-import { Loader2, Zap } from 'lucide-react';
 
 // 🧪 VIRTUAL LAB: The Worker Harness
 // This demonstrates how to structure a React component that offloads 
@@ -252,7 +259,7 @@ export default function WasmWorkshop() {
       <div className="z-10 w-full max-w-md space-y-8">
         <div className="text-center">
             <h2 className="text-3xl font-black mb-2 flex items-center justify-center gap-3">
-                <Zap className="text-orange-500 fill-orange-500" /> Wasm Simulator
+                <span className="text-orange-500 text-4xl">⚡</span> Wasm Simulator
             </h2>
             <p className="text-slate-400">Off-main-thread processing</p>
         </div>
@@ -263,7 +270,7 @@ export default function WasmWorkshop() {
             
             {status === 'processing' && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+                    <span className="text-4xl animate-spin">⚙️</span>
                 </div>
             )}
         </div>

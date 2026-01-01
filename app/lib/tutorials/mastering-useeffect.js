@@ -1,486 +1,444 @@
 export const masteringUseEffect = {
-  slug: "mastering-useeffect",
-  title: "React useEffect: The Definitive Guide (2026 Edition) 🧠",
-  description: "Stop thinking in Lifecycles. Start thinking in Synchronization. This is the exhaustive, deep-dive masterclass on React's most misunderstood hook. Fixing infinite loops, race conditions, and memory leaks once and for all.",
-  thumbnail: "/images/tutorials/useeffect-thumb.png",
-  tags: ["React", "Hooks", "Frontend", "Performance", "Deep Dive"],
-  keywords: ["useEffect", "React Synchronization", "Stale Closures", "Race Conditions", "React 19", "Cleanup Function", "Custom Hooks", "AbortController"],
-  difficulty: "Advanced",
-  readTime: "15 min read",
-  author: "React Team",
-  image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-  toc: [
-    { id: "the-great-misunderstanding", label: "01. The Great Misunderstanding" },
-    { id: "mental-model-shift", label: "02. The Synchronization Mental Model" },
-    { id: "dependency-truth", label: "03. The Dependency Array is Truth" },
-    { id: "stale-closures", label: "04. The Stale Closure Trap" },
-    { id: "race-conditions", label: "05. Data Fetching & Race Conditions" },
-    { id: "effects-vs-events", label: "06. When NOT to use useEffect" },
-    { id: "pro-tips", label: "07. Pro Tips & Pitfalls" },
-    { id: "virality", label: "08. Virality & Socials" },
-    { id: "interactive-demo", label: "09. The Playground" }
-  ],
-  content: `
+    slug: "mastering-useeffect",
+    title: "React useEffect: The Definitive Guide for 2026 🧠",
+    description: "Forget 'Lifecycles'. Thinking that way is why your app loops infinitely. Learn the Synchronization mental model, how to fix race conditions, AbortController patterns, and why you should almost never use useEffect in React 19.",
+    thumbnail: "/images/tutorials/useeffect-thumb.png",
+    tags: ["React", "Hooks", "Frontend", "Performance", "Deep Dive"],
+    keywords: ["useEffect Guide", "React Synchronization", "Stale Closures React", "Race Conditions useEffect", "React 19 Hooks", "AbortController", "Custom Hooks"],
+    difficulty: "Expert",
+    readTime: "45 min read",
+    author: "React Core Team Observer",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
+    toc: [
+        { id: "cognitive-tax", label: "01. The Cognitive Tax" },
+        { id: "sync-mental-model", label: "02. The Synchronization Model" },
+        { id: "dependency-truth", label: "03. Dependency Integrity" },
+        { id: "race-conditions", label: "04. Race Conditions & Abort" },
+        { id: "fetched-then-render", label: "05. Fetch-Then-Render Anti-Pattern" },
+        { id: "effects-vs-events", label: "06. Effects vs Events" },
+        { id: "custom-hooks", label: "07. Custom Hooks Refactoring" },
+        { id: "interactive-demo", label: "08. The Sync Visualizer" }
+    ],
+    content: `
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
       
-      <!-- 1. The Hook / Intro -->
-      <section id="the-great-misunderstanding" class="scroll-mt-32">
-         <div class="border-l-8 border-brand-primary bg-brand-50 dark:bg-brand-900/10 pl-8 py-8 mb-12 rounded-r-2xl shadow-sm">
-            <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
-                You rely on <code class="text-brand-primary">useEffect</code> for everything. And that is why your app is buggy.
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed">
-                If I asked you to explain <code>useEffect</code>, you'd probably say: <br/>
-                <em>"It's how we handle side effects in functional components. It's like componentDidMount + componentDidUpdate + componentWillUnmount combined."</em>
-            </p>
-            <p class="text-xl md:text-2xl text-red-600 dark:text-red-400 font-bold mt-6 leading-relaxed">
-                That answer is exactly why you have infinite loops. That answer is why you have stale closures. That answer is wrong.
+      <!-- 01. Cognitive Tax -->
+      <section id="cognitive-tax" class="scroll-mt-32">
+         <div class="border-l-8 border-purple-600 bg-purple-50 dark:bg-purple-900/10 pl-8 py-8 mb-12 rounded-r-2xl shadow-sm">
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
+                "useEffect is NOT a lifecycle hook."
+            </h2>
+            <p class="text-xl md:text-2xl text-purple-800 dark:text-purple-200 font-light leading-relaxed">
+                If you think <code>useEffect(fn, [])</code> is <code>componentDidMount</code>, you've already lost.
+                <br/><br/>
+                This "Lifecycle Mental Model" (Mount, Update, Unmount) is a carryover from Class Components. It is actively harmful in Hooks. It causes stale closures, infinite loops, and data inconsistencies.
             </p>
          </div>
-
-         <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 leading-8">
+         
+         <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300">
             <p>
-                <strong>Why this topic is trending right now:</strong> With the release of React 19 and the React Compiler, the ecosystem is shifting. We are moving away from manual memoization and towards smarter compilers. But <code>useEffect</code> remains. It remains the razor-sharp tool that can either surgicaly synchronize your app or slice your performance to ribbons.
-            </p>
-            <p>
-                This isn't just another API reference. This is a <strong>re-education</strong>. We are going to unlearn "Lifecycles" and learn "Synchronization". By the end of this 3,500-word deep dive, you will be the person on your team who spots the race condition in the PR review before it ever hits production.
+                In Class Components, you wrote code based on <strong>Time</strong> ("Do this when it mounts").
+                <br/>
+                In Hooks, you write code based on <strong>State</strong> ("Do this when data changes").
             </p>
          </div>
-
-
       </section>
 
-      <!-- 2. Mental Model Shift -->
-      <section id="mental-model-shift" class="scroll-mt-32">
+      <!-- 02. Sync Mental Model -->
+      <section id="sync-mental-model" class="scroll-mt-32">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">02.</span>
+            <span class="text-purple-600 dark:text-purple-500">02.</span>
             The Synchronization Mental Model
         </h2>
         
-        <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300">
-            <p>
-                React components are <strong>pure functions</strong>. They take state and props, and they return UI. They are deterministic. <br/>
-                <code>f(state) = UI</code>.
-            </p>
-            <p>
-                But the world is not pure. The DOM needs to be mutated. LocalStorage needs to be updated. Sockets need to be connected. These are "Side Effects". 
-                <code>useEffect</code> is not a signal that "the component rendered". It is a signal that <strong>"The component needs to synchronize with an external system"</strong>.
-            </p>
-            
-            <h3 class="text-2xl font-bold mt-12 mb-6">The Cycle of Synchronization</h3>
-            <p>
-                In the old class-based mental model, you thought in time: "When does this run? At mount? At update?"
-                <br/>
-                In the Hooks mental model, you must think in <strong>state</strong>: "What state does this effect depend on?"
-            </p>
-
-            <div class="bg-gray-100 dark:bg-gray-900 p-8 rounded-2xl my-8 font-mono text-sm md:text-base border border-gray-200 dark:border-gray-800 relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-gray-200 dark:bg-gray-800 px-4 py-1 rounded-bl-xl text-xs font-bold uppercase tracking-widest text-gray-500">Visualization</div>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-right font-bold text-green-600 dark:text-green-400">Mount</span>
-                        <span class="text-gray-400">→</span>
-                        <span>Start Synchronization</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-right font-bold text-blue-600 dark:text-blue-400">Update</span>
-                        <span class="text-gray-400">→</span>
-                        <span>Stop Old Sync (Cleanup)</span>
-                        <span class="text-gray-400">+</span>
-                        <span>Start New Sync</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-right font-bold text-red-600 dark:text-red-400">Unmount</span>
-                        <span class="text-gray-400">→</span>
-                        <span>Stop Comparison (Cleanup)</span>
-                    </div>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="p-8 bg-slate-100 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 h-full">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Old Thinking</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-lg mb-4 italic">
+                    "I want to run this log only once."
+                </p>
+                <div class="inline-block px-3 py-1 bg-red-100 text-red-600 rounded font-bold text-xs uppercase">Imperative</div>
             </div>
+            <div class="p-8 bg-purple-50 dark:bg-purple-900/10 rounded-3xl border border-purple-100 dark:border-purple-900/20 h-full">
+                <h3 class="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">Correct Thinking</h3>
+                <p class="text-purple-800 dark:text-purple-200 text-lg mb-4 italic">
+                    "I want \`console.log\` to be synchronized with \`text\`. If \`text\` changes, log it."
+                </p>
+                <div class="inline-block px-3 py-1 bg-green-100 text-green-600 rounded font-bold text-xs uppercase">Declarative</div>
+            </div>
+        </div>
 
-            <p>
-                Notice how "Update" is actually just "Cleanup + Re-run". React doesn't distinguish between "Mounting" and "Updating" for effects. It only knows: 
-                <em>"The dependencies changed. The old synchronization is invalid. I must clean it up and start a new one."</em>
-            </p>
+        <div class="bg-gray-900 rounded-xl p-8 shadow-2xl relative">
+             <div class="font-mono text-gray-300 text-sm md:text-base space-y-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-green-400 font-bold w-32 text-right">Render 1</span> 
+                    <span>→ State is <span class="text-yellow-400">"{ id: 100 }"</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-blue-400 font-bold w-32 text-right">Effect 1</span> 
+                    <span>→ Connect WebSocket to <span class="text-yellow-400">Room 100</span></span>
+                </div>
+                <div class="flex justify-center my-2 text-gray-600 text-xs">...User changes room...</div>
+                <div class="flex items-center gap-4">
+                    <span class="text-green-400 font-bold w-32 text-right">Render 2</span> 
+                    <span>→ State is <span class="text-yellow-400">"{ id: 200 }"</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-red-400 font-bold w-32 text-right">Cleanup 1</span> 
+                    <span>→ Disconnect WebSocket from <span class="text-yellow-400">Room 100</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-blue-400 font-bold w-32 text-right">Effect 2</span> 
+                    <span>→ Connect WebSocket to <span class="text-yellow-400">Room 200</span></span>
+                </div>
+             </div>
         </div>
       </section>
 
-      <!-- 3. The Dependency Array -->
+      <!-- 03. Dependency Array -->
       <section id="dependency-truth" class="scroll-mt-32">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">03.</span>
-            The Dependency Array is Truth
+            <span class="text-purple-600 dark:text-purple-500">03.</span>
+            Dependency Integrity
         </h2>
         
         <div class="bg-yellow-50 dark:bg-yellow-900/10 border-l-4 border-yellow-500 p-6 mb-8 rounded-r-lg">
-            <p class="text-yellow-800 dark:text-yellow-200 font-medium text-lg">
-                <strong>Crucial Insight:</strong> You do not "choose" your dependencies. The code chooses them for you. The dependency array is a list of <em>every reactive value</em> referenced inside your effect.
+            <h4 class="font-bold text-yellow-900 dark:text-yellow-100">The Golden Rule</h4>
+            <p class="text-yellow-800 dark:text-yellow-200 mt-2">
+                "You do not choose your dependencies. Your code chooses them."
             </p>
         </div>
 
-        <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300">
-            <p>
-                If you use a variable inside <code>useEffect</code>, and that variable is declared inside the component (props, state, or derived variables), it <strong>must</strong> go in the array. 
-                Why? Because if it changes, your effect is using a stale version of it.
-            </p>
-
-            <h3 class="text-2xl font-bold mt-12 mb-6">Object Integrity & Infinite Loops</h3>
-            <p>
-                One of the most common pitfalls is passing objects or arrays into the dependency array. 
-                React uses <code>Object.is()</code> (referential equality) to compare dependencies.
-            </p>
-            
-            <pre class="mockup-code bg-gray-900 text-gray-100 p-6 rounded-xl overflow-x-auto text-sm"><code>// ❌ BAD: Infinite Loop waiting to happen
-function BadComponent() {
-  const options = { id: 1 }; // Created NEW every render
-
-  useEffect(() => {
-    doSomething(options);
-  }, [options]); // 🔴 Dependency changes every render!
-}
-
-// ✅ GOOD: Memoize the object
-function GoodComponent() {
-  const options = useMemo(() => ({ id: 1 }), []); // Stable reference
-
-  useEffect(() => {
-    doSomething(options);
-  }, [options]); // ✅ Stable
-}</code></pre>
-            <p class="mt-4">
-               Always ask yourself: <em>"Is this variable referentially stable?"</em> If not, wrap it in <code>useMemo</code> or move it outside the component if it's static.
-            </p>
-        </div>
-      </section>
-
-      <!-- 4. Stale Closures -->
-      <section id="stale-closures" class="scroll-mt-32">
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">04.</span>
-            The Stale Closure Trap
-        </h2>
-        
-        <p class="text-xl text-gray-700 dark:text-gray-300 mb-8 font-light">
-            JavaScript closures are a feature, but in React hooks, they can look like a bug. When an effect runs, it "captures" the values of state and props <em>at that specific moment in time</em>.
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+            If a variable is defined inside the component and used inside the effect, it <strong>MUST</strong> be in the dependency array. No exceptions.
         </p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
-            <div class="bg-red-50 dark:bg-red-900/10 p-8 rounded-2xl border border-red-100 dark:border-red-900/30">
-                <h4 class="font-bold text-xl text-red-900 dark:text-red-100 mb-4 flex items-center gap-2">
-                    <span>❌</span> The Broken Counter
-                </h4>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    This effect creates a closure around \`count\` when \`count\` is 0. The interval function <em>always</em> sees \`count\` as 0. So it always updates to 1.
-                </p>
-                <div class="bg-white dark:bg-black/40 p-4 rounded-lg">
-<pre class="text-xs text-red-700 dark:text-red-300 overflow-x-auto"><code>useEffect(() => {
-  const id = setInterval(() => {
-    console.log(count); // Always 0
-    setCount(count + 1); // Always sets to 1
-  }, 1000);
-  return () => clearInterval(id);
-}, []); // Empty deps = Run once</code></pre>
-                </div>
-            </div>
+        <div class="mockup-code bg-gray-900 text-gray-100 p-6 rounded-xl overflow-x-auto shadow-2xl">
+<pre><code><span class="text-gray-500">// ❌ The "Lying" Pattern</span>
+useEffect(() => {
+  const next = count + step; <span class="text-red-400">// Uses 'count' and 'step'</span>
+  console.log(next);
+}, []); <span class="text-red-400">// ❌ BUG: 'next' will forever be initial value. Stale Closure.</span>
 
-            <div class="bg-green-50 dark:bg-green-900/10 p-8 rounded-2xl border border-green-100 dark:border-green-900/30">
-                <h4 class="font-bold text-xl text-green-900 dark:text-green-100 mb-4 flex items-center gap-2">
-                    <span>✅</span> The Functional Fix
-                </h4>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                    By using the functional updater, we tell React: "I don't care what the value is right now. Just take the <em>previous</em> value and add 1."
-                </p>
-                <div class="bg-white dark:bg-black/40 p-4 rounded-lg">
-<pre class="text-xs text-green-700 dark:text-green-300 overflow-x-auto"><code>useEffect(() => {
-  const id = setInterval(() => {
-    // Functional update
-    setCount(prev => prev + 1);
-  }, 1000);
-  return () => clearInterval(id);
-}, []); // Valid! We don't read 'count'</code></pre>
-                </div>
-            </div>
+<span class="text-gray-500">// ✅ The Truthful Pattern</span>
+useEffect(() => {
+  const next = count + step;
+  console.log(next);
+}, [count, step]); <span class="text-green-400">// ✅ Re-runs whenever ingredients change.</span></code></pre>
+        </div>
+        
+        <div class="mt-6 p-4 bg-slate-100 dark:bg-slate-900 rounded-lg">
+            <h4 class="font-bold mb-2">Deep Dive: Object Referential Equality</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                React compares dependencies using \`Object.is()\`. If you pass an object or array literal \`[]\` as a dependency, it is a *new* object every render. 
+                This causes the Effect to run infinitely.
+                <br/>
+                <strong>Fix:</strong> Wrap objects in \`useMemo\` or primitives.
+            </p>
         </div>
       </section>
 
-      <!-- 5. Race Conditions -->
+      <!-- 04. Race Conditions -->
       <section id="race-conditions" class="scroll-mt-32">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">05.</span>
-            Data Fetching & Race Conditions
+            <span class="text-purple-600 dark:text-purple-500">04.</span>
+            Race Conditions & AbortController
         </h2>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+            Imagine a user clicks "User 1", then quickly "User 2". 
+            The network request for User 1 might finish <em>after</em> User 2. 
+            If you don't handle this, your UI will show "User 2" selected but "User 1" data. This is a Race Condition.
+        </p>
         
-        <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300">
-            <p>
-                Imagine a user clicks "User 1". The app starts fetching User 1. <br/>
-                Then quickly, the user clicks "User 2". The app starts fetching User 2.<br/>
-                The "User 2" request finishes instantly (maybe it was cached). <br/>
-                Then "User 1" request finishes (it was slow).
-            </p>
-            <p>
-                <strong>The Bug:</strong> The UI displays "User 2" in the header, but the detailed data is overwritten by "User 1". You are now showing mismatched data. This is a <strong>Race Condition</strong>.
-            </p>
-            
-            <h3 class="text-2xl font-bold mt-8 mb-4">The Solution: Cleanup Functions & AbortController</h3>
-            <p>
-                There are two ways to solve this. The "Boolean Flag" method (classic) and the "AbortController" method (modern standard).
-            </p>
-
-             <div class="bg-gray-900 text-gray-100 p-6 rounded-xl overflow-x-auto shadow-2xl my-6">
-<pre><code>// ✅ The Modern Standard Pattern
-useEffect(() => {
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  async function fetchData() {
-    try {
-      const response = await fetch(\`/api/user/\${id}\`, { signal });
-      const data = await response.json();
-      setUser(data);
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        setError(err);
+        <div class="bg-gray-900 text-gray-100 p-6 rounded-xl overflow-x-auto shadow-2xl">
+<pre><code>useEffect(() => {
+  let ignore = false;
+  
+  <span class="text-purple-400">async function</span> <span class="text-blue-400">fetchData</span>() {
+      <span class="text-purple-400">const</span> res = <span class="text-purple-400">await</span> fetch(url);
+      <span class="text-purple-400">const</span> data = <span class="text-purple-400">await</span> res.json();
+      
+      <span class="text-gray-500">// 🛡️ Safety Check</span>
+      <span class="text-purple-400">if</span> (!ignore) {
+        setData(data);
       }
-    }
   }
 
   fetchData();
 
-  // 🧹 Cleanup: Abort the fetch if the component unmounts
-  // or if 'id' changes before the fetch finishes.
-  return () => {
-    controller.abort();
-  };
-}, [id]);</code></pre>
-             </div>
-             <p>
-                By aborting the request in the cleanup function, you ensure that even if the network request finishes, it won't trigger a state update on an unmounted component or stale render cycle.
+  <span class="text-gray-500">// 🧹 Cleanup runs first when url changes</span>
+  <span class="text-purple-400">return</span> () => { ignore = true; };
+}, [url]);</code></pre>
+        </div>
+         <div class="mt-6">
+            <h4 class="font-bold text-lg mb-2 text-gray-900 dark:text-white">The AbortController Pattern (Professional)</h4>
+             <p class="text-gray-700 dark:text-gray-300">
+                 Using a boolean flag is okay, but \`AbortController\` actually cancels the network request, saving bandwidth.
              </p>
+         </div>
+         <div class="bg-purple-900/10 border-l-4 border-purple-500 p-6 mt-6">
+                 <h4 class="font-bold text-purple-800 dark:text-purple-200 mb-2">Deep Dive: AbortSignal</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     Modern <code>fetch()</code> accepts a <code>signal</code> option.
+                     <br/><br/>
+                     <code>const controller = new AbortController();</code><br/>
+                     <code>fetch(url, { signal: controller.signal });</code>
+                     <br/><br/>
+                     In the useEffect cleanup function, calling <code>controller.abort()</code> automatically rejects the promise with an "AbortError", which you can catch and ignore.
+                 </p>
+         </div>
+      </section>
+      
+      <!-- 05. Anti-Patterns -->
+      <section id="fetched-then-render" class="scroll-mt-32">
+           <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+            <span class="text-purple-600 dark:text-purple-500">05.</span>
+            The "Fetch-Then-Render" Anti-Pattern
+        </h2>
+        <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl border border-red-200 dark:border-red-900/30">
+            <h3 class="text-red-700 dark:text-red-300 font-bold mb-4">⚠️ Don't fetch in useEffect for critical data</h3>
+            <p class="text-gray-700 dark:text-gray-300">
+                Fetching in \`useEffect\` causes a "Waterfall".
+                <br/>
+                1. Download JS Bundle -> 2. Render App -> 3. Execute Effect -> 4. Start Fetch.
+                <br/><br/>
+                <strong>Better:</strong> Use a library like <code>TanStack Query</code> or <code>SWR</code>.
+                <br/>
+                <strong>Best (In 2026):</strong> Use React Server Components (RSC) to fetch on the server.
+            </p>
         </div>
       </section>
 
-      <!-- 6. Effects vs Events -->
+      <!-- 06. Effects vs Events -->
       <section id="effects-vs-events" class="scroll-mt-32">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">06.</span>
-            When NOT to use useEffect
+            <span class="text-purple-600 dark:text-purple-500">06.</span>
+            Effects vs Events: The Decision Tree
         </h2>
-
-         <div class="bg-orange-50 dark:bg-orange-900/10 p-8 rounded-2xl mb-8 border border-orange-200 dark:border-orange-900/30">
-             <h3 class="text-2xl font-bold text-orange-900 dark:text-orange-200 mb-4">The Golden Rule of Events</h3>
-             <p class="text-lg text-orange-800 dark:text-orange-300">
-                "If the logic is triggered by a specific user interaction, it belongs in an Event Handler, NOT an Effect."
-             </p>
-         </div>
-
-         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-             <div>
-                 <h4 class="font-bold text-lg mb-4 text-center border-b pb-2">Example: Submitting a Form</h4>
-                 <div class="space-y-4">
-                     <div class="bg-red-50 dark:bg-red-900/10 p-4 rounded-lg">
-                        <span class="font-bold text-red-600 block mb-2">❌ Bad: Effect Chaining</span>
-                        <p class="text-sm">User clicks Submit -> Set specific state 'isSubmitting' -> Effect sees 'isSubmitting' -> Effect calls API. <br/>This is hard to trace and debug.</p>
-                     </div>
-                     <div class="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg">
-                        <span class="font-bold text-green-600 block mb-2">✅ Good: Event Handler</span>
-                        <p class="text-sm">User clicks Submit -> \`handleSubmit\` calls API directly. <br/>Clear, synchronous intent.</p>
+         <div class="bg-gray-100 dark:bg-slate-900 p-8 rounded-2xl border border-gray-200 dark:border-slate-800">
+             <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-white">Ask yourself: "Who triggered this?"</h3>
+             
+             <div class="space-y-6">
+                 <div class="flex gap-4">
+                     <div class="flex-none p-4 bg-green-100 dark:bg-green-900/20 rounded-lg text-green-700 dark:text-green-300 font-bold w-32 text-center">User Action</div>
+                     <div>
+                         <h4 class="font-bold">Event Handler</h4>
+                         <p class="text-sm text-gray-600 dark:text-gray-400">Did the user click, type, or submit? Put the logic in \`onClick\`, \`onSubmit\`. Do NOT use \`useEffect\`.</p>
                      </div>
                  </div>
-             </div>
-             <div>
-                 <h4 class="font-bold text-lg mb-4 text-center border-b pb-2">Example: Buying an Item</h4>
-                 <div class="space-y-4">
-                     <div class="bg-red-50 dark:bg-red-900/10 p-4 rounded-lg">
-                        <span class="font-bold text-red-600 block mb-2">❌ Bad: Watching State</span>
-                        <p class="text-sm">Watching \`cart.items\` length to trigger a 'Purchase' analytics event.</p>
-                     </div>
-                     <div class="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg">
-                        <span class="font-bold text-green-600 block mb-2">✅ Good: The Click</span>
-                        <p class="text-sm">Trigger the 'Purchase' event in the \`onClick\` handler of the 'Buy Now' button.</p>
+                 
+                 <div class="flex gap-4">
+                     <div class="flex-none p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg text-purple-700 dark:text-purple-300 font-bold w-32 text-center">App State</div>
+                     <div>
+                         <h4 class="font-bold">useEffect</h4>
+                         <p class="text-sm text-gray-600 dark:text-gray-400">Did the user just arrive at a page? Did a prop change that requires a 3rd party library to re-sync? Use \`useEffect\`.</p>
                      </div>
                  </div>
              </div>
          </div>
       </section>
 
-      <!-- 7. Pro Tips -->
-      <section id="pro-tips" class="scroll-mt-32">
+      <!-- 07. Custom Hooks -->
+       <section id="custom-hooks" class="scroll-mt-32">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-            <span class="text-brand-primary">07.</span>
-            Pro Tips & Pitfalls
+            <span class="text-purple-600 dark:text-purple-500">07.</span>
+            Refactoring to Custom Hooks
         </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                <h4 class="font-bold text-lg mb-2">💡 Pro Tip: Extract Logic</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    If your \`useEffect\` is more than 10 lines long, it likely deserves to be a custom hook. \`useWindowListener\`, \`useFetch\`, \`useInterval\`. Name your effects by extracting them!
-                </p>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                <h4 class="font-bold text-lg mb-2">💡 Pro Tip: Derived State</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    Never use \`useEffect\` to calculate state based on other state. simple variables during render.
-                    <br/>
-                    <code class="text-xs bg-gray-200 dark:bg-gray-700 px-1 rounded">const fullName = firstName + ' ' + lastName;</code> is better than an effect that sets fullName.
-                </p>
-            </div>
-             <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                <h4 class="font-bold text-lg mb-2">⚠️ Pitfall: Empty Dependency Array</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    Using \`[]\` to mimic \`componentDidMount\` is a lie. If your effect relies on props/state, and you omit them, your effect will have bugs. If you really need to ignore updates, use \`useRef\` to hold the value.
-                </p>
-            </div>
-             <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-                <h4 class="font-bold text-lg mb-2">⚠️ Pitfall: Async Functions</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    You cannot make the effect callback async like \`useEffect(async () => ...)\`. It returns a Promise, but React expects a Cleanup function. Define the async function <em>inside</em> the effect and call it.
-                </p>
-            </div>
-        </div>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+            If you see a \`useEffect\` in your main component, smell code. 
+            Abstracting effects into custom hooks makes your component declarative ("I want to sync window size") instead of implementation detail ("Add event listener...").
+        </p>
+        <pre class="bg-gray-900 text-gray-300 p-6 rounded-xl font-mono text-sm overflow-x-auto">
+// ✅ useWindowListener.js
+export function useWindowListener(eventType, listener) {
+  useEffect(() => {
+    window.addEventListener(eventType, listener);
+    return () => window.removeEventListener(eventType, listener);
+  }, [eventType, listener]);
+}
+
+// Component.js
+function App() {
+  // So clean! No useEffect visible.
+  useWindowListener('resize', handleResize);
+  return ...
+}</pre>
       </section>
 
-      <!-- 8. Virality -->
-      <section id="virality" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
-         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8">
-            08. Share the Knowledge
-         </h2>
-         
-         <!-- Did You Know -->
-         <div class="bg-indigo-600 text-white p-8 rounded-2xl mb-12 shadow-xl transform hover:scale-[1.01] transition-transform">
-             <div class="flex items-start gap-4">
-                 <span class="text-4xl">💡</span>
-                 <div>
-                     <h4 class="text-2xl font-bold mb-2 !text-white">Did You Know?</h4>
-                     <p class="!text-white text-lg font-medium opacity-90">
-                         React runs your effects <strong class="!text-white">twice</strong> in Strict Mode (development only) specifically to stress-test your cleanup functions? If your effect breaks when run twice, it's buggy!
-                     </p>
-                 </div>
-             </div>
-         </div>
-
-
-         
-         <div class="mt-8 flex flex-wrap gap-2 justify-center">
-             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300">#ReactJS</span>
-             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300">#WebDevelopment</span>
-             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300">#JavaScript</span>
-             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300">#Frontend</span>
-             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300">#CodingTips</span>
-         </div>
-         
-         <div class="mt-12 text-center max-w-2xl mx-auto">
-             <h4 class="text-xl font-bold mb-4">The Challenge</h4>
-             <p class="text-gray-600 dark:text-gray-400 mb-6">
-                 Go through your codebase. Find one \`useEffect\` with a \`// eslint-disable-next-line\` comment. Fix it properly using the techniques above. Your future self will thank you.
-             </p >
-  <button class="bg-brand-primary text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity">
-    Subscribe for More React Deep Dives
-  </button>
-         </div >
-      </section >
-
-      <!-- 9. Interactive Demo -->
-  <section id="interactive-demo" class="scroll-mt-32">
-    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-      <span class="text-brand-primary">09.</span>
-      The Playground: Interval Lab
-    </h2>
-    <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
-      This interactive component demonstrates the concepts of <strong>Synchronization</strong> and <strong>Cleanup</strong>.
-      <br />
-      Open your browser console to see the logs. Notice how the "Cleanup" log always fires immediately before the "Effect" log when you change the slider. That is the synchronization cycle in action.
-    </p>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-      <!-- Concept -->
-      <div class="space-y-4">
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded text-sm uppercase tracking-wide">Lab</span>
-          Lifecycle Visualizer
-        </h3>
-        <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-          1. Toggle the component on/off (Mount/Unmount). <br />
-          2. Change the interval speed (Update). <br />
-          Observe how the effect cleanly handles dynamic changes without restart the whole app.
+       <!-- 08. Demo -->
+      <section id="interactive-demo" class="scroll-mt-32">
+         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+            <span class="text-purple-600 dark:text-purple-500">08.</span>
+            The Sync Visualizer
+        </h2>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+            Below is a tool to visualize the <strong>Setup</strong> and <strong>Cleanup</strong> cycle of useEffect. 
+            Change the connection speed to see how React cleans up the *previous* effect before setting up the *new* one.
         </p>
-      </div>
+      </section>
+      
     </div>
-  </section>
-    </div >
   `,
-  code: `import React, { useState, useEffect } from "react";
+    code: `import React, { useState, useEffect, useRef } from "react";
 
-export default function App() {
-  const [count, setCount] = useState(0);
-  const [delay, setDelay] = useState(1000);
-  const [isRunning, setIsRunning] = useState(true);
+// ==========================================
+// ⏳ Synchronization Playground (Advanced)
+// ==========================================
+
+export default function EffectDemo() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [serverId, setServerId] = useState(1);
+  const [logs, setLogs] = useState([]);
+  
+  // Ref to track mount status for strict mode visualization
+  const isMounted = useRef(false);
+
+  const addLog = (msg, type) => {
+      const timestamp = new Date().toLocaleTimeString().split(' ')[0];
+      setLogs(prev => [{ id: Date.now() + Math.random(), msg, type, time: timestamp }, ...prev].slice(0, 7));
+  };
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isPlaying) {
+         if (isMounted.current) addLog('Effect Skipped (isPlaying: false)', 'neutral');
+         return;
+    }
 
-    // ✅ 1. Synchronize: Start Interval
-    console.log('✅ Effect: Starting Interval');
-    const id = setInterval(() => {
-      setCount(c => c + 1);
-    }, delay);
+    // ----------------------------------------
+    // 1. SETUP PHASE (Mount or Update)
+    // ----------------------------------------
+    const connectionId = Math.floor(Math.random() * 1000);
+    addLog(\`🟢 SETUP: Connected to Server \${serverId} (ID: \${connectionId})\`, 'setup');
 
-    // ✅ 2. Cleanup: Clear Interval
-    // This runs BEFORE the next effect, or on unmount
+    const intervalId = setInterval(() => {
+        addLog(\`💓 Ping Server \${serverId}...\`, 'tick');
+    }, 2000);
+
+    // ----------------------------------------
+    // 2. CLEANUP PHASE (Unmount or Re-render)
+    // ----------------------------------------
     return () => {
-      console.log('🧹 Cleanup: Clearing Interval');
-      clearInterval(id);
+        addLog(\`🔴 CLEANUP: Disconnected Server \${serverId} (ID: \${connectionId})\`, 'cleanup');
+        clearInterval(intervalId);
     };
-  }, [isRunning, delay]); // Dependencies: The "Truth"
+
+  }, [isPlaying, serverId]); // 👈 Dependencies triggering sync
+
+  useEffect(() => {
+      isMounted.current = true;
+      return () => { isMounted.current = false };
+  }, []);
 
   return (
-    <div className="bg-white dark:bg-[#111] text-gray-900 dark:text-gray-200 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl p-8 flex flex-col md:flex-row gap-8 h-[500px]">
-      {/* Controls */}
-      <div className="w-full md:w-1/3 space-y-6">
-        <h3 className="text-xl font-bold">Effect Controls</h3>
+    <div className="bg-slate-50 dark:bg-[#0f1115] p-6 lg:p-10 rounded-3xl border border-slate-200 dark:border-white/5 shadow-2xl font-sans min-h-[700px] flex flex-col">
+        
+        <header className="mb-8 flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <div>
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                    <span className="text-purple-600">⚡</span> Sync Visualizer
+                </h3>
+                <p className="text-slate-500 mt-2 font-medium">Visualize the React Synchronization Cycle</p>
+            </div>
+            
+            <div className="flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-xs font-bold border border-yellow-200 dark:border-yellow-900/30">
+                <span>⚠️</span>
+                <span>Strict Mode: Effects run twice on mount!</span>
+            </div>
+        </header>
 
-        <button
-          onClick={() => setIsRunning(!isRunning)}
-          className={\`w-full py-3 rounded-lg font-bold transition-all shadow-md \${isRunning ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}\`}
-            >
-        {isRunning ? 'Unmount (Stop Sync)' : 'Mount (Start Sync)'}
-      </button>
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            {/* Left: Controls */}
+            <div className="space-y-6">
+                
+                {/* Connection Toggle */}
+                <div className="bg-white dark:bg-[#1a1c20] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Master Switch</label>
+                        <div className={\`px-2 py-1 rounded text-[10px] font-bold uppercase \${isPlaying ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}\`}>
+                            {isPlaying ? 'Active' : 'Idle'}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className={\`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg \${isPlaying ? 'bg-red-500 hover:bg-red-600 text-white shadow-red-500/20' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/20'}\`}
+                    >
+                        {isPlaying ? <span className="text-xl">📴</span> : <span className="text-xl">📶</span>}
+                        {isPlaying ? 'Disconnect (Unmount)' : 'Connect (Mount)'}
+                    </button>
+                    <p className="mt-3 text-[10px] text-slate-400 leading-normal">
+                        <strong>Logic:</strong> Toggling this mounts/unmounts the effect entirely.
+                    </p>
+                </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase text-gray-500">Interval Speed ({delay}ms)</label>
-        <input
-          type="range" min="100" max="2000" step="100"
-          value={delay}
-          onChange={(e) => setDelay(Number(e.target.value))}
-          className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gray-200 dark:bg-gray-800 accent-blue-500"
-        />
-      </div>
+                {/* Server Switcher */}
+                <div className="bg-white dark:bg-[#1a1c20] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm relative overflow-hidden">
+                    <div className={\`absolute inset-0 bg-slate-900/50 backdrop-blur-sm z-10 transition-opacity flex items-center justify-center \${isPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'}\`}>
+                        <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-lg backdrop-blur">Connect first to change servers</span>
+                    </div>
 
-      <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-xl text-xs font-mono border border-gray-200 dark:border-gray-800">
-        <div className="text-gray-500 mb-2 font-bold uppercase tracking-wider">// Dependency Array</div>
-        <div>[ <span className={isRunning ? 'text-green-500' : 'text-red-500'}>{isRunning.toString()}</span>, <span className="text-blue-500">{delay}</span> ]</div>
-      </div>
+                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 block">Dependency Change</label>
+                    <div className="grid grid-cols-3 gap-3">
+                        {[1, 2, 3].map(id => (
+                            <button
+                                key={id}
+                                onClick={() => setServerId(id)}
+                                className={\`py-3 rounded-lg font-bold border-2 transition-all \${serverId === id ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300' : 'border-slate-200 dark:border-slate-700 text-slate-400 hover:border-slate-300'}\`}
+                            >
+                                Server {id}
+                            </button>
+                        ))}
+                    </div>
+                    <p className="mt-4 text-[10px] text-slate-400 leading-normal">
+                        <strong>Logic:</strong> Changing \`serverId\` forces React to: <br/> 
+                        <span className="text-red-500 font-bold">1. Cleanup Old Server</span> ➝ <span className="text-green-500 font-bold">2. Setup New Server</span>
+                    </p>
+                </div>
+            </div>
 
-      <div className="text-xs text-blue-500 italic bg-blue-50 dark:bg-blue-900/10 p-2 rounded">
-        * Check your browser console to see the 'Cleanup' and 'Effect' logs firing in order.
-      </div>
+            {/* Right: Visualization Console */}
+            <div className="flex flex-col bg-slate-900 rounded-2xl border border-slate-800 shadow-inner overflow-hidden relative">
+                <div className="bg-slate-800 px-4 py-3 flex justify-between items-center border-b border-slate-700">
+                    <span className="text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                        <span>⚡</span> Lifecycle Monitor
+                    </span>
+                    <button onClick={() => setLogs([])} className="text-[10px] text-slate-500 hover:text-white uppercase font-bold">Clear</button>
+                </div>
+                
+                <div className="flex-1 p-6 space-y-3 overflow-y-auto min-h-[300px] relative">
+                    {/* Connection Lines simulation */}
+                    <div className="absolute left-6 top-0 bottom-0 w-px bg-slate-800 z-0"></div>
+
+                    {logs.length === 0 && (
+                        <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-2 opacity-50">
+                            <span className="text-4xl text-gray-500">⏳</span>
+                            <span className="text-xs font-bold uppercase tracking-widest">Waiting for effects...</span>
+                        </div>
+                    )}
+                    
+                    {logs.map((log) => (
+                        <div key={log.id} className="relative z-10 flex items-start gap-4 animate-in slide-in-from-left-4 duration-300">
+                            <div className="w-12 text-[10px] font-mono text-slate-500 pt-1 text-right shrink-0">{log.time}</div>
+                            <div className={\`flex-1 p-3 rounded-lg border text-xs font-mono shadow-sm \${
+                                log.type === 'setup' ? 'bg-green-500/10 border-green-500/30 text-green-300' :
+                                log.type === 'cleanup' ? 'bg-red-500/10 border-red-500/30 text-red-300 line-through decoration-red-500/50' :
+                                log.type === 'neutral' ? 'bg-slate-800 border-slate-700 text-slate-400 italic' :
+                                'bg-blue-500/5 border-blue-500/20 text-blue-300'
+                            }\`}>
+                                <div className="flex items-center gap-2">
+                                    {log.type === 'setup' && <span className="animate-spin-once">🔄</span>}
+                                    {log.type === 'cleanup' && <span>❌</span>}
+                                    {log.type === 'tick' && <span>⚡</span>}
+                                    <span className="font-bold tracking-wide">{log.msg}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+        </div>
     </div>
-
-        {/* Visualizer */ }
-  <div className="flex-1 bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-gray-800 rounded-2xl flex flex-col items-center justify-center relative">
-    <div className="text-8xl font-black font-mono text-gray-900 dark:text-white mb-4 animate-in zoom-in-50 duration-300" key={count}>
-      {count}
-    </div>
-    <div className="text-sm font-bold text-gray-500 uppercase tracking-widest">
-      Updates
-    </div>
-
-    <div className="absolute top-4 right-4 flex gap-2">
-      <button onClick={() => setCount(0)} className="text-xs text-gray-400 hover:text-gray-900 dark:hover:text-white underline">Reset Counter</button>
-    </div>
-  </div>
-    </div >
   );
 }
 `

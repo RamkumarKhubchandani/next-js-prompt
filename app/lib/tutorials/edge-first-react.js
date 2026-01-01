@@ -35,7 +35,7 @@ export const edgeFirstReact = {
                     <strong>Edge-First React</strong> means your code runs in 300+ cities simultaneously, instantly, and without cold starts.
                 </p>
              </div>
-             <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 leading-8">
+             <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert leading-8">
                  <p>
                      For the last decade, "Cloud" meant "Someone else's computer in a specific building." 
                      "Edge" means "The computer closest to the user."
@@ -50,7 +50,7 @@ export const edgeFirstReact = {
                 <span class="text-violet-600 dark:text-violet-500">02.</span>
                 Deep Dive: V8 Isolates vs Containers
             </h2>
-             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
                 <p>
                     Understanding the architectural difference between Node.js and Edge Runtime is crucial.
                 </p>
@@ -62,6 +62,12 @@ export const edgeFirstReact = {
                         <strong>V8 Isolates (Workers):</strong> Cloudflare/Vercel already have a massive browser engine running. When a request comes in, they spawn a new "Tab" (Isolate) for your code. It shares the existing memory of the engine. It boots in <strong>5ms</strong>.
                     </li>
                 </ul>
+                <div class="bg-violet-900/10 border-l-4 border-violet-500 p-6 mt-6">
+                     <h4 class="font-bold text-violet-800 dark:text-violet-200 mb-2">Deep Dive: Security Isolation</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         "Sharing memory" sounds scary. V8 Isolates use the same security sandbox as Chrome tabs. Your code cannot access the memory of another Isolate, even though they run in the same process. It's safe, but cheaper.
+                     </p>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8">
@@ -101,6 +107,14 @@ export const edgeFirstReact = {
             <p class="text-gray-700 dark:text-gray-300 mb-6">
                 New architectural patterns utilize pooled connections over HTTP or WebSockets.
             </p>
+            <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mb-8">
+                 <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">The Connection Limit Trap</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     A standard Postgres server allows ~100 concurrent connections. 
+                     <br/>
+                     If your site goes viral and 10,000 Edge functions spin up, they will DOS attack your own database instantly. You <strong>must</strong> use a connection pooler (like PgBouncer or Neon's built-in pool) to funnel these thousands of requests into a few stable connections.
+                 </p>
+            </div>
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <li class="bg-white dark:bg-slate-900 p-4 rounded-lg border border-gray-200 dark:border-slate-800 shadow-sm">
                     <strong>Neon (Serverless Postgres):</strong> Separates storage from compute. Spin up read-replicas in seconds.
@@ -173,8 +187,6 @@ export const edgeFirstReact = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Globe, Server, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // 🌍 Component: Edge Latency Simulator
 
@@ -220,7 +232,7 @@ export default function EdgeSimulator() {
             <div className="flex flex-col md:flex-row justify-between items-center mb-8 relative z-10 gap-4">
                 <div>
                      <h3 className="text-2xl font-bold flex items-center gap-2">
-                         <Globe className="text-violet-500" /> Global Latency Test
+                         <span>🌍</span> Global Latency Test
                      </h3>
                      <p className="text-slate-400 text-sm">Simulating request round-trips from user to backend.</p>
                 </div>
@@ -244,11 +256,10 @@ export default function EdgeSimulator() {
             <div className="relative h-64 bg-slate-800 rounded-xl mb-8 border border-slate-700 overflow-hidden shadow-inner">
                 <div className="absolute inset-0 opacity-20 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center"></div>
                 
-                {/* Visualizing the Architecture */}
                 {mode === 'central' ? (
                      <div className="absolute top-[30%] left-[25%] -translate-x-1/2 -translate-y-1/2 z-20">
                          <div className="relative group cursor-help">
-                             <Server className="w-10 h-10 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                             <span className="text-4xl drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">🖥️</span>
                              <div className="absolute -inset-4 bg-red-500/20 rounded-full animate-ping"></div>
                              
                              {/* Tooltip */}
@@ -305,36 +316,32 @@ export default function EdgeSimulator() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {logs.map((log, i) => (
-                    <motion.div 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
+                    <div 
                         key={log.region} 
-                        className="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-700"
+                        className="bg-slate-800 p-3 rounded-lg flex justify-between items-center border border-slate-700 animate-in slide-in-from-left duration-300"
+                        style={{ animationDelay: \`\${i * 100}ms\` }}
                     >
                         <span className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                             <Globe size={14} className="text-slate-500" /> {log.region}
+                             <span>🌍</span> {log.region}
                         </span>
                         <div className="flex items-center gap-2 h-full">
                             <div className="h-2 w-24 bg-slate-700 rounded-full overflow-hidden relative">
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: Math.min(log.latency, 100) + '%' }}
-                                    transition={{ duration: 0.5 }}
-                                    className={\`h-full rounded-full \${log.latency < 50 ? 'bg-green-500' : 'bg-red-500'}\`} 
-                                ></motion.div>
+                                <div 
+                                    className={\`h-full rounded-full transition-all duration-500 \${log.latency < 50 ? 'bg-green-500' : 'bg-red-500'}\`} 
+                                    style={{ width: Math.min(log.latency, 100) + '%' }}
+                                ></div>
                             </div>
                             <span className={\`text-xs font-mono font-bold w-12 text-right \${log.latency < 50 ? 'text-green-400' : 'text-red-400'}\`}>
                                 {log.latency}ms
                             </span>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
             
             {logs.length === 0 && (
                 <div className="text-center text-slate-500 py-8 italic flex flex-col items-center">
-                    <Server size={32} className="mb-2 opacity-50" />
+                    <span className="text-4xl mb-2 opacity-50">🖥️</span>
                     <p>Select a mode and run the benchmark to visualize the speed of light.</p>
                 </div>
             )}

@@ -31,6 +31,16 @@ export const angularStandaloneMfes = {
                     <br/><br/>
                     With <strong>Standalone Components</strong>, a micro-frontend is just a URL that exports a single Component class. No modules. No boilerplate.
                 </p>
+                <div class="bg-indigo-900/10 border-l-4 border-indigo-500 p-6 mt-6">
+                     <h4 class="font-bold text-indigo-800 dark:text-indigo-200 mb-2">Deep Dive: Version Skew Hell</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Using MFEs doesn't magically solve dependency issues. If Host uses Angular 18 and Remote uses Angular 16, they might both try to load different versions of <code>zone.js</code> or <code>rxjs</code>.
+                         <br/><br/>
+                         <strong>Rule of Thumb:</strong> Force all MFEs to use the exact same version of Core Framework dependencies via a Monorepo policy.
+                     </p>
+                </div>
+             </div>
+        </section>
              </div>
         </section>
 
@@ -96,7 +106,6 @@ export const angularStandaloneMfes = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { LayoutGrid, Box, ArrowLeftRight, Settings, CreditCard, ShoppingBag } from 'lucide-react';
 
 // 🧊 Micro-Frontend Architect
 
@@ -130,7 +139,7 @@ export default function StandaloneMFEDemo() {
                                 onClick={() => setSelectedApp('products')}
                              >
                                  <div className="text-center">
-                                     <ShoppingBag size={32} className="mx-auto text-green-600 mb-2" />
+                                     <span className="text-4xl mx-auto mb-2 block">🛍️</span>
                                      <div className="font-bold text-green-700 dark:text-green-400">Product MFE</div>
                                      <div className="text-xs text-green-600/60 mt-2">localhost:4201</div>
                                  </div>
@@ -142,7 +151,7 @@ export default function StandaloneMFEDemo() {
                                 onClick={() => setSelectedApp('payment')}
                              >
                                  <div className="text-center">
-                                     <CreditCard size={32} className="mx-auto text-purple-600 mb-2" />
+                                     <span className="text-4xl mx-auto mb-2 block">💳</span>
                                      <div className="font-bold text-purple-700 dark:text-purple-400">Payment MFE</div>
                                      <div className="text-xs text-purple-600/60 mt-2">localhost:4202</div>
                                  </div>
@@ -155,7 +164,7 @@ export default function StandaloneMFEDemo() {
                 {/* Config Panel */}
                 <div className="w-full lg:w-1/3 bg-slate-900 rounded-2xl p-6 text-slate-300 font-mono text-sm border border-slate-800 flex flex-col">
                     <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-700">
-                        <Settings size={18} />
+                        <span>⚙️</span>
                         <span className="font-bold">App Config</span>
                     </div>
                     
