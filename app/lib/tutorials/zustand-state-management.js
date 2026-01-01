@@ -1,260 +1,381 @@
 export const zustandStateManagement = {
-    title: "Zustand: The Bear Necessities 🐻",
-    description: "Redux is boilerplate heavy. Context API triggers too many re-renders. Zustand is the Goldilocks solution: Just right. Master the art of atomic state.",
+    title: "Zustand: The Definitive Guide to Scalable State Management (2026) 🐻",
+    description: "The most comprehensive guide to Zustand on the web. From replacing Redux to building enterprise-grade store architectures with Slices, Middleware, and TypeScript.",
     slug: "zustand-state-management",
     type: "static",
-    author: "Zustand Core Team",
+    author: "Senior Frontend Architect",
     createdAt: new Date().toISOString(),
-    readTime: "30 min read",
-    difficulty: "Intermediate",
+    readTime: "45 min read",
+    difficulty: "Advanced",
     image: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?q=80&w=2670&auto=format&fit=crop",
-    tags: ["React", "State Management", "Zustand", "Architecture", "Scalability"],
-    keywords: ["Zustand", "Redux", "Context API", "Global State", "Middlewares", "Immer", "Atomic State"],
+    tags: ["React", "State Management", "Zustand", "Architecture", "Performance", "TypeScript", "Testing"],
+    keywords: ["Zustand Guide", "Redux alternative", "React Context Performance", "Zustand Slices Pattern", "Testing Zustand", "Zustand Middleware"],
     toc: [
-        { id: "philosophy", label: "01. The No-Boilerplate Philosophy" },
-        { id: "store-pattern", label: "02. The Store Pattern" },
-        { id: "selectors", label: "03. Atomic Selectors" },
-        { id: "async-actions", label: "04. Async Actions & Thunks" },
-        { id: "slices-pattern", label: "05. The Slices Pattern" },
-        { id: "middlewares", label: "06. Middlewares (Persist)" },
-        { id: "virality", label: "07. Share & Takeaways" },
-        { id: "interactive-demo", label: "08. Interactive Demo" }
+        { id: "evolution", label: "01. The Evolution of State" },
+        { id: "why-zustand", label: "02. Why Zustand Wins" },
+        { id: "core-concepts", label: "03. Core Concepts & Syntax" },
+        { id: "atomic-selectors", label: "04. Performance & Atomic Selectors" },
+        { id: "async-architecture", label: "05. Async Architecture" },
+        { id: "enterprise-patterns", label: "06. Enterprise Patterns (Slices)" },
+        { id: "middleware-mastery", label: "07. Middleware Mastery" },
+        { id: "testing-strategy", label: "08. Testing Strategy" },
+        { id: "advanced-recipes", label: "09. Advanced Recipes" },
+        { id: "interactive-demo", label: "10. The Ecosystem Simulator" }
     ],
     content: `
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
         
-        <!-- Introduction -->
-        <section class="scroll-mt-32">
-             <div class="border-l-4 border-amber-500 pl-6 py-2 mb-8">
-                <p class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">
-                    "Web dev has two hard problems: Cache invalidation, and naming things. React has a third: Global State."
+        <!-- 01. The Evolution -->
+        <section id="evolution" class="scroll-mt-32">
+             <div class="border-l-8 border-amber-500 bg-amber-50 dark:bg-amber-900/10 pl-8 py-8 mb-12 rounded-r-2xl shadow-sm">
+                 <h2 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
+                    "State management shouldn't be a full-time job."
+                </h2>
+                <p class="text-xl md:text-2xl text-amber-900 dark:text-amber-100 font-light leading-relaxed">
+                    To understand why **Zustand** is taking over the React ecosystem, we first need to understand the pain that came before it. 
+                    We spent a decade wrapping our apps in Providers, writing switch statements, and debating overly complex architectures for simple problems.
                 </p>
              </div>
-             <p class="text-xl md:text-2xl leading-relaxed font-light">
-                For years, we argued about Flux, Redux, and Context. 
-                Redux forced us to write switch statements. Context forced us to re-render the entire app.
-                <br/><br/>
-                Then a small bear (Zustand) came along and showed us that global state is actually just a variable that you can subscribe to.
-                This is the definitive guide to state management without the headache.
-            </p>
+
+             <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert leading-8">
+                <h3 class="font-bold text-2xl text-gray-900 dark:text-white mt-12 mb-6">The Historical Context</h3>
+                <p>
+                    Let's rewind. <strong>2015</strong>: Redux appears. It's revolutionary. A single source of truth. Time travel debugging. But it demanded a blood sacrifice: *Boilerplate*. 
+                    To change a single boolean, you needed an Action Type, an Action Creator, a Thunk, and a Reducer case.
+                </p>
+                <p>
+                    <strong>2018</strong>: React Context API updates. Everyone says "Redux is dead!" We start shoving global state into Context. 
+                    But Context has a fatal flaw: <strong>The Re-render Bomb</strong>. If you have a Context with 20 values, and *one* changes, *every* component consuming that context re-renders. 
+                    Even if they don't use the changed value. Performance tanks.
+                </p>
+                <p>
+                    <strong>2020s</strong>: Enter **Zustand** (German for 'State'). It solves the dilemma. It gives you the "Single Source of Truth" from Redux, but with the simplicity of a hook. 
+                    Crucially, it solves the performance problem via <strong>Atomic Selectors</strong>.
+                </p>
+             </div>
         </section>
 
-        <!-- Section 1: Philosophy -->
-        <section id="philosophy" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">01.</span>
-                The "No-Boilerplate" Rule
+        <!-- 02. Why Zustand Wins -->
+        <section id="why-zustand" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">02.</span>
+                Why Zustand Wins
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300">
-                <p class="text-lg leading-relaxed">
-                    Redux requires actions, reducers, types, and selectors. 
-                    Zustand requires one hook. 
-                    It treats state like a <strong>Module</strong> rather than a Context Tree.
-                </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 my-12">
+                <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div class="text-4xl mb-4">🤏</div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Tiny Footprint</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Zustand is ~1KB gzipped. It is a thin wrapper around \`useSyncExternalStore\`. It doesn't bloat your bundle like Redux Toolkit often can.
+                    </p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Rendering Precision</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Components only re-render if the specific *slice* of state they select changes. React Context cannot do this natively without complex memoization.
+                    </p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div class="text-4xl mb-4">🔓</div>
+                    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Unopinionated</h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Want to use Immer? Go ahead. Middleware? Sure. Async? Just use async/await. It doesn't force a strict pattern like Sagas or Observables.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03. Core Concepts -->
+        <section id="core-concepts" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">03.</span>
+                Core Concepts & Syntax
+            </h2>
+            <p class="text-xl text-gray-700 dark:text-gray-300 mb-8">
+                The mental model is simple: <strong>Your store is a hook</strong>. You don't wrap your app in a Provider. You don't dispatch actions. You just call a function.
+            </p>
+
+            <div class="bg-gray-900 text-gray-100 p-8 rounded-2xl overflow-x-auto shadow-2xl relative group">
+                <div class="absolute top-0 right-0 bg-slate-800 text-gray-400 text-xs px-3 py-1 rounded-bl-lg font-mono">store.js</div>
+                <pre class="text-sm md:text-base font-mono leading-relaxed">
+<span class="text-purple-400">import</span> { create } <span class="text-purple-400">from</span> <span class="text-green-400">'zustand'</span>
+
+<span class="text-gray-500">// 1. Create the store</span>
+<span class="text-purple-400">export const</span> useStore = create((set) => ({
+  <span class="text-gray-500">// State</span>
+  bears: <span class="text-blue-400">0</span>,
+  
+  <span class="text-gray-500">// Actions (UPDATES ARE MERGED AUTOMATICALLY!)</span>
+  increasePopulation: () => set((state) => ({ bears: state.bears + <span class="text-blue-400">1</span> })),
+  
+  removeAllBears: () => set({ bears: <span class="text-blue-400">0</span> }),
+}))
+
+<span class="text-gray-500">// 2. Use the hook in ANY component</span>
+<span class="text-purple-400">function</span> <span class="text-yellow-400">BearCounter</span>() {
+  <span class="text-purple-400">const</span> bears = useStore((state) => state.bears)
+  <span class="text-purple-400">return</span> <span class="text-blue-400">&lt;h1&gt;</span>{bears} around here ...<span class="text-blue-400">&lt;/h1&gt;</span>
+}</pre>
             </div>
             
-            <!-- Comparison Table -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 dark:bg-slate-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-slate-800 my-8">
-                <div class="bg-white dark:bg-black p-8 space-y-4">
-                    <h3 class="text-red-600 dark:text-red-400 font-bold uppercase tracking-widest text-sm">Redux / Context</h3>
-                    <ul class="text-base space-y-3 text-gray-600 dark:text-slate-400">
-                         <li class="flex gap-2">❌ Wrap app in &lt;Provider&gt;</li>
-                         <li class="flex gap-2">❌ Complex reducers & actions</li>
-                         <li class="flex gap-2">❌ Context re-renders entire subtree</li>
-                    </ul>
-                </div>
-                <div class="bg-white dark:bg-black p-8 space-y-4">
-                    <h3 class="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-widest text-sm">Zustand</h3>
-                    <ul class="text-base space-y-3 text-gray-600 dark:text-slate-400">
-                         <li class="flex gap-2">✅ No Providers involved</li>
-                         <li class="flex gap-2">✅ Just functions updating object</li>
-                         <li class="flex gap-2">✅ Surgical re-renders via selectors</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 2: The Store Pattern -->
-        <section id="store-pattern" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">02.</span>
-                The Store Pattern
-            </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                A store is just a hook! You create it once, and use it anywhere. 
-                The \`set\` function merges state shallowly (like Class Component \`setState\`).
-            </p>
-
-            <pre class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl text-sm md:text-base font-mono text-gray-800 dark:text-gray-200 overflow-x-auto border border-gray-200 dark:border-slate-800"><code>import { create } from 'zustand'
-
-const useStore = create((set) => ({
-  bears: 0,
-  increase: () => set((state) => ({ bears: state.bears + 1 })),
-  removeAll: () => set({ bears: 0 }),
-}))</code></pre>
-        </section>
-
-        <!-- Section 3: Selectors & Re-renders -->
-        <section id="selectors" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">03.</span>
-                Selectors & Atomic Updates
-            </h2>
-            <div class="space-y-6">
-                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">How to NOT re-render</h3>
-                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                        This is the most critical concept. When you use the hook, pass a <strong>selector function</strong>.
-                        If you select the whole state, you re-render on *every* change.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-lg border border-red-200 dark:border-red-900/30">
-                            <div class="text-sm font-bold text-red-600 uppercase mb-2">🐢 The Bad Way</div>
-                            <code class="text-base font-mono block mb-2">const store = useStore()</code>
-                            <p class="text-sm text-gray-600 dark:text-slate-400">Re-renders when honey changes, even if you only use bears.</p>
-                        </div>
-                        <div class="bg-green-50 dark:bg-green-900/10 p-6 rounded-lg border border-green-200 dark:border-green-900/30">
-                            <div class="text-sm font-bold text-green-600 uppercase mb-2">🐰 The Good Way</div>
-                            <code class="text-base font-mono block mb-2">const bears = useStore((s) => s.bears)</code>
-                            <p class="text-sm text-gray-600 dark:text-slate-400"><strong>Only</strong> re-renders when \`bears\` number changes.</p>
-                        </div>
-                    </div>
-                 </div>
-            </div>
-        </section>
-
-         <!-- Section 4: Async Actions & Thunks -->
-        <section id="async-actions" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">04.</span>
-                Async Actions
-            </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Just like in a real forest, some events take time. Fetching data from an API is like waiting for a new species to migrate into your forest. 
-                Zustand handles these asynchronous actions with plain JavaScript. No middlewares. No Thunks. No Sagas.
-            </p>
-             <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800">
-                <pre class="font-mono text-base text-gray-800 dark:text-gray-200 overflow-x-auto"><code>export const useForestStore = create((set) => ({
-  fishInPond: 0,
-  // Simulate fish migration!
-  fetchFish: async () => {
-    const response = await fetch('/api/pond-data') // Imagine an API call
-    const fishCount = await response.json()
-    set({ fishInPond: fishCount }) // Update the forest's fish count when done
-  }
-}))</code></pre>
-            </div>
-        </section>
-
-         <!-- Section 5: The Slices Pattern -->
-        <section id="slices-pattern" class="scroll-mt-32">
-             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">05.</span>
-                The Slices Pattern
-            </h2>
-             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Scaling Zustand? Don't make one giant file. Split your store into <strong>Slices</strong>.
-                A Slice is just a function that returns a part of the state object.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                 <div class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-xl border border-amber-200 dark:border-amber-900/30">
-                     <h4 class="font-bold text-amber-800 dark:text-amber-200 mb-2">bearSlice.js</h4>
-                     <code class="text-xs font-mono">export const createBearSlice = (set) => ({ bears: 0, ... })</code>
-                 </div>
-                 <div class="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-xl border border-amber-200 dark:border-amber-900/30">
-                     <h4 class="font-bold text-amber-800 dark:text-amber-200 mb-2">fishSlice.js</h4>
-                     <code class="text-xs font-mono">export const createFishSlice = (set) => ({ fishes: 0, ... })</code>
-                 </div>
-            </div>
-            <p class="text-base text-gray-600 dark:text-gray-400 italic">
-                Then merge them in your main store creation: \`create((...a) => ({ ...createBearSlice(...a), ...createFishSlice(...a) }))\`
-            </p>
-        </section>
-
-         <!-- Section 6: Middlewares -->
-        <section id="middlewares" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">06.</span>
-                Forest Policies (Middlewares)
-            </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Sometimes you need forest-wide policies, like ensuring certain conditions persist even after a storm (page refresh). 
-                Zustand's middlewares allow you to wrap your store with extra functionality, such as persisting your forest's state to local storage with a single line.
-            </p>
-             <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800">
-                <pre class="font-mono text-base text-gray-800 dark:text-gray-200 overflow-x-auto"><code>import { persist } from 'zustand/middleware'
-
-export const useForestStore = create(
-  persist(
-    (set) => ({
-      bears: 0,
-      honey: 100,
-      addBear: () => set((state) => ({ bears: state.bears + 1, honey: state.honey - 20 })),
-    }),
-    { name: 'forest-ecosystem' } // 👈 Unique key for persistence
-  )
-)</code></pre>
-            </div>
-        </section>
-
-         <!-- Section 7: Shares -->
-        <section id="virality" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
-             <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">
-                07. Share the Calm
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-2xl">
-                     <p class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-4">
-                        "Just deleted 20 files of Redux boilerplate and replaced it with one Zustand store. It feels like taking off tight shoes. #React #Zustand #WebDev"
-                     </p>
-                     <div class="text-xs font-bold text-blue-500 uppercase tracking-wide">Twitter / X</div>
-                </div>
-            </div>
-             <div class="mt-8 p-6 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-center">
-                <h4 class="font-bold text-lg mb-2 text-amber-900 dark:text-amber-200">The Takeaway</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    State management doesn't have to be hard. Keep it simple. Keep it atomic. Let the bear handle the heavy lifting.
+            <div class="mt-8 bg-amber-50 dark:bg-amber-900/10 p-6 rounded-xl border border-amber-200 dark:border-amber-900/30">
+                <h4 class="font-bold text-amber-900 dark:text-amber-100 mb-2">Deep Dive: The \`set\` function</h4>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Unlike weird reducers, the \`set\` function is intuitive. It takes the *old* state and returns a *partial* new state. 
+                    Zustand shallowly merges this returned object with the current state.
+                    <br/><br/>
+                    <code>set({ bears: 5 })</code> implies <code>state = { ...oldState, bears: 5 }</code>.
                 </p>
             </div>
         </section>
 
-        <!-- Interactive Demo Section -->
-        <section id="interactive-demo" class="scroll-mt-32">
-             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-amber-600 dark:text-amber-400">08.</span>
-                Visualize Your Living Forest
+        <!-- 04. Atomic Selectors -->
+        <section id="atomic-selectors" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">04.</span>
+                Performance & Atomic Selectors
             </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
-                This isn't just a counter; it's a dynamic simulation of a forest ecosystem. Observe how different components act as rangers, biologists, or tourists, each subscribing to and interacting with specific aspects of the forest state.
+             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                This is the #1 mistake new Zustand users make. They treat the hook like \`useContext\`.
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                 <!-- Concept: Controls slice -->
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded text-sm uppercase tracking-wide">Optimization</span>
-                        Silent Rangers (Static Actions)
-                    </h3>
-                    <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                        The "Controls" component below acts as a silent ranger. It issues commands (actions) to the forest manager but doesn't need to constantly observe the forest's state, thus <strong>never re-rendering</strong> itself based on state changes.
-                    </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl border border-red-200 dark:border-red-900/30">
+                    <h3 class="text-red-700 dark:text-red-300 font-bold mb-4">❌ The Lazy Way (Bad Performance)</h3>
+                    <pre class="text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+const { bears, honey, fish } = useStore();
+// ⚠️ This component re-renders if 'fish' changes,
+// even if it only renders 'bears'. 
+// It subscribes to the WHOLE object.</pre>
                 </div>
-
-                 <!-- Concept: Stats slice -->
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                         <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded text-sm uppercase tracking-wide">Optimization</span>
-                         Focused Biologists (Atomic Selectors)
-                    </h3>
-                    <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                        The "Bear Stats" component is like a focused biologist. It <strong>only</strong> observes the number of \`bears\`. It doesn't care about bees or honey levels, ensuring surgical rendering and optimal performance.
-                    </p>
+                 <div class="bg-green-50 dark:bg-green-900/10 p-6 rounded-xl border border-green-200 dark:border-green-900/30">
+                    <h3 class="text-green-700 dark:text-green-300 font-bold mb-4">✅ The Atomic Way (Optimization)</h3>
+                    <pre class="text-xs font-mono text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+const bears = useStore((state) => state.bears);
+// 🚀 This component ONLY re-renders if 'bears' changes.
+// 'fish' or 'honey' updates are ignored.</pre>
                 </div>
             </div>
 
-            <p class="text-base text-gray-500 italic mb-6">
-                👇 Interact with the ecosystem below. Notice smooth updates and efficient state management in action.
+            <div class="bg-slate-100 dark:bg-slate-900 p-6 rounded-xl border-l-4 border-blue-500">
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Pro Tip: Auto-Generating Selectors</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    In large apps, writing \`state => state.foo\` repeats heavily. You can write a helper to auto-generate selectors, but honestly, manual selectors are clearer and explicit.
+                </p>
+            </div>
+        </section>
+
+        <!-- 05. Async Architecture -->
+        <section id="async-architecture" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">05.</span>
+                Async Architecture
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+                In Redux, async is hell (Thunks, Sagas). In Zustand, async actions are just... async functions.
+                You can await promises and call \`set\` whenever you want.
+            </p>
+
+            <div class="bg-gray-900 text-gray-100 p-8 rounded-2xl shadow-2xl overflow-x-auto">
+                <pre class="text-sm font-mono">
+const useStore = create((set, get) => ({
+  data: null,
+  loading: false,
+  error: null,
+
+  fetchData: <span class="text-purple-400">async</span> (url) => {
+    <span class="text-gray-500">// 1. Start Loading & Reset Error</span>
+    set({ loading: true, error: null });
+
+    <span class="text-purple-400">try</span> {
+      const response = <span class="text-purple-400">await</span> fetch(url);
+      const data = <span class="text-purple-400">await</span> response.json();
+      
+      <span class="text-gray-500">// 2. Success Update</span>
+      set({ data, loading: false });
+    } <span class="text-purple-400">catch</span> (error) {
+      <span class="text-gray-500">// 3. Error Update</span>
+      set({ error: error.message, loading: false });
+    }
+  }
+}))</pre>
+            </div>
+             <p class="mt-4 text-gray-600 dark:text-gray-400 italic">
+                Note: You can use \`get()\` to read current state inside an action if you need to depend on other values (e.g., \`if (get().loading) return; \`).
+            </p>
+        </section>
+
+        <!-- 06. Enterprise Patterns -->
+        <section id="enterprise-patterns" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">06.</span>
+                Enterprise Patterns (The Slice Pattern)
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+                You do NOT want a 5,000 line \`store.js\` file.
+                As your app grows, you must split your store into small, manageable <strong>Slices</strong>.
+            </p>
+
+            <div class="space-y-8">
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-2 font-mono">1. createAuthSlice.js</h4>
+                    <pre class="text-xs font-mono text-gray-600 dark:text-gray-400 leading-relaxed">
+export const createAuthSlice = (set) => ({
+  user: null,
+  login: (user) => set({ user }),
+  logout: () => set({ user: null }),
+});</pre>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-2 font-mono">2. createCartSlice.js</h4>
+                    <pre class="text-xs font-mono text-gray-600 dark:text-gray-400 leading-relaxed">
+export const createCartSlice = (set, get) => ({
+  items: [],
+  addItem: (item) => set((s) => ({ items: [...s.items, item] })),
+  totalPrice: () => get().items.reduce((acc, item) => acc + item.price, 0),
+});</pre>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-2 font-mono">3. useStore.js (Root Store)</h4>
+                    <pre class="text-xs font-mono text-gray-600 dark:text-gray-400 leading-relaxed">
+import { create } from 'zustand';
+import { createAuthSlice } from './createAuthSlice';
+import { createCartSlice } from './createCartSlice';
+
+export const useStore = create((...a) => ({
+  ...createAuthSlice(...a),
+  ...createCartSlice(...a),
+}));</pre>
+                </div>
+            </div>
+            <p class="mt-6 text-gray-700 dark:text-gray-300">
+                This pattern makes your code infinitely scalable. Each slice is an isolated module, but they all share the same memory space, so \`get()\` in the Cart slice can technically read \`user\` from Audio slice if needed.
+            </p>
+        </section>
+
+        <!-- 07. Middleware -->
+        <section id="middleware-mastery" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">07.</span>
+                Middleware Mastery
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Zustand has built-in middleware for common tasks.
+            </p>
+            
+            <div class="space-y-8">
+                 <div class="p-6 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4">💾 Persistence (LocalStorage)</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Automatically save your store to \`localStorage\` (or AsyncStorage).
+                    </p>
+                    <pre class="text-sm font-mono bg-white dark:bg-black p-4 rounded-lg overflow-x-auto">
+import { persist } from 'zustand/middleware'
+
+export const useStore = create(
+  persist(
+    (set) => ({ count: 0, increase: ... }),
+    { name: 'my-app-storage' } // Unique key
+  )
+)</pre>
+                 </div>
+
+                 <div class="p-6 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4">🎁 Immer (Mutable Syntax)</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Prefer mutable syntax like \`state.count++\`? Wrap it in immer.
+                    </p>
+                    <pre class="text-sm font-mono bg-white dark:bg-black p-4 rounded-lg overflow-x-auto">
+import { immer } from 'zustand/middleware/immer'
+
+export const useStore = create(
+  immer((set) => ({
+    count: 0,
+    increase: () => set((state) => {
+      state.count += 1 // Mutation is safe here!
+    })
+  }))
+)</pre>
+                 </div>
+            </div>
+        </section>
+        
+        <!-- 08. Testing -->
+        <section id="testing-strategy" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">08.</span>
+                Testing Strategy
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Testing hooks can be tricky because state preserves between tests. You need to reset your store between tests.
+            </p>
+            <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+                <h4 class="font-bold mb-4">Unit Testing with Vitest/Jest</h4>
+                 <pre class="text-sm font-mono text-gray-600 dark:text-gray-400 overflow-x-auto">
+import { act, renderHook } from '@testing-library/react'
+import { useStore } from './store'
+
+describe('Zustand Store', () => {
+  beforeEach(() => {
+    // Reset store before each test
+    useStore.setState({ bears: 0 }) 
+  })
+
+  it('should increase bears', () => {
+    const { result } = renderHook(() => useStore())
+    
+    act(() => {
+      result.current.increase()
+    })
+
+    expect(result.current.bears).toBe(1)
+  })
+})</pre>
+            </div>
+        </section>
+
+        <!-- 09. Advanced Recipes -->
+        <section id="advanced-recipes" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">09.</span>
+                Advanced Recipes
+            </h2>
+            
+             <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Using Zustand Outside React</h3>
+             <p class="text-gray-700 dark:text-gray-300 mb-6">
+                 Because Zustand is strictly separated from React, you can import and use the store in plain vanilla JS files, Web Workers, or legacy code.
+             </p>
+             <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-lg mb-8">
+                 <code class="text-sm font-mono block">
+                     import { useStore } from './store' <br/><br/>
+                     // Read state <br/>
+                     const bears = useStore.getState().bears<br/><br/>
+                     // Write state <br/>
+                     useStore.setState({ bears: bears + 1 })<br/><br/>
+                     // Subscribe <br/>
+                     useStore.subscribe((state) => console.log("New state:", state))
+                 </code>
+             </div>
+
+             <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Transient Updates (Performance Hack)</h3>
+             <p class="text-gray-700 dark:text-gray-300 mb-6">
+                 If you state updates 60fps (animation), triggering React re-renders is too slow. You can subscribe directly to the store ref without causing a React Render cycle.
+             </p>
+        </section>
+
+        <!-- 10. Interactive Demo -->
+        <section id="interactive-demo" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-amber-600 dark:text-amber-400">10.</span>
+                The Ecosystem Simulator
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+                Below is a fully functional forest ecosystem built with Zustand. 
+                <br/>
+                <strong>The key innovation:</strong> Notice how the "Controls" panel adds animals but <em>never re-renders</em> itself? That is the power of atomic actions.
             </p>
         </section>
 
@@ -262,53 +383,46 @@ export const useForestStore = create(
     `,
     code: `import React, { useState, useEffect } from 'react';
 
-// ----------------------------------------------------
-// 🐻 ZUSTAND SIMULATOR (Mini-implementation)
-// ----------------------------------------------------
-
-// 1. Create a tiny store (observable pattern)
+// ==========================================
+// 🏗️ Mini-Zustand Implementation 
+// (To demonstrate how it works under the hood)
+// ==========================================
 const createStore = (initialState) => {
   let state = initialState;
   const listeners = new Set();
 
   return {
     getState: () => state,
-    setState: (fn) => {
-      const nextState = typeof fn === 'function' ? fn(state) : fn;
+    setState: (partial) => {
+      const nextState = typeof partial === 'function' ? partial(state) : partial;
       state = { ...state, ...nextState };
-      listeners.forEach(l => l());
+      listeners.forEach(listener => listener());
     },
-    // The real magic: Subscribing
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     }
-  }
+  };
 };
 
-// 2. The Global Store Instance
+// ==========================================
+// 🌲 The Store Instance
+// ==========================================
 const store = createStore({
-  bears: 0,
-  bees: 0, // Bees make honey
-  honey: 100, // Starts full
-  mood: 'Neutral'
+  bears: 2,
+  honey: 80,
+  bees: 5,
+  log: ['Initialized forest ecosystem...']
 });
 
-// 3. The Hook (useStore)
+// Hook for React
 const useStore = (selector) => {
-  // Initial value
   const [value, setValue] = useState(() => selector(store.getState()));
 
   useEffect(() => {
-    // Determine if we need to update when global state changes
     const unsub = store.subscribe(() => {
-      const nextValue = selector(store.getState());
-      
-      // Basic equality check (simplified for demo)
-      setValue(current => {
-          if (current !== nextValue) return nextValue;
-          return current;
-      });
+      const newVal = selector(store.getState());
+      setValue(prev => (prev !== newVal ? newVal : prev));
     });
     return unsub;
   }, [selector]);
@@ -316,207 +430,223 @@ const useStore = (selector) => {
   return value;
 };
 
-// ----------------------------------------------------
-// 🌲 THE INTERACTIVE FOREST
-// ----------------------------------------------------
 
-export default function ZustandForest() {
+// ==========================================
+// 🧩 Components
+// ==========================================
+
+export default function ZustandDemo() {
   return (
-    <div className="flex flex-col h-[700px] bg-amber-50 dark:bg-[#1a1a0f] text-amber-900 dark:text-amber-50 font-sans rounded-3xl overflow-hidden border border-amber-200 dark:border-amber-900/30 shadow-xl relative">
-      
-      {/* Background Decor */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none"></div>
+    <div className="bg-amber-50 dark:bg-[#1a1c19] p-6 lg:p-10 rounded-3xl border border-amber-200 dark:border-white/10 shadow-2xl font-sans min-h-[800px] flex flex-col">
+       
+       <header className="mb-8 flex justify-between items-center bg-white/50 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-amber-100 dark:border-white/5">
+           <div>
+                <h1 className="text-3xl font-black text-amber-900 dark:text-amber-100 tracking-tight flex items-center gap-3">
+                    <span>🐻</span> Forest Dashboard
+                </h1>
+                <p className="text-amber-800/60 dark:text-amber-100/60 font-medium mt-1">
+                    Zustand State Inspector
+                </p>
+           </div>
+           <div className="hidden md:flex gap-4">
+                <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-800 dark:text-amber-200 text-xs font-bold uppercase tracking-wider">
+                    <span>⚡</span> Live Sync
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-800 dark:text-amber-200 text-xs font-bold uppercase tracking-wider">
+                    <span>🗄️</span> Atomic Updates
+                </div>
+           </div>
+       </header>
 
-      {/* Header */}
-      <div className="p-6 border-b border-amber-200 dark:border-amber-900/30 bg-white/50 dark:bg-black/20 backdrop-blur flex justify-between items-center z-10">
-          <div>
-              <h2 className="text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">The Ecosystem</h2>
-              <p className="text-xs text-amber-600/50 dark:text-amber-200/50 uppercase tracking-widest mt-1">Global Store State</p>
-          </div>
-          <ResetButton />
-      </div>
+       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* LEFT COLUMN: CONTROLS & LOGS */}
+            <div className="lg:col-span-4 flex flex-col gap-6">
+                
+                {/* 1. Control Panel (Action Slice) */}
+                <div className="bg-white dark:bg-white/5 p-6 rounded-2xl shadow-sm border border-amber-100 dark:border-white/5">
+                    <div className="flex items-center gap-2 mb-6">
+                        <span className="text-amber-500 text-xl">⚙️</span>
+                        <h3 className="font-bold text-amber-900 dark:text-amber-100">Actions (Slice)</h3>
+                    </div>
+                    
+                    <ControlPanel />
+                    
+                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/30 text-[10px] text-blue-700 dark:text-blue-300 leading-tight">
+                        💡 <strong>Performance Tip:</strong> This panel component does NOT re-render when state changes. It only dispatches actions.
+                    </div>
+                </div>
 
-      <div className="flex-1 flex flex-col md:flex-row p-6 gap-6 relative z-10 overflow-y-auto">
-          
-          {/* LEFT: Controls (Actions) */}
-          <div className="w-full md:w-1/3 space-y-6">
-              <Controls />
-              <MoodIndicator />
-              <LogView />
-          </div>
+                {/* 2. Action Log */}
+                <div className="flex-1 bg-black/80 rounded-2xl p-6 font-mono text-xs overflow-hidden flex flex-col">
+                    <div className="text-gray-400 uppercase tracking-widest font-bold mb-4 flex justify-between">
+                        <span>Console Stream</span>
+                        <span className="text-green-500 animate-pulse">●</span>
+                    </div>
+                    <LogViewer />
+                </div>
+            </div>
 
-          {/* RIGHT: Visualization (Subscribers) */}
-          <div className="flex-1 grid grid-rows-[auto_1fr] gap-6 h-full">
-              
-              {/* Top: Stats (Deeply Connected) */}
-              <div className="bg-white/40 dark:bg-black/40 rounded-2xl p-6 border border-amber-500/10 grid grid-cols-2 gap-4">
-                  <BearStats />
-                  <HoneyStats />
-              </div>
+            {/* RIGHT COLUMN: VISUALIZATIONS */}
+            <div className="lg:col-span-8 flex flex-col gap-6">
+                
+                {/* 3. Atomic Stats (Selectors) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <BearCounter />
+                    <BeeCounter />
+                    <HoneyLevel />
+                </div>
 
-               {/* Bottom: Visuals */}
-               <div className="bg-white/40 dark:bg-black/40 rounded-2xl p-6 border border-amber-500/10 flex items-center justify-center relative overflow-hidden min-h-[300px]">
-                   <ForestVisualizer />
-               </div>
-          </div>
-      </div>
+                {/* 4. The Visual Forest */}
+                <div className="flex-1 bg-gradient-to-b from-blue-100 to-amber-100 dark:from-slate-900 dark:to-[#2c3025] rounded-3xl relative overflow-hidden shadow-inner border border-amber-200 dark:border-white/5 p-8 min-h-[400px]">
+                    <div className="absolute top-4 left-4 text-xs font-bold uppercase text-black/30 dark:text-white/30 tracking-widest">
+                        Visual Layer (Subscriber)
+                    </div>
+                    <ForestCanvas />
+                </div>
+            </div>
+       </div>
+
     </div>
   );
 }
 
-// --- COMPONENTS (Independent Subscribers) ---
+// -------------------------------------------------------------
+// 🧠 Components (Notice granular subscriptions)
+// -------------------------------------------------------------
 
-function Controls() {
-  // Select nothing, just using actions directly from store
-  // Optimization: This component NEVER re-renders based on state changes!
+function ControlPanel() {
+  // Directly accessing state setter, no subscription!
   const addBear = () => {
-    const state = store.getState();
-    if (state.honey < 20) return; // Need honey to attract bears
-
+    const s = store.getState();
+    if (s.honey < 10) return;
     store.setState(prev => ({ 
-        bears: prev.bears + 1,
-        honey: prev.honey - 20,
-        mood: prev.bears + 1 > 5 ? 'Wild' : 'Happy'
+        bears: prev.bears + 1, 
+        honey: prev.honey - 10,
+        log: [...prev.log, '🐻 A new bear arrived (-10 Honey)']
     }));
-  };
+  }
 
   const addBee = () => {
     store.setState(prev => ({ 
         bees: prev.bees + 1,
-        honey: Math.min(prev.honey + 10, 100) // Bees make honey
+        log: [...prev.log, '🐝 Creating a new Buzzer']
     }));
-  };
+  }
+
+  const makeHoney = () => {
+    store.setState(prev => ({ 
+        honey: Math.min(prev.honey + (prev.bees * 2), 100),
+        log: [...prev.log, \`🍯 Bees made honey (+\${prev.bees*2})\`]
+    }));
+  }
 
   return (
-      <div className="bg-amber-100/50 dark:bg-amber-900/20 p-6 rounded-2xl border border-amber-200 dark:border-amber-500/20">
-          <h3 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase mb-4">Actions</h3>
-          <div className="space-y-3">
-              <button 
-                onClick={addBear}
-                className="w-full bg-amber-600 hover:bg-amber-500 text-white dark:text-black font-bold py-3 rounded-xl transition-transform active:scale-95 shadow-lg shadow-amber-900/10 flex items-center justify-center gap-2"
-              >
-                  <span>🐻</span> Add Bear (-20 Honey)
-              </button>
-              <button 
-                onClick={addBee}
-                className="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-3 rounded-xl transition-transform active:scale-95 shadow-lg shadow-yellow-900/10 flex items-center justify-center gap-2"
-              >
-                  <span>🐝</span> Add Bee (+10 Honey)
-              </button>
-          </div>
-          <p className="text-[10px] text-amber-700/40 dark:text-amber-200/40 mt-4 leading-tight">
-              *Notice: The "Controls" component does not re-render (check console).
-          </p>
-      </div>
+    <div className="space-y-3">
+        <button onClick={addBear} className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl active:scale-95 transition-all shadow-lg flex justify-between px-6">
+            <span>Spawn Bear</span>
+            <span className="opacity-70 text-xs py-1">-10 Honey</span>
+        </button>
+        <div className="flex gap-3">
+             <button onClick={addBee} className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-400 text-white font-bold rounded-xl active:scale-95 transition-all shadow-lg">
+                + Bee
+            </button>
+            <button onClick={makeHoney} className="flex-1 py-3 bg-orange-500 hover:bg-orange-400 text-white font-bold rounded-xl active:scale-95 transition-all shadow-lg">
+                Work Bees
+            </button>
+        </div>
+        <button onClick={() => store.setState({ bears: 0, bees: 0, honey: 100, log: ['🔥 Forest reset!'] })} className="w-full py-2 border-2 border-red-400 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold rounded-xl mt-4 text-xs uppercase tracking-widest">
+            Reset Ecosystem
+        </button>
+    </div>
   )
 }
 
-function BearStats() {
-    // Select ONLY bears
-    const bears = useStore(state => state.bears);
+function BearCounter() {
+  const bears = useStore(s => s.bears);
+  return (
+    <div className="bg-amber-100 dark:bg-amber-900/20 p-6 rounded-2xl border-l-4 border-amber-600 relative overflow-hidden group">
+        <div className="text-4xl font-black text-amber-900 dark:text-amber-100 relative z-10">{bears}</div>
+        <div className="text-xs uppercase font-bold text-amber-700 dark:text-amber-300 mt-2 relative z-10">Bears</div>
+        <div className="absolute right-[-10px] bottom-[-10px] text-8xl opacity-10 group-hover:scale-110 transition-transform select-none">🐻</div>
+    </div>
+  )
+}
 
+function BeeCounter() {
+  const bees = useStore(s => s.bees);
+  return (
+    <div className="bg-yellow-100 dark:bg-yellow-900/20 p-6 rounded-2xl border-l-4 border-yellow-500 relative overflow-hidden group">
+        <div className="text-4xl font-black text-yellow-900 dark:text-yellow-100 relative z-10">{bees}</div>
+        <div className="text-xs uppercase font-bold text-yellow-700 dark:text-yellow-300 mt-2 relative z-10">Bees</div>
+        <div className="absolute right-[-10px] bottom-[-10px] text-8xl opacity-10 group-hover:scale-110 transition-transform select-none">🐝</div>
+    </div>
+  )
+}
+
+function HoneyLevel() {
+  const honey = useStore(s => s.honey);
+  return (
+    <div className="bg-orange-100 dark:bg-orange-900/20 p-6 rounded-2xl border-l-4 border-orange-500 relative overflow-hidden">
+        <div className="text-4xl font-black text-orange-900 dark:text-orange-100 relative z-10">{honey}%</div>
+        <div className="text-xs uppercase font-bold text-orange-700 dark:text-orange-300 mt-2 relative z-10">Honey Reserves</div>
+        <div className="absolute right-0 top-0 bottom-0 w-2 bg-orange-200 dark:bg-orange-900/40">
+            <div className="absolute bottom-0 left-0 right-0 bg-orange-500 transition-all duration-500" style={{ height: \`\${honey}%\` }}></div>
+        </div>
+    </div>
+  )
+}
+
+function LogViewer() {
+    const log = useStore(s => s.log);
     return (
-        <div className="flex flex-col items-center justify-center bg-amber-100/50 dark:bg-amber-950/30 rounded-xl p-4 transition-all duration-300 hover:scale-105">
-            <div className="text-4xl mb-2">🐻</div>
-            <div className="text-3xl font-bold">{bears}</div>
-            <div className="text-xs text-amber-600/60 dark:text-amber-400/60 uppercase font-bold">Population</div>
+        <div className="flex-1 overflow-y-scroll space-y-2 pr-2 custom-scrollbar">
+            {[...log].reverse().map((entry, i) => (
+                <div key={i} className="text-gray-300 border-b border-white/5 pb-1 mb-1 animate-in fade-in slide-in-from-left-4">
+                    <span className="text-gray-600 mr-2 opacity-50">[{new Date().toLocaleTimeString().split(' ')[0]}]</span>
+                    {entry}
+                </div>
+            ))}
         </div>
     )
 }
 
-function HoneyStats() {
-    // Select ONLY honey
-    const honey = useStore(state => state.honey);
+function ForestCanvas() {
+    const bears = useStore(s => s.bears);
+    const bees = useStore(s => s.bees);
 
-    return (
-        <div className="flex flex-col items-center justify-center bg-yellow-100/50 dark:bg-yellow-950/30 rounded-xl p-4 relative overflow-hidden group transition-all duration-300 hover:scale-105">
-            <div 
-                className="absolute bottom-0 left-0 right-0 bg-yellow-500/20 transition-all duration-500"
-                style={{ height: \`\${honey}%\` }}
-            ></div>
-            <div className="text-4xl mb-2 relative z-10">🍯</div>
-            <div className="text-3xl font-bold relative z-10">{Math.round(honey)}%</div>
-            <div className="text-xs text-yellow-600/60 dark:text-yellow-400/60 uppercase font-bold relative z-10">Reserves</div>
-        </div>
-    )
-}
-
-function MoodIndicator() {
-     // Select ONLY mood
-     const mood = useStore(state => state.mood);
-     
-     let color = "text-gray-400 dark:text-slate-400";
-     if (mood === 'Happy') color = "text-green-500 dark:text-green-400";
-     if (mood === 'Wild') color = "text-red-500 dark:text-red-400";
-
-     return (
-         <div className="bg-white/40 dark:bg-black/40 p-6 rounded-2xl border border-amber-500/10 text-center">
-             <div className="text-xs text-gray-500 dark:text-slate-500 uppercase font-bold mb-2">Forest Mood</div>
-             <div className={\`font-bold \${color} text-2xl transition-transform duration-300 transform group-hover:scale-110 uppercase\`}>
-                 {mood}
-             </div>
-         </div>
-     )
-}
-
-function LogView() {
-    const bears = useStore(state => state.bears);
-    const bees = useStore(state => state.bees);
-    
-    // Just a dummy log to show subscription updates
-    return (
-        <div className="font-mono text-[10px] text-gray-400 dark:text-gray-500 p-4 bg-black/5 dark:bg-black/20 rounded-xl">
-             <div>Latest State Broadcast:</div>
-             <div className="mt-1">Bears: {bears} | Bees: {bees}</div>
-        </div>
-    )
-}
-
-function ForestVisualizer() {
-    const bears = useStore(state => state.bears);
-    const bees = useStore(state => state.bees);
+    // Bees positioning
+    const [beePositions, setBeePositions] = useState([]);
+    useEffect(() => {
+        setBeePositions(Array.from({length: bees}).map(() => ({
+            top: Math.random() * 60 + 10 + '%',
+            left: Math.random() * 80 + 10 + '%',
+            delay: Math.random() * 2 + 's'
+        })));
+    }, [bees]);
 
     return (
         <div className="w-full h-full relative">
-             {/* Bears stay on ground */}
-             <div className="absolute bottom-0 left-0 right-0 h-16 flex items-end justify-center gap-[-10px]">
-                 {Array.from({ length: bears }).map((_, i) => (
-                     <div key={\`bear-\${i}\`} className="text-4xl animate-in fade-in slide-in-from-bottom-5 duration-500 transition-all" style={{ transform: \`translateX(\${(i%2===0 ? -1 : 1) * i * 5}px)\`, zIndex: bears-i }}>
-                         🐻
-                     </div>
-                 ))}
-             </div>
+            {/* Clouds */}
+            <div className="absolute top-10 left-20 text-white/50 text-5xl animate-pulse">☁️</div>
+            <div className="absolute top-20 right-40 text-white/50 text-4xl animate-pulse delay-1000">☁️</div>
 
-             {/* Bees fly randomly */}
-             {Array.from({ length: bees }).map((_, i) => (
-                 <div key={\`bee-\${i}\`} className="text-xl animate-pulse absolute transition-all duration-[2000ms] ease-in-out" 
-                      style={{ 
-                          top: \`\${20 + (Math.sin(i + Date.now()/1000) * 20)}%\`, 
-                          left: \`\${(i * 15) % 90}%\`,
-                          animationDelay: \`\${i * 0.2}s\` 
-                      }}>
-                     🐝
-                 </div>
-             ))}
-             
-             {bears === 0 && bees === 0 && (
-                 <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-slate-600 italic text-sm">
-                     The forest is quiet...
-                 </div>
-             )}
+            {/* Bears */}
+            <div className="absolute bottom-0 left-0 right-0 flex justify-center items-end h-32 px-10 gap-[-10px]">
+                {Array.from({length: bears}).map((_, i) => (
+                    <div key={i} className="text-5xl lg:text-7xl transition-all duration-500 animate-in slide-in-from-bottom-20 bounce-in" style={{ zIndex: i }}>
+                        🐻
+                    </div>
+                ))}
+            </div>
+
+            {/* Bees */}
+            {beePositions.map((pos, i) => (
+                <div key={i} className="absolute text-2xl animate-bounce" style={{ top: pos.top, left: pos.left, animationDuration: '3s', animationDelay: pos.delay }}>
+                    🐝
+                </div>
+            ))}
         </div>
     )
 }
-
-function ResetButton() {
-    const reset = () => {
-        store.setState({ bears: 0, bees: 0, honey: 100, mood: 'Neutral' });
-    };
-    return (
-        <button onClick={reset} className="text-xs text-amber-600 dark:text-amber-500 hover:text-amber-500 font-bold bg-amber-100 dark:bg-amber-900/40 px-3 py-1.5 rounded-lg transition-colors">
-            Reset
-        </button>
-    )
-}
-`
-}
+`};

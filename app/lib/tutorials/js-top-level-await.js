@@ -89,6 +89,14 @@ db.query(...);
              <div class="bg-red-50 dark:bg-red-900/20 p-4 border-l-4 border-red-500 text-red-800 dark:text-red-300 rounded-r-lg">
                  ⚠️ <strong>Warning:</strong> If <code>db.js</code> takes 10 seconds to connect, your entire app startup pauses for 10 seconds before executing the next line of <code>import</code> in the consumer.
             </div>
+            <div class="bg-yellow-900/10 border-l-4 border-yellow-500 p-6 mt-6">
+                 <h4 class="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Deep Dive: Parallel Loading</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     The Javascript module loader is smart. If two modules don't depend on each other, it tries to load them in parallel. 
+                     <br/><br/>
+                     However, if \`App\` imports \`User\` which imports \`DB\`, you are stuck in a serial chain. Top-Level Await effectively <strong>pauses the graph construction</strong> at that node.
+                 </p>
+            </div>
         </section>
 
         <!-- 04. Senior Take -->
@@ -109,7 +117,6 @@ db.query(...);
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Play, Pause, FastForward, Layers, Clock } from 'lucide-react';
 
 // ⏳ Module Loader Visualizer
 
@@ -167,7 +174,7 @@ export default function AwaitDemo() {
                     disabled={status === 'loading'}
                     className="bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white font-bold px-6 py-2 rounded-xl transition-all flex items-center gap-2"
                 >
-                    {status === 'loading' ? <Clock className="animate-spin" /> : <Play />}
+                    {status === 'loading' ? <span className="animate-spin">⏳</span> : <span>▶️</span>}
                     {status === 'loading' ? 'Initializing...' : 'Run Imports'}
                 </button>
             </div>
@@ -205,7 +212,7 @@ export default function AwaitDemo() {
                                         </div>
                                     </div>
                                 </div>
-                                {mod.state === 'loading' && <Clock size={20} className="text-yellow-500 animate-spin" />}
+                                {mod.state === 'loading' && <span className="text-2xl animate-spin">⏳</span>}
                             </div>
                         </div>
                     ))}

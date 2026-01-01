@@ -44,6 +44,13 @@ export const aiMultimodalRag = {
                 <p>
                     We use a multimodal embedding model. We pass images through a Vision Encoder and text through a Text Encoder. They project vectors into the same n-dimensional space.
                 </p>
+                <div class="bg-orange-900/10 border-l-4 border-orange-500 p-6 my-6">
+                     <h4 class="font-bold text-orange-800 dark:text-orange-200 mb-2">Deep Dive: The Modal Gap</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         You cannot use OpenAI's <code>text-embedding-3-small</code> for text and a ResNet for images. The vectors would be in completely different coordinate systems. <br/><br/>
+                         You <strong>must</strong> use a model trained with Contrastive Learning (like CLIP or SigLIP) which forces "A photo of a dog" and the text "A photo of a dog" to be close in vector space.
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// ingestion.ts</div>
@@ -73,12 +80,15 @@ export const aiMultimodalRag = {
                     <br/><br/>
                     <strong>Pro Tip:</strong> Don't embed every frame of a video. Use keyframe extraction (every 5s) to capture the semantic meaning without blowing up your vector storage bill.
                 </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-6">ColBERT & Late Interaction</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    If standard cosine similarity isn't precise enough, look into <strong>ColBERT</strong> (Late Interaction). It keeps all token vectors rather than compressing them into one, allowing for much finer-grained matching at the cost of higher storage and compute.
+                </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Search, Image as ImageIcon, FileText, Crosshair, ZoomIn } from 'lucide-react';
 
 // 👁️ Multimodal Search Visualizer
 
@@ -130,7 +140,7 @@ export default function MultimodalDemo() {
             {/* Input */}
             <div className="relative mb-8 z-20">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="text-gray-400" />
+                    <span className="text-gray-400">🔍</span>
                 </div>
                 <input 
                     type="text"
@@ -176,7 +186,7 @@ export default function MultimodalDemo() {
                                 style={{ top: pos.top, left: pos.left, transform: 'translate(-50%, -50%)' }}
                             >
                                 <div className={\`w-12 h-12 rounded-lg flex items-center justify-center \${isMatch ? 'bg-orange-100 dark:bg-orange-800' : 'bg-gray-200 dark:bg-slate-800'}\`}>
-                                    {item.type === 'image' ? <ImageIcon size={24} /> : <FileText size={24} />}
+                                    {item.type === 'image' ? <span className="text-2xl">🖼️</span> : <span className="text-2xl">📄</span>}
                                 </div>
                                 <div className="text-[10px] font-bold max-w-[80px] text-center truncate px-1 rounded bg-white/50 dark:bg-black/50">
                                     {item.label}

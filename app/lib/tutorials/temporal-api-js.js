@@ -22,16 +22,26 @@ export const temporalApiJs = {
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
         
         <!-- 01. Pain -->
+        <!-- 01. Pain -->
         <section id="pain" class="scroll-mt-32">
              <div class="border-l-8 border-purple-600 bg-purple-50 dark:bg-purple-900/10 pl-8 py-8 mb-12 rounded-r-2xl shadow-sm">
                  <h1 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
                     Friends don't let friends use <code>new Date()</code>.
                 </h1>
                 <p class="text-xl md:text-2xl text-purple-800 dark:text-purple-200 font-light leading-relaxed">
-                    JavaScript's original Date object was copied from Java in 1995. It's mutable, confusing (months are 0-indexed, days are 1-indexed), and handles time zones poorly.
+                    JavaScript's original <code>Date</code> object is a 1995 port of <code>java.util.Date</code>. It's mutable, confusing (months are 0-indexed, days are 1-indexed), and fails at basic arithmetic.
                     <br/><br/>
-                    The <strong>Temporal API</strong> is a global object that acts as a top-level namespace (like Math) to bring modern date/time handling to the ECMAScript language.
+                    The <strong>Temporal API</strong> is the clean slate we've been waiting for: A robust, immutable, timezone-aware standard built for the modern web.
                 </p>
+             </div>
+
+             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                <h3 class="text-2xl font-bold">Why the \`Date\` object failed us</h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Mutability:</strong> <code>date.setHours(0)</code> modifies the object in place. This causes bugs when dates are shared across components.</li>
+                    <li><strong>0-Indexed Months:</strong> <code>new Date(2023, 0, 1)</code> is January. <code>new Date(2023, 1, 1)</code> is February. This off-by-one error has wasted millions of developer hours.</li>
+                    <li><strong>Parsing Inconsistency:</strong> Browser support for parsing strings like <code>"2023-01-01"</code> varies dangerously between UTC and Local time.</li>
+                </ul>
              </div>
         </section>
 
@@ -41,9 +51,10 @@ export const temporalApiJs = {
                 <span class="text-purple-600 dark:text-purple-500">02.</span>
                 Immutable & Type-Safe
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                <h3 class="text-2xl font-bold">Clear Benefits</h3>
                 <p>
-                    Temporal introduces specific types for specific use cases. No more using a generic milliseconds-since-epoch for "Today".
+                    Temporal handles concepts distinctively: Wall-Clock time (PlainDate) vs. Absolute time (Instant) vs. Zoned time (ZonedDateTime). This prevents you from accidentally mixing up "local time" with "UTC time".
                 </p>
             </div>
              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-sm">
@@ -68,17 +79,54 @@ const meeting = Temporal.Now.zonedDateTimeISO('Asia/Tokyo');
         <section id="timezones" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-purple-600 dark:text-purple-500">03.</span>
-                Time Zones without Tears
+                Time Zone Sanity & Arithmetic
             </h2>
-            <div class="bg-slate-900 p-6 rounded-xl mb-6 shadow-lg">
-                <pre class="text-gray-300 text-sm font-mono overflow-x-auto">
-const departure = Temporal.ZonedDateTime.from('2026-10-01T14:00:00[Europe/London]');
-const arrival = departure.add({ hours: 8 });
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
+                <p>
+                    Time zones and Daylight Saving Time (DST) are notorious sources of bugs in date and time handling. The native <code>Date</code> object offers minimal help, often requiring complex external libraries to manage these intricacies. Temporal, however, was built from the ground up with time zones in mind, making operations like adding hours across DST boundaries or comparing dates in different zones straightforward and reliable.
+                </p>
+                <p>
+                    <code>Temporal.ZonedDateTime</code> is your go-to for representing a specific moment in time within a particular time zone. It automatically handles offsets, DST transitions, and provides robust methods for arithmetic and comparison.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-8 mb-12">
+                <!-- Example 1 -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase mb-4">Adding Time (DST Safe)</h4>
+                    <pre class="whitespace-pre-wrap font-mono text-sm text-gray-300">
+const flight = Temporal.ZonedDateTime.from(
+  '2026-03-14T10:00:00[America/New_York]'
+); // Day before DST changes
 
-console.log(arrival.toString()); 
-// Automatically handles Daylight Savings (BST vs GMT) 
-// and preserves the timezone ID.
-                </pre>
+// Add 24 hours (wall clock time)
+const nextDay = flight.add({ hours: 24 });
+// Temporal knows if 24 hours actually lands at 10am or 11am based on DST rules!</pre>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase mb-4">Comparing Dates</h4>
+                    <pre class="whitespace-pre-wrap font-mono text-sm text-gray-300">
+const d1 = Temporal.PlainDate.from('2026-01-01');
+const d2 = Temporal.PlainDate.from('2026-06-01');
+
+const duration = d1.until(d2); 
+console.log(duration.toString()); // "P5M" (Period: 5 Months)
+console.log(d1.equals(d2));       // false</pre>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase mb-4">Sorting</h4>
+                    <pre class="whitespace-pre-wrap font-mono text-sm text-gray-300">
+const dates = [
+  Temporal.PlainDate.from('2026-01-01'),
+  Temporal.PlainDate.from('2025-12-31')
+];
+
+dates.sort(Temporal.PlainDate.compare); // Built-in comparator!</pre>
+                </div>
             </div>
         </section>
 
@@ -101,7 +149,6 @@ console.log(arrival.toString());
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Clock, Globe, Calendar, ArrowRight } from 'lucide-react';
 
 // ⏳ Temporal API Visualizer
 // Note: Since Temporal is not in all browsers yet, this is a simulated demo for the tutorial.
@@ -143,8 +190,8 @@ export default function TemporalDemo() {
             
                 {/* Input Card */}
                 <div className="w-full max-w-sm p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
-                    <div className="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                        <Calendar size={14} /> Start Date (Temporal.PlainDateTime)
+                    <div class="text-xs font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
+                        <span className="text-xl">📅</span> Start Date (Temporal.PlainDateTime)
                     </div>
                     <div className="text-2xl font-mono font-bold text-gray-800 dark:text-white break-all">
                         {baseTime.split('T')[0]}
@@ -169,7 +216,7 @@ export default function TemporalDemo() {
                 {/* Operation */}
                 <div className="flex flex-col items-center gap-4">
                     <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-full text-purple-600">
-                        <ArrowRight size={24} />
+                        <span className="text-2xl">➡️</span>
                     </div>
                     <div className="bg-white dark:bg-black p-4 rounded-xl shadow-sm border text-center space-y-2">
                         <div className="text-xs font-bold text-gray-400 uppercase">Operation</div>
@@ -183,12 +230,12 @@ export default function TemporalDemo() {
 
                 {/* Result Card */}
                  <div className="w-full max-w-sm p-6 bg-purple-50 dark:bg-purple-900/10 rounded-2xl border-2 border-purple-200 dark:border-purple-500/50 shadow-lg relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <Globe size={100} />
+                    <div className="absolute top-0 right-0 p-4 opacity-10 select-none pointer-events-none">
+                        <span className="text-[100px]">🌍</span>
                     </div>
                     
                     <div className="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase mb-4 flex items-center gap-2">
-                        <Clock size={14} /> Calculated Result
+                        <span className="text-xl">⏰</span> Calculated Result
                     </div>
                     <div className="text-2xl font-mono font-bold text-gray-900 dark:text-white break-all relative z-10">
                         {result.split('T')[0]}

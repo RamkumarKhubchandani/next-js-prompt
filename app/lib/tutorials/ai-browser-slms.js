@@ -44,6 +44,14 @@ export const aiBrowserSlms = {
                 <p>
                     Libraries like MLC-LLM (WebLLM) compile models to TVM (Tensor Virtual Machine) which can execute on the GPU via WGSL shaders. It's shockingly fast.
                 </p>
+                <div class="bg-emerald-900/10 border-l-4 border-emerald-500 p-6 my-6">
+                     <h4 class="font-bold text-emerald-800 dark:text-emerald-200 mb-2">Deep Dive: Shader Compilation</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         The very first time a user visits your site, the browser must compile the WGSL shaders for their specific GPU. This takes ~5-10 seconds.
+                         <br/>
+                         However, browsers cache these compiled shaders. The second visit? Instant startup.
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// main.ts</div>
@@ -73,12 +81,15 @@ export const aiBrowserSlms = {
                     <br/><br/>
                     <strong>Pattern:</strong> Use Cloud AI for the first interaction, while downloading the Local Model in the background. Once ready, switch to Local for pure speed.
                 </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-6">Hybrid AI</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    The best architecture isn't 100% local. Use <strong>GPT-4 (Cloud)</strong> for complex reasoning or planning, and <strong>Phi-3 (Local)</strong> for drafting e-mails, text completion, or UI generation where latency matters most.
+                </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Cpu, Cloud, Download, Zap, WifiOff } from 'lucide-react';
 
 // 🏎️ Inference Speed Visualizer
 
@@ -150,7 +161,7 @@ export default function WebGpuDemo() {
                     
                     {mode === 'cloud' ? (
                         <div className="flex flex-col items-center justify-center h-48 animate-in fade-in">
-                            <Cloud size={64} className="text-blue-500 mb-4" />
+                            <span className="text-6xl text-blue-500 mb-4">☁️</span>
                             <h3 className="text-xl font-bold text-blue-600">OpenAI Server</h3>
                             <p className="text-sm text-gray-400 mt-2">Latency: ~500ms (Network)</p>
                             <p className="text-sm text-gray-400">Cost: $0.03/1k tokens</p>
@@ -160,16 +171,16 @@ export default function WebGpuDemo() {
                             {isModelReady ? (
                                 <>
                                     <div className="relative">
-                                        <Cpu size={64} className="text-emerald-500 mb-4" />
+                                        <span className="text-6xl text-emerald-500 mb-4">💻</span>
                                         <div className="absolute -bottom-2 -right-2 bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">WASM</div>
                                     </div>
                                     <h3 className="text-xl font-bold text-emerald-600">User's GPU</h3>
-                                    <p className="text-sm text-gray-400 mt-2 flex items-center gap-2"><WifiOff size={14}/> Offline Capable</p>
+                                    <p className="text-sm text-gray-400 mt-2 flex items-center gap-2"><span>📡</span> Offline Capable</p>
                                     <p className="text-sm text-gray-400">Cost: $0.00</p>
                                 </>
                             ) : (
                                 <div className="w-full max-w-xs text-center">
-                                    <Download size={40} className="mx-auto text-gray-400 mb-4 animate-bounce" />
+                                    <span className="text-4xl mx-auto text-gray-400 mb-4 animate-bounce block">⬇️</span>
                                     <div className="text-sm font-bold mb-2">Downloading Weights (2GB)...</div>
                                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                                         <div className="h-full bg-emerald-500 transition-all duration-100" style={{ width: \`\${downloadProgress}%\` }}></div>
@@ -200,7 +211,7 @@ export default function WebGpuDemo() {
                             disabled={isGenerating || (mode === 'local' && !isModelReady)}
                             className="w-full py-3 bg-white text-black font-bold rounded-xl hover:bg-gray-200 disabled:opacity-50 transition flex items-center justify-center gap-2"
                         >
-                            <Zap size={18} className={isGenerating ? "text-yellow-500 fill-yellow-500" : ""} />
+                            <span className={isGenerating ? "text-yellow-500" : ""}>⚡</span>
                             Generate Response
                         </button>
                     </div>

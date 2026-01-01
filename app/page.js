@@ -2,6 +2,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/landing-page/Hero';
 import { Features } from './components/landing-page/Features';
 import { DailyChallenges } from './components/landing-page/DailyChallenges';
+import { FeaturedBlogs } from './components/landing-page/FeaturedBlogs';
 import { AiQuizCta } from './components/landing-page/AiQuizCta';
 import { HowItWorks } from './components/landing-page/HowItWorks';
 import { Pricing } from './components/landing-page/Pricing';
@@ -16,6 +17,7 @@ export default function Home() {
         <Hero />
         <Features />
         <DailyChallenges />
+        <FeaturedBlogs />
         <AiQuizCta />
         <HowItWorks />
         <Pricing />

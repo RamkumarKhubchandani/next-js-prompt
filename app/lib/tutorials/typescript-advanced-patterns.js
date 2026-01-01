@@ -1,313 +1,388 @@
 export const typescriptAdvancedPatterns = {
-    title: "TypeScript: Beyond the Basics 🛡️",
-    description: "You know interface and type. Now master the patterns that make TypeScript actually powerful: Discriminated Unions, Template Literals, and Conditional Types.",
+    title: "TypeScript: The Defensive Guide (2026) 🛡️",
+    description: "Move beyond `any`. Master the Turing Checklist of TypeScript: Discriminated Unions for state machines, Template Literals for DSLs, Conditional Types for utility libraries, and Branded Types for domain modeling.",
     slug: "typescript-advanced-patterns",
     type: "static",
-    author: "Matt Pocock (Visualization)",
+    author: "Senior TypeScript Architect",
     createdAt: new Date().toISOString(),
-    readTime: "35 min read",
-    difficulty: "Advanced",
-    tags: ["TypeScript", "Patterns", "Generics", "Type Safety"],
-    keywords: ["Discriminated Unions", "Type Guards", "Satisfies", "Generics", "Inference", "Template Literal Types", "Conditional Types"],
+    readTime: "45 min read",
+    difficulty: "Expert",
+    tags: ["TypeScript", "Patterns", "Generics", "Type Safety", "Domain Driven Design"],
+    keywords: ["TypeScript Discriminated Unions", "Conditional Types Infer", "Template Literal Types", "Branded Types", "TypeScript Performance", "Zod Inference"],
     toc: [
-        { id: "discriminated-unions", label: "01. Discriminated Unions" },
-        { id: "template-literals", label: "02. Template Literal Types" },
-        { id: "type-guards", label: "03. Type Guards (Predicates)" },
-        { id: "satisfies-operator", label: "04. The Satisfies Operator" },
-        { id: "conditional-types", label: "05. Conditional Types & Infer" },
-        { id: "generics-inference", label: "06. Generics & Inference" },
-        { id: "virality", label: "07. Share & Takeaways" },
-        { id: "interactive-demo", label: "08. Interactive Visualizer" }
+        { id: "philosophy", label: "01. Type-Driven Design" },
+        { id: "discriminated-unions", label: "02. Discriminated Unions (State)" },
+        { id: "template-literals", label: "03. Template Literal DSLs" },
+        { id: "conditional-logic", label: "04. Conditional Types & Infer" },
+        { id: "branded-types", label: "05. Branded Types (Domain Safety)" },
+        { id: "utility-types", label: "06. Advanced Utility Types" },
+        { id: "runtime-validation", label: "07. Runtime Validation (Zod)" },
+        { id: "performance-check", label: "08. Compiler Performance" },
+        { id: "visualizer", label: "09. The Type Visualizer" }
     ],
     content: `
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
         
-        <!-- Introduction -->
-        <section class="scroll-mt-32">
-             <div class="border-l-4 border-blue-600 pl-6 py-2 mb-8">
-                <p class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight">
-                    "TypeScript isn't just a linter. It's a programming language for your types."
+        <!-- 01. Philosophy -->
+        <section id="philosophy" class="scroll-mt-32">
+             <div class="border-l-8 border-blue-600 bg-blue-50 dark:bg-blue-900/10 pl-8 py-8 mb-12 rounded-r-2xl shadow-sm">
+                 <h2 class="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
+                    "Make Impossible States Impossible."
+                </h2>
+                <p class="text-xl md:text-2xl text-blue-900 dark:text-blue-100 font-light leading-relaxed mb-6">
+                    TypeScript is not just a linter or a tool for auto-complete. It is a <strong>modeling language</strong>. 
+                    If your types allow a state that represents a bug, your types are buggy.
                 </p>
              </div>
-             <p class="text-xl md:text-2xl leading-relaxed font-light">
-                Most developers stop at \`interface Props {}\`. 
-                But TypeScript has a turing-complete type system. 
-                You can write code that generates other code. You can validate API responses at compile time.
-                <br/><br/>
-                This guide takes you from "TypeScript User" to "TypeScript Wizard".
-            </p>
+             <p class="text-lg text-gray-700 dark:text-gray-300">
+                 Most developers use "Bag of Optional Props" programming: <code>{ isLoading?: boolean, error?: string, data?: User }</code>. 
+                 This allows a state where <code>isLoading: false</code>, <code>error: null</code>, and <code>data: null</code> exist simultaneously. This is a "Zombie State".
+                 <br/><br/>
+                 We fix this with <strong>Algebraic Data Types</strong> (Discriminated Unions).
+             </p>
         </section>
 
-        <!-- Section 1: Discriminated Unions -->
+        <!-- 02. Discriminated Unions -->
         <section id="discriminated-unions" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">01.</span>
-                Discriminated Unions
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">02.</span>
+                Discriminated Unions (State Machines)
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300">
-                <p class="text-lg leading-relaxed">
-                    The single most important pattern in TypeScript. 
-                    It allows you to model state transitions (Loading -> Success -> Error) safely. 
-                    If you use \`isLoading?\` booleans, you are doing it wrong.
-                </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                 <div class="p-6 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/20">
+                     <h3 class="text-lg font-bold text-red-700 dark:text-red-300 mb-4">❌ The Bad Way</h3>
+                     <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+interface State {
+  isLoading: boolean;
+  error?: string;
+  data?: User;
+}
+// ⚠️ Impossible state allowed:
+// { isLoading: false, error: undefined, data: undefined }</pre>
+                 </div>
+                 <div class="p-6 rounded-xl bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/20">
+                     <h3 class="text-lg font-bold text-green-700 dark:text-green-300 mb-4">✅ The Safe Way</h3>
+                     <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+type State = 
+ | { status: 'loading' }
+ | { status: 'error', error: string }
+ | { status: 'success', data: User }; // Data ONLY exists here</pre>
+                 </div>
             </div>
             
-             <pre class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl text-sm md:text-base font-mono text-gray-800 dark:text-gray-200 overflow-x-auto border border-gray-200 dark:border-slate-800 my-6"><code>type State = 
-  | { status: 'loading' } // 👈 The "Discriminant"
-  | { status: 'success'; data: User }
-  | { status: 'error'; error: Error };
-
-function render(state: State) {
-  if (state.status === 'loading') {
-    // TS knows 'data' and 'error' don't exist here!
-    return &lt;Spinner /&gt;; 
-  }
-  if (state.status === 'success') {
-    // TS knows 'data' DOES exist here!
-    return &lt;UserCard user={state.data} /&gt;;
-  }
-}</code></pre>
+            <p class="text-gray-700 dark:text-gray-300">
+                TypeScript acts as a control flow analyzer. Inside a \`if(state.status === 'success')\` block, it <em>knows</em> that \`data\` exists.
+            </p>
         </section>
 
-        <!-- Section 2: Template Literals -->
+        <!-- 03. Template Literals -->
         <section id="template-literals" class="scroll-mt-32">
-             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">02.</span>
-                Template Literal Types
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">03.</span>
+                Template Literal DSLs
             </h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                You can combine string literals to create powerful pattern-matching types.
-                Tailwind, CSS-in-JS, and Event listeners rely heavily on this.
+                You can generate string types using template syntax. This is incredibly powerful for typed Event Emitters, CSS classes, or Internationalization keys.
             </p>
-            <div class="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-xl border border-blue-200 dark:border-blue-900/30">
-                <pre class="font-mono text-sm"><code>type Color = "red" | "blue";
-type Shade = "100" | "500" | "900";
+            <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+                <pre class="font-mono text-sm text-gray-800 dark:text-gray-200">
+type Entity = "User" | "Post" | "Comment";
+type EventType = "created" | "deleted" | "updated";
 
-// Automatically generates "red-100" | "red-500" | "blue-900" ...
-type TailwindColor = \`\${Color}-\${Shade}\`; 
+// 🪄 Generates 9 possible string combinations automatically
+type AppEvent = \`\${Entity}:\${EventType}\`; 
 
-const bg: TailwindColor = "red-500"; // ✅
-const bg2: TailwindColor = "green-500"; // ❌ Error</code></pre>
+// usage
+function listen(event: AppEvent) {}
+
+listen("User:created"); // ✅
+listen("Post:archived"); // ❌ Error: "archived" is not in EventType</pre>
             </div>
         </section>
 
-
-        <!-- Section 3: Type Guards -->
-        <section id="type-guards" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">03.</span>
-                Type Guards
-            </h2>
-             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Imagine a bouncer at a club. Type Guards are those bouncers for your types. 
-                They check if a value meets certain criteria, and if it does, TypeScript trusts that value to be of a more specific type. 
-            </p>
-             <pre class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl text-sm md:text-base font-mono text-gray-800 dark:text-gray-200 overflow-x-auto border border-gray-200 dark:border-slate-800"><code>function isError(err: unknown): err is Error {
-   return err instanceof Error;
-}
-
-const results = [data, error, data].filter(isError); 
-// results type: Error[] (Narrowed from unknown[])</code></pre>
-        </section>
-
-         <!-- Section 4: Satisfies -->
-        <section id="satisfies-operator" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
+        <!-- 04. Conditional Logic -->
+        <section id="conditional-logic" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-blue-600 dark:text-blue-500">04.</span>
-                The \`satisfies\` Operator
-            </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                New in TS 4.9. Validate a type *without* widening it. 
-                Keep the specific literal types while ensuring they match a pattern.
-            </p>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-lg border border-red-200 dark:border-red-900/30">
-                     <div class="text-sm font-bold text-red-600 uppercase mb-2">Old Way (Widens)</div>
-                     <code class="text-sm">const palette: Record&lt;string, string&gt; = { red: '#f00' };</code>
-                     <p class="text-xs mt-2 text-gray-500">palette.red is just \`string\`</p>
-                 </div>
-                 <div class="bg-green-50 dark:bg-green-900/10 p-6 rounded-lg border border-green-200 dark:border-green-900/30">
-                     <div class="text-sm font-bold text-green-600 uppercase mb-2">Satisfies (Specific)</div>
-                     <code class="text-sm">const palette = { red: '#f00' } satisfies Record&lt;string, string&gt;;</code>
-                     <p class="text-xs mt-2 text-gray-500">palette.red is \`'#f00'\` (Literal!)</p>
-                 </div>
-             </div>
-        </section>
-
-        <!-- Section 5: Conditional Types -->
-        <section id="conditional-types" class="scroll-mt-32">
-             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">05.</span>
                 Conditional Types & Infer
             </h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Conditionals types are distinct from conditionals in JavaScript. They work on the types themselves.
-                <code class="text-sm bg-gray-100 dark:bg-gray-800 px-1 rounded">T extends U ? X : Y</code>
+                Think of this as <strong>Ternary Operators for Types</strong>. 
+                \`T extends U ? X : Y\` means: "Does type T look like type U? If yes, use type X, otherwise Y."
             </p>
-             <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
-                 <h4 class="font-bold text-gray-700 dark:text-gray-300 mb-2">Extracting Return Types with \`infer\`</h4>
-                 <pre class="font-mono text-sm text-gray-800 dark:text-gray-200"><code>type GetReturnType&lt;T&gt; = T extends (...args: any[]) => infer R ? R : never;
 
-function getData() { return { id: 1, name: "Alice" }; }
+            <div class="bg-gray-900 rounded-xl p-8 shadow-2xl relative overflow-hidden group">
+                 <div class="absolute top-0 right-0 px-4 py-2 bg-slate-800 text-xs font-mono text-gray-400 rounded-bl-xl border-l border-b border-gray-700">getReturnType.ts</div>
+                 <pre class="text-sm md:text-base font-mono text-gray-300">
+<span class="text-gray-500">// The 'infer' keyword extracts a part of the type definition</span>
+type GetReturnType&lt;T&gt; = 
+  T extends (...args: any[]) => <span class="text-purple-400">infer</span> R 
+  ? R 
+  : never;
 
-// Automatically gets { id: number; name: string; }
-type Data = GetReturnType&lt;typeof getData&gt;;</code></pre>
-             </div>
+<span class="text-purple-400">function</span> <span class="text-blue-400">createUser</span>() {
+  return { id: 1, name: "Alice", role: "admin" }
+}
+
+<span class="text-gray-500">// Magic: We extracted the return type without exporting an interface!</span>
+type User = GetReturnType&lt;<span class="text-purple-400">typeof</span> createUser&gt;;
+<span class="text-gray-500">// User = { id: number, name: string, role: string }</span></pre>
+            </div>
         </section>
 
-        <!-- Section 6: Generics & Inference -->
-        <section id="generics-inference" class="scroll-mt-32">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">06.</span>
-                Generics & Inference
+        <!-- 05. Branded Types -->
+        <section id="branded-types" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">05.</span>
+                Branded Types (Domain Safety)
             </h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Generics allow you to write flexible, reusable components and functions that work with a variety of types, while still maintaining type safety. 
-                TypeScript's inference capabilities often mean you don't even need to explicitly specify these types.
+                A number is not just a number. A \`USD\` amount should not be added to a \`EUR\` amount. A \`UserId\` should not be passable to a function expecting a \`PostId\`.
             </p>
-            <pre class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl text-sm md:text-base font-mono text-gray-800 dark:text-gray-200 overflow-x-auto border border-gray-200 dark:border-slate-800"><code>function identity&lt;T&gt;(arg: T): T {
-  return arg;
-}
+             <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-2">The Branding Pattern</h4>
+                <pre class="font-mono text-sm text-gray-600 dark:text-gray-300">
+// 1. Define the Brands
+type Brand&lt;K, T&gt; = K & { __brand: T };
 
-let output1 = identity&lt;string&gt;("myString"); // type of output1 is string
-let output2 = identity(123); // type of output2 is number (inferred)
+type USD = Brand&lt;number, 'USD'&gt;;
+type EUR = Brand&lt;number, 'EUR'&gt;;
 
-interface Box&lt;T&gt; {
-  value: T;
-}
+// 2. Usage
+const wallet = 100 as USD;
+const cost = 50 as EUR;
 
-const stringBox: Box&lt;string&gt; = { value: "hello" };
-const numberBox: Box&lt;number&gt; = { value: 123 };</code></pre>
+function pay(amount: USD) {}
+
+pay(wallet); // ✅
+pay(cost);   // ❌ Error: Type 'EUR' is not assignable to type 'USD'</pre>
+            </div>
         </section>
 
-        <!-- Section 7: Shares -->
-        <section id="virality" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
-             <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">
-                07. Share the Wizardry
-            </h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-2xl">
-                     <p class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-4">
-                        "Stop writing 'any'. This guide unlocked Conditional Types and Template Litearls for me. TypeScript is actually magic. #TypeScript #WebDev 🧙‍♂️"
-                     </p>
-                     <div class="text-xs font-bold text-blue-500 uppercase tracking-wide">Twitter / X</div>
-                </div>
+        <!-- 06. Utility Types -->
+        <section id="utility-types" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">06.</span>
+                Advanced Utility Types
+            </h2>
+            <div class="space-y-6">
+                 <div class="p-4 bg-gray-100 dark:bg-slate-900 rounded-lg">
+                     <h4 class="font-bold">DeepPartial&lt;T&gt;</h4>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Recursively makes all properties optional.</p>
+                     <code class="text-xs font-mono block">type DeepPartial&lt;T&gt; = { [P in keyof T]?: DeepPartial&lt;T[P]&gt; };</code>
+                 </div>
+                 <div class="p-4 bg-gray-100 dark:bg-slate-900 rounded-lg">
+                     <h4 class="font-bold">Prettify&lt;T&gt;</h4>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Forces VS Code to show the computed type instead of the alias name.</p>
+                     <code class="text-xs font-mono block">type Prettify&lt;T&gt; = { [K in keyof T]: T[K] } & {};</code>
+                 </div>
             </div>
-             <div class="mt-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-center">
-                <h4 class="font-bold text-lg mb-2 text-blue-900 dark:text-blue-200">The Takeaway</h4>
-                <p class="text-gray-600 dark:text-gray-400">
-                    TypeScript is a tool for thought. If you model your state correctly with Discriminated Unions, bugs simply become impossible.
+        </section>
+
+        <!-- 07. Runtime Validation -->
+        <section id="runtime-validation" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">07.</span>
+                Runtime Validation (Zod)
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                TypeScript handles compile time. Zod handles runtime. 
+                Instead of manually writing interfaces, write a Zod schema and infer the type from it.
+            </p>
+             <pre class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl text-sm md:text-base font-mono text-gray-800 dark:text-gray-200 overflow-x-auto border border-gray-200 dark:border-slate-800">
+import { z } from "zod";
+
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  age: z.number().min(18)
+});
+
+// ✨ Automatic Type Inference
+type User = z.infer&lt;typeof UserSchema&gt;;
+// { id: string; email: string; age: number; }</pre>
+        </section>
+        
+        <!-- 08. Performance -->
+        <section id="performance-check" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">08.</span>
+                Compiler Performance
+            </h2>
+            <div class="bg-yellow-50 dark:bg-yellow-900/10 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                <p class="text-yellow-800 dark:text-yellow-200">
+                    <strong>Warning:</strong> Excessive recursion or massive unions (10k+ items) will slay your Intellisense speed. Use \`interface\` extends where possible instead of intersection types \` & \` for object shapes, as interfaces cache better.
                 </p>
             </div>
         </section>
 
-        <!-- Interactive Demo Section -->
-        <section id="interactive-demo" class="scroll-mt-32">
-             <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-3">
-                <span class="text-blue-600 dark:text-blue-500">08.</span>
-                Pattern Visualizer
+        <!-- 09. Visualizer -->
+        <section id="visualizer" class="scroll-mt-32">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">09.</span>
+                The Type Visualizer
             </h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
-                Explore how Discriminated Unions prevent bugs in a simple "Shape Sorter" application.
+                Below is a visualization of how Discriminated Unions work in a real-world scenario (a Shape Sorter). Notice how the properties available change based on the "Kind".
             </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                 <!-- Concept -->
-                <div class="space-y-4">
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded text-sm uppercase tracking-wide">Pattern</span>
-                        Discriminated Union
-                    </h3>
-                    <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                        The switch statement below is exhaustive. TypeScript would throw an error if we handled \`circle\` but forgot \`square\`.
-                    </p>
-                </div>
-            </div>
         </section>
 
     </div>
     `,
     code: `import React, { useState } from 'react';
 
-// ----------------------------------------------------
-// 🛡️ TYPE SAFE SHAPE SORTER
-// ----------------------------------------------------
+// ==========================================
+// 🛡️ TYPE SAFE SHAPE SORTER (Interactive)
+// ==========================================
 
-// type Shape = 
-//   | { kind: 'circle'; radius: number }
-//   | { kind: 'square'; side: number }
-//   | { kind: 'rectangle'; width: number; height: number };
+export default function TypeVisualizer() {
+  const [selectedKind, setSelectedKind] = useState('circle');
+  const [radius, setRadius] = useState(50);
+  const [side, setSide] = useState(80);
+  const [width, setWidth] = useState(120);
+  const [height, setHeight] = useState(60);
 
-export default function ShapeSorter() {
-  const [currentShape, setCurrentShape] = useState({ kind: 'circle', radius: 50 });
-  const [area, setArea] = useState(0);
+  // Type Logic Simulation
+  const getProperties = (kind) => {
+      switch(kind) {
+          case 'circle': return { radius };
+          case 'square': return { side };
+          case 'rectangle': return { width, height };
+          default: return {};
+      }
+  }
 
-  // Discriminant Check Logic (simulated)
-  const calculateArea = (shape) => {
-    switch (shape.kind) {
-      case 'circle': return Math.PI * shape.radius ** 2;
-      case 'square': return shape.side ** 2;
-      case 'rectangle': return shape.width * shape.height;
-    }
-  };
-
-  const handleCreate = (type) => {
-      if(type === 'circle') setCurrentShape({ kind: 'circle', radius: Math.floor(Math.random() * 40) + 20 });
-      if(type === 'square') setCurrentShape({ kind: 'square', side: Math.floor(Math.random() * 80) + 40 });
-      if(type === 'rectangle') setCurrentShape({ kind: 'rectangle', width: 100, height: 50 });
+  const props = getProperties(selectedKind);
+  
+  const calculateArea = () => {
+       switch(selectedKind) {
+          case 'circle': return Math.PI * radius ** 2;
+          case 'square': return side ** 2;
+          case 'rectangle': return width * height;
+       }
   }
 
   return (
-    <div className="bg-white dark:bg-[#111] text-gray-900 dark:text-gray-200 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xl p-8 flex flex-col md:flex-row gap-8 h-[500px]">
-      
-      {/* Controls */}
-      <div className="w-full md:w-1/3 space-y-6">
-          <div className="space-y-2">
-               <h3 className="text-xl font-bold">1. Pick a Shape</h3>
-               <div className="flex gap-2">
-                   <button onClick={() => handleCreate('circle')} className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 transition">Circle</button>
-                   <button onClick={() => handleCreate('square')} className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 transition">Square</button>
-                   <button onClick={() => handleCreate('rectangle')} className="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 transition">Rect</button>
-               </div>
-          </div>
+    <div className="bg-slate-50 dark:bg-[#0f1115] p-6 lg:p-10 rounded-3xl border border-slate-200 dark:border-white/5 shadow-2xl font-sans min-h-[700px] flex flex-col">
+       
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8 bg-white/50 dark:bg-white/5 p-6 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-white/5">
+             <div>
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                    <span className="text-blue-600"><span className="text-3xl">🛡️</span></span> Type Guard Visualizer
+                </h3>
+                <p className="text-slate-500 mt-2 font-medium">Visualizing Discriminated Unions logic</p>
+            </div>
+            <div className="hidden md:flex gap-2">
+                <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs font-bold rounded uppercase tracking-wider">
+                    Strict Mode: ON
+                </div>
+            </div>
+        </div>
 
-          <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl font-mono text-xs">
-              <div className="text-gray-500 mb-2">// Current State (Discriminated):</div>
-              <pre>{JSON.stringify(currentShape, null, 2)}</pre>
-          </div>
+        <div className="flex-1 flex flex-col xl:flex-row gap-8">
+            
+            {/* LEFT: Type Definition Code Block */}
+            <div className="w-full xl:w-96 space-y-6">
+                
+                {/* 1. The Discriminated Union Definition */}
+                <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl relative overflow-hidden group">
+                     <div className="absolute top-0 right-0 px-3 py-1 bg-blue-600/20 text-blue-400 text-[10px] font-bold uppercase rounded-bl-lg font-mono">types.ts</div>
+                     <pre className="font-mono text-xs text-blue-200 leading-relaxed">
+<span className="text-purple-400">type</span> Shape = 
+  | {'{'} <span className="text-yellow-400">kind</span>: <span className="text-green-300">'circle'</span>; <span className={selectedKind === 'circle' ? "bg-white/20 px-1 rounded text-white font-bold" : "text-slate-500"}>radius</span>: number {'}'}
+  | {'{'} <span className="text-yellow-400">kind</span>: <span className="text-green-300">'square'</span>; <span className={selectedKind === 'square' ? "bg-white/20 px-1 rounded text-white font-bold" : "text-slate-500"}>side</span>: number {'}'}
+  | {'{'} <span className="text-yellow-400">kind</span>: <span className="text-green-300">'rect'</span>; <span className={selectedKind === 'rectangle' ? "bg-white/20 px-1 rounded text-white font-bold" : "text-slate-500"}>width</span>: number; <span className={selectedKind === 'rectangle' ? "bg-white/20 px-1 rounded text-white font-bold" : "text-slate-500"}>height</span>: number {'}'};
+                     </pre>
+                     
+                     <div className="mt-4 pt-4 border-t border-slate-800">
+                         <div className="text-[10px] text-slate-500 uppercase font-bold mb-2">Internal Logic</div>
+                         <div className="flex gap-2">
+                             <button onClick={() => setSelectedKind('circle')} className={\`flex-1 p-2 rounded border text-xs font-bold transition-all \${selectedKind === 'circle' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}\`}>Circle</button>
+                             <button onClick={() => setSelectedKind('square')} className={\`flex-1 p-2 rounded border text-xs font-bold transition-all \${selectedKind === 'square' ? 'bg-green-600 border-green-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}\`}>Square</button>
+                             <button onClick={() => setSelectedKind('rectangle')} className={\`flex-1 p-2 rounded border text-xs font-bold transition-all \${selectedKind === 'rectangle' ? 'bg-purple-600 border-purple-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}\`}>Rect</button>
+                         </div>
+                     </div>
+                </div>
 
-          <button 
-             onClick={() => setArea(calculateArea(currentShape))}
-             className="w-full py-3 bg-gray-900 dark:bg-white text-white dark:text-black font-bold rounded-xl"
-          >
-              Calculate Area (Safe)
-          </button>
-      </div>
+                {/* 2. Compiler Feedback */}
+                <div className="bg-white dark:bg-[#1a1c20] p-6 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span>💻</span> Available Props
+                    </h4>
+                    <div className="space-y-3">
+                         {/* Common Prop */}
+                         <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
+                             <div className="font-mono text-sm text-yellow-600 dark:text-yellow-400">kind</div>
+                             <div className="text-xs text-slate-500">Discriminant</div>
+                         </div>
+                         
+                         {/* Conditional Props */}
+                         {selectedKind === 'circle' && (
+                             <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-500/20 animate-in slide-in-from-left-2">
+                                <div className="font-mono text-sm text-blue-600 dark:text-blue-400">radius</div>
+                                <input type="range" min="20" max="100" value={radius} onChange={e => setRadius(Number(e.target.value))} className="w-24 accent-blue-500" />
+                             </div>
+                         )}
+                         {selectedKind === 'square' && (
+                             <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-100 dark:border-green-500/20 animate-in slide-in-from-left-2">
+                                <div className="font-mono text-sm text-green-600 dark:text-green-400">side</div>
+                                <input type="range" min="40" max="150" value={side} onChange={e => setSide(Number(e.target.value))} className="w-24 accent-green-500" />
+                             </div>
+                         )}
+                         {selectedKind === 'rectangle' && (
+                             <>
+                                <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-100 dark:border-purple-500/20 animate-in slide-in-from-left-2">
+                                    <div className="font-mono text-sm text-purple-600 dark:text-purple-400">width</div>
+                                    <input type="range" min="50" max="200" value={width} onChange={e => setWidth(Number(e.target.value))} className="w-24 accent-purple-500" />
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-100 dark:border-purple-500/20 animate-in slide-in-from-left-2">
+                                    <div className="font-mono text-sm text-purple-600 dark:text-purple-400">height</div>
+                                    <input type="range" min="20" max="100" value={height} onChange={e => setHeight(Number(e.target.value))} className="w-24 accent-purple-500" />
+                                </div>
+                             </>
+                         )}
+                    </div>
+                </div>
 
-      {/* Visualization */}
-      <div className="flex-1 bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-gray-800 rounded-2xl flex items-center justify-center relative">
-          
-           {/* Render Shape based on TYPE */}
-           <div 
-              className="transition-all duration-500 shadow-xl"
-              style={{
-                  width: currentShape.kind === 'circle' ? currentShape.radius * 2 : (currentShape.kind === 'square' ? currentShape.side : currentShape.width),
-                  height: currentShape.kind === 'circle' ? currentShape.radius * 2 : (currentShape.kind === 'square' ? currentShape.side : currentShape.height),
-                  borderRadius: currentShape.kind === 'circle' ? '50%' : '12px',
-                  backgroundColor: currentShape.kind === 'circle' ? '#3b82f6' : (currentShape.kind === 'square' ? '#22c55e' : '#a855f7')
-              }}
-           />
+            </div>
 
-           {area > 0 && (
-               <div className="absolute bottom-4 bg-white dark:bg-black px-4 py-2 rounded-lg shadow font-mono font-bold animate-in slide-in-from-bottom-2">
-                   Area: {area.toFixed(0)}px²
-               </div>
-           )}
-      </div>
+            {/* RIGHT: Visual Output */}
+            <div className="flex-1 bg-slate-100 dark:bg-black/40 rounded-3xl border border-slate-200 dark:border-dashed dark:border-slate-800 flex flex-col items-center justify-center relative min-h-[400px]">
+                
+                {/* The Shape */}
+                <div 
+                    className="shadow-2xl transition-all duration-500 ease-out flex items-center justify-center"
+                    style={{
+                        width: selectedKind === 'circle' ? radius * 2 : (selectedKind === 'square' ? side : width),
+                        height: selectedKind === 'circle' ? radius * 2 : (selectedKind === 'square' ? side : height),
+                        borderRadius: selectedKind === 'circle' ? '50%' : '16px',
+                        background: selectedKind === 'circle' ? '#2563eb' : (selectedKind === 'square' ? '#16a34a' : '#9333ea')
+                    }}
+                >
+                    <div className="text-white font-bold text-shadow text-center">
+                        <div className="uppercase tracking-widest text-xs opacity-70">{selectedKind}</div>
+                        <div className="text-2xl">{Math.round(calculateArea())}</div>
+                        <div className="text-[10px] opacity-70">px²</div>
+                    </div>
+                </div>
 
+                {/* Floating Labels */}
+                <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-6">
+                    {/* Only show safe properties */}
+                    {Object.entries(props).map(([key, val]) => (
+                        <div key={key} className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-lg border border-slate-200 dark:border-slate-700 flex items-center gap-2 animate-in zoom-in">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase">{key}:</span>
+                            <span className="text-sm font-mono font-bold text-slate-800 dark:text-slate-200">{val}</span>
+                        </div>
+                    ))}
+                </div>
+
+            </div>
+
+        </div>
     </div>
   );
 }
-`
-}
+`};

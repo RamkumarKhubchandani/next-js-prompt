@@ -35,6 +35,14 @@ export const nodeBunDenoShowdown = {
                     <br/><br/>
                     Which one deserves your next production deployment?
                 </p>
+                <div class="bg-blue-900/10 border-l-4 border-blue-500 p-6 mt-6">
+                     <h4 class="font-bold text-blue-800 dark:text-blue-200 mb-2">Deep Dive: WinterCG Compliance</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         The Web-interoperable Runtimes Community Group (WinterCG) defines a common API set (Fetch, WebCrypto, Streams).
+                         <br/><br/>
+                         <strong>Bun</strong> and <strong>Deno</strong> are effectively "Browsers on the Server". Node.js implementation of these standards is often wrapped or slightly divergent (e.g. \`node:fetch\`).
+                     </p>
+                </div>
              </div>
         </section>
 
@@ -128,7 +136,6 @@ export const nodeBunDenoShowdown = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Timer, Server, HardDrive, Trophy, Zap, ShieldCheck } from 'lucide-react';
 
 // 🏎️ Runtime Benchmark Visualizer
 
@@ -214,9 +221,9 @@ export default function RuntimeShowdown() {
                         <div key={r.name} className={\`p-6 rounded-2xl border \${r.bg} \${r.border}\`}>
                             <div className="flex justify-between items-center mb-2">
                                 <h4 className="font-bold text-lg flex items-center gap-2">
-                                    {r.name === 'Bun' && <Zap size={18} className="text-yellow-500" />}
-                                    {r.name === 'Node.js' && <Server size={18} className="text-green-600" />}
-                                    {r.name === 'Deno' && <ShieldCheck size={18} className="text-purple-500" />}
+                                    {r.name === 'Bun' && <span className="text-yellow-500">⚡</span>}
+                                    {r.name === 'Node.js' && <span className="text-green-600">🖥️</span>}
+                                    {r.name === 'Deno' && <span className="text-purple-500">🛡️</span>}
                                     {r.name}
                                 </h4>
                                 <div className="text-2xl font-black">{valueText}</div>

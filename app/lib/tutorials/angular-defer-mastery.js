@@ -45,7 +45,7 @@ export const angularDeferMastery = {
                     Angular handles the code-splitting, chunk generation, and loading state management for you.
                 </p>
             </div>
-             <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// dashboard.component.html</div>
                  <div class="text-purple-400">@defer</div> (on viewport) {'{'} <br/>
                  &nbsp;&nbsp;&lt;heavy-chart /&gt; <br/>
@@ -56,6 +56,16 @@ export const angularDeferMastery = {
                  {'}'} <div class="text-purple-400">@error</div> {'{'} <br/>
                  &nbsp;&nbsp;&lt;error-msg /&gt; <br/>
                  {'}'}
+            </div>
+            <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                 <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Prefetching</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     You can separate the <em>render</em> trigger from the <em>fetch</em> trigger.
+                     <br/><br/>
+                     <code>@defer (on interaction; prefetch on idle)</code>
+                     <br/><br/>
+                     This downloads the JS bundle in the background when the browser is idle, so it's ready instantly when the user clicks.
+                 </p>
             </div>
         </section>
 
@@ -76,7 +86,6 @@ export const angularDeferMastery = {
     </div>
     `,
     code: `import React, { useState, useEffect, useRef } from 'react';
-import { Download, Eye, Layout, Loader2, MousePointerClick } from 'lucide-react';
 
 // 🚀 @defer Visualizer
 
@@ -149,23 +158,23 @@ export default function DeferDemo() {
 
                         {loadState === 'placeholder' && (
                             <div className="h-48 bg-gray-100 dark:bg-slate-900 rounded-xl flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-200 transition">
-                                <Layout size={40} className="mb-4 opacity-50" />
+                                <span className="text-4xl mb-4 opacity-50">📊</span>
                                 <div className="font-bold text-sm">Heavy Chart Placeholder</div>
                                 <div className="text-xs mt-2">Scroll or Hover to Load</div>
-                                <MousePointerClick className="mt-4 animate-bounce opacity-50" />
+                                <span className="mt-4 animate-bounce opacity-50">🖱️</span>
                             </div>
                         )}
 
                         {loadState === 'loading' && (
                             <div className="h-48 bg-red-50 dark:bg-red-900/10 rounded-xl flex flex-col items-center justify-center text-red-500 animate-pulse">
-                                <Loader2 size={40} className="animate-spin mb-4" />
+                                <span className="animate-spin mb-4 text-4xl">⏳</span>
                                 <div className="font-bold text-sm">Downloading Chunk...</div>
                             </div>
                         )}
 
                         {loadState === 'loaded' && (
                             <div className="h-48 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex flex-col items-center justify-center text-white shadow-lg animate-in zoom-in">
-                                <Download size={40} className="mb-4" />
+                                <span className="text-4xl mb-4">📦</span>
                                 <div className="font-bold text-lg">Heavy Component Loaded!</div>
                                 <div className="text-xs opacity-80">This JS was fetched lazily.</div>
                             </div>

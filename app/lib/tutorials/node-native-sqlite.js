@@ -91,7 +91,6 @@ export const nodeNativeSqlite = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Database, Server, FileText, ArrowRight, Activity, HardDrive } from 'lucide-react';
 
 // 🗄️ Database Architecture Visualizer
 
@@ -145,7 +144,7 @@ export default function DbDemo() {
                 {/* Application Server */}
                 <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 z-10 flex flex-col items-center justify-center shadow-lg">
                     <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-full mb-4">
-                        <Server size={32} className="text-gray-700 dark:text-white" />
+                        <span className="text-3xl">🖥️</span>
                     </div>
                     <div className="font-bold text-gray-800 dark:text-white">Node.js API</div>
                     <button 
@@ -158,7 +157,7 @@ export default function DbDemo() {
                     {/* SQLite Architecture: DB Inside App */}
                     {arch === 'sqlite' && (
                         <div className="mt-4 p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-2 animate-in fade-in zoom-in">
-                            <FileText size={16} className="text-green-600" />
+                            <span className="text-green-600">📄</span>
                             <span className="text-xs font-bold text-green-700 dark:text-green-400">Running In-Process (data.db)</span>
                         </div>
                     )}
@@ -167,7 +166,7 @@ export default function DbDemo() {
                 {/* Database Server / Disk */}
                 <div className={\`bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 z-10 flex flex-col items-center justify-center transition-all duration-500 \${arch === 'sqlite' ? 'opacity-30 blur-sm scale-90' : 'shadow-lg'}\`}>
                      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-full mb-4">
-                        <Database size={32} className="text-blue-600" />
+                        <span className="text-3xl">🗄️</span>
                     </div>
                     <div className="font-bold text-gray-800 dark:text-white">Postgres Server</div>
                     <div className="text-xs text-gray-400 mt-2">Requires TCP/IP Connection</div>
@@ -185,7 +184,7 @@ export default function DbDemo() {
                         >
                             {/* The Request Bolt */}
                             <div className={\`p-2 rounded-full shadow-xl z-50 \${arch === 'postgres' ? 'bg-blue-500 animate-network-trip' : 'bg-green-500 animate-disk-flash'}\`}>
-                                <Activity size={16} className="text-white" />
+                                <span className="text-white text-xs">⚡</span>
                             </div>
                         </div>
                     ))}

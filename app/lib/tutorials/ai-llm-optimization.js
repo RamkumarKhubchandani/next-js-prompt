@@ -31,6 +31,14 @@ export const aiLlmOptimization = {
                     <br/><br/>
                     <strong>LLM Cost Engineering</strong> is the art of caching prompt prefixes, using smaller "Router Models" (like Haiku/Flash) to triage requests, and compressing context.
                 </p>
+                <div class="bg-yellow-900/10 border-l-4 border-yellow-500 p-6 mt-8">
+                     <h4 class="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Deep Dive: Prompt Caching</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Models like Haiku and DeepSeek now support <strong>Prompt Caching</strong>. If your System Prompt + RAG Context (the "Prefix") is identical across requests, the API provider caches the KV states on the GPU.
+                         <br/>
+                         <strong>Impact:</strong> 90% Cost Reduction and 80% Latency Reduction for the cached portion. Always structure your prompt so static content comes <em>first</em>.
+                     </p>
+                </div>
              </div>
         </section>
 
@@ -73,12 +81,18 @@ export const aiLlmOptimization = {
                     Don't ask for <code>{ "customer_shipping_address": "..." }</code>. 
                     Ask for <code>{ "addr": "..." }</code> and map it in your code. You can save 20% on output tokens just by shortening keys.
                 </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 mt-6">Context Stuffing vs RAG</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Just because Gemini 1.5 Pro has a 2M context window doesn't mean you should dump your whole DB into it. <br/>
+                    1. It costs $10 per call. <br/>
+                    2. Latency is 60+ seconds. <br/>
+                    RAG is still essential for <strong>Latency</strong> and <strong>Cost</strong> control, even if capacity exists.
+                </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Coins, Database, Zap, Repeat } from 'lucide-react';
 
 // 💰 Cost Savings Visualizer
 
@@ -156,7 +170,7 @@ export default function CostDemo() {
                 {/* Request Log */}
                 <div className="flex-1 bg-slate-200 dark:bg-slate-900/50 rounded-2xl p-6 relative min-h-[300px]">
                     <div className="absolute top-4 right-4 flex items-center gap-2 text-xs font-bold text-gray-500 uppercase">
-                        <Database size={14} /> Redis Semantic Cache
+                        <span>🧊</span> Redis Semantic Cache
                     </div>
 
                     <div className="space-y-3 mt-8">
@@ -169,7 +183,7 @@ export default function CostDemo() {
                                     <div className="text-xs text-gray-400">{q.isHit ? 'Served from Cache' : 'Sent to LLM API'}</div>
                                 </div>
                                 <div className={\`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 \${q.isHit ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}\`}>
-                                    {q.isHit ? <Zap size={14} /> : <Coins size={14} />}
+                                    {q.isHit ? <span>⚡</span> : <span>💸</span>}
                                     {q.isHit ? 'HIT ($0.00)' : 'MISS ($0.05)'}
                                 </div>
                             </div>

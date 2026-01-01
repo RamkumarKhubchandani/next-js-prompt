@@ -31,8 +31,17 @@ export const angularHydrationMastery = {
                     <br/><br/>
                     Modern Angular <strong>Non-Destructive Hydration</strong> reuses existing DOM nodes and attaches event listeners surgically.
                 </p>
+                <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                     <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Progressive vs Partial</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         <strong>Progressive Hydration:</strong> Hydrating the page chunk-by-chunk over time (usually priority-based). All JS eventually runs.
+                         <br/>
+                         <strong>Partial Hydration (\`@defer\`):</strong> Non-interactive parts (like this text block) <em>never</em> hydrate. Their JS code is never downloaded. The HTML stays static forever.
+                     </p>
+                </div>
              </div>
         </section>
+
 
         <!-- 02. Partial Hydration -->
         <section id="partial-hydration" class="scroll-mt-32">
@@ -40,7 +49,7 @@ export const angularHydrationMastery = {
                 <span class="text-red-600 dark:text-red-500">02.</span>
                 Partial Hydration (@defer)
             </h2>
-            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
+            <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert mb-8">
                 <p>
                     Why load the JavaScript for a footer that is off-screen? 
                     With <code>@defer</code> blocks, Angular allows you to hydrate only the critical parts of the application first, and lazy-load/hydrate the rest on interaction or visibility.
@@ -98,7 +107,6 @@ export const angularHydrationMastery = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Smartphone, Zap, MousePointer, Activity } from 'lucide-react';
 
 // 💧 Hydration Simulator
 
@@ -173,7 +181,7 @@ export default function HydrationDemo() {
                         <div className="h-6 bg-black text-white text-[10px] flex justify-between px-4 items-center">
                             <span>9:41</span>
                             <div className="flex gap-1">
-                                <Activity size={10} />
+                                <span>📶</span>
                                 <div className="w-4 h-2 bg-white rounded-sm"></div>
                             </div>
                         </div>
@@ -182,7 +190,7 @@ export default function HydrationDemo() {
                         <div className="flex-1 p-4 flex flex-col items-center justify-center space-y-4">
                             
                             <div className={\`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-500 \${stage === 'hydrated' ? 'bg-green-500 scale-110' : 'bg-gray-200 grayscale'}\`}>
-                                <Zap size={40} className="text-white" />
+                                <span className="text-4xl text-white">⚡</span>
                             </div>
 
                             <h2 className="font-bold text-xl text-center text-gray-800 dark:text-white">

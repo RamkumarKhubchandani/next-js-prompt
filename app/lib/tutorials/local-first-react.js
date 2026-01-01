@@ -34,6 +34,13 @@ export const localFirstReact = {
                     <br/><br/>
                     <strong>Local-First</strong> is not just "caching." It means <strong>the Client Database is the source of truth</strong> for the UI. The Server is just a backup.
                 </p>
+                <div class="bg-rose-900/10 border-l-4 border-rose-500 p-6 mt-8">
+                     <h4 class="font-bold text-rose-800 dark:text-rose-200 mb-2">Deep Dive: The 100ms Threshold</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Jakob Nielsen's rule: < 100ms feels instantaneous. <br/>
+                         Server roundtrips vary (50ms - 500ms). Local-First guarantees < 10ms for all read/write operations by hitting the local DB first. 
+                     </p>
+                </div>
              </div>
         </section>
 
@@ -138,7 +145,6 @@ export const localFirstReact = {
     </div>
     `,
     code: `import React, { useState, useEffect, useRef } from 'react';
-import { Wifi, WifiOff, RefreshCw, Database } from 'lucide-react';
 
 // 💾 Local-First Todo Simulator
 // Demonstrates the "Write Local -> Sync Background" pattern
@@ -241,7 +247,7 @@ export default function SyncEngineDemo() {
                             onClick={() => setOnline(!online)}
                             className={\`p-2 rounded-full transition-colors \${online ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}\`}
                         >
-                            {online ? <Wifi size={20} /> : <WifiOff size={20} />}
+                            {online ? <span>📶</span> : <span>📵</span>}
                         </button>
                     </div>
 
@@ -250,9 +256,9 @@ export default function SyncEngineDemo() {
                             <div key={t.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-gray-100 dark:border-slate-700">
                                 <span>{t.text}</span>
                                 {t.synced ? (
-                                    <CheckCircle size={16} className="text-green-500" />
+                                    <span>✅</span>
                                 ) : (
-                                    <RefreshCw size={16} className="text-orange-500 animate-spin" />
+                                    <span className="animate-spin inline-block">⏳</span>
                                 )}
                             </div>
                         ))}
@@ -279,7 +285,7 @@ export default function SyncEngineDemo() {
                  </div>
 
                  <div className="mb-8 p-6 bg-white dark:bg-slate-800 rounded-full shadow-xl border border-slate-200 dark:border-slate-700 z-10">
-                     <Database size={48} className={isSyncing ? "text-rose-500 animate-pulse" : "text-slate-400"} />
+                     <span className={\`text-6xl \${isSyncing ? "animate-pulse" : ""}\`}>🗄️</span>
                  </div>
 
                  <h3 className="text-xl font-bold mb-4 text-slate-500">Cloud Database (Postgres)</h3>
@@ -296,15 +302,6 @@ export default function SyncEngineDemo() {
             </div>
         </div>
     );
-}
-
-function CheckCircle({size, className}) {
-    return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
-    )
 }
 `
 };

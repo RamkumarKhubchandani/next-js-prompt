@@ -23,7 +23,7 @@ export default async function TutorialsPage() {
                 }}>
             </div>
             {/* Dark Mode Dot Grid Override */}
-            <div className="fixed inset-0 z-0 pointer-events-none opacity-20 hidden dark:block"
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.04] hidden dark:block"
                 style={{
                     backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)',
                     backgroundSize: '24px 24px'

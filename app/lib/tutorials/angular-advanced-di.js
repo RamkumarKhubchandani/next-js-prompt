@@ -31,6 +31,20 @@ export const angularAdvancedDi = {
                     <br/><br/>
                     But Angular's DI system is a hierarchical, key-value store that can hold <em>configurations</em>, <em>functions</em>, and even <em>lists of plugins</em>.
                 </p>
+                <div class="bg-red-900/10 border-l-4 border-red-500 p-6 mt-6">
+                     <h4 class="font-bold text-red-800 dark:text-red-200 mb-2">Deep Dive: Resolution Modifiers</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Control <em>where</em> Angular looks for dependencies:
+                         <ul class="list-disc pl-4 mt-2 space-y-1">
+                             <li><code>@Optional()</code>: Don't crash if not found (returns null).</li>
+                             <li><code>@Self()</code>: Look only in <em>this</em> component's injector.</li>
+                             <li><code>@SkipSelf()</code>: Start looking in the parent injector.</li>
+                             <li><code>@Host()</code>: Stop looking at the host component boundary.</li>
+                         </ul>
+                     </p>
+                </div>
+             </div>
+        </section>
              </div>
         </section>
 
@@ -88,7 +102,6 @@ export const angularAdvancedDi = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Box, Layers, Settings, Plug, Zap } from 'lucide-react';
 
 // 🏗️ DI System Visualizer
 
@@ -140,7 +153,7 @@ export default function DiDemo() {
                 {/* Configuration */}
                 <div className="w-full md:w-1/3 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
                     <div className="font-bold text-gray-500 uppercase text-xs mb-4 flex items-center gap-2">
-                        <Settings size={14} /> App Configuration (providers)
+                        <span>⚙️</span> App Configuration (providers)
                     </div>
                     
                     <div className="space-y-2">
@@ -176,7 +189,7 @@ export default function DiDemo() {
                         onClick={runUse}
                         className="p-4 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition flex items-center justify-center gap-2"
                     >
-                        <Zap size={20} /> Run Application
+                        <span>⚡</span> Run Application
                     </button>
 
                     <div className="flex-1 bg-black rounded-xl p-6 font-mono text-xs overflow-y-auto h-[300px]">

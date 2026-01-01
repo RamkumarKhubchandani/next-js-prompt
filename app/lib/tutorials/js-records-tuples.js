@@ -15,7 +15,9 @@ export const jsRecordsTuples = {
         { id: "identity-crisis", label: "01. The Identity Crisis" },
         { id: "syntax", label: "02. Syntax: #{} and #[]" },
         { id: "react-perf", label: "03. React Performance" },
-        { id: "senior-take", label: "04. Senior Engineer's Take" }
+        { id: "map-keys", label: "04. Tuples as Map Keys" },
+        { id: "structural-sharing", label: "05. Structural Sharing" },
+        { id: "senior-take", label: "06. Senior Engineer's Take" }
     ],
     content: `
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
@@ -84,10 +86,63 @@ console.log(a === b);
             </div>
         </section>
 
-        <!-- 04. Senior Take -->
-        <section id="senior-take" class="scroll-mt-32">
+        <!-- 04. Tuples as Map Keys -->
+        <section id="map-keys" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-purple-600 dark:text-purple-500">04.</span>
+                The Killer Feature: Composite Map Keys
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Previously, using an object as a Map key relied on its reference. You couldn't create a "fresh" object and look up a value. With Records, <strong>Value Object</strong> keys are finally possible.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="p-6 bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20">
+                     <h3 class="font-bold text-red-600 mb-2">Before (Broken)</h3>
+                     <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+const cache = new Map();
+cache.set({x:1, y:2}, "Hit!");
+
+// Returns undefined because this object 
+// is a DIFFERENT reference
+cache.get({x:1, y:2}); // ❌ undefined
+                     </pre>
+                 </div>
+                 <div class="p-6 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-100 dark:border-green-900/20">
+                     <h3 class="font-bold text-green-600 mb-2">After (Works)</h3>
+                     <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+const cache = new Map();
+cache.set(#{x:1, y:2}, "Hit!");
+
+// Works because the Record is compared 
+// by value, not reference
+cache.get(#{x:1, y:2}); // ✅ "Hit!"
+                     </pre>
+                 </div>
+            </div>
+        </section>
+
+        <!-- 05. Structural Sharing -->
+        <section id="structural-sharing" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-purple-600 dark:text-purple-500">05.</span>
+                How it Works: Structural Sharing
+            </h2>
+            <div class="bg-slate-100 dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800">
+                 <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                    You might think identifying two deep objects as "equal" is slow (O(N) recursion). But engine implementers use <strong>Structural Sharing</strong>. 
+                </p>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    When you modify a Record: <code>const newRec = #{ ...oldRec, b: 2 }</code><br/>
+                    The engine doesn't copy the entire tree. It points <code>newRec</code> to the same memory locations as <code>oldRec</code> for all unchanged properties. 
+                    Comparison is often as fast as O(1) hashing or pointer checking for shared sub-trees.
+                </p>
+            </div>
+        </section>
+
+        <!-- 06. Senior Take -->
+        <section id="senior-take" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-purple-600 dark:text-purple-500">06.</span>
                 The Senior Engineer's Take
             </h2>
             <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-purple-500">
@@ -102,7 +157,6 @@ console.log(a === b);
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Scale, Check, X, Box, Copy } from 'lucide-react';
 
 // ⚖️ Equality Visualizer
 
@@ -153,7 +207,9 @@ export default function EqualityDemo() {
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-200 dark:bg-slate-700 px-2 py-1 rounded text-[10px] font-mono font-bold text-gray-500">
                         {isRecord ? 'Value: #{...}' : \`Ref: \${addrA}\`}
                     </div>
-                    <Box size={40} className={\`mx-auto mb-4 \${isRecord ? 'text-purple-500' : 'text-blue-500'}\`} />
+                    <div className="mx-auto mb-4 text-4xl">
+                        {isRecord ? '📦' : '📦'} 
+                    </div>
                     <pre className="text-left text-xs bg-slate-100 dark:bg-black p-2 rounded">
 {isRecord ? '#{' : '{'}
   id: 1, 
@@ -172,7 +228,9 @@ export default function EqualityDemo() {
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-200 dark:bg-slate-700 px-2 py-1 rounded text-[10px] font-mono font-bold text-gray-500">
                          {isRecord ? 'Value: #{...}' : \`Ref: \${addrB}\`}
                     </div>
-                    <Box size={40} className={\`mx-auto mb-4 \${isRecord ? 'text-purple-500' : 'text-orange-500'}\`} />
+                    <div className="mx-auto mb-4 text-4xl">
+                        {isRecord ? '📦' : '📦'}
+                    </div>
                     <pre className="text-left text-xs bg-slate-100 dark:bg-black p-2 rounded">
 {isRecord ? '#{' : '{'}
   id: 1, 
@@ -189,7 +247,7 @@ export default function EqualityDemo() {
                 ? 'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-600' 
                 : 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-600'
             }\`}>
-                {areEqual ? <Check size={32} /> : <X size={32} />}
+                <span className="text-3xl">{areEqual ? '✅' : '❌'}</span>
                 {areEqual ? 'TRUE' : 'FALSE'}
             </div>
             

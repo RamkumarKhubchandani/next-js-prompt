@@ -85,6 +85,25 @@ const obj: Point = { x: 1, y: 2 };
             </div>
         </section>
 
+        </section>
+
+        <!-- 04. Type Stripping -->
+        <section id="type-check-performance" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-blue-600 dark:text-blue-500">04.</span>
+                Type Stripping (Node.js 23+)
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Node.js can now run TypeScript natively by "stripping" types. It doesn't check them. It just deletes them and runs the JS. This is instant.
+            </p>
+            <div class="bg-yellow-50 dark:bg-yellow-900/10 p-6 rounded-xl border border-yellow-200 dark:border-yellow-900/30">
+                 <h4 class="font-bold text-yellow-900 dark:text-yellow-100 mb-2">Deep Dive: Isolated Modules</h4>
+                 <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                     For type stripping to work, you must enable <code>isolatedModules: true</code>. This ensures every file can be compiled without knowing the rest of the project (no const enums, no namespaces).
+                 </p>
+            </div>
+        </section>
+
         <!-- 05. Benchmark -->
         <section id="benchmark" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
@@ -108,7 +127,6 @@ const obj: Point = { x: 1, y: 2 };
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Shield, AlertTriangle, Check, X, FileCode } from 'lucide-react';
 
 // 🛡️ TS Compiler Visualizer
 
@@ -121,7 +139,7 @@ export default function TSPerformanceDemo() {
             {/* Controls */}
             <div className="w-full md:w-1/3 space-y-6">
                 <h3 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
-                    <Shield className="text-blue-600" /> TS Compiler
+                    <span className="text-blue-600">🛡️</span> TS Compiler
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 text-sm">
                     Toggle Strict Mode to see how the React Compiler optimizes code generation.
@@ -157,7 +175,7 @@ export default function TSPerformanceDemo() {
             {/* Code Visualizer */}
             <div className="flex-1 bg-white dark:bg-black p-6 rounded-2xl font-mono text-sm border border-slate-200 dark:border-slate-800 overflow-hidden relative shadow-inner">
                 <div className="absolute top-4 right-4 text-xs font-bold text-gray-400 uppercase flex items-center gap-1">
-                    <FileCode size={12} /> output.js
+                    <span>📄</span> output.js
                 </div>
                 
                 {strictMode ? (

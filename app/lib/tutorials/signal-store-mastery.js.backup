@@ -1,28 +1,28 @@
 export const signalStoreMastery = {
-  title: "Signal-Store Mastery: Is NgRx Dead in the Age of Signals?",
-  description: "NgRx was the king of Angular state management. But Signals and the new Signal Store offer a lighter, less boilerplate-heavy alternative. A controversial look at the future of state.",
-  slug: "signal-store-mastery",
-  category: "Angular",
-  type: "static",
-  author: "Angular GDE",
-  createdAt: new Date().toISOString(),
-  readTime: "45 min read",
-  difficulty: "Advanced",
-  image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop",
-  tags: ["Angular", "Signals", "NgRx", "State Management", "Signal Store"],
-  keywords: ["NgRx Signal Store", "ngrx vs signals", "Angular State Management", "Redux Pattern", "Boilerplate"],
-  toc: [
-    { id: "evolution", label: "01. The Evolution of State" },
-    { id: "why-signals", label: "02. Why Signals?" },
-    { id: "boilerplate", label: "03. The Boilerplate Problem" },
-    { id: "signal-store", label: "04. The Signal Store" },
-    { id: "comparison", label: "05. Code Comparison" },
-    { id: "real-world", label: "06. Real-World Examples" },
-    { id: "advanced-patterns", label: "07. Advanced Patterns" },
-    { id: "architecture", label: "08. When to use what?" },
-    { id: "senior-verdict", label: "09. Senior Engineer's Verdict" }
-  ],
-  content: `
+    title: "Signal-Store Mastery: Is NgRx Dead in the Age of Signals?",
+    description: "NgRx was the king of Angular state management. But Signals and the new Signal Store offer a lighter, less boilerplate-heavy alternative. A controversial look at the future of state.",
+    slug: "signal-store-mastery",
+    category: "Angular",
+    type: "static",
+    author: "Angular GDE",
+    createdAt: new Date().toISOString(),
+    readTime: "45 min read",
+    difficulty: "Advanced",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2670&auto=format&fit=crop",
+    tags: ["Angular", "Signals", "NgRx", "State Management", "Signal Store"],
+    keywords: ["NgRx Signal Store", "ngrx vs signals", "Angular State Management", "Redux Pattern", "Boilerplate"],
+    toc: [
+        { id: "evolution", label: "01. The Evolution of State" },
+        { id: "why-signals", label: "02. Why Signals?" },
+        { id: "boilerplate", label: "03. The Boilerplate Problem" },
+        { id: "signal-store", label: "04. The Signal Store" },
+        { id: "comparison", label: "05. Code Comparison" },
+        { id: "real-world", label: "06. Real-World Examples" },
+        { id: "advanced-patterns", label: "07. Advanced Patterns" },
+        { id: "architecture", label: "08. When to use what?" },
+        { id: "senior-verdict", label: "09. Senior Engineer's Verdict" }
+    ],
+    content: `
     <div class="space-y-16 font-sans text-gray-800 dark:text-gray-200">
         
         <!-- 01. Evolution -->
@@ -943,45 +943,125 @@ export const ProductStore = signalStore(
                 </p>
             </div>
         </section>
-
-        <!-- Conclusion -->
-        <section id="conclusion" class="scroll-mt-32">
-             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-                <span class="text-pink-600 dark:text-pink-500">🎯</span>
-                Conclusion
-            </h2>
-            <div class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/10 dark:to-purple-900/10 p-8 rounded-2xl border border-pink-200 dark:border-pink-900/30">
-                <p class="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-                    The Angular Signal Store represents a paradigm shift in how we think about state management. By combining the best aspects of NgRx's structure with the simplicity and performance of Signals, it offers a compelling alternative that reduces boilerplate while maintaining type safety and predictability.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl">
-                        <h4 class="font-bold text-pink-600 dark:text-pink-400 mb-3">Key Takeaways</h4>
-                        <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                            <li>✓ Signal Store reduces code by 75% compared to classic NgRx</li>
-                            <li>✓ No subscriptions needed - Signals handle reactivity automatically</li>
-                            <li>✓ Type-safe by default with full TypeScript inference</li>
-                            <li>✓ Composable features make stores infinitely scalable</li>
-                            <li>✓ Perfect for feature-level state management</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl">
-                        <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-3">When to Use</h4>
-                        <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                            <li>• New Angular projects (2024+)</li>
-                            <li>• Feature-level state management</li>
-                            <li>• Apps prioritizing developer experience</li>
-                            <li>• Teams wanting less boilerplate</li>
-                            <li>• Projects using Angular Signals</li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    As Angular continues to evolve with Signals at its core, the Signal Store positions itself as the future-proof choice for state management. Whether you're building a new application or gradually migrating from NgRx, the patterns and principles covered in this guide will serve you well in the modern Angular ecosystem.
-                </p>
-            </div>
-        </section>
     </div>
     `,
-  code: undefined
+    code: `import React, { useState } from 'react';
+
+// 🏪 Signal Store Visualization
+
+export default function SignalStoreDemo() {
+    const [boilerplateLevel, setBoilerplateLevel] = useState(100); // % of lines of code
+    const [storeType, setStoreType] = useState('ngrx');
+
+    const handleSwitch = (type) => {
+        setStoreType(type);
+        setBoilerplateLevel(type === 'ngrx' ? 100 : 25);
+    };
+
+    return (
+        <div className="bg-slate-50 dark:bg-slate-950 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+                <div>
+                    <h3 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                        <span className="text-pink-600">🧠</span> State Wars
+                    </h3>
+                    <p className="text-gray-500 mt-2">NgRx Boilerplate vs. Signal Store Efficiency.</p>
+                </div>
+
+                <div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-xl">
+                    <button
+                        onClick={() => handleSwitch('ngrx')}
+                        className={\`px-6 py-2 rounded-lg font-bold text-sm transition-all \${storeType === 'ngrx' ? 'bg-white dark:bg-slate-800 shadow text-pink-600' : 'text-slate-500'}\`}
+                    >
+                    Classic NgRx
+                </button>
+                <button
+                    onClick={() => handleSwitch('signal')}
+                    className={\`px-6 py-2 rounded-lg font-bold text-sm transition-all \${storeType === 'signal' ? 'bg-white dark:bg-slate-800 shadow text-green-600' : 'text-slate-500'}\`}
+                    >
+                Signal Store
+            </button>
+        </div>
+            </div >
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+                {/* Visual Representation of Complexity */}
+                <div className="space-y-6">
+                    <div className="flex justify-between text-sm font-bold text-gray-500 uppercase">
+                        <span>Complexity / Files</span>
+                        <span>{boilerplateLevel}%</span>
+                    </div>
+                    
+                    {/* File Stack Visualization */}
+                    <div className="relative h-64 w-full bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-end justify-center pb-4 overflow-hidden">
+                        <div 
+                            className={\`w-24 bg-red-400 rounded-t-lg transition-all duration-700 ease-in-out relative group \${storeType === 'ngrx' ? 'h-full opacity-100' : 'h-0 opacity-0'}\`}
+                        >
+                             <div className="absolute inset-0 flex items-center justify-center text-white font-bold -rotate-90">Reducers</div>
+                        </div>
+                         <div 
+                            className={\`w-24 bg-orange-400 rounded-t-lg transition-all duration-700 ease-in-out ml-2 relative group \${storeType === 'ngrx' ? 'h-4/5 opacity-100' : 'h-0 opacity-0'}\`}
+                        >
+                            <div className="absolute inset-0 flex items-center justify-center text-white font-bold -rotate-90">Actions</div>
+                        </div>
+                         <div 
+                            className={\`w-24 bg-purple-400 rounded-t-lg transition-all duration-700 ease-in-out ml-2 relative group \${storeType === 'ngrx' ? 'h-3/4 opacity-100' : 'h-0 opacity-0'}\`}
+                        >
+                            <div className="absolute inset-0 flex items-center justify-center text-white font-bold -rotate-90">Effects</div>
+                        </div>
+                        <div 
+                            className={\`w-24 bg-blue-400 rounded-t-lg transition-all duration-700 ease-in-out ml-2 relative group \${storeType === 'ngrx' ? 'h-1/2 opacity-100' : 'h-0 opacity-0'}\`}
+                        >
+                            <div className="absolute inset-0 flex items-center justify-center text-white font-bold -rotate-90">Selectors</div>
+                        </div>
+                        
+                        {/* Signal Store Single Block */}
+                         <div 
+                            className={\`w-48 bg-green-500 rounded-t-lg transition-all duration-700 ease-in-out absolute bottom-4 shadow-[0_0_30px_rgba(34,197,94,0.4)] \${storeType === 'signal' ? 'h-1/3 opacity-100' : 'h-0 opacity-0'}\`}
+                        >
+                             <div className="flex flex-col items-center justify-center h-full text-white font-bold">
+                                <span className="text-2xl mb-2">⚡</span>
+                                One Store File
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Features List */}
+                <div className="grid grid-cols-1 gap-4">
+                     <div className={\`p-4 rounded-xl border flex items-center gap-4 transition-colors \${storeType === 'ngrx' ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}\`}>
+                        <div className="p-2 bg-white rounded-lg shadow-sm">
+                            <span className="text-xl">💻</span>
+                        </div>
+                        <div>
+                            <h4 className="font-bold">Type Safety</h4>
+                            <p className="text-xs text-gray-500">
+                                {storeType === 'ngrx' ? 'Requires manual type matching in props' : 'Inferred automatically from state'}
+                            </p>
+                        </div>
+                    </div>
+                    
+                     <div className={\`p-4 rounded-xl border flex items-center gap-4 transition-colors \${storeType === 'ngrx' ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}\`}>
+                        <div className="p-2 bg-white rounded-lg shadow-sm">
+                            <span className="text-xl">🗄️</span>
+                        </div>
+                        <div>
+                            <h4 className="font-bold">Mental Model</h4>
+                            <p className="text-xs text-gray-500">
+                                {storeType === 'ngrx' ? 'Indirection (Dispatch -> Effect -> Action -> Reducer)' : 'Direct (Call Method -> Update Signal)'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+`
 };
+
+
+
+

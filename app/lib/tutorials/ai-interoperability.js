@@ -42,19 +42,43 @@ export const aiInteroperability = {
             </h2>
             <div class="prose prose-lg max-w-none text-gray-700 dark:text-gray-300 mb-8">
                 <p>
-                    Anthropic's MCP is becoming the standard. It allows an AI to discover resources (files, databases, APIs) served by another process or machine.
+                    Anthropic's MCP (Model Context Protocol) is winning because it solves the N x M problem. Instead of every AI app building integrations for Google Drive, Slack, and GitHub, we build <strong>one</strong> MCP Server for each service. Any MCP-compliant Agent (Claude, Cursor, etc.) can then connect to it.
                 </p>
+                <div class="bg-indigo-900/10 border-l-4 border-indigo-500 p-6 my-6 font-mono text-xs md:text-sm">
+                    <strong>Architecture:</strong><br/><br/>
+                    [🤖 AI Client (Claude)] <br/>
+                       &nbsp;&nbsp;&nbsp;⬇️ (JSON-RPC) <br/>
+                    [🔌 MCP Host Process] <br/>
+                       &nbsp;&nbsp;&nbsp;⬇️ (Stdio / SSE) <br/>
+                    [📦 MCP Server (e.g., Stripe Integration)] <br/>
+                       &nbsp;&nbsp;&nbsp;⬇️ (HTTP) <br/>
+                    [☁️ Actual Stripe API]
+                </div>
             </div>
              <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// server.ts (The Stripe Agent)</div>
+                 <div class="text-purple-400">import</div> {'{'} McpServer, ResourceTemplate {'}'} <div class="text-purple-400">from</div> <span class="text-green-400">"@modelcontextprotocol/sdk"</span>;<br/><br/>
+                 
                  <div class="text-purple-400">const</div> server = <div class="text-purple-400">new</div> McpServer({'{'} <br/>
                  &nbsp;&nbsp;name: <span class="text-green-400">"stripe-agent"</span>,<br/>
                  &nbsp;&nbsp;version: <span class="text-green-400">"1.0"</span> <br/>
                  {'}'}); <br/><br/>
                  
-                 server.tool(<span class="text-green-400">"refund_payment"</span>, {'{'} id: z.string() {'}'}, <div class="text-purple-400">async</div> ({'{'} id {'}'}) => {'{'} <br/>
-                 &nbsp;&nbsp;<div class="text-purple-400">return</div> refund(id); <br/>
-                 {'}'});
+                 <span class="text-gray-500">// 1. Expose Tools</span><br/>
+                 server.tool(<br/>
+                 &nbsp;&nbsp;<span class="text-green-400">"refund_payment"</span>, <br/>
+                 &nbsp;&nbsp;{'{'} id: z.string().startsWith("ch_") {'}'}, <br/>
+                 &nbsp;&nbsp;<div class="text-purple-400">async</div> ({'{'} id {'}'}) => {'{'} <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<div class="text-purple-400">return</div> refund(id); <br/>
+                 &nbsp;&nbsp;{'}'}<br/>
+                 );<br/><br/>
+
+                 <span class="text-gray-500">// 2. Expose Resources (Read-Only Data)</span><br/>
+                 server.resource(<br/>
+                 &nbsp;&nbsp;<span class="text-green-400">"payment-logs"</span>,<br/>
+                 &nbsp;&nbsp;<span class="text-green-400">"payments://{'{'}id{'}'}/logs"</span>,<br/>
+                 &nbsp;&nbsp;<div class="text-purple-400">async</div> (uri, {'{'} id {'}'}) => readLogs(id)<br/>
+                 );
             </div>
         </section>
 
@@ -65,18 +89,17 @@ export const aiInteroperability = {
                 The Senior Engineer's Take
             </h2>
             <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-indigo-500">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Trust is the Bottleneck</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Trust & Auth Delegation</h3>
                 <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    Technically, this is solved. Economically, it's risky. 
+                    Technically, this is solved. The hard part is <strong>Authentication</strong>. 
                     <br/><br/>
-                    <strong>Prediction:</strong> We will see "Agent Visas" or cryptographic signatures (Attestation) to prove that "This agent is authorized by Stripe" before your agent shares user data with it.
+                    We need "OAuth for Agents". You shouldn't give your agent your raw Stripe Secret Key. You should grant a scoped token: <code>stripe:refunds:read_write</code>.
                 </p>
             </div>
         </section>
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Bot, ArrowRightLeft, ShieldCheck, Lock } from 'lucide-react';
 
 // 🤝 Protocol Visualizer
 
@@ -126,7 +149,7 @@ export default function ProtocolDemo() {
                 {/* Agent A */}
                 <div className="w-1/4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 flex flex-col items-center border border-blue-200 dark:border-blue-800">
                     <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4 text-white">
-                        <Bot size={32} />
+                        <span className="text-3xl">🤖</span>
                     </div>
                     <div className="font-bold text-blue-700 dark:text-blue-300">Buyer Agent</div>
                     <div className="text-xs text-center text-gray-500 mt-2">Goal: Buy cheaper than $50</div>
@@ -152,7 +175,7 @@ export default function ProtocolDemo() {
                 {/* Agent B */}
                  <div className="w-1/4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-4 flex flex-col items-center border border-indigo-200 dark:border-indigo-800">
                     <div className="w-16 h-16 bg-indigo-500 rounded-full flex items-center justify-center mb-4 text-white">
-                        <Bot size={32} />
+                        <span className="text-3xl">🤖</span>
                     </div>
                     <div className="font-bold text-indigo-700 dark:text-indigo-300">Seller Agent</div>
                     <div className="text-xs text-center text-gray-500 mt-2">Goal: Maximize profit (> $40)</div>

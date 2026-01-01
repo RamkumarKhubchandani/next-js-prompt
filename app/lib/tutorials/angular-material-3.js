@@ -45,7 +45,7 @@ export const angularMaterial3 = {
                     The new system exposes semantic tokens. You don't use "Blue-500". You use "Primary", "On-Primary", "Surface-Container".
                 </p>
             </div>
-             <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-400 mb-2">// globals.css</div>
                  <div class="text-purple-400">:root</div> {'{'} <br/>
                  &nbsp;&nbsp;<span class="text-green-400">--md-sys-color-primary</span>: #6750A4; <br/>
@@ -55,6 +55,14 @@ export const angularMaterial3 = {
                  <div class="text-purple-400">body.dark</div> {'{'} <br/>
                  &nbsp;&nbsp;<span class="text-green-400">--md-sys-color-primary</span>: #D0BCFF; <br/>
                  {'}'}
+            </div>
+            <div class="bg-pink-900/10 border-l-4 border-pink-500 p-6 mt-6">
+                 <h4 class="font-bold text-pink-800 dark:text-pink-200 mb-2">Deep Dive: HCT Color Space</h4>
+                 <p class="text-gray-700 dark:text-gray-300 text-sm">
+                     Material 3 isn't just random hex codes. It uses the <strong>HCT (Hue Chroma Tone)</strong> color space.
+                     <br/>
+                     This mathematically guarantees contrast. "Tone 40" text on "Tone 90" background <em>always</em> meets WCAG AA standards, regardless of the Hue (Blue, Red, or Green).
+                 </p>
             </div>
         </section>
 
@@ -76,7 +84,6 @@ export const angularMaterial3 = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Palette, Moon, Sun, Check, ToggleLeft } from 'lucide-react';
 
 // 🎨 Theme Visualizer
 
@@ -108,10 +115,10 @@ export default function ThemeDemo() {
                         <label className="text-xs font-bold text-gray-500 uppercase block mb-3">Mode</label>
                         <div className="flex gap-2">
                             <button onClick={() => setIsDark(false)} className={\`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 \${!isDark ? 'bg-gray-200 dark:bg-slate-700 font-bold' : 'border border-gray-200 dark:border-slate-700'}\`}>
-                                <Sun size={16} /> Light
+                                <span>☀️</span> Light
                             </button>
                             <button onClick={() => setIsDark(true)} className={\`flex-1 py-2 rounded-lg flex items-center justify-center gap-2 \${isDark ? 'bg-gray-200 dark:bg-slate-700 font-bold' : 'border border-gray-200 dark:border-slate-700'}\`}>
-                                <Moon size={16} /> Dark
+                                <span>🌙</span> Dark
                             </button>
                         </div>
                     </div>
@@ -126,7 +133,7 @@ export default function ThemeDemo() {
                                     className="aspect-square rounded-full border-2 border-white dark:border-slate-800 shadow relative transition-transform active:scale-90"
                                     style={{ backgroundColor: c }}
                                  >
-                                     {primary === c && <Check size={16} className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+                                     {primary === c && <span className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">✓</span>}
                                  </button>
                              ))}
                          </div>
@@ -164,7 +171,7 @@ export default function ThemeDemo() {
                              <div className="font-bold mb-2">Checkbox</div>
                              <div className="flex items-center gap-2">
                                  <div className="w-6 h-6 rounded flex items-center justify-center text-white" style={{ backgroundColor: 'var(--app-primary)' }}>
-                                     <Check size={14} />
+                                     <span>✓</span>
                                  </div>
                                  <span className="opacity-80">Agree to Terms</span>
                              </div>

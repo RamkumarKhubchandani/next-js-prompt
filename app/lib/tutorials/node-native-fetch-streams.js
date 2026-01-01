@@ -45,6 +45,14 @@ export const nodeNativeFetchStreams = {
                     Node.js streams (<code>.pipe()</code>) are legendary but complex. 
                     <strong>Web Streams</strong> (<code>.pipeTo()</code>, <code>.pipeThrough()</code>) are the modern standard, used by <code>fetch</code> and supported by Edge runtimes (Cloudflare, Deno).
                 </p>
+                <div class="bg-cyan-900/10 border-l-4 border-cyan-500 p-6 mt-6">
+                     <h4 class="font-bold text-cyan-800 dark:text-cyan-200 mb-2">Deep Dive: Duplex Streams</h4>
+                     <p class="text-gray-700 dark:text-gray-300 text-sm">
+                         Since Node.js 20, <code>Duplex.from()</code> and <code>Readable.fromWeb()</code> allow you to convert between Node.js Streams and Web Streams instantly.
+                         <br/><br/>
+                         This means you can pipe a native Node <code>fs.createReadStream</code> into a Web Standard <code>fetch</code> body effortlessly.
+                     </p>
+                </div>
             </div>
              <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800 font-mono text-sm leading-relaxed overflow-x-auto">
                  <div class="text-gray-500 mb-2">// fetch-and-stream.js (Zero Dependencies)</div>
@@ -72,7 +80,6 @@ export const nodeNativeFetchStreams = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { ArrowRight, FileText, Database, HardDrive, Download, Link2 } from 'lucide-react';
 
 // 🌊 Stream Visualizer
 
@@ -116,7 +123,7 @@ export default function StreamsDemo() {
                 {/* Source */}
                 <div className="flex flex-col items-center gap-2 z-10">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-slate-700">
-                        <Database size={24} className="text-cyan-600" />
+                        <span className="text-cyan-600 text-2xl">🗄️</span>
                     </div>
                     <div className="font-bold text-xs">Response.body</div>
                 </div>
@@ -137,7 +144,7 @@ export default function StreamsDemo() {
                 {/* Transform */}
                  <div className="flex flex-col items-center gap-2 z-10">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-slate-700">
-                        <Link2 size={24} className="text-purple-500" />
+                         <span className="text-purple-500 text-2xl">🔗</span>
                     </div>
                     <div className="font-bold text-xs text-center">Transform<br/>Stream</div>
                 </div>
@@ -158,7 +165,7 @@ export default function StreamsDemo() {
                 {/* Sink */}
                  <div className="flex flex-col items-center gap-2 z-10">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-lg border border-slate-200 dark:border-slate-700">
-                        <HardDrive size={24} className="text-green-600" />
+                        <span className="text-green-600 text-2xl">💾</span>
                     </div>
                     <div className="font-bold text-xs">Writable</div>
                 </div>

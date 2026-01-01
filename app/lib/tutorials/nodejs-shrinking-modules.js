@@ -32,6 +32,14 @@ export const nodejsShrinkingModules = {
                     <br/><br/>
                     In 2026, Node.js has absorbed the most popular userland libraries into the core runtime. You no longer need <em>Jest, Mocha, Dotenv, Notebooks, or Nodemon</em>.
                 </p>
+                <div class="bg-green-100 dark:bg-green-900/30 border-l-4 border-green-600 p-6 mt-6">
+                     <h4 class="font-bold text-green-900 dark:text-green-100 mb-2">Deep Dive: Single Executable Applications (SEA)</h4>
+                     <p class="text-sm text-gray-700 dark:text-gray-300">
+                         Node.js now allows you to bundle your script <strong>and</strong> the runtime into a single binary file. 
+                         <br/>
+                         Combined with zero dependencies, you can distribute a 50MB <code>my-api.exe</code> that runs anywhere without <code>npm install</code>.
+                     </p>
+                </div>
              </div>
         </section>
 
@@ -101,7 +109,6 @@ db.exec('CREATE TABLE users...');
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Package, Trash2, ShieldCheck, Database, Terminal } from 'lucide-react';
 
 // 📦 Node.js Core Visualizer
 
@@ -143,7 +150,7 @@ export default function NodeModulesDemo() {
                     <p className="text-gray-500 mt-2">Replace userland bloat with Native Core modules.</p>
                 </div>
                 
-                <div className="flex gap-6">
+                 <div className="flex gap-6">
                     <div className="text-right">
                          <div className="text-xs font-bold text-gray-400 uppercase">Disk Usage</div>
                          <div className="text-3xl font-black text-gray-900 dark:text-white transition-all duration-500">
@@ -173,7 +180,7 @@ export default function NodeModulesDemo() {
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <div className="p-3 bg-gray-100 dark:bg-black rounded-lg">
-                                    <Package size={20} className={isMigrated ? 'text-green-500' : 'text-gray-500'} />
+                                    <span className={isMigrated ? 'text-green-500' : 'text-gray-500'}>📦</span>
                                 </div>
                                 {!isMigrated && (
                                     <span className="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded-full border border-red-200">
@@ -182,7 +189,7 @@ export default function NodeModulesDemo() {
                                 )}
                                 {isMigrated && (
                                      <span className="text-xs font-bold bg-green-100 text-green-600 px-2 py-1 rounded-full border border-green-200 flex items-center gap-1">
-                                        <ShieldCheck size={12} /> Native
+                                        <span>🛡️</span> Native
                                     </span>
                                 )}
                             </div>
@@ -192,14 +199,14 @@ export default function NodeModulesDemo() {
                             
                             {isMigrated ? (
                                 <div className="text-sm text-green-700 dark:text-green-400 font-mono flex items-center gap-2">
-                                    <Terminal size={14} /> {pkg.native}
+                                    <span>📟</span> {pkg.native}
                                 </div>
                             ) : (
                                 <button 
                                     onClick={() => handleMigrate(pkg.id)}
                                     className="w-full py-2 bg-slate-900 dark:bg-white text-white dark:text-black rounded-lg text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                                 >
-                                    <Trash2 size={14} /> Migrate to Native
+                                    <span>🗑️</span> Migrate to Native
                                 </button>
                             )}
                         </div>

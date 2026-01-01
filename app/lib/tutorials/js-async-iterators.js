@@ -60,6 +60,48 @@ export const jsAsyncIterators = {
                  &nbsp;&nbsp;console.log(price); <br/>
                  {'}'}
             </div>
+        <!-- 03. Processing Streams -->
+        <section id="streams" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-cyan-600 dark:text-cyan-500">03.</span>
+                Real-World Pattern: Paginated APIs
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                The most common use case isn't stock tickers; it's fetching large datasets. Instead of a recursive function that crashes the stack, use an async generator to "flatten" pages into a single stream of items.
+            </p>
+            
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 font-mono text-sm leading-relaxed overflow-x-auto shadow-2xl">
+                 <div class="text-gray-500 mb-2">// Flattens pages of users into a single stream</div>
+                 <span class="text-purple-400">async function*</span> fetchAllUsers() {'{'} <br/>
+                 &nbsp;&nbsp;<span class="text-purple-400">let</span> page = 1; <br/>
+                 &nbsp;&nbsp;<span class="text-purple-400">while</span> (true) {'{'} <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500">// Fetch chunk</span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">const</span> res = <span class="text-purple-400">await</span> api.get(<span class="text-green-400">\`/users?page=\${page}\`</span>); <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">if</span> (res.data.length === 0) <span class="text-purple-400">break</span>; <br/>
+                 <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-gray-500">// Yield items one by one</span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">for</span> (<span class="text-purple-400">const</span> user <span class="text-purple-400">of</span> res.data) {'{'} <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">yield</span> user; <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;{'}'} <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;page++; <br/>
+                 &nbsp;&nbsp;{'}'} <br/>
+                 {'}'} <br/><br/>
+                 
+                 <span class="text-gray-500">// Usage: Looks like a sync loop, behaves async!</span> <br/>
+                 <span class="text-purple-400">for await</span> (<span class="text-purple-400">const</span> user <span class="text-purple-400">of</span> fetchAllUsers()) {'{'} <br/>
+                 &nbsp;&nbsp;processUser(user); <br/>
+                 {'}'}
+            </div>
+
+            <div class="bg-blue-900/10 border-l-4 border-blue-500 p-6 mt-8">
+                 <h4 class="font-bold text-blue-800 dark:text-blue-200 mb-2">Deep Dive: The "Pull" Architecture</h4>
+                 <p class="text-gray-700 dark:text-gray-300">
+                     This is a <strong>Pull Stream</strong>. The consumer <em>requests</em> the next item (by calling <code>next()</code> implicit in the loop), and the producer computes it. 
+                     <br/><br/>
+                     This is different from <strong>Push Streams</strong> (like RxJS Observables or standard DOM Events) where the producer blasts data at you whether you are ready or not.
+                     Async Iterators are perfect for flow control because the producer <strong>awaits</strong> the consumer!
+                 </p>
+            </div>
         </section>
 
         <!-- 04. Senior Take -->
@@ -69,9 +111,9 @@ export const jsAsyncIterators = {
                 The Senior Engineer's Take
             </h2>
             <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl border-l-4 border-cyan-500">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Memory Efficiency</h3>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Memory Efficiency & Backpressure</h3>
                 <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    Why use this? <strong>Backpressure</strong>. 
+                    Why use this over <code>Promise.all()</code>? <strong>Backpressure</strong>. 
                     <br/><br/>
                     When you process a 1GB file line-by-line using a generator, you only keep one line in memory at a time. A standard <code>file.read()</code> would crash your V8 engine.
                 </p>
@@ -80,7 +122,6 @@ export const jsAsyncIterators = {
     </div>
     `,
     code: `import React, { useState, useEffect } from 'react';
-import { Activity, Play, Pause, RefreshCw } from 'lucide-react';
 
 // 🌊 Stream Visualizer
 
@@ -132,7 +173,7 @@ export default function StreamDemo() {
                     disabled={isRunning}
                     className="bg-cyan-500 hover:bg-cyan-600 disabled:opacity-50 text-white font-bold px-6 py-2 rounded-xl transition-all flex items-center gap-2"
                 >
-                    {isRunning ? <Activity className="animate-pulse" /> : <Play />}
+                    {isRunning ? <span className="animate-pulse">📈</span> : <span>▶️</span>}
                     {isRunning ? 'Streaming...' : 'Start Feed'}
                 </button>
             </div>

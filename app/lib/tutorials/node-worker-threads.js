@@ -47,12 +47,20 @@ export const nodeWorkerThreads = {
                         Entire new V8 instance. Requires huge memory overhead. Slow startup.
                     </p>
                 </div>
-                 <div class="p-6 rounded-xl bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200">
+                <div class="p-6 rounded-xl bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200">
                     <h4 class="font-bold text-yellow-700 dark:text-yellow-400 mb-2">Worker Thread</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
                         Shares the same process memory. Lightweight. Fast message passing via ArrayBuffers.
                     </p>
                 </div>
+            </div>
+             <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl mb-8">
+                 <h4 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Deep Dive: Atomics & SharedArrayBuffer</h4>
+                 <p class="text-sm text-gray-700 dark:text-gray-300">
+                     True shared memory is possible! By passing a <code>SharedArrayBuffer</code> to a worker, both the main thread and the worker can read/write to the <strong>same memory address</strong> instantly. 
+                     <br/>
+                     Use <code>Atomics</code> to prevent race conditions.
+                 </p>
             </div>
         </section>
 
@@ -92,7 +100,6 @@ export const nodeWorkerThreads = {
     </div>
     `,
     code: `import React, { useState } from 'react';
-import { Cpu, Layers, Activity, AlertCircle } from 'lucide-react';
 
 // 🧵 Thread Visualizer
 
@@ -157,7 +164,7 @@ export default function ThreadsDemo() {
                     onClick={addTask}
                     className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold shadow-lg active:scale-95 transition-transform flex justify-center items-center gap-2"
                 >
-                    <Activity size={18} /> Spawn CPU Task (Hash)
+                    <span>⚡</span> Spawn CPU Task (Hash)
                 </button>
             </div>
 
@@ -166,7 +173,7 @@ export default function ThreadsDemo() {
                 {/* Main Thread Lane */}
                 <div className="border border-slate-300 dark:border-slate-700 rounded-xl p-4 bg-white dark:bg-black/20 min-h-[300px]">
                     <div className="flex items-center gap-2 mb-4 font-bold text-gray-500 uppercase text-xs">
-                        <Cpu size={14} /> Main Event Loop
+                         <span>⚙️</span> Main Event Loop
                     </div>
                     
                     {tasks.filter(t => t.status !== 'done').map(t => (
@@ -188,7 +195,7 @@ export default function ThreadsDemo() {
                     
                      {mode === 'single' && tasks.some(t => t.status === 'running') && (
                         <div className="mt-4 p-2 bg-red-100 text-red-600 text-xs rounded border border-red-200 flex items-center gap-2">
-                            <AlertCircle size={14} /> UI is Frozen!
+                            <span>⚠️</span> UI is Frozen!
                         </div>
                     )}
                 </div>
@@ -196,7 +203,7 @@ export default function ThreadsDemo() {
                 {/* Worker Pool Visualizer */}
                 <div className="col-span-2 border border-slate-300 dark:border-slate-700 rounded-xl p-4 bg-slate-100 dark:bg-slate-900/50 min-h-[300px] relative">
                      <div className="flex items-center gap-2 mb-4 font-bold text-gray-500 uppercase text-xs">
-                        <Layers size={14} /> Thread Pool (4 Threads)
+                        <span>📚</span> Thread Pool (4 Threads)
                     </div>
 
                     {mode === 'single' ? (
