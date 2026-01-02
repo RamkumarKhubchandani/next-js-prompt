@@ -1,8 +1,12 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Trophy, BookOpen, Flame } from 'lucide-react';
+import { Trophy, BookOpen, Flame, Mic } from 'lucide-react';
+import React from 'react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function StatsBar({ stats, loading }) {
+    const { data: session } = useSession();
     const StatItem = ({ icon: Icon, label, value, color, delay }) => (
         <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -22,29 +26,83 @@ export default function StatsBar({ stats, loading }) {
         </motion.div>
     );
 
+    const [showCard, setShowCard] = React.useState(false);
+
+    // Import DevCard dynamically or pass it? Better to import at top but let's do modal logic here.
+    // For cleaner code, we'll just add the button here and assume the parent or a global modal handles it, 
+    // OR we can simple render the modal here. Let's render it here for simplicity.
+
     return (
-        <div className="flex flex-wrap gap-3">
-            <StatItem
-                icon={Trophy}
-                label="XP"
-                value={stats.xp}
-                color={{ bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400' }}
-                delay={0.1}
-            />
-            <StatItem
-                icon={BookOpen}
-                label="Tutorials"
-                value={stats.completedTutorialsCount ?? 0}
-                color={{ bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' }}
-                delay={0.2}
-            />
-            <StatItem
-                icon={Flame}
-                label="Streak"
-                value={stats.streak?.count || 0}
-                color={{ bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400' }}
-                delay={0.3}
-            />
-        </div>
+        <>
+            <div className="flex flex-wrap gap-3 items-center">
+                <StatItem
+                    icon={Trophy}
+                    label="XP"
+                    value={stats.xp}
+                    color={{ bg: 'bg-yellow-500/10', text: 'text-yellow-600 dark:text-yellow-400' }}
+                    delay={0.1}
+                />
+                <StatItem
+                    icon={BookOpen}
+                    label="Tutorials"
+                    value={stats.completedTutorialsCount ?? 0}
+                    color={{ bg: 'bg-blue-500/10', text: 'text-blue-600 dark:text-blue-400' }}
+                    delay={0.2}
+                />
+                <StatItem
+                    icon={Flame}
+                    label="Streak"
+                    value={stats.streak?.count || 0}
+                    color={{ bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400' }}
+                    delay={0.3}
+                />
+
+                <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowCard(true)}
+                    className="ml-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold rounded-full shadow-lg shadow-purple-500/20 flex items-center gap-1.5 hover:shadow-purple-500/40 transition-all border border-white/10"
+                >
+                    <Trophy size={12} />
+                    My Card
+                </motion.button>
+
+                <Link href="/interview/mock">
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-500/20 flex items-center gap-1.5 hover:shadow-blue-500/40 transition-all border border-white/10"
+                    >
+                        <Mic size={12} />
+                        AI Interview
+                    </motion.button>
+                </Link>
+            </div>
+
+            {/* Dev Card Modal */}
+            {showCard && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowCard(false)}
+                            className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors"
+                        >
+                            Close
+                        </button>
+                        <DevCardLoader stats={stats} user={session?.user || { name: 'Guest User' }} activeGoal="Fullstack Mastery" />
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
+
+// Lazy load DevCard to avoid heavy initial bundle
+import dynamic from 'next/dynamic';
+const DevCardLoader = dynamic(() => import('./DevCard'), {
+    loading: () => <div className="text-white">Minting your identity...</div>
+});
