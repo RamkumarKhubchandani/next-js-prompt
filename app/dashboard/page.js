@@ -14,6 +14,7 @@ import UpgradeBanner from '../components/dashboard/UpgradeBanner';
 import CareerSimulator from '../components/dashboard/CareerSimulator';
 import Milestones from '../components/dashboard/Milestones';
 import XPGuide from '../components/dashboard/XPGuide';
+import CareerGoalsCTA from '../components/dashboard/CareerGoalsCTA';
 
 // Paths Definition
 const PATHS = [
@@ -217,6 +218,12 @@ export default function DashboardPage() {
                     </div>
                 </motion.div>
 
+
+
+
+                {/* New Feature CTA */}
+                <CareerGoalsCTA />
+
                 {/* 1. The Daily Focus */}
                 <DailyFocus
                     session={session}
@@ -260,6 +267,6 @@ export default function DashboardPage() {
                 <XPGuide />
 
             </div>
-        </div>
+        </div >
     );
 }

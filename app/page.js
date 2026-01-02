@@ -4,6 +4,7 @@ import { Features } from './components/landing-page/Features';
 import { DailyChallenges } from './components/landing-page/DailyChallenges';
 import { FeaturedBlogs } from './components/landing-page/FeaturedBlogs';
 import { AiQuizCta } from './components/landing-page/AiQuizCta';
+import { CareerGoalPromo } from './components/landing-page/CareerGoalPromo';
 import { HowItWorks } from './components/landing-page/HowItWorks';
 import { Pricing } from './components/landing-page/Pricing';
 import { Testimonials } from './components/landing-page/Testimonials';
@@ -19,6 +20,7 @@ export default function Home() {
         <DailyChallenges />
         <FeaturedBlogs />
         <AiQuizCta />
+        <CareerGoalPromo />
         <HowItWorks />
         <Pricing />
         <Testimonials />
