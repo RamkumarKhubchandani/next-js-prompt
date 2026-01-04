@@ -5,6 +5,40 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
+const PremiumAction = ({ href, icon: Icon, label, gradient, shadow, onClick, delay }) => {
+    const Component = href ? Link : 'div';
+    const props = href ? { href } : { onClick, className: 'cursor-pointer' };
+
+    return (
+        <Component {...props}>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className={`group relative overflow-hidden rounded-xl px-4 py-2 bg-gray-900/5 dark:bg-white/5 backdrop-blur-md border border-gray-200/50 dark:border-white/10 ${shadow} shadow-lg transition-all duration-300`}
+            >
+                {/* Gradient Border via Pseudo-element or layered background */}
+                <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity ${gradient}`} />
+                <div className={`absolute bottom-0 left-0 right-0 h-[2px] ${gradient}`} />
+
+                {/* Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out" />
+
+                <div className="relative flex items-center gap-2">
+                    <div className={`p-1 rounded-full ${gradient} text-white shadow-sm`}>
+                        <Icon size={12} strokeWidth={2.5} />
+                    </div>
+                    <span className="text-xs font-bold tracking-wide text-gray-700 dark:text-gray-200 group-hover:text-black dark:group-hover:text-white transition-colors">
+                        {label}
+                    </span>
+                </div>
+            </motion.div>
+        </Component>
+    );
+};
+
 export default function StatsBar({ stats, loading }) {
     const { data: session } = useSession();
     const StatItem = ({ icon: Icon, label, value, color, delay }) => (
@@ -56,57 +90,6 @@ export default function StatsBar({ stats, loading }) {
                     color={{ bg: 'bg-orange-500/10', text: 'text-orange-600 dark:text-orange-400' }}
                     delay={0.3}
                 />
-
-                <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowCard(true)}
-                    className="ml-2 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold rounded-full shadow-lg shadow-purple-500/20 flex items-center gap-1.5 hover:shadow-purple-500/40 transition-all border border-white/10"
-                >
-                    <Trophy size={12} />
-                    My Card
-                </motion.button>
-
-                <Link href="/interview/mock">
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-500/20 flex items-center gap-1.5 hover:shadow-blue-500/40 transition-all border border-white/10"
-                    >
-                        <Mic size={12} />
-                        AI Interview
-                    </motion.button>
-                </Link>
-
-                <Link href="/resume-audit">
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-bold rounded-full shadow-lg shadow-green-500/20 flex items-center gap-1.5 hover:shadow-green-500/40 transition-all border border-white/10"
-                    >
-                        <BookOpen size={12} />
-                        Resume Audit
-                    </motion.button>
-                </Link>
-
-                <Link href="/system-design">
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 hover:shadow-orange-500/40 transition-all border border-white/10"
-                    >
-                        <Layers size={12} />
-                        System Design
-                    </motion.button>
-                </Link>
             </div>
 
             {/* Dev Card Modal */}

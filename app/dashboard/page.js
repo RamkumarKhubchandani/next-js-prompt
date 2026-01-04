@@ -3,7 +3,13 @@ import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Settings } from 'lucide-react';
+import { Settings, Trophy, BookOpen, Mic, Layers, Wand2 } from 'lucide-react';
+import { PremiumAction } from '../components/dashboard/PremiumAction';
+import dynamic from 'next/dynamic';
+
+const DevCardLoader = dynamic(() => import('../components/dashboard/DevCard'), {
+    loading: () => <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">Loading...</div>
+});
 import StatsBar from '../components/dashboard/StatsBar';
 import DailyFocus from '../components/dashboard/DailyFocus';
 import LearningPaths from '../components/dashboard/LearningPaths';
@@ -111,6 +117,7 @@ export default function DashboardPage() {
     const [planResolved, setPlanResolved] = useState(false);
     const [learningPath, setLearningPath] = useState('none');
     const [progressData, setProgressData] = useState(null);
+    const [showDevCard, setShowDevCard] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -192,29 +199,71 @@ export default function DashboardPage() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+                    className="mb-8"
                 >
-                    <div>
-                        <h1 className="text-3xl font-bold mb-1 flex items-center gap-2">
-                            {greeting},
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-500">
-                                {session?.user?.name || 'Student'}
-                            </span>
-                        </h1>
-                        <p className="text-gray-500 dark:text-gray-400">Ready to level up your skills today?</p>
+                    {/* Header Row */}
+                    <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 mb-8">
+                        <div className="flex-1 min-w-0">
+                            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                                {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-500">
+                                    {session?.user?.name || 'Student'}
+                                </span>
+                            </h1>
+                            <p className="mt-2 text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+                                Ready to level up your skills today?
+                            </p>
+                        </div>
+
+                        <div className="w-full xl:w-auto flex items-center justify-between xl:justify-end gap-4">
+                            <StatsBar stats={stats} loading={loading} />
+
+                            <div className="h-8 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+
+                            <Link href="/dashboard/settings">
+                                <button className="p-2 rounded-full bg-white dark:bg-dark-800 text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-dark-700 transition-colors shadow-sm">
+                                    <Settings size={20} />
+                                </button>
+                            </Link>
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {/* Stats Bar Integrated Here */}
-                        <StatsBar stats={stats} loading={loading} />
+                    {/* Premium Tools Hero Grid - The "Command Center" */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <PremiumAction
+                            icon={Trophy}
+                            label="YOUR DEV CARD"
+                            gradient="bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600"
+                            shadow="shadow-purple-500/10 hover:shadow-purple-500/25"
+                            onClick={() => setShowDevCard(true)}
+                            delay={0.1}
+                        />
 
-                        <div className="h-8 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+                        <PremiumAction
+                            href="/interview/mock"
+                            icon={Mic}
+                            label="AI INTERVIEW"
+                            gradient="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500"
+                            shadow="shadow-blue-500/10 hover:shadow-blue-500/25"
+                            delay={0.2}
+                        />
 
-                        <Link href="/dashboard/settings">
-                            <button className="p-2 rounded-full bg-white dark:bg-dark-800 text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-dark-700 transition-colors">
-                                <Settings size={20} />
-                            </button>
-                        </Link>
+                        <PremiumAction
+                            href="/resume-audit"
+                            icon={BookOpen}
+                            label="RESUME AUDIT"
+                            gradient="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"
+                            shadow="shadow-emerald-500/10 hover:shadow-emerald-500/25"
+                            delay={0.3}
+                        />
+
+                        <PremiumAction
+                            href="/system-design"
+                            icon={Layers}
+                            label="SYSTEM DESIGN"
+                            gradient="bg-gradient-to-r from-orange-500 via-amber-500 to-red-500"
+                            shadow="shadow-orange-500/10 hover:shadow-orange-500/25"
+                            delay={0.4}
+                        />
                     </div>
                 </motion.div>
 
@@ -266,6 +315,20 @@ export default function DashboardPage() {
                 {/* 9. XP Guide (Restored) */}
                 <XPGuide />
 
+                {/* Dev Card Modal */}
+                {showDevCard && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowDevCard(false)}
+                                className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors"
+                            >
+                                Close
+                            </button>
+                            <DevCardLoader stats={stats} user={session?.user || { name: 'Guest User' }} activeGoal="Fullstack Mastery" />
+                        </div>
+                    </div>
+                )}
             </div>
         </div >
     );
