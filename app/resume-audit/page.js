@@ -178,121 +178,127 @@ export default function ResumeAuditPage() {
         const contentWidth = pageWidth - (margin * 2);
         let yPosition = 20;
 
-        // Header
-        doc.setFillColor(79, 70, 229);
-        doc.rect(0, 0, pageWidth, 35, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
+        // NAME (Centered, Big, Bold)
+        doc.setFontSize(22);
         doc.setFont('helvetica', 'bold');
-        doc.text(optimizedResume.personalInfo.name.toUpperCase(), margin, 20);
-        doc.setFontSize(11);
+        doc.text(optimizedResume.personalInfo.name.toUpperCase(), pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 8;
+
+        // CONTACT INFO (Centered, Single Line)
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
-        doc.text(optimizedResume.personalInfo.title, margin, 28);
+        const contactInfo = [
+            optimizedResume.personalInfo.email,
+            optimizedResume.personalInfo.phone,
+            optimizedResume.personalInfo.linkedin,
+            optimizedResume.personalInfo.location
+        ].filter(Boolean).join(' | ');
+        doc.text(contactInfo, pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 15;
 
-        doc.setFontSize(9);
-        const contactY = 15;
-        const contactX = pageWidth - margin;
-        doc.text(optimizedResume.personalInfo.email, contactX, contactY, { align: 'right' });
-        doc.text(optimizedResume.personalInfo.phone, contactX, contactY + 5, { align: 'right' });
-        doc.text(optimizedResume.personalInfo.linkedin, contactX, contactY + 10, { align: 'right' });
+        // Helper function for section headers
+        const addSectionHeader = (title) => {
+            if (yPosition > 270) { doc.addPage(); yPosition = 20; }
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text(title, margin, yPosition);
+            yPosition += 2;
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPosition, pageWidth - margin, yPosition);
+            yPosition += 6;
+        };
 
-        yPosition = 45;
-        doc.setTextColor(0, 0, 0);
-
-        // Summary
-        doc.setFillColor(240, 240, 245);
-        doc.rect(margin, yPosition, contentWidth, 8, 'F');
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(79, 70, 229);
-        doc.text('PROFESSIONAL SUMMARY', margin + 2, yPosition + 5.5);
-        yPosition += 12;
-        doc.setTextColor(0, 0, 0);
+        // PROFESSIONAL SUMMARY
+        addSectionHeader('PROFESSIONAL SUMMARY');
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         const summaryLines = doc.splitTextToSize(optimizedResume.sections.summary, contentWidth);
         doc.text(summaryLines, margin, yPosition);
         yPosition += summaryLines.length * 5 + 8;
 
-        // Experience
-        doc.setFillColor(240, 240, 245);
-        doc.rect(margin, yPosition, contentWidth, 8, 'F');
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(79, 70, 229);
-        doc.text('PROFESSIONAL EXPERIENCE', margin + 2, yPosition + 5.5);
-        yPosition += 12;
-        doc.setTextColor(0, 0, 0);
+        // PROFESSIONAL EXPERIENCE
+        addSectionHeader('PROFESSIONAL EXPERIENCE');
 
         optimizedResume.sections.experience.forEach((exp) => {
             if (yPosition > 250) { doc.addPage(); yPosition = 20; }
-            doc.setFontSize(12);
+
+            // Title (Left) and Date (Right)
+            doc.setFontSize(11);
             doc.setFont('helvetica', 'bold');
             doc.text(exp.title, margin, yPosition);
-            yPosition += 6;
+
+            // Company | Location (Left, below title)
+            yPosition += 5;
             doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold'); // Company Name Bold
+            doc.text(exp.company, margin, yPosition);
+
+            const companyWidth = doc.getTextWidth(exp.company);
             doc.setFont('helvetica', 'italic');
-            doc.setTextColor(100, 100, 100);
-            doc.text(`${exp.company} | ${exp.duration}`, margin, yPosition);
+            doc.text(` | ${exp.duration}`, margin + companyWidth, yPosition);
+
             yPosition += 6;
-            doc.setTextColor(0, 0, 0);
             doc.setFont('helvetica', 'normal');
+
+            // Bullets
             exp.bullets.forEach(bullet => {
-                if (yPosition > 270) { doc.addPage(); yPosition = 20; }
-                doc.text('•', margin, yPosition);
-                const bulletLines = doc.splitTextToSize(bullet, contentWidth - 5);
-                doc.text(bulletLines, margin + 5, yPosition);
+                if (yPosition > 275) { doc.addPage(); yPosition = 20; }
+                doc.text('•', margin + 2, yPosition);
+                const bulletLines = doc.splitTextToSize(bullet, contentWidth - 8);
+                doc.text(bulletLines, margin + 6, yPosition);
                 yPosition += bulletLines.length * 5;
             });
             yPosition += 4;
         });
 
-        // Skills
-        if (yPosition > 200) { doc.addPage(); yPosition = 20; }
-        doc.setFillColor(240, 240, 245);
-        doc.rect(margin, yPosition, contentWidth, 8, 'F');
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(79, 70, 229);
-        doc.text('TECHNICAL SKILLS', margin + 2, yPosition + 5.5);
-        yPosition += 12;
-        doc.setTextColor(0, 0, 0);
-        Object.entries(optimizedResume.sections.skills).forEach(([category, skills]) => {
-            if (yPosition > 270) { doc.addPage(); yPosition = 20; }
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text(category.toUpperCase() + ':', margin, yPosition);
-            yPosition += 5;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            const skillsText = skills.join(' • ');
-            const skillLines = doc.splitTextToSize(skillsText, contentWidth);
-            doc.text(skillLines, margin, yPosition);
-            yPosition += skillLines.length * 5 + 3;
-        });
+        // TECHNICAL SKILLS
+        if (yPosition > 230) { doc.addPage(); yPosition = 20; }
+        addSectionHeader('TECHNICAL SKILLS');
 
-        // Education
-        if (optimizedResume.sections.education && optimizedResume.sections.education.length > 0) {
-            if (yPosition > 240) { doc.addPage(); yPosition = 20; }
-            doc.setFillColor(240, 240, 245);
-            doc.rect(margin, yPosition, contentWidth, 8, 'F');
-            doc.setFontSize(14);
+        Object.entries(optimizedResume.sections.skills).forEach(([category, skills]) => {
+            if (yPosition > 275) { doc.addPage(); yPosition = 20; }
+            doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(79, 70, 229);
-            doc.text('EDUCATION', margin + 2, yPosition + 5.5);
-            yPosition += 12;
-            doc.setTextColor(0, 0, 0);
+            const categoryTitle = category.toUpperCase() + ': ';
+            doc.text(categoryTitle, margin, yPosition);
+
+            const categoryWidth = doc.getTextWidth(categoryTitle);
+            doc.setFont('helvetica', 'normal');
+            const skillsText = skills.join(', ');
+            const skillsLines = doc.splitTextToSize(skillsText, contentWidth - categoryWidth);
+
+            // If skills wrap, handle indent
+            if (skillsLines.length > 1) {
+                doc.text(skillsLines[0], margin + categoryWidth, yPosition);
+                for (let i = 1; i < skillsLines.length; i++) {
+                    yPosition += 5;
+                    doc.text(skillsLines[i], margin, yPosition); // Align left for subsequent lines
+                }
+            } else {
+                doc.text(skillsLines, margin + categoryWidth, yPosition);
+            }
+            yPosition += 6;
+        });
+        yPosition += 4;
+
+        // EDUCATION
+        if (optimizedResume.sections.education && optimizedResume.sections.education.length > 0) {
+            if (yPosition > 250) { doc.addPage(); yPosition = 20; }
+            addSectionHeader('EDUCATION');
+
             optimizedResume.sections.education.forEach(edu => {
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'bold');
-                doc.text(edu.degree, margin, yPosition);
-                yPosition += 5;
                 doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(edu.school, margin, yPosition);
+
+                const schoolWidth = doc.getTextWidth(edu.school);
                 doc.setFont('helvetica', 'italic');
-                doc.setTextColor(100, 100, 100);
-                doc.text(`${edu.school} | ${edu.year}`, margin, yPosition);
+                doc.text(` | ${edu.year}`, margin + schoolWidth, yPosition);
+
+                yPosition += 5;
+                doc.setFont('helvetica', 'normal');
+                doc.text(edu.degree, margin, yPosition);
                 yPosition += 8;
-                doc.setTextColor(0, 0, 0);
             });
         }
 
@@ -302,88 +308,156 @@ export default function ResumeAuditPage() {
     };
 
     const downloadAsDOCX = async () => {
-        const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle, UnderlineType } = await import('docx');
         const FileSaver = await import('file-saver');
         const saveAs = FileSaver.default || FileSaver.saveAs;
 
+        // ATS-Friendly Header Style
+        const sectionHeaderBorder = {
+            bottom: {
+                style: BorderStyle.SINGLE,
+                size: 6,
+                space: 1,
+            },
+        };
+
         const doc = new Document({
+            styles: {
+                default: {
+                    document: {
+                        run: {
+                            font: "Arial",
+                        },
+                    },
+                    heading1: {
+                        run: {
+                            font: "Arial",
+                            bold: true,
+                            color: "000000",
+                        },
+                    },
+                    heading2: {
+                        run: {
+                            font: "Arial",
+                            bold: true,
+                            color: "000000",
+                        },
+                    },
+                },
+            },
             sections: [{
-                properties: {},
+                properties: {
+                    page: {
+                        margin: {
+                            top: 1000,
+                            right: 1440,
+                            bottom: 1000,
+                            left: 1440,
+                        },
+                    },
+                },
                 children: [
-                    // Name
+                    // NAME
                     new Paragraph({
                         text: optimizedResume.personalInfo.name.toUpperCase(),
                         heading: HeadingLevel.HEADING_1,
                         alignment: AlignmentType.CENTER,
+                        spacing: { after: 120 },
                     }),
-                    // Title
-                    new Paragraph({
-                        text: optimizedResume.personalInfo.title,
-                        alignment: AlignmentType.CENTER,
-                    }),
-                    // Contact
+                    // CONTACT INFO (Single line separated by |)
                     new Paragraph({
                         children: [
-                            new TextRun(`${optimizedResume.personalInfo.email} | ${optimizedResume.personalInfo.phone} | ${optimizedResume.personalInfo.linkedin}`)
+                            new TextRun({ text: optimizedResume.personalInfo.email }),
+                            new TextRun({ text: " | " }),
+                            new TextRun({ text: optimizedResume.personalInfo.phone }),
+                            new TextRun({ text: " | " }),
+                            new TextRun({ text: optimizedResume.personalInfo.linkedin }),
+                            ...(optimizedResume.personalInfo.location ? [
+                                new TextRun({ text: " | " }),
+                                new TextRun({ text: optimizedResume.personalInfo.location })
+                            ] : [])
                         ],
                         alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 },
                     }),
-                    new Paragraph({ text: '' }),
 
-                    // Summary
+                    // PROFESSIONAL SUMMARY
                     new Paragraph({
-                        text: 'PROFESSIONAL SUMMARY',
+                        text: "PROFESSIONAL SUMMARY",
                         heading: HeadingLevel.HEADING_2,
+                        border: sectionHeaderBorder,
+                        spacing: { before: 200, after: 120 },
                     }),
-                    new Paragraph({ text: optimizedResume.sections.summary }),
-                    new Paragraph({ text: '' }),
-
-                    // Experience
                     new Paragraph({
-                        text: 'PROFESSIONAL EXPERIENCE',
+                        text: optimizedResume.sections.summary,
+                        spacing: { after: 300 },
+                    }),
+
+                    // EXPERIENCE
+                    new Paragraph({
+                        text: "PROFESSIONAL EXPERIENCE",
                         heading: HeadingLevel.HEADING_2,
+                        border: sectionHeaderBorder,
+                        spacing: { before: 200, after: 120 },
                     }),
                     ...optimizedResume.sections.experience.flatMap(exp => [
                         new Paragraph({
-                            children: [new TextRun({ text: exp.title, bold: true })],
+                            children: [
+                                new TextRun({ text: exp.title, bold: true, size: 24 }), // 12pt
+                            ],
+                            spacing: { before: 120 },
                         }),
                         new Paragraph({
-                            children: [new TextRun({ text: `${exp.company} | ${exp.duration}`, italics: true })],
+                            children: [
+                                new TextRun({ text: exp.company, bold: true }),
+                                new TextRun({ text: ` | ${exp.duration}`, italics: true })
+                            ],
+                            spacing: { after: 120 },
                         }),
                         ...exp.bullets.map(bullet => new Paragraph({
-                            text: `• ${bullet}`,
+                            text: bullet,
                             bullet: { level: 0 },
+                            spacing: { after: 60 },
                         })),
-                        new Paragraph({ text: '' }),
+                        new Paragraph({ text: "" }),
                     ]),
 
-                    // Skills
+                    // SKILLS
                     new Paragraph({
-                        text: 'TECHNICAL SKILLS',
+                        text: "TECHNICAL SKILLS",
                         heading: HeadingLevel.HEADING_2,
+                        border: sectionHeaderBorder,
+                        spacing: { before: 200, after: 120 },
                     }),
                     ...Object.entries(optimizedResume.sections.skills).map(([category, skills]) =>
                         new Paragraph({
                             children: [
                                 new TextRun({ text: `${category.toUpperCase()}: `, bold: true }),
-                                new TextRun(skills.join(', '))
+                                new TextRun({ text: skills.join(', ') })
                             ],
+                            spacing: { after: 120 },
                         })
                     ),
-                    new Paragraph({ text: '' }),
+                    new Paragraph({ text: "" }),
 
-                    // Education
+                    // EDUCATION
                     ...(optimizedResume.sections.education && optimizedResume.sections.education.length > 0 ? [
                         new Paragraph({
-                            text: 'EDUCATION',
+                            text: "EDUCATION",
                             heading: HeadingLevel.HEADING_2,
+                            border: sectionHeaderBorder,
+                            spacing: { before: 200, after: 120 },
                         }),
                         ...optimizedResume.sections.education.flatMap(edu => [
                             new Paragraph({
-                                children: [new TextRun({ text: edu.degree, bold: true })],
+                                children: [
+                                    new TextRun({ text: edu.school, bold: true }),
+                                    new TextRun({ text: ` | ${edu.year}`, italics: true })
+                                ],
                             }),
                             new Paragraph({
-                                children: [new TextRun({ text: `${edu.school} | ${edu.year}`, italics: true })],
+                                text: edu.degree,
+                                spacing: { after: 200 },
                             }),
                         ])
                     ] : [])
@@ -431,7 +505,7 @@ export default function ResumeAuditPage() {
                             transition={{ delay: 0.2 }}
                             className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
                         >
-                            Upload your resume + paste job description. Our FREE AI rewrites it to beat ATS and impress recruiters.
+                            Upload your resume + paste job description. Our premium powerful AI agent rewrites it to beat ATS and impress recruiters.
                         </motion.p>
                     </div>
 
@@ -469,7 +543,7 @@ export default function ResumeAuditPage() {
                                     <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
                                         <span className="flex items-center gap-1"><ShieldCheck size={12} /> Privacy First</span>
                                         <span className="flex items-center gap-1"><FileText size={12} /> PDF/DOCX</span>
-                                        <span className="flex items-center gap-1"><Wand2 size={12} /> FREE AI</span>
+                                        <span className="flex items-center gap-1"><Wand2 size={12} /> AI AGENT</span>
                                     </div>
                                 </div>
                             </motion.div>
