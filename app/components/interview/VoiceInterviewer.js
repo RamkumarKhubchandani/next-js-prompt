@@ -1,12 +1,23 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Play, Loader2, RefreshCw, CheckCircle, AlertCircle, Volume2, Square, Briefcase, Code, Layers, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Play, Loader2, RefreshCw, CheckCircle, AlertCircle, Volume2, Square, Briefcase, Code, Layers, Sparkles, Video, VideoOff } from 'lucide-react';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const Webcam = dynamic(() => import('react-webcam'), { ssr: false });
 
 const ROLES = [
     { id: 'frontend', label: 'Frontend Engineer', icon: Code },
     { id: 'backend', label: 'Backend Engineer', icon: Layers },
     { id: 'fullstack', label: 'Full Stack Engineer', icon: Briefcase }
+];
+
+const COMPANIES = [
+    { id: 'google', label: 'Google', color: 'from-blue-500 to-red-500', focus: "Scalability & Edge Cases" },
+    { id: 'amazon', label: 'Amazon', color: 'from-orange-500 to-yellow-500', focus: "Leadership Principles" },
+    { id: 'meta', label: 'Meta', color: 'from-blue-400 to-blue-600', focus: "Move Fast & Product Sense" },
+    { id: 'generic', label: 'Generic', color: 'from-gray-500 to-gray-700', focus: "Standard Assessment" }
 ];
 
 const TECH_STACKS = {
@@ -80,7 +91,7 @@ const QUESTION_BANK = {
 
 export default function VoiceInterviewer() {
     const [state, setState] = useState('setup'); // setup, idle, questioning, listening, processing, feedback
-    const [config, setConfig] = useState({ role: null, tech: [] });
+    const [config, setConfig] = useState({ role: null, tech: [], company: 'generic' });
     const [activeQuestion, setActiveQuestion] = useState(null);
     const [transcript, setTranscript] = useState('');
     const [feedback, setFeedback] = useState(null);
@@ -137,6 +148,8 @@ export default function VoiceInterviewer() {
         const relevant = pool.filter(q =>
             config.tech.some(t => q.tags.includes(t)) || q.tags.includes('System Design') || q.tags.includes('Performance')
         );
+        // Insider Mode: In a real app, we would filter or fetch specific company questions here.
+        // For now, we will just use the pool but the feedback will be customized.
         return relevant.length > 0 ? relevant : pool;
     };
 
@@ -212,8 +225,11 @@ export default function VoiceInterviewer() {
         let strengths = [];
         let improvements = [];
 
+        const company = COMPANIES.find(c => c.id === config.company) || COMPANIES[3];
+        const prefix = config.company !== 'generic' ? `[${company.label} Mode]: ` : "";
+
         if (score < 30) {
-            summary = "Your answer seems unrelated or too brief. Make sure to address the core technical concepts directly.";
+            summary = `${prefix}Your answer seems unrelated or too brief. Make sure to address the core technical concepts directly.`;
             strengths = ["Attempted answer"];
             improvements = ["Focus on the question", `Include terms like: ${missing.slice(0, 3).join(', ')}`];
         } else if (matchPercentage < 0.4) {
@@ -314,6 +330,35 @@ export default function VoiceInterviewer() {
                         )}
                     </AnimatePresence>
 
+                    {/* Company Selection (Insider Mode) */}
+                    <AnimatePresence>
+                        {config.role && config.tech.length > 0 && (
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden">
+                                <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 block flex justify-between">
+                                    <span>Target Company (Insider Mode)</span>
+                                    <span className="text-xs bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-full">PRO Feature</span>
+                                </label>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    {COMPANIES.map(company => (
+                                        <button
+                                            key={company.id}
+                                            onClick={() => setConfig(prev => ({ ...prev, company: company.id }))}
+                                            className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all relative overflow-hidden ${config.company === company.id
+                                                ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-black dark:border-white ring-2 ring-brand-primary ring-offset-2 dark:ring-offset-black'
+                                                : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 dark:bg-dark-800 dark:border-dark-700 dark:text-gray-400 dark:hover:bg-dark-700'
+                                                }`}
+                                        >
+                                            <span className={`font-bold text-sm ${config.company === company.id ? 'text-transparent bg-clip-text bg-gradient-to-r ' + company.color : ''}`}>
+                                                {company.label}
+                                            </span>
+                                            <span className="text-[10px] opacity-70 text-center leading-tight">{company.focus}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                     {/* Start Button */}
                     <div className="pt-4 flex justify-center">
                         <button
@@ -329,128 +374,104 @@ export default function VoiceInterviewer() {
         );
     }
 
-    // Existing Interface (Reused with activeQuestion)
+
+    // Active Interview Interface - Video Call Style
     return (
-        <div className="w-full max-w-4xl mx-auto p-4 md:p-8 min-h-[600px] flex flex-col items-center justify-center relative">
+        <div className="w-full max-w-6xl mx-auto p-4 md:p-6 min-h-[600px] flex flex-col gap-6">
 
-            {/* Ambient Background */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-primary/20 rounded-full blur-[100px] transition-all duration-1000 ${state === 'listening' ? 'scale-150 opacity-40' : 'scale-100 opacity-20'}`} />
+            {/* Video Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+
+                {/* AI Interviewer Feed */}
+                <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800 ring-1 ring-white/10 group">
+                    <Image
+                        src="/ai-interviewer.png"
+                        alt="AI Interviewer"
+                        fill
+                        className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
+                    />
+
+                    {/* Speaking Indicator / Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                    {/* Status Visualizer */}
+                    <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all ${state === 'questioning'
+                                ? 'bg-blue-500/20 border-blue-400 animate-pulse ring-2 ring-blue-500/40'
+                                : 'bg-white/10 border-white/20'
+                                }`}>
+                                {state === 'questioning' ? <Volume2 size={20} className="text-blue-400" /> : <div className="w-3 h-3 bg-green-500 rounded-full" />}
+                            </div>
+                            <div>
+                                <h3 className="text-white font-bold text-sm leading-none mb-1">Sarah (AI Interviewer)</h3>
+                                <p className="text-blue-300 text-[10px] font-mono uppercase tracking-wider flex items-center gap-2">
+                                    {state === 'questioning' ? 'Speaking...' : state === 'listening' ? 'Listening...' : 'Online'}
+                                    {config.company !== 'generic' && (
+                                        <span className="bg-white/10 px-1 rounded text-[8px] text-white/80 border border-white/10">{COMPANIES.find(c => c.id === config.company)?.label} Mode</span>
+                                    )}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Orb mini-visualizer */}
+                        {state === 'questioning' && (
+                            <div className="flex gap-1 h-4 items-end">
+                                {[...Array(5)].map((_, i) => (
+                                    <motion.div
+                                        key={i}
+                                        animate={{ height: [4, 16, 4] }}
+                                        transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                                        className="w-1 bg-blue-400 rounded-full"
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* User Feed (Webcam) */}
+                <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800 ring-1 ring-white/10">
+                    <Webcam
+                        audio={false}
+                        className="w-full h-full object-cover mirror-mode" // Add mirror class if needed in global css or styled component
+                        mirrored={true}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+
+                    <div className="absolute bottom-4 left-4 flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all ${state === 'listening'
+                            ? 'bg-red-500/20 border-red-400 animate-pulse ring-2 ring-red-500/40'
+                            : 'bg-white/10 border-white/20'
+                            }`}>
+                            {state === 'listening' ? <Mic size={20} className="text-red-400" /> : <MicOff size={20} className="text-gray-400" />}
+                        </div>
+                        <h3 className="text-white font-bold text-sm">You</h3>
+                    </div>
+                </div>
+
             </div>
 
-            {/* AI Avatar / Orb */}
-            <div className="relative z-10 mb-12">
-                <motion.div
-                    animate={{
-                        scale: state === 'questioning' ? [1, 1.1, 1] : state === 'listening' ? [1, 1.2, 1] : 1,
-                        boxShadow: state === 'listening'
-                            ? "0 0 50px 10px rgba(59, 130, 246, 0.5)"
-                            : "0 0 20px 5px rgba(59, 130, 246, 0.2)"
-                    }}
-                    transition={{
-                        duration: state === 'listening' ? 1.5 : 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                    className={`w-32 h-32 rounded-full flex items-center justify-center border-4 backdrop-blur-md transition-colors duration-500
-                        ${state === 'idle' ? 'bg-gray-100 border-gray-200 dark:bg-dark-800 dark:border-gray-700' : ''}
-                        ${state === 'questioning' ? 'bg-blue-600/10 border-blue-500 dark:bg-blue-600/20' : ''}
-                        ${state === 'listening' ? 'bg-red-500/10 border-red-500 dark:bg-red-500/20' : ''}
-                        ${state === 'processing' ? 'bg-purple-600/10 border-purple-500 dark:bg-purple-600/20' : ''}
-                        ${state === 'feedback' ? 'bg-green-600/10 border-green-500 dark:bg-green-600/20' : ''}
-                    `}
-                >
-                    {state === 'idle' && <Volume2 size={48} className="text-gray-500" />}
-                    {state === 'questioning' && <div className="space-y-1"><div className="w-16 h-1 bg-blue-400 rounded-full animate-pulse" /><div className="w-10 h-1 bg-blue-400 rounded-full animate-pulse mx-auto" /></div>}
-                    {state === 'listening' && <Mic size={48} className="text-red-400 animate-pulse" />}
-                    {state === 'processing' && <Loader2 size={48} className="text-purple-400 animate-spin" />}
-                    {state === 'feedback' && <CheckCircle size={48} className="text-green-400" />}
-                </motion.div>
-
-                {/* Status Label */}
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                    <span className="bg-white/80 dark:bg-dark-800/80 border border-gray-200 dark:border-dark-700 backdrop-blur px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-light-300">
-                        {state === 'idle' && 'AI Ready'}
-                        {state === 'questioning' && 'Interviewer Speaking...'}
-                        {state === 'listening' && 'Listening...'}
-                        {state === 'processing' && 'Analyzing Answer...'}
-                        {state === 'feedback' && 'Feedback Ready'}
+            {/* Interaction / Question Panel - Below Video */}
+            <div className="w-full bg-white dark:bg-dark-800/80 backdrop-blur-xl border border-gray-200 dark:border-dark-700 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center transition-all bg-opacity-90">
+                {/* Active Question Display */}
+                <div className="mb-6 max-w-3xl">
+                    <span className="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 text-xs font-bold mb-3 uppercase tracking-wider">
+                        {activeQuestion?.level || 'L4'} Question
                     </span>
-                </div>
-            </div>
-
-            {/* Interaction Area */}
-            <div className="w-full max-w-2xl bg-white/50 dark:bg-dark-800/50 backdrop-blur-xl border border-gray-200 dark:border-dark-700 rounded-3xl p-6 md:p-8 shadow-2xl relative z-10 transition-all">
-
-                {/* Question Section */}
-                <div className="mb-8 text-center">
-                    <div className="inline-flex items-center gap-2 mb-4">
-                        <span className="text-[10px] font-bold uppercase bg-brand-primary/10 text-brand-primary px-2 py-1 rounded">
-                            {activeQuestion?.level || 'L4'} Question
-                        </span>
-                        {activeQuestion?.tags && activeQuestion.tags.map(tag => (
-                            <span key={tag} className="text-[10px] font-bold uppercase bg-gray-200 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 px-2 py-1 rounded border border-gray-300 dark:border-gray-600">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
-                        {state === 'idle' ? "Ready for your interview?" : activeQuestion?.text}
-                    </h3>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-relaxed">
+                        "{activeQuestion?.text}"
+                    </h2>
                 </div>
 
-                {/* Transcript Area (Real-time) */}
-                {(state === 'listening' || state === 'processing' || state === 'feedback') && (
-                    <div className="mb-8 p-4 bg-gray-50 dark:bg-black/20 rounded-xl border border-gray-200 dark:border-white/5 min-h-[100px] max-h-[200px] overflow-y-auto">
-                        <p className="text-gray-700 dark:text-gray-300 font-mono text-sm leading-relaxed">
-                            {transcript || <span className="text-gray-400 dark:text-gray-600 italic">Listening for your answer... speak clearly...</span>}
-                        </p>
-                    </div>
-                )}
-
-                {/* Feedback Report */}
-                <AnimatePresence>
-                    {state === 'feedback' && feedback && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-white/80 dark:bg-dark-900/80 rounded-xl p-6 border border-gray-200 dark:border-dark-600 mb-8"
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <h4 className="font-bold text-gray-900 dark:text-white">AI Analysis</h4>
-                                <div className={`px-3 py-1 rounded-full text-sm font-bold ${feedback.score >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400'}`}>
-                                    Score: {feedback.score}/100
-                                </div>
-                            </div>
-                            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 leading-relaxed border-l-2 border-brand-primary pl-4">
-                                {feedback.summary}
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 text-xs">
-                                <div>
-                                    <div className="font-bold text-green-600 dark:text-green-400 mb-2 flex items-center gap-1"><CheckCircle size={10} /> Strengths</div>
-                                    <ul className="space-y-1 text-gray-600 dark:text-gray-400">
-                                        {feedback.strengths.map((s, i) => <li key={i}>• {s}</li>)}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <div className="font-bold text-orange-600 dark:text-orange-400 mb-2 flex items-center gap-1"><AlertCircle size={10} /> Improvements</div>
-                                    <ul className="space-y-1 text-gray-600 dark:text-gray-400">
-                                        {feedback.improvements.map((s, i) => <li key={i}>• {s}</li>)}
-                                    </ul>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Controls */}
-                <div className="flex justify-center gap-4">
+                {/* Controls Bar */}
+                <div className="flex items-center gap-4">
                     {state === 'idle' && (
                         <button
                             onClick={startInterview}
                             className="flex items-center gap-2 bg-brand-primary hover:bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-brand-primary/20 transition-all hover:scale-105"
                         >
-                            <Play size={18} fill="currentColor" /> Start Interview
+                            <Play size={18} fill="currentColor" /> Begin Session
                         </button>
                     )}
 
@@ -459,7 +480,7 @@ export default function VoiceInterviewer() {
                             onClick={stopListening}
                             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-red-500/20 transition-all hover:scale-105 animate-pulse"
                         >
-                            <Square size={18} fill="currentColor" /> I'm Done Speaking
+                            <Square size={18} fill="currentColor" /> Stop Recording
                         </button>
                     )}
 
@@ -469,24 +490,65 @@ export default function VoiceInterviewer() {
                                 onClick={startInterview}
                                 className="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-dark-700 dark:hover:bg-dark-600 dark:text-white px-6 py-3 rounded-full font-semibold transition-all"
                             >
-                                <RefreshCw size={18} /> Retry Question
+                                <RefreshCw size={18} /> Retry
                             </button>
                             <button
                                 onClick={nextQuestion}
                                 className="flex items-center gap-2 bg-brand-primary hover:bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-brand-primary/20 transition-all hover:scale-105"
                             >
-                                Next Question <Play size={18} fill="currentColor" />
+                                Next <Play size={18} fill="currentColor" />
                             </button>
                         </div>
                     )}
                 </div>
+
+                {/* Feedback Overlay - Animated Pop-up */}
+                <AnimatePresence>
+                    {state === 'feedback' && feedback && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
+                            className="w-full max-w-4xl text-left bg-gray-50 dark:bg-black/40 rounded-xl p-6 border border-gray-200 dark:border-white/5 overflow-hidden"
+                        >
+                            <div className="flex items-center gap-3 mb-3">
+                                <Sparkles size={20} className="text-brand-primary" />
+                                <h4 className="font-bold text-gray-900 dark:text-white">Live Feedback Analysis</h4>
+                                <div className={`ml-auto px-3 py-1 rounded-full text-xs font-bold ${feedback.score >= 70 ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400'}`}>
+                                    Score: {feedback.score}/100
+                                </div>
+                            </div>
+                            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                                {feedback.summary}
+                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div className="space-y-1">
+                                    <div className="font-bold text-green-600 dark:text-green-400 flex items-center gap-1"><CheckCircle size={10} /> Good Points</div>
+                                    {feedback.strengths.map((s, i) => <div key={i} className="text-gray-500 dark:text-gray-400 pl-4 border-l border-gray-300 dark:border-gray-700">{s}</div>)}
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1"><AlertCircle size={10} /> Needs Work</div>
+                                    {feedback.improvements.map((s, i) => <div key={i} className="text-gray-500 dark:text-gray-400 pl-4 border-l border-gray-300 dark:border-gray-700">{s}</div>)}
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
+
+            {/* Live Transcript (Subtitle style) */}
+            {(state === 'listening' || state === 'processing') && (
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur px-6 py-3 rounded-full border border-white/10 max-w-2xl text-center z-50 shadow-2xl">
+                    <p className="text-white font-medium text-lg animate-fade-in transition-all">
+                        {transcript || <span className="opacity-50 italic">Listening...</span>}
+                    </p>
+                </div>
+            )}
 
             <button
                 onClick={() => setState('setup')}
-                className="mt-8 text-xs text-center text-gray-500 hover:text-white underline transition-colors"
+                className="text-xs text-center text-gray-400 hover:text-gray-900 dark:hover:text-white underline transition-colors"
             >
-                Change Configuration
+                End Session & Reconfigure
             </button>
         </div>
     );

@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { Trophy, BookOpen, Flame, Mic } from 'lucide-react';
+import { Trophy, BookOpen, Flame, Mic, Layers } from 'lucide-react';
 import React from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -79,6 +79,32 @@ export default function StatsBar({ stats, loading }) {
                     >
                         <Mic size={12} />
                         AI Interview
+                    </motion.button>
+                </Link>
+
+                <Link href="/resume-audit">
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-bold rounded-full shadow-lg shadow-green-500/20 flex items-center gap-1.5 hover:shadow-green-500/40 transition-all border border-white/10"
+                    >
+                        <BookOpen size={12} />
+                        Resume Audit
+                    </motion.button>
+                </Link>
+
+                <Link href="/system-design">
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="ml-2 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 hover:shadow-orange-500/40 transition-all border border-white/10"
+                    >
+                        <Layers size={12} />
+                        System Design
                     </motion.button>
                 </Link>
             </div>
