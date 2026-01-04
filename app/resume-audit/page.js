@@ -2,8 +2,9 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/app/components/Header';
-import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import Link from 'next/link';
 
 export default function ResumeAuditPage() {
     const [auditState, setAuditState] = useState('idle');
@@ -477,6 +478,11 @@ export default function ResumeAuditPage() {
             <Header />
 
             <main className="pt-24 pb-12 px-4 relative overflow-hidden min-h-screen">
+                <div className="max-w-6xl mx-auto mb-6">
+                    <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium mb-4">
+                        <ChevronLeft size={20} /> Back to Dashboard
+                    </Link>
+                </div>
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-20 left-10 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
                     <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
