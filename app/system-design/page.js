@@ -387,38 +387,127 @@ export default function SystemDesignPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-slate-900 dark:text-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-300">
+            {/* Animated Background Elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-20 left-10 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-300/20 dark:bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            </div>
+
             <Header />
-            <main className="pt-24 px-4 pb-10 min-h-screen">
+            <main className="pt-24 px-4 pb-10 min-h-screen relative z-10">
                 {view === 'lobby' && (
                     <div className="max-w-7xl mx-auto">
-                        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-500 hover:text-brand-primary mb-8">
-                            <ArrowLeft size={20} /> Back to Dashboard
+                        <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-white mb-8 transition-all group">
+                            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                            <span className="font-medium">Back to Dashboard</span>
                         </Link>
-                        <h1 className="text-5xl font-black mb-12">System Design <span className="text-orange-500">Arena</span></h1>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {CHALLENGES.map(c => (
-                                <div key={c.id} onClick={() => openBriefing(c)} className="bg-white dark:bg-dark-800 p-6 rounded-2xl border hover:border-orange-500 cursor-pointer">
-                                    <div className="flex justify-between mb-4">
-                                        <div className="p-3 bg-gray-50 rounded-xl"><c.icon className="text-orange-500" /></div>
-                                        <span className="text-xs font-bold bg-gray-100 px-2 py-1 rounded">{c.level}</span>
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-2">{c.title}</h3>
-                                    <p className="text-sm text-gray-500">{c.desc}</p>
+
+                        {/* Hero Section */}
+                        <div className="text-center mb-16">
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-6xl md:text-7xl font-black mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 dark:from-white dark:via-purple-200 dark:to-pink-200 bg-clip-text text-transparent"
+                            >
+                                System Design Arena
+                            </motion.h1>
+                            <motion.p
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
+                            >
+                                Master 24 real-world system design challenges. From Netflix to Uber, learn how tech giants build at scale.
+                            </motion.p>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="flex flex-wrap gap-4 justify-center mt-8"
+                            >
+                                <div className="px-4 py-2 bg-purple-100 dark:bg-purple-500/20 rounded-full border border-purple-300 dark:border-purple-500/30 backdrop-blur-sm">
+                                    <span className="text-sm font-bold text-purple-700 dark:text-purple-300">🎓 AI Tutor Included</span>
                                 </div>
+                                <div className="px-4 py-2 bg-blue-100 dark:bg-blue-500/20 rounded-full border border-blue-300 dark:border-blue-500/30 backdrop-blur-sm">
+                                    <span className="text-sm font-bold text-blue-700 dark:text-blue-300">🔊 Voice Narration</span>
+                                </div>
+                                <div className="px-4 py-2 bg-pink-100 dark:bg-pink-500/20 rounded-full border border-pink-300 dark:border-pink-500/30 backdrop-blur-sm">
+                                    <span className="text-sm font-bold text-pink-700 dark:text-pink-300">✨ Interactive Canvas</span>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* Challenge Cards Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {CHALLENGES.map((c, index) => (
+                                <motion.div
+                                    key={c.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    onClick={() => openBriefing(c)}
+                                    className="group relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-6 rounded-2xl border border-gray-200 dark:border-slate-700/50 hover:border-purple-400 dark:hover:border-purple-500/50 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20"
+                                >
+                                    {/* Glow Effect on Hover */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300"></div>
+
+                                    <div className="relative z-10">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="p-3 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-500/20 dark:to-pink-500/20 rounded-xl border border-purple-200 dark:border-purple-500/30 group-hover:scale-110 transition-transform">
+                                                <c.icon className="text-purple-600 dark:text-purple-400" size={24} />
+                                            </div>
+                                            <span className="text-xs font-bold bg-gray-100 dark:bg-slate-800/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700/50 text-purple-700 dark:text-purple-300">
+                                                {c.level}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+                                            {c.title}
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                                            {c.desc}
+                                        </p>
+
+                                        {/* Hover Arrow */}
+                                        <div className="mt-4 flex items-center gap-2 text-purple-600 dark:text-purple-400 opacity-0 group-hover:opacity-100 transition-all">
+                                            <span className="text-sm font-bold">Start Challenge</span>
+                                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                        </div>
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 )}
 
                 {view === 'briefing' && selectedBrief && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                        <div className="bg-white dark:bg-dark-900 max-w-2xl w-full p-8 rounded-3xl">
-                            <button onClick={() => setView('lobby')} className="absolute top-4 right-4">✕</button>
-                            <h2 className="text-3xl font-black mb-4">{selectedBrief.title}</h2>
-                            <p className="text-lg mb-8">{selectedBrief.brief}</p>
-                            <button onClick={startChallenge} className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold">Start Designing</button>
-                        </div>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white dark:bg-slate-900 max-w-2xl w-full p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 relative"
+                        >
+                            <button
+                                onClick={() => setView('lobby')}
+                                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all"
+                            >
+                                ✕
+                            </button>
+                            <div className="mb-6">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-500/20 rounded-full border border-purple-200 dark:border-purple-500/30 mb-4">
+                                    <span className="text-xs font-bold text-purple-700 dark:text-purple-300">{selectedBrief.level}</span>
+                                </div>
+                                <h2 className="text-4xl font-black mb-4 text-gray-900 dark:text-white">{selectedBrief.title}</h2>
+                            </div>
+                            <p className="text-lg mb-8 text-gray-700 dark:text-gray-300 leading-relaxed">{selectedBrief.brief}</p>
+                            <button
+                                onClick={startChallenge}
+                                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+                            >
+                                Start Designing →
+                            </button>
+                        </motion.div>
                     </div>
                 )}
 
