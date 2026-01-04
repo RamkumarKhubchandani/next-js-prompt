@@ -6,12 +6,17 @@ import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Spar
 import confetti from 'canvas-confetti';
 
 export default function ResumeAuditPage() {
-    const [auditState, setAuditState] = useState('idle'); // idle, job-input, uploading, analyzing, results, optimizing, optimized
-    const [file, setFile] = useState(null);
+    const [auditState, setAuditState] = useState('idle');
+    const [resumeText, setResumeText] = useState('');
     const [jobDescription, setJobDescription] = useState('');
     const [analysis, setAnalysis] = useState(null);
     const [optimizedResume, setOptimizedResume] = useState(null);
+    const [originalResumeData, setOriginalResumeData] = useState(null);
     const [copied, setCopied] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [progressMessage, setProgressMessage] = useState('');
+    const [downloadFormat, setDownloadFormat] = useState('pdf');
+    const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
 
     const handleFileUpload = (e) => {
@@ -24,73 +29,129 @@ export default function ResumeAuditPage() {
 
     const startAnalysis = async () => {
         setAuditState('analyzing');
+        setProgress(0);
+        setProgressMessage('Reading your resume...');
 
-        // Mock Analysis Delay
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        try {
+            setProgress(20);
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Mock Result Data
-        const mockResult = {
-            score: 64,
-            summary: "Your resume has a strong technical foundation but lacks quantitative impact. It might get filtered by ATS due to complex formatting.",
-            ats_compatibility: "Medium",
-            keywords_found: ["React", "JavaScript", "CSS"],
-            keywords_missing: ["CI/CD", "TypeScript", "System Design", "Unit Testing"],
-            formatting_issues: ["Multiple columns detected (bad for ATS)", "Font size too small (10px)"],
-            improvements: [
-                { section: "Experience", tip: "Use the 'X-Y-Z' formula: Achieved [X] as measured by [Y], by doing [Z]." },
-                { section: "Skills", tip: "Group skills by category (Languages, Tools, Frameworks) for better readability." },
-                { section: "Summary", tip: "Remove the 'Objective' section. Replace with a 'Professional Summary' highlighting 3 key achievements." }
-            ]
-        };
+            const formData = new FormData();
+            formData.append('resume', file);
+            formData.append('jobDescription', jobDescription);
 
-        setAnalysis(mockResult);
-        setAuditState('results');
-        if (mockResult.score > 80) confetti();
+            setProgress(40);
+            setProgressMessage('Sending to AI for analysis...');
+
+            const response = await fetch('/api/analyze-resume', {
+                method: 'POST',
+                body: formData
+            });
+
+            setProgress(70);
+            setProgressMessage('AI is analyzing your resume...');
+
+            if (!response.ok) {
+                throw new Error('Analysis failed');
+            }
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Analysis failed');
+            }
+
+            setProgress(90);
+            setProgressMessage('Preparing results...');
+
+            const data = result.data;
+
+            setOriginalResumeData({
+                name: data.personalInfo.name,
+                email: data.personalInfo.email,
+                phone: data.personalInfo.phone,
+                linkedin: data.personalInfo.linkedin,
+                currentTitle: data.personalInfo.currentTitle,
+                experience: data.experience,
+                skills: data.skills,
+                education: data.education
+            });
+
+            setAnalysis({
+                score: data.analysis.score,
+                summary: `Your resume has been analyzed. Current ATS score: ${data.analysis.score}/100.`,
+                ats_compatibility: data.analysis.score > 80 ? 'High' : data.analysis.score > 60 ? 'Medium' : 'Low',
+                keywords_found: data.analysis.keywordsFound,
+                keywords_missing: data.analysis.keywordsMissing,
+                formatting_issues: data.analysis.formattingIssues,
+                improvements: data.analysis.improvements
+            });
+
+            setProgress(100);
+            setProgressMessage('Complete!');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            setAuditState('results');
+            if (data.analysis.score > 80) confetti();
+
+        } catch (error) {
+            console.error('Analysis error:', error);
+            alert('Failed to analyze resume. Please check your Gemini API key in .env.local');
+            setAuditState('job-input');
+        }
     };
 
     const optimizeResume = async () => {
         setAuditState('optimizing');
+        setProgress(0);
+        setProgressMessage('Preparing optimization...');
 
-        // Mock Optimization Delay
-        await new Promise(resolve => setTimeout(resolve, 4000));
+        try {
+            setProgress(20);
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Mock Optimized Resume
-        const mockOptimized = {
-            score: 92,
-            sections: {
-                summary: "Results-driven Senior Software Engineer with 5+ years building scalable web applications. Increased system performance by 40% through React optimization and reduced deployment time by 60% via CI/CD automation. Expert in TypeScript, System Design, and Unit Testing.",
-                experience: [
-                    {
-                        title: "Senior Software Engineer",
-                        company: "Tech Corp",
-                        duration: "2021 - Present",
-                        bullets: [
-                            "Architected and deployed microservices infrastructure serving 2M+ users, reducing latency by 35% through Redis caching and load balancing",
-                            "Led migration from JavaScript to TypeScript, improving code quality by 50% as measured by 80% reduction in runtime errors",
-                            "Implemented CI/CD pipeline using GitHub Actions and Docker, decreasing deployment time from 2 hours to 15 minutes (87.5% improvement)",
-                            "Mentored 5 junior developers on React best practices and system design, resulting in 30% faster feature delivery"
-                        ]
-                    }
-                ],
-                skills: {
-                    languages: ["TypeScript", "JavaScript", "Python", "Go"],
-                    frameworks: ["React", "Next.js", "Node.js", "Express"],
-                    tools: ["Docker", "Kubernetes", "AWS", "CI/CD", "Git"],
-                    practices: ["System Design", "Unit Testing", "Agile", "Code Review"]
-                }
-            },
-            improvements_made: [
-                "Added quantifiable metrics to all experience bullets",
-                "Incorporated missing keywords: TypeScript, CI/CD, System Design, Unit Testing",
-                "Restructured skills section by category for ATS compatibility",
-                "Replaced generic objective with achievement-focused professional summary",
-                "Removed complex formatting for better ATS parsing"
-            ]
-        };
+            setProgressMessage('Sending to AI...');
+            setProgress(40);
 
-        setOptimizedResume(mockOptimized);
-        setAuditState('optimized');
-        confetti();
+            const response = await fetch('/api/optimize-resume', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    originalData: originalResumeData,
+                    jobDescription: jobDescription
+                })
+            });
+
+            setProgress(60);
+            setProgressMessage('AI is rewriting your resume...');
+
+            if (!response.ok) {
+                throw new Error('Optimization failed');
+            }
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Optimization failed');
+            }
+
+            setProgress(90);
+            setProgressMessage('Finalizing...');
+
+            setOptimizedResume(result.data);
+
+            setProgress(100);
+            setProgressMessage('Complete!');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            setAuditState('optimized');
+            confetti();
+
+        } catch (error) {
+            console.error('Optimization error:', error);
+            alert('Failed to optimize resume. Please check your Gemini API key.');
+            setAuditState('results');
+        }
     };
 
     const copyToClipboard = (text) => {
@@ -99,20 +160,255 @@ export default function ResumeAuditPage() {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const downloadOptimizedResume = async () => {
+        if (!optimizedResume || !optimizedResume.personalInfo) return;
+
+        if (downloadFormat === 'pdf') {
+            await downloadAsPDF();
+        } else {
+            await downloadAsDOCX();
+        }
+    };
+
+    const downloadAsPDF = async () => {
+        const { jsPDF } = await import('jspdf');
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        const contentWidth = pageWidth - (margin * 2);
+        let yPosition = 20;
+
+        // Header
+        doc.setFillColor(79, 70, 229);
+        doc.rect(0, 0, pageWidth, 35, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text(optimizedResume.personalInfo.name.toUpperCase(), margin, 20);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text(optimizedResume.personalInfo.title, margin, 28);
+
+        doc.setFontSize(9);
+        const contactY = 15;
+        const contactX = pageWidth - margin;
+        doc.text(optimizedResume.personalInfo.email, contactX, contactY, { align: 'right' });
+        doc.text(optimizedResume.personalInfo.phone, contactX, contactY + 5, { align: 'right' });
+        doc.text(optimizedResume.personalInfo.linkedin, contactX, contactY + 10, { align: 'right' });
+
+        yPosition = 45;
+        doc.setTextColor(0, 0, 0);
+
+        // Summary
+        doc.setFillColor(240, 240, 245);
+        doc.rect(margin, yPosition, contentWidth, 8, 'F');
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(79, 70, 229);
+        doc.text('PROFESSIONAL SUMMARY', margin + 2, yPosition + 5.5);
+        yPosition += 12;
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        const summaryLines = doc.splitTextToSize(optimizedResume.sections.summary, contentWidth);
+        doc.text(summaryLines, margin, yPosition);
+        yPosition += summaryLines.length * 5 + 8;
+
+        // Experience
+        doc.setFillColor(240, 240, 245);
+        doc.rect(margin, yPosition, contentWidth, 8, 'F');
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(79, 70, 229);
+        doc.text('PROFESSIONAL EXPERIENCE', margin + 2, yPosition + 5.5);
+        yPosition += 12;
+        doc.setTextColor(0, 0, 0);
+
+        optimizedResume.sections.experience.forEach((exp) => {
+            if (yPosition > 250) { doc.addPage(); yPosition = 20; }
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text(exp.title, margin, yPosition);
+            yPosition += 6;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(100, 100, 100);
+            doc.text(`${exp.company} | ${exp.duration}`, margin, yPosition);
+            yPosition += 6;
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            exp.bullets.forEach(bullet => {
+                if (yPosition > 270) { doc.addPage(); yPosition = 20; }
+                doc.text('•', margin, yPosition);
+                const bulletLines = doc.splitTextToSize(bullet, contentWidth - 5);
+                doc.text(bulletLines, margin + 5, yPosition);
+                yPosition += bulletLines.length * 5;
+            });
+            yPosition += 4;
+        });
+
+        // Skills
+        if (yPosition > 200) { doc.addPage(); yPosition = 20; }
+        doc.setFillColor(240, 240, 245);
+        doc.rect(margin, yPosition, contentWidth, 8, 'F');
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(79, 70, 229);
+        doc.text('TECHNICAL SKILLS', margin + 2, yPosition + 5.5);
+        yPosition += 12;
+        doc.setTextColor(0, 0, 0);
+        Object.entries(optimizedResume.sections.skills).forEach(([category, skills]) => {
+            if (yPosition > 270) { doc.addPage(); yPosition = 20; }
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text(category.toUpperCase() + ':', margin, yPosition);
+            yPosition += 5;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const skillsText = skills.join(' • ');
+            const skillLines = doc.splitTextToSize(skillsText, contentWidth);
+            doc.text(skillLines, margin, yPosition);
+            yPosition += skillLines.length * 5 + 3;
+        });
+
+        // Education
+        if (optimizedResume.sections.education && optimizedResume.sections.education.length > 0) {
+            if (yPosition > 240) { doc.addPage(); yPosition = 20; }
+            doc.setFillColor(240, 240, 245);
+            doc.rect(margin, yPosition, contentWidth, 8, 'F');
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(79, 70, 229);
+            doc.text('EDUCATION', margin + 2, yPosition + 5.5);
+            yPosition += 12;
+            doc.setTextColor(0, 0, 0);
+            optimizedResume.sections.education.forEach(edu => {
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text(edu.degree, margin, yPosition);
+                yPosition += 5;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text(`${edu.school} | ${edu.year}`, margin, yPosition);
+                yPosition += 8;
+                doc.setTextColor(0, 0, 0);
+            });
+        }
+
+        const fileName = `${optimizedResume.personalInfo.name.replace(/\s+/g, '_')}_Resume.pdf`;
+        doc.save(fileName);
+        confetti();
+    };
+
+    const downloadAsDOCX = async () => {
+        const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = await import('docx');
+        const FileSaver = await import('file-saver');
+        const saveAs = FileSaver.default || FileSaver.saveAs;
+
+        const doc = new Document({
+            sections: [{
+                properties: {},
+                children: [
+                    // Name
+                    new Paragraph({
+                        text: optimizedResume.personalInfo.name.toUpperCase(),
+                        heading: HeadingLevel.HEADING_1,
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    // Title
+                    new Paragraph({
+                        text: optimizedResume.personalInfo.title,
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    // Contact
+                    new Paragraph({
+                        children: [
+                            new TextRun(`${optimizedResume.personalInfo.email} | ${optimizedResume.personalInfo.phone} | ${optimizedResume.personalInfo.linkedin}`)
+                        ],
+                        alignment: AlignmentType.CENTER,
+                    }),
+                    new Paragraph({ text: '' }),
+
+                    // Summary
+                    new Paragraph({
+                        text: 'PROFESSIONAL SUMMARY',
+                        heading: HeadingLevel.HEADING_2,
+                    }),
+                    new Paragraph({ text: optimizedResume.sections.summary }),
+                    new Paragraph({ text: '' }),
+
+                    // Experience
+                    new Paragraph({
+                        text: 'PROFESSIONAL EXPERIENCE',
+                        heading: HeadingLevel.HEADING_2,
+                    }),
+                    ...optimizedResume.sections.experience.flatMap(exp => [
+                        new Paragraph({
+                            children: [new TextRun({ text: exp.title, bold: true })],
+                        }),
+                        new Paragraph({
+                            children: [new TextRun({ text: `${exp.company} | ${exp.duration}`, italics: true })],
+                        }),
+                        ...exp.bullets.map(bullet => new Paragraph({
+                            text: `• ${bullet}`,
+                            bullet: { level: 0 },
+                        })),
+                        new Paragraph({ text: '' }),
+                    ]),
+
+                    // Skills
+                    new Paragraph({
+                        text: 'TECHNICAL SKILLS',
+                        heading: HeadingLevel.HEADING_2,
+                    }),
+                    ...Object.entries(optimizedResume.sections.skills).map(([category, skills]) =>
+                        new Paragraph({
+                            children: [
+                                new TextRun({ text: `${category.toUpperCase()}: `, bold: true }),
+                                new TextRun(skills.join(', '))
+                            ],
+                        })
+                    ),
+                    new Paragraph({ text: '' }),
+
+                    // Education
+                    ...(optimizedResume.sections.education && optimizedResume.sections.education.length > 0 ? [
+                        new Paragraph({
+                            text: 'EDUCATION',
+                            heading: HeadingLevel.HEADING_2,
+                        }),
+                        ...optimizedResume.sections.education.flatMap(edu => [
+                            new Paragraph({
+                                children: [new TextRun({ text: edu.degree, bold: true })],
+                            }),
+                            new Paragraph({
+                                children: [new TextRun({ text: `${edu.school} | ${edu.year}`, italics: true })],
+                            }),
+                        ])
+                    ] : [])
+                ]
+            }]
+        });
+
+        const blob = await Packer.toBlob(doc);
+        const fileName = `${optimizedResume.personalInfo.name.replace(/\s+/g, '_')}_Resume.docx`;
+        saveAs(blob, fileName);
+        confetti();
+    };
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-purple-950 dark:to-slate-950 text-slate-900 dark:text-white font-sans selection:bg-brand-primary/30 transition-colors duration-300">
             <Header />
 
             <main className="pt-24 pb-12 px-4 relative overflow-hidden min-h-screen">
-                {/* Background Decor */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-20 left-10 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
                     <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
                 </div>
 
                 <div className="max-w-6xl mx-auto relative z-10">
-
-                    {/* Header Section */}
                     <div className="text-center mb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -135,12 +431,12 @@ export default function ResumeAuditPage() {
                             transition={{ delay: 0.2 }}
                             className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
                         >
-                            Upload your resume + paste job description. Our AI rewrites it to beat ATS systems and impress recruiters.
+                            Upload your resume + paste job description. Our FREE AI rewrites it to beat ATS and impress recruiters.
                         </motion.p>
                     </div>
 
                     <AnimatePresence mode="wait">
-                        {/* STATE: UPLOAD */}
+                        {/* UPLOAD STATE */}
                         {auditState === 'idle' && (
                             <motion.div
                                 key="upload"
@@ -157,7 +453,7 @@ export default function ResumeAuditPage() {
                                         type="file"
                                         ref={fileInputRef}
                                         onChange={handleFileUpload}
-                                        accept=".pdf"
+                                        accept=".pdf,.docx,.doc"
                                         className="hidden"
                                     />
 
@@ -165,21 +461,21 @@ export default function ResumeAuditPage() {
                                         <Upload size={32} className="text-purple-600 dark:text-purple-400" />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                        Drop your resume (PDF) here
+                                        Drop your resume here
                                     </h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                        or click to browse • We'll analyze and optimize it for you
+                                        PDF or DOCX • We'll analyze and optimize it
                                     </p>
                                     <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
                                         <span className="flex items-center gap-1"><ShieldCheck size={12} /> Privacy First</span>
-                                        <span className="flex items-center gap-1"><FileText size={12} /> PDF Only</span>
-                                        <span className="flex items-center gap-1"><Wand2 size={12} /> AI Powered</span>
+                                        <span className="flex items-center gap-1"><FileText size={12} /> PDF/DOCX</span>
+                                        <span className="flex items-center gap-1"><Wand2 size={12} /> FREE AI</span>
                                     </div>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* STATE: JOB DESCRIPTION INPUT */}
+                        {/* JOB INPUT STATE */}
                         {auditState === 'job-input' && (
                             <motion.div
                                 key="job-input"
@@ -195,7 +491,7 @@ export default function ResumeAuditPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Paste Job Description</h3>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Help us tailor your resume to this specific role</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">Help us tailor your resume to this role</p>
                                         </div>
                                     </div>
 
@@ -205,7 +501,7 @@ export default function ResumeAuditPage() {
                                         placeholder="Paste the full job description here...
 
 Example:
-We're looking for a Senior Software Engineer with 5+ years of experience in React, TypeScript, and system design. You'll build scalable web applications, mentor junior developers, and implement CI/CD pipelines..."
+We're looking for a Senior Software Engineer with 5+ years of experience in React, TypeScript, and system design..."
                                         className="w-full h-64 p-4 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
                                     />
 
@@ -221,18 +517,14 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                             disabled={!jobDescription.trim()}
                                             className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                                         >
-                                            Analyze Resume →
+                                            Analyze Resume with AI →
                                         </button>
                                     </div>
-
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
-                                        💡 Tip: The more detailed the job description, the better we can optimize your resume
-                                    </p>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* STATE: ANALYZING */}
+                        {/* ANALYZING STATE */}
                         {auditState === 'analyzing' && (
                             <motion.div
                                 key="analyzing"
@@ -249,20 +541,31 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                                     />
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <FileText size={40} className="text-gray-400 animate-pulse" />
+                                        <span className="text-2xl font-black text-purple-600">{progress}%</span>
                                     </div>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Analyzing Resume...</h3>
-                                <div className="space-y-2">
-                                    <ScanningStep text="Extracting text layers..." delay={0} />
-                                    <ScanningStep text="Checking ATS readability..." delay={1} />
-                                    <ScanningStep text="Comparing with job description..." delay={2} />
-                                    <ScanningStep text="Finding missing keywords..." delay={3} />
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Analyzing with AI...</h3>
+
+                                {/* Progress Bar */}
+                                <div className="w-full mb-6">
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">{progressMessage}</span>
+                                        <span className="text-sm font-bold text-purple-600">{progress}%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <motion.div
+                                            className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${progress}%` }}
+                                            transition={{ duration: 0.5 }}
+                                        />
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* STATE: RESULTS */}
+
+                        {/* RESULTS STATE */}
                         {auditState === 'results' && analysis && (
                             <motion.div
                                 key="results"
@@ -270,31 +573,25 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                 animate={{ opacity: 1, y: 0 }}
                                 className="w-full"
                             >
-                                {/* Scorecard */}
+                                {/* Score Card */}
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                                    <div className="md:col-span-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-xl relative overflow-hidden">
-                                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-500" />
+                                    <div className="md:col-span-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-xl">
                                         <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-xs mb-4">Current Score</h3>
                                         <div className="relative w-40 h-40 flex items-center justify-center mb-4">
                                             <svg className="w-full h-full transform -rotate-90">
                                                 <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-gray-100 dark:text-slate-800" />
-                                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * analysis.score) / 100} className={`text-orange-500 transition-all duration-1000 ease-out`} />
+                                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * analysis.score) / 100} className="text-orange-500 transition-all duration-1000" />
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="text-5xl font-black text-gray-900 dark:text-white">{analysis.score}</span>
                                                 <span className="text-sm font-bold text-gray-400">/ 100</span>
                                             </div>
                                         </div>
-                                        <div className={`px-4 py-1.5 rounded-full text-sm font-bold ${analysis.score > 70 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'} mb-2`}>
-                                            {analysis.score > 70 ? 'Good Start' : 'Needs Optimization'}
-                                        </div>
                                     </div>
 
                                     <div className="md:col-span-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-700 shadow-xl">
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Analysis Summary</h3>
-                                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                                            {analysis.summary}
-                                        </p>
+                                        <p className="text-gray-600 dark:text-gray-300 mb-6">{analysis.summary}</p>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl border border-green-100 dark:border-green-900/30">
@@ -323,12 +620,12 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     </div>
                                 </div>
 
-                                {/* CTA: Optimize Resume */}
+                                {/* CTA */}
                                 <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 text-center text-white shadow-2xl mb-8">
                                     <Wand2 size={48} className="mx-auto mb-4" />
                                     <h3 className="text-3xl font-black mb-3">Want to Fix All These Issues?</h3>
                                     <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
-                                        Our AI will rewrite your resume sections, add missing keywords, fix formatting, and boost your ATS score to 90+
+                                        Our FREE AI will rewrite your resume with YOUR real data + job keywords
                                     </p>
                                     <button
                                         onClick={optimizeResume}
@@ -338,29 +635,26 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     </button>
                                 </div>
 
-                                {/* Issues */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <AlertCircle className="text-red-500" /> Critical Issues
+                                            <AlertCircle className="text-red-500" /> Issues Found
                                         </h3>
                                         {analysis.formatting_issues.map((issue, i) => (
                                             <div key={i} className="flex gap-4 p-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl">
                                                 <X className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                                                <div>
-                                                    <p className="text-gray-800 dark:text-gray-200 font-medium text-sm">{issue}</p>
-                                                </div>
+                                                <p className="text-gray-800 dark:text-gray-200 font-medium text-sm">{issue}</p>
                                             </div>
                                         ))}
                                     </div>
 
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <Sparkles className="text-purple-500" /> Suggested Improvements
+                                            <Sparkles className="text-purple-500" /> Improvements
                                         </h3>
                                         {analysis.improvements.map((imp, i) => (
                                             <div key={i} className="p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm">
-                                                <div className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">{imp.section}</div>
+                                                <div className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase mb-1">{imp.section}</div>
                                                 <p className="text-gray-700 dark:text-gray-300 text-sm">{imp.tip}</p>
                                             </div>
                                         ))}
@@ -369,35 +663,44 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                             </motion.div>
                         )}
 
-                        {/* STATE: OPTIMIZING */}
+                        {/* OPTIMIZING STATE */}
                         {auditState === 'optimizing' && (
                             <motion.div
                                 key="optimizing"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
                                 className="max-w-md mx-auto text-center pt-10"
                             >
                                 <div className="relative w-32 h-32 mx-auto mb-8">
                                     <motion.div
-                                        className="absolute inset-0"
                                         animate={{ rotate: 360 }}
                                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                        className="flex items-center justify-center"
                                     >
-                                        <Wand2 size={64} className="text-purple-600 dark:text-purple-400 mx-auto" />
+                                        <Wand2 size={64} className="text-purple-600 dark:text-purple-400" />
                                     </motion.div>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">AI is Optimizing Your Resume...</h3>
-                                <div className="space-y-2">
-                                    <ScanningStep text="Rewriting experience bullets with metrics..." delay={0} />
-                                    <ScanningStep text="Adding missing keywords naturally..." delay={1} />
-                                    <ScanningStep text="Restructuring for ATS compatibility..." delay={2} />
-                                    <ScanningStep text="Crafting achievement-focused summary..." delay={3} />
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">AI is Optimizing...</h3>
+
+                                {/* Progress Bar */}
+                                <div className="w-full mb-6">
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">{progressMessage}</span>
+                                        <span className="text-sm font-bold text-purple-600">{progress}%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                        <motion.div
+                                            className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full"
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${progress}%` }}
+                                            transition={{ duration: 0.5 }}
+                                        />
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* STATE: OPTIMIZED */}
+                        {/* OPTIMIZED STATE */}
                         {auditState === 'optimized' && optimizedResume && (
                             <motion.div
                                 key="optimized"
@@ -405,7 +708,6 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                 animate={{ opacity: 1, y: 0 }}
                                 className="w-full"
                             >
-                                {/* Score Improvement */}
                                 <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl p-8 text-center text-white shadow-2xl mb-8">
                                     <div className="flex items-center justify-center gap-8 mb-4">
                                         <div>
@@ -419,111 +721,73 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                         </div>
                                     </div>
                                     <h3 className="text-2xl font-bold mb-2">🎉 +{optimizedResume.score - analysis.score} Point Improvement!</h3>
-                                    <p className="text-green-100">Your resume is now ATS-optimized and interview-ready</p>
+                                    <p className="text-green-100">Resume optimized with YOUR real data</p>
                                 </div>
 
-                                {/* Optimized Content */}
-                                <div className="grid grid-cols-1 gap-6">
-                                    {/* Professional Summary */}
+                                <div className="grid grid-cols-1 gap-6 mb-8">
                                     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-xl">
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">✨ Professional Summary</h3>
                                             <button
                                                 onClick={() => copyToClipboard(optimizedResume.sections.summary)}
-                                                className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all flex items-center gap-2"
+                                                className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 transition-all flex items-center gap-2"
                                             >
                                                 {copied ? <Check size={14} /> : <Copy size={14} />}
                                                 {copied ? 'Copied!' : 'Copy'}
                                             </button>
                                         </div>
-                                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{optimizedResume.sections.summary}</p>
-                                    </div>
-
-                                    {/* Experience */}
-                                    {optimizedResume.sections.experience.map((exp, i) => (
-                                        <div key={i} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-xl">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <div>
-                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{exp.title}</h3>
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400">{exp.company} • {exp.duration}</p>
-                                                </div>
-                                                <button
-                                                    onClick={() => copyToClipboard(exp.bullets.join('\n'))}
-                                                    className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all flex items-center gap-2"
-                                                >
-                                                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                                                </button>
-                                            </div>
-                                            <ul className="space-y-2">
-                                                {exp.bullets.map((bullet, j) => (
-                                                    <li key={j} className="flex gap-3 text-gray-700 dark:text-gray-300 text-sm">
-                                                        <span className="text-purple-600 dark:text-purple-400 font-bold">•</span>
-                                                        <span>{bullet}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    ))}
-
-                                    {/* Skills */}
-                                    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-xl">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">🛠️ Skills (ATS-Optimized)</h3>
-                                            <button
-                                                onClick={() => copyToClipboard(JSON.stringify(optimizedResume.sections.skills, null, 2))}
-                                                className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all flex items-center gap-2"
-                                            >
-                                                {copied ? <Check size={14} /> : <Copy size={14} />}
-                                            </button>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {Object.entries(optimizedResume.sections.skills).map(([category, skills]) => (
-                                                <div key={category}>
-                                                    <h4 className="text-sm font-bold text-purple-600 dark:text-purple-400 uppercase mb-2">{category}</h4>
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {skills.map(skill => (
-                                                            <span key={skill} className="px-3 py-1 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 text-sm rounded-lg">{skill}</span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Improvements Made */}
-                                    <div className="bg-purple-50 dark:bg-purple-900/10 rounded-3xl p-6 border border-purple-100 dark:border-purple-900/30">
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                            <CheckCircle className="text-green-500" /> What We Improved
-                                        </h3>
-                                        <ul className="space-y-2">
-                                            {optimizedResume.improvements_made.map((improvement, i) => (
-                                                <li key={i} className="flex gap-3 text-gray-700 dark:text-gray-300 text-sm">
-                                                    <CheckCircle size={16} className="text-green-500 flex-shrink-0 mt-0.5" />
-                                                    <span>{improvement}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <p className="text-gray-700 dark:text-gray-300">{optimizedResume.sections.summary}</p>
                                     </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="mt-8 flex gap-4 justify-center">
+                                {/* Download Format Choice */}
+                                <div className="mt-8 mb-4">
+                                    <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Choose Download Format:</h4>
+                                    <div className="flex gap-4 justify-center">
+                                        <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-purple-500 transition-all">
+                                            <input
+                                                type="radio"
+                                                name="format"
+                                                value="pdf"
+                                                checked={downloadFormat === 'pdf'}
+                                                onChange={(e) => setDownloadFormat(e.target.value)}
+                                                className="w-4 h-4 text-purple-600"
+                                            />
+                                            <FileText size={18} className="text-red-500" />
+                                            <span className="font-bold text-gray-900 dark:text-white">PDF</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-purple-500 transition-all">
+                                            <input
+                                                type="radio"
+                                                name="format"
+                                                value="docx"
+                                                checked={downloadFormat === 'docx'}
+                                                onChange={(e) => setDownloadFormat(e.target.value)}
+                                                className="w-4 h-4 text-purple-600"
+                                            />
+                                            <FileText size={18} className="text-blue-500" />
+                                            <span className="font-bold text-gray-900 dark:text-white">DOCX</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4 justify-center">
                                     <button
                                         onClick={() => setAuditState('idle')}
-                                        className="px-6 py-3 bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-slate-700 transition-all"
+                                        className="px-6 py-3 bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-300 transition-all"
                                     >
-                                        Optimize Another Resume
+                                        Optimize Another
                                     </button>
                                     <button
+                                        onClick={downloadOptimizedResume}
                                         className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold transition-all shadow-lg flex items-center gap-2"
                                     >
-                                        <Download size={20} /> Download Optimized Resume
+                                        <Download size={20} /> Download {downloadFormat.toUpperCase()}
                                     </button>
                                 </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
-
                 </div>
             </main>
         </div>
