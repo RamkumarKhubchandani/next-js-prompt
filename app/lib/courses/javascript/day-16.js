@@ -2,6 +2,47 @@ export const day16 = {
   day: 16,
   title: "Day 16: Sets & Maps (Choose the Right Data Structure)",
   intro: "Stop using objects for everything. Today you’ll learn when to use Set, Map, Object, and Array — with real bug patterns and performance intuition.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 16! Data Structures. Objects are great, but they are terrible maps because keys are always strings."
+      },
+      {
+        type: "talk",
+        message: "If you do `obj[1] = 'A'` and `obj['1'] = 'B'`, you just overwrote 'A'. Let's see this in action."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the collision. This cache overwrites numeric keys with string keys. Convert the `cache` to a `Map` so that `1` (number) and `'1'` (string) are treated as different keys.",
+        buggyCode: `const cache = {};
+
+function addToCache(key, value) {
+  cache[key] = value;
+}
+
+addToCache(1, "Number");
+addToCache("1", "String");
+
+console.log(cache[1]); // ❌ Output: "String" (Collision!)`,
+        solutionCode: `const cache = new Map();
+
+function addToCache(key, value) {
+  cache.set(key, value);
+}
+
+addToCache(1, "Number");
+addToCache("1", "String");
+
+console.log(cache.get(1)); // ✅ Output: "Number"`,
+        verifyOutput: "Number",
+        verifyCode: "new Map",
+        successMessage: "Perfect. Map keeps keys as-is. Object always stringifies them. Use Map when keys aren't known static strings.",
+        hint: "Use `new Map()`, `cache.set(key, value)`, and `cache.get(key)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1. Map vs Object</h3>
 <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-dark-600 mb-6">

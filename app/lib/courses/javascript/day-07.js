@@ -2,6 +2,48 @@ export const day07 = {
   day: 7,
   title: "Day 7: Promises (State, Chaining, Error Propagation)",
   intro: "Promises are not magic—they are a state machine plus queued callbacks. Today you’ll learn chaining, error propagation, and the real difference between all/allSettled/race/any.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 7! Promises. They replaced Callback Hell, but they brought a new devil: The 'Silent Undefined'."
+      },
+      {
+        type: "code",
+        code: `Promise.resolve(5)
+  .then(n => { n * 2; }) // ❌ Forgot 'return'
+  .then(n => console.log(n)); // undefined!`,
+        caption: "The broken chain.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "In a Promise chain, if you don't return a value, the next step gets `undefined`. It happens to everyone."
+      },
+      {
+        type: "challenge",
+        instruction: "This code prints `undefined` for the user data. Fix it so the data flows from the first `.then` to the second.",
+        buggyCode: `Promise.resolve({ id: 1, name: "Alice" })
+  .then(user => {
+    // BUG: Missing return
+    user.isAdmin = true;
+    user; 
+  })
+  .then(user => console.log("User:", user));`,
+        solutionCode: `Promise.resolve({ id: 1, name: "Alice" })
+  .then(user => {
+    user.isAdmin = true;
+    return user; // ✅ Pass it down
+  })
+  .then(user => console.log("User:", user));`,
+        verifyCode: "return",
+        verifyOutput: "User: [object Object]",
+        successMessage: "Data flow restored! Always check your returns in a chain.",
+        hint: "Add the `return` keyword before `user` inside the first `.then` block."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -2,6 +2,55 @@ export const day24 = {
   day: 24,
   title: "🔥 Debounce & Throttle with Cancel",
   intro: "The most asked utility functions. Build production-grade versions with cancel, immediate, and trailing options.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 24: Debounce & Throttle. These limit how often expensive code runs."
+      },
+      {
+        type: "talk",
+        message: "The tricky part isn't the timer, it's preserving the context (`this`) and arguments."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Lost Arguments. This debounce implementation waits correctly, but it forgets to pass the arguments to the final function call. It also ignores `this` context.",
+        buggyCode: `function debounce(fn, wait) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    // ❌ BUG: Original args are lost!
+    timer = setTimeout(() => {
+      fn(); 
+    }, wait);
+  };
+}
+
+const log = debounce((msg) => console.log("Msg:", msg), 100);
+log("Hello!"); 
+// Output: "Msg: undefined"`,
+        solutionCode: `function debounce(fn, wait) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    // ✅ Apply context and args
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, wait);
+  };
+}
+
+const log = debounce((msg) => console.log("Msg:", msg), 100);
+log("Hello!"); 
+// Output: "Msg: Hello!"`,
+        verifyOutput: "Msg: Hello!",
+        verifyCode: "fn.apply",
+        successMessage: "Correct. A robust debounce must use `.apply(this, args)` (or `fn(...args)` if context doesn't matter) to ensure the original function receives the data it expects.",
+        hint: "Inside `setTimeout`, call `fn.apply(this, args)` or `fn(...args)` to pass the captured arguments."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-200 dark:border-green-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-green-600 dark:text-green-400 font-bold mb-2">🎯 Interview Frequency: VERY HIGH</h4>

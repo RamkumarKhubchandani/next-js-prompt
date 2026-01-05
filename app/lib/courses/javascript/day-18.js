@@ -2,6 +2,45 @@ export const day18 = {
   day: 18,
   title: "Day 18: SOLID in JavaScript (Maintainable Architecture)",
   intro: "SOLID is about change: your code should be easy to extend without breaking. Today you’ll learn each principle with concrete JS examples and refactor a “god function” into maintainable pieces.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 18! SOLID. The most useful one for daily coding is 'D' - Dependency Injection."
+      },
+      {
+        type: "talk",
+        message: "It makes your code testable. Instead of `new Database()` inside your function, pass it in."
+      },
+      {
+        type: "challenge",
+        instruction: "Decouple this. The `processUser` function is hard to test because it creates its own `DB`. Refactor it to accept `db` as an argument.",
+        buggyCode: `class DB { save(x) { console.log('Saved', x); } }
+
+function processUser(user) {
+  const db = new DB(); // ❌ Hard dependency
+  db.save(user);
+}
+
+processUser('Alice');
+// How do we test this without a real DB? We can't.`,
+        solutionCode: `class DB { save(x) { console.log('Saved', x); } }
+
+// ✅ Dependency Injection
+function processUser(db, user) {
+  db.save(user);
+}
+
+const db = new DB();
+processUser(db, 'Alice');`,
+        verifyOutput: "Saved Alice",
+        verifyCode: "processUser(db",
+        successMessage: "Boom. Now you can pass a FakeDB for testing and a RealDB for production. That is the power of Dependency Injection.",
+        hint: "Change `processUser(user)` to `processUser(db, user)` and remove the `new DB()` line."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Teaching Lens</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

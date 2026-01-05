@@ -2,6 +2,61 @@ export const day09 = {
   day: 9,
   title: "Day 9: Memory Leaks + Garbage Collection (Debug Like a Pro)",
   intro: "Most performance problems are memory problems. Today you’ll learn how GC thinks (reachability), the most common leak patterns, and how to prevent them with clean lifecycles.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 9! Memory Leaks. The silent killer of long-running apps. If you allocate but never free, your app gets slower and slower."
+      },
+      {
+        type: "code",
+        code: `function start() {
+  setInterval(() => {
+     // I run forever, even if you don't need me!
+     console.log("Leak..."); 
+  }, 1000);
+}`,
+        caption: "The Dangling Interval.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "When you start a timer or listener, you MUST hold a reference to stop it. Otherwise, it leaks."
+      },
+      {
+        type: "challenge",
+        instruction: "This code starts a clock but has no way to stop it. Fix it by capturing the `intervalId` and adding a `stop()` function that clears it.",
+        buggyCode: `let intervalId;
+
+function startClock() {
+  // BUG: repeated calls lose the reference
+  intervalId = setInterval(() => console.log("Tick"), 1000);
+}
+
+function stopClock() {
+  // TODO: Stop the clock
+  intervalId = null;
+}`,
+        solutionCode: `let intervalId;
+
+function startClock() {
+  // Prevent multiple intervals
+  if (intervalId) clearInterval(intervalId);
+  intervalId = setInterval(() => console.log("Tick"), 1000);
+}
+
+function stopClock() {
+  clearInterval(intervalId); // ✅ Cleanup
+  intervalId = null;
+}`,
+        verifyCode: "clearInterval",
+        verifyOutput: "",
+        successMessage: "Leak plugged! Always pair `setInterval` with `clearInterval`.",
+        hint: "Use `clearInterval(intervalId)` inside the `stopClock` function."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The GC Mental Model (Reachability)</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

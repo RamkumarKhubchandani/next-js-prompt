@@ -2,6 +2,45 @@ export const day28 = {
   day: 28,
   title: "🔥 Top 20 JS Output Questions",
   intro: "The most common tricky output questions asked in interviews. Master these and you'll never be surprised.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 28: Output Questions. These test your knowledge of JS internals: Hoisting, Coercion, and Event Loop."
+      },
+      {
+        type: "talk",
+        message: "The most famous one involves `var` hoisting and shadowing. It trips up 50% of candidates."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Shadowing Bug. This code prints `undefined` because the local `var value` declaration is 'hoisted' to the top of the function, creating a local variable that shadows the global one but isn't initialized yet. Rename the local variable to `localValue` to fix the shadowing.",
+        buggyCode: `var value = "Global";
+
+function printValue() {
+  // ❌ Output: undefined (Because of line 6!)
+  console.log(value);
+  var value = "Local"; 
+}
+
+printValue();`,
+        solutionCode: `var value = "Global";
+
+function printValue() {
+  // ✅ Output: Global
+  console.log(value);
+  var localValue = "Local"; 
+}
+
+printValue();`,
+        verifyOutput: "Global",
+        verifyCode: "var localValue",
+        successMessage: "Correct. `var` declarations are hoisted to the top of their scope. By renaming the local variable, you removed the shadowing, allowing `console.log` to see the global `value`.",
+        hint: "Change `var value = 'Local'` to `var localValue = 'Local'` so it doesn't conflict with the global `value`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-yellow-600 dark:text-yellow-400 font-bold mb-2">🎯 Most Asked in Interviews</h4>

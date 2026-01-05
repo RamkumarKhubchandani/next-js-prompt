@@ -2,6 +2,48 @@ export const day30 = {
   day: 30,
   title: "🔥 JavaScript Performance & Memory",
   intro: "Profile like a pro. Identify memory leaks, optimize render cycles, and write performant code.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 30: Performance. The silent killer of apps isn't crashes, it's memory leaks."
+      },
+      {
+        type: "talk",
+        message: "A classic leak: starting an interval/timer and never clearing it when the component unmounts."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Memory Leak. `startPolling` creates an interval but gives the caller no way to stop it. If this runs in a React component that unmounts, the interval will keep running forever. Fix it by returning a cleanup function.",
+        buggyCode: `function startPolling() {
+  const id = setInterval(() => {
+    console.log("Polling...");
+  }, 500);
+  // ❌ BUG: Returns undefined. No way to stop it!
+}
+
+const stop = startPolling();
+// Later...
+if (stop) stop(); // Error: stop is not a function`,
+        solutionCode: `function startPolling() {
+  const id = setInterval(() => {
+    console.log("Polling...");
+  }, 500);
+  // ✅ Return cleanup function
+  return () => clearInterval(id);
+}
+
+const stop = startPolling();
+// Later...
+if (stop) stop(); // Works!`,
+        verifyOutput: "Polling...", // Note: verifying timing is hard, but verifying 'stop' is a function is easier. We assume success if structure matches.
+        verifyCode: "return () => clearInterval",
+        successMessage: "Correct. Always return a cleanup function (unsubscribe) when setting up side effects. This pattern is foundational to React `useEffect` and decent library design.",
+        hint: "Return a function that calls `clearInterval(id)`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-emerald-400 font-bold mb-2">🎯 Senior-Level Skill</h4>

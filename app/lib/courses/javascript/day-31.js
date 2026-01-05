@@ -2,6 +2,45 @@ export const day31 = {
   day: 31,
   title: "🔥 TypeScript Essentials for JS Devs",
   intro: "TypeScript is now essential. Learn the core concepts every JS developer needs in 2025.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 31: TypeScript Essentials. Even if you write JS, you need to understand types."
+      },
+      {
+        type: "talk",
+        message: "The biggest mindset shift: treating data as `unknown` until proven otherwise."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Type Safety. We are simulating a TS environment. The `input` variable implies it can be anything (`unknown`). Accessing `.toUpperCase()` directly is unsafe and would crash if `input` is a number or null. Add a runtime type check (Type Guard) to ensure it's a string before operating on it.",
+        buggyCode: `function toUpper(input) {
+  // ❌ Unsafe! What if input is null or a number?
+  // In TS: Object is of type 'unknown'.
+  return input.toUpperCase(); 
+}
+
+console.log(toUpper("hello")); // Works
+// console.log(toUpper(123)); // CRASH!`,
+        solutionCode: `function toUpper(input) {
+  // ✅ Type Guard (Narrowing)
+  if (typeof input === "string") {
+    return input.toUpperCase();
+  }
+  return ""; // Fallback or throw error
+}
+
+console.log(toUpper("hello")); // HELLO
+console.log(toUpper(123)); // "" (Safe)`,
+        verifyOutput: "HELLO",
+        verifyCode: "typeof input",
+        successMessage: "Correct. In TypeScript, `unknown` forces you to perform a runtime check (Type Guard) before you can use the value. This prevents runtime crashes commonly caused by assuming data shapes.",
+        hint: "Wrap the code in `if (typeof input === 'string') { ... }`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-blue-400 font-bold mb-2">🎯 Required Skill in 2025</h4>

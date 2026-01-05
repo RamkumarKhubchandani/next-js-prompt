@@ -2,6 +2,50 @@ export const day32 = {
   day: 32,
   title: "🔥 System Design for Frontend",
   intro: "The final boss. Design scalable frontend architectures like a senior engineer.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 32: System Design. This is where you prove you can build Facebook, not just a ToDo app."
+      },
+      {
+        type: "talk",
+        message: "The most common mistake? Storing large collections as Arrays. Searching for an item becomes O(n), and updating it is painful."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Data Model. We need to store 10,000 tweets. Storing them in an array means every time we 'like' a tweet, we have to `.map()` or `.find()` through the whole list, which is slow. Refactor the state to use **Normalization** (storing items in an object by ID).",
+        buggyCode: `// ❌ Bad for scale
+const state = {
+  tweets: [
+    { id: "t1", text: "Hello" },
+    { id: "t2", text: "World" }
+  ]
+};
+
+// To update "t2":
+// state.tweets.map(t => t.id === "t2" ? { ...t, liked: true } : t)`,
+        solutionCode: `// ✅ Normalized State
+const state = {
+  tweets: {
+    byId: {
+      "t1": { id: "t1", text: "Hello" },
+      "t2": { id: "t2", text: "World" }
+    },
+    allIds: ["t1", "t2"]
+  }
+};
+
+// To update "t2":
+// state.tweets.byId["t2"].liked = true; // O(1) access!`,
+        verifyOutput: "byId",
+        verifyCode: "byId",
+        successMessage: "Excellent. Normalization (splitting data into `byId` and `allIds`) is the standard pattern for Redux/State Management in large apps. It makes CRUD operations O(1) (instant).",
+        hint: "Change `tweets` to an object with `byId` (map of ID to object) and `allIds` (array of IDs)."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-violet-500/20 to-purple-500/20 border border-violet-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-violet-400 font-bold mb-2">🎯 Staff/Principal Level</h4>

@@ -2,6 +2,62 @@ export const day29 = {
   day: 29,
   title: "🔥 Currying & Composition",
   intro: "Functional programming fundamentals. Build curry, compose, pipe, and partial application from scratch.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 29: Currying. It sounds academic, but it's how you build flexible, reusable function pipelines."
+      },
+      {
+        type: "talk",
+        message: "The goal: turn `add(a, b, c)` into `add(a)(b)(c)` OR `add(a, b)(c)`. Flexibility is key."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Curry. This implementation only accepts one argument at a time and forgets previous arguments when chained. Fix it so it accumulates arguments until it has enough to call the original function.",
+        buggyCode: `function curry(fn) {
+  return function curried(...args) {
+    // If we have enough args, call fn
+    if (args.length >= fn.length) {
+      return fn(...args);
+    }
+    // ❌ BUG: Returns a new function but FORGETS 'args'!
+    return function(...next) {
+      return curried(...next); 
+    };
+  };
+}
+
+function sum(a, b, c) { return a + b + c; }
+const curriedSum = curry(sum);
+
+// This loops forever or crashes because it forgets '1' when you pass '2'
+console.log(curriedSum(1)(2)(3));`,
+        solutionCode: `function curry(fn) {
+  return function curried(...args) {
+    if (args.length >= fn.length) {
+      return fn.apply(this, args);
+    }
+    return function(...next) {
+      // ✅ Merge previous args with new args
+      return curried.apply(this, args.concat(next));
+    };
+  };
+}
+
+function sum(a, b, c) { return a + b + c; }
+const curriedSum = curry(sum);
+
+console.log(curriedSum(1)(2)(3)); // 6
+console.log(curriedSum(1, 2)(3)); // 6`,
+        verifyOutput: "6",
+        verifyCode: "args.concat",
+        successMessage: "Perfect. The essence of currying is recursion + argument accumulation. You keep returning a wrapper until `args.length >= fn.length`.",
+        hint: "In the returned function, you must combine the old `args` with the new `next` args: `curried.apply(this, args.concat(next))`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border border-teal-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-teal-400 font-bold mb-2">🎯 Functional Programming Interview Questions</h4>

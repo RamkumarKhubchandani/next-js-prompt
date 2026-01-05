@@ -2,6 +2,57 @@ export const day08 = {
   day: 8,
   title: "Day 8: Async/Await (Readable Async) + Concurrency Patterns",
   intro: "Async/await makes async code readable, but it also hides performance traps. Today you’ll learn sequential vs parallel, proper error handling, and the forEach pitfall.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 8! Async/Await is beautiful, but it can make your code S-L-O-W if you treat it like sync code."
+      },
+      {
+        type: "code",
+        code: `// ❌ Waits 1s, then waits 1s (Total 2s)
+await wait(1000);
+await wait(1000);
+
+// ✅ Waits 1s total (Parallel)
+await Promise.all([wait(1000), wait(1000)]);`,
+        caption: "Sequential vs Parallel.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "Most juniors accidentally write sequential code because it looks easier. Let's fix that."
+      },
+      {
+        type: "challenge",
+        instruction: "This code takes ~200ms because it awaits sequentially. Make it fast (parallel) using `Promise.all` so it only takes ~100ms.",
+        buggyCode: `const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function run() {
+  const start = Date.now();
+  await wait(100); // ❌ Slow
+  await wait(100); // ❌ Slow
+  console.log("Time:", Date.now() - start);
+}
+run();`,
+        solutionCode: `const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function run() {
+  const start = Date.now();
+  // ✅ Fast: Run together
+  await Promise.all([wait(100), wait(100)]);
+  console.log("Time:", Date.now() - start);
+}
+run();`,
+        verifyCode: "Promise.all",
+        // verifyOutput is tricky with time. We rely on code check.
+        verifyOutput: "Time:",
+        successMessage: "Speed boost achieved! Promise.all is your friend for independent tasks.",
+        hint: "Replace the individual `await` lines with a single `await Promise.all([...])`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) Key Truth</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

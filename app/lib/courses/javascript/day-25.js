@@ -2,6 +2,60 @@ export const day25 = {
   day: 25,
   title: "🔥 Deep Clone, Deep Equal & Flatten",
   intro: "Core utility functions every senior dev must master. Handle circular refs, symbols, and edge cases.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 25: Utilities. You will be asked to deep clone an object. The naive approach fails hard."
+      },
+      {
+        type: "talk",
+        message: "If an object refers to itself (circular reference), a standard recursive clone will crash the browser."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Crash. This recursive clone function crashes on circular references (Stack Overflow). Add a `WeakMap` or `Map` to track visited objects (cycles) and return the cached copy if we see it again.",
+        buggyCode: `function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  
+  // ❌ Crash: No check for cycles!
+  const copy = Array.isArray(obj) ? [] : {};
+  
+  for (let key in obj) {
+    copy[key] = deepClone(obj[key]);
+  }
+  return copy;
+}
+
+const a = { name: "A" };
+a.self = a; // Cycle
+deepClone(a); // RangeError: Maximum call stack size exceeded`,
+        solutionCode: `function deepClone(obj, seen = new WeakMap()) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  
+  // ✅ Cycle Check
+  if (seen.has(obj)) return seen.get(obj);
+  
+  const copy = Array.isArray(obj) ? [] : {};
+  seen.set(obj, copy);
+  
+  for (let key in obj) {
+    copy[key] = deepClone(obj[key], seen);
+  }
+  return copy;
+}
+
+const a = { name: "A" };
+a.self = a;
+deepClone(a); // Works!`,
+        verifyOutput: "Works!",
+        verifyCode: "seen.has(obj)",
+        successMessage: "Correct. To handle circular references, you must pass a 'memo' or 'cache' (usually a Map/WeakMap) down the recursion tree to remember what you've already started cloning.",
+        hint: "Add a second argument `seen = new WeakMap()` and check `if (seen.has(obj)) return seen.get(obj)` at the start."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-amber-400 font-bold mb-2">🎯 Why These Matter</h4>

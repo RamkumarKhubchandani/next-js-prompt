@@ -2,6 +2,42 @@ export const day20 = {
   day: 20,
   title: "Day 20: Web Security (XSS, CSRF, Cookies, and Safe Rendering)",
   intro: "Security is architecture. Today you’ll learn the two biggest web attack classes (XSS + CSRF), how cookies really work, and the practical defenses senior engineers use.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 20: Security. The web is hostile. If you use `innerHTML` with user input, you are inviting attackers."
+      },
+      {
+        type: "talk",
+        message: "This is called XSS (Cross Site Scripting). Let's fix a vulnerability right now."
+      },
+      {
+        type: "challenge",
+        instruction: "Defend against XSS. The code below takes a user comment and puts it into the DOM. Because it uses `.innerHTML`, the malicious image tag executes code. Change it to use `.textContent` or `.innerText` so the browser treats it as plain text.",
+        buggyCode: `const userInput = "<img src='x' onerror='console.log(\"Stole your cookies!\")'>";
+const div = document.createElement('div');
+
+// ❌ DANGER: Interprets as HTML
+div.innerHTML = userInput;
+
+console.log("DOM updated.");
+// In a real browser, the console would now show the stolen message.`,
+        solutionCode: `const userInput = "<img src='x' onerror='console.log(\"Stole your cookies!\")'>";
+const div = document.createElement('div');
+
+// ✅ SAFE: Interprets as Text
+div.textContent = userInput;
+
+console.log("DOM updated safely.");`,
+        verifyOutput: "DOM updated safely.",
+        verifyCode: ".textContent",
+        successMessage: "Secure! `textContent` automatically escapes HTML characters. Never use `innerHTML` unless you absolutely trust the source (or use a sanitizer library).",
+        hint: "Replace `div.innerHTML = userInput` with `div.textContent = userInput`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Rule</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

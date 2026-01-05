@@ -2,6 +2,50 @@ export const day05 = {
   day: 5,
   title: "Day 5: Prototypes (How JS “Inheritance” Actually Works)",
   intro: "JavaScript inheritance is delegation: objects link to objects. Today you’ll learn property lookup, prototype chains, classes as sugar, and the safe patterns pros use.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 5! Prototypes. It's how JavaScript objects share features. But 'Classic' objects have a hidden flaw."
+      },
+      {
+        type: "code",
+        code: `const map = {};
+console.log(map["toString"]); // Function (inherited!)
+// If a user is named "toString", your app crashes.`,
+        caption: " The 'Inherited Key' collision.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "If you want a pure dictionary (a Map) in older JS, you must remove the prototype."
+      },
+      {
+        type: "challenge",
+        instruction: "The 'userMap' assumes 'constructor' is a valid username, but it crashes because 'constructor' exists on the prototype. Fix it by making the object prototype-less.",
+        buggyCode: `const userMap = {}; 
+userMap["alice"] = 1;
+
+if (userMap["constructor"]) {
+  console.log("Found constructor!"); // ❌ False positive!
+} else {
+  console.log("Safe.");
+}`,
+        solutionCode: `const userMap = Object.create(null); // ✅ No prototype
+userMap["alice"] = 1;
+
+if (userMap["constructor"]) {
+  console.log("Found constructor!");
+} else {
+  console.log("Safe.");
+}`,
+        verifyOutput: "Safe.",
+        successMessage: "Smart move. Object.create(null) creates a truly empty object with no hidden properties.",
+        hint: "Use `Object.create(null)` instead of `{}` to create an object with NO prototype."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

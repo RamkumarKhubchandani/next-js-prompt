@@ -2,6 +2,43 @@ export const day15 = {
   day: 15,
   title: "Day 15: ES Modules vs CommonJS (Practical Mental Models)",
   intro: "This is where real-world JS apps break: module boundaries, import/export behavior, and runtime differences. Today you’ll build the mental model that prevents bundler and Node confusion.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 15! Modules. Specifically, why `import { count } from './db'` works differently than you think."
+      },
+      {
+        type: "talk",
+        message: "CommonJS (and most languages) copy values. ES Modules create 'Live Bindings'. It's like a pointer."
+      },
+      {
+        type: "challenge",
+        instruction: "Behavior Simulation: We can't do real imports here easily, so simulate it. Change `getCount` so it returns the current value of `count` (live), instead of the old copied value.",
+        buggyCode: `let count = 0;
+// "Exporting" a copy
+const exports = {
+  count: count // ❌ Copied at 0
+};
+
+count++;
+console.log(exports.count); // 0 (Stale!)`,
+        solutionCode: `let count = 0;
+// "Exporting" a Getter (Live)
+const exports = {
+  get count() { return count; }
+};
+
+count++;
+console.log(exports.count); // 1 (Live!)`,
+        verifyOutput: "1 (Live!)", // or valid output
+        verifyCode: "get count",
+        successMessage: "Exactly. ES Modules work like getters—they always reflect the current value of the variable in the exporting module.",
+        hint: "Use a getter: `get count() { return count; }` inside the object."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Simplest Truth</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -8,6 +8,66 @@ export const day38 = {
   <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-700 dark:text-yellow-300 font-bold">createQueryClient</span> with TTL cache, in-flight dedupe, and SWR-style refresh.</p>
 </div>
             `,
+  aiSession: {
+    start: {
+      title: "Fix the Request Storm",
+      subTitle: "Two components asking for the same data cause two network requests. Implement request deduping.",
+      intro: "When multiple components mount simultaneously and ask for the same data, we shouldn't spam the server. We need to 'deduplicate' these into a single in-flight request.",
+      buggyCode: `
+const inflight = new Map();
+
+function fetchDeduped(key) {
+  // ❌ Bug: Always creates a new promise, ignoring existing ones
+  function makeRequest() {
+    return new Promise(resolve => {
+      console.log("Fetching " + key);
+      setTimeout(() => resolve("Data for " + key), 100);
+    });
+  }
+
+  return makeRequest();
+}
+
+// Simulation: Two calls, should only log "Fetching user:1" ONCE
+fetchDeduped("user:1").then(console.log);
+fetchDeduped("user:1").then(console.log);
+`,
+      solutionCode: `
+const inflight = new Map();
+
+function fetchDeduped(key) {
+  // Check if already fetching
+  if (inflight.has(key)) {
+    return inflight.get(key);
+  }
+
+  const promise = new Promise(resolve => {
+    console.log("Fetching " + key);
+    setTimeout(() => resolve("Data for " + key), 100);
+  }).finally(() => {
+    // Correctly cleanup after done
+    inflight.delete(key);
+  });
+
+  inflight.set(key, promise);
+  return promise;
+}
+
+// Simulation
+fetchDeduped("user:1").then(console.log);
+fetchDeduped("user:1").then(console.log);
+`,
+      verifyOutput: (output) => {
+        const fetches = output.filter(line => line.includes("Fetching"));
+        return fetches.length === 1;
+      },
+      verifyCode: (code) => {
+        return code.includes("inflight.set") && code.includes("inflight.get");
+      },
+      successMessage: "Great! Start sharing the promise. Now multiple callers get the same result from a single network call.",
+      hint: "Before creating a new Promise, check if `inflight.has(key)`. If so, return `inflight.get(key)`."
+    }
+  },
   masteryChecklist: [
     {
       id: "d38-c1",

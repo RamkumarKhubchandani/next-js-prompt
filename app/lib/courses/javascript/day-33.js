@@ -2,6 +2,63 @@ export const day33 = {
   day: 33,
   title: "🏁 Capstone: Build a Resilient Autocomplete (Debounce + Abort + Cache + Retry)",
   intro: "Today you build a mini system you will actually use in real apps: an autocomplete/search controller that stays fast, cancels stale requests, avoids duplicate calls, and retries safely. We build it step-by-step so even a beginner can follow.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 33: Capstone. You're building a resilient Autocomplete. The biggest bug here is the 'Race Condition'."
+      },
+      {
+        type: "talk",
+        message: "If I type 'react' then 'reactjs', and the 'react' request is slow, it might arrive AFTER 'reactjs', overwriting the correct results with old ones."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Race Condition. This search function blindly accepts all responses. If an earlier request takes longer than a later one, the UI will show the wrong data (stale results). Use `AbortController` to cancel the previous request when a new one starts.",
+        buggyCode: `// ❌ Race Condition: Old requests can overwrite new ones
+function search(query) {
+  // Simulate fetch
+  const randomDelay = Math.random() * 2000;
+  
+  setTimeout(() => {
+    console.log("Results for:", query); 
+  }, randomDelay);
+}
+
+// "A" starts, then "B" starts. 
+// If "A" is slower, it prints LAST, which is wrong.
+search("A");
+search("B");`,
+        solutionCode: `let controller;
+
+function search(query) {
+  // ✅ Cancel previous
+  if (controller) controller.abort();
+  controller = new AbortController();
+  const signal = controller.signal;
+
+  const randomDelay = Math.random() * 2000;
+
+  // Pass signal to fetch (simulated here with logic)
+  setTimeout(() => {
+    if (signal.aborted) {
+      console.log("Aborted:", query);
+      return;
+    }
+    console.log("Results for:", query); 
+  }, randomDelay);
+}
+
+search("A");
+search("B");`,
+        verifyOutput: "Results for: B", // A should be aborted or at least B finishes last? Wait, A should NOT print results.
+        verifyCode: "controller.abort()",
+        successMessage: "Correct. By aborting the previous request (using `AbortController`), you ensure that only the results of the *latest* query are ever processed/rendered. This eliminates race conditions.",
+        hint: "Store `controller` in a variable outside the function. Call `if (controller) controller.abort()` at the start of `search`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-fuchsia-500/20 to-pink-500/20 border border-fuchsia-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-fuchsia-300 font-bold mb-2">🎯 Capstone Goal</h4>
