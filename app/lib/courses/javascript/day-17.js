@@ -2,6 +2,55 @@ export const day17 = {
   day: 17,
   title: "Day 17: Design Patterns (Singleton, Factory, Observer) — Practical Use",
   intro: "Patterns are tools, not trophies. Today you’ll learn when to use them, how to implement them safely in JS, and how to avoid the common anti-patterns.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 17: Patterns. The most common one in React/Frontend is the Observer (or Pub/Sub)."
+      },
+      {
+        type: "talk",
+        message: "The biggest bug with Observers? Memory leaks. You subscribe, but forget to unsubscribe."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Leak. Update the `subscribe` function so it returns a cleanup function that removes the listener.",
+        buggyCode: `const listeners = [];
+
+function subscribe(fn) {
+  listeners.push(fn);
+  // ❌ Missing return value!
+}
+
+const sub = subscribe(() => console.log("Event!"));
+if (typeof sub === 'function') {
+    sub(); // Should unsubscribe, but crashes now
+    console.log("Unsubscribed. Count:", listeners.length);
+}`,
+        solutionCode: `const listeners = [];
+
+function subscribe(fn) {
+  listeners.push(fn);
+  // ✅ Return cleanup
+  return () => {
+    const idx = listeners.indexOf(fn);
+    if (idx > -1) listeners.splice(idx, 1);
+  };
+}
+
+const sub = subscribe(() => console.log("Event!"));
+if (typeof sub === 'function') {
+    sub(); 
+    console.log("Unsubscribed. Count:", listeners.length);
+}`,
+        verifyOutput: "Unsubscribed. Count: 0",
+        verifyCode: "return",
+        successMessage: "Great! Always return a cleanup function (unsubscribe) when creating subscriptions. This is exactly how `useEffect` cleanup works.",
+        hint: "Inside `subscribe`, return a function that finds `fn` in `listeners` and removes it (e.g. using `splice` or `filter`)."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Rule for Patterns</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -8,6 +8,92 @@ export const day39 = {
   <p class="text-gray-600 dark:text-light-300">You will build <span class="text-yellow-700 dark:text-yellow-300 font-bold">createStore</span> with subscribe/unsubscribe and selector subscriptions (only re-run when selected state changes).</p>
 </div>
             `,
+  aiSession: {
+    start: {
+      title: "Fix the Over-Notification Bug",
+      subTitle: "Subscribers are getting notified even when their data hasn't changed. Implement a selector-based subscription.",
+      intro: "In high-performance apps, re-rendering entirely on every state change is too slow. We need 'selectors' that check if the specific slice of state data has actually changed.",
+      buggyCode: `
+function createStore(initialState) {
+  let state = initialState;
+  const listeners = new Set();
+
+  return {
+    getState: () => state,
+    setState: (update) => {
+      state = { ...state, ...update };
+      listeners.forEach(l => l(state));
+    },
+    // ❌ Bug: No way to check if specific data changed
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    }
+  };
+}
+
+const store = createStore({ user: "Alice", count: 0 });
+
+// Listener for COUNT only
+store.subscribe((state) => {
+  console.log("Count listener ran (should not run if only user changes)");
+});
+
+store.setState({ user: "Bob" }); // Changing USER triggers COUNT listener?
+`,
+      solutionCode: `
+function createStore(initialState) {
+  let state = initialState;
+  const listeners = new Set();
+
+  return {
+    getState: () => state,
+    setState: (update) => {
+      state = { ...state, ...update };
+      listeners.forEach(l => l()); // Notify plain listeners
+    },
+    subscribeSelector: (selector, callback) => {
+      let prevValue = selector(state);
+      const listener = () => {
+        const nextValue = selector(state);
+        // Only fire if value CHANGED
+        if (nextValue !== prevValue) {
+          prevValue = nextValue;
+          callback(nextValue);
+        }
+      };
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    }
+  };
+}
+
+const store = createStore({ user: "Alice", count: 0 });
+
+store.subscribeSelector(
+  s => s.count, 
+  val => console.log("Count listener ran:", val)
+);
+
+console.log("Updating user...");
+store.setState({ user: "Bob" }); // Should NOT log
+console.log("Updating count...");
+store.setState({ count: 1 });    // SHOULD log
+`,
+      verifyOutput: (output) => {
+        const logs = output.join("\n");
+        return logs.includes("Updating user...") &&
+          !logs.includes("Count listener ran (should not run") &&
+          logs.includes("Updating count...") &&
+          logs.includes("Count listener ran:");
+      },
+      verifyCode: (code) => {
+        return (code.includes("!==") || code.includes("Object.is")) && code.includes("selector(state)");
+      },
+      successMessage: "Perfect! You've implemented the core optimization of Redux/Zustand: checking for equality before notifying.",
+      hint: "Store the `prevValue` in a closure. inside the listener, calculate `nextValue = selector(state)`. Compare them."
+    }
+  },
   masteryChecklist: [
     {
       id: "d39-c1",

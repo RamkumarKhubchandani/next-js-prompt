@@ -2,6 +2,55 @@ export const day36 = {
   day: 36,
   title: "🌊 Async Iterators & Streams: for-await, async generators, pipelines",
   intro: "Async iterators let you consume data over time (pages, events, streams) with clean code. Today you build small async generators and utilities to process them.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 36: Async Iterators. These are like Arrays, but the items arrive over time (like a stream)."
+      },
+      {
+        type: "talk",
+        message: "You can't loop over them with a normal `for..of` because the values are Promises."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Loop. This code fails because `for..of` expects synchronous values, but the generator yields Promises (it's async). Change the loop to `for await..of` to properly consume the stream.",
+        buggyCode: `async function* numberStream() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+async function consume() {
+  // ❌ Start of error: numberStream() is async!
+  for (const num of numberStream()) {
+    console.log(num);
+  }
+}
+
+consume();`,
+        solutionCode: `async function* numberStream() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+async function consume() {
+  // ✅ Async Iteration
+  for await (const num of numberStream()) {
+    console.log(num);
+  }
+}
+
+consume();`,
+        verifyOutput: "1\n2\n3", // or just "1" check
+        verifyCode: "for await",
+        successMessage: "Correct. `for await...of` is the special syntax designed to consume Async Iterables. It waits for each Promise to resolve before entering the loop body.",
+        hint: "Add `await` after `for`: `for await (const num of numberStream())`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-cyan-500/20 to-sky-500/20 border border-cyan-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-cyan-700 dark:text-cyan-300 font-bold mb-2">🎯 Outcome</h4>

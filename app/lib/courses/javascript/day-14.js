@@ -2,6 +2,66 @@ export const day14 = {
   day: 14,
   title: "Day 14: Iterators & Generators (Lazy Sequences)",
   intro: "Iterators power for...of, spread, and many built-ins. Generators make iterators readable and enable lazy sequences that don’t allocate big arrays.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 14! Iterators. This is how `for...of` loops work under the hood. It's just an object asking: 'Do you have more?'"
+      },
+      {
+        type: "code",
+        code: `function* nums() {
+  yield 1;
+  yield 2;
+}
+// [...nums()] becomes [1, 2]`,
+        caption: "Generators make it easy.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "But if you write a manual iterator, you MUST tell it when to stop, or it runs forever."
+      },
+      {
+        type: "challenge",
+        instruction: "This manual iterator counts forever because `done` is never set to true. Fix it so it stops after 3 items.",
+        buggyCode: `const iterator = {
+  i: 0,
+  next() {
+    this.i++;
+    // BUG: Always says done: false
+    return { value: this.i, done: false };
+  }
+};
+
+// Test loop (limited to 10 to prevent crash)
+let count = 0;
+for(let x = iterator.next(); !x.done && count < 10; x = iterator.next()) {
+  console.log(x.value);
+  count++;
+}`,
+        solutionCode: `const iterator = {
+  i: 0,
+  next() {
+    this.i++;
+    if (this.i > 3) return { value: undefined, done: true }; // ✅ Stop
+    return { value: this.i, done: false };
+  }
+};
+
+let count = 0;
+for(let x = iterator.next(); !x.done && count < 10; x = iterator.next()) {
+  console.log(x.value);
+  count++;
+}`,
+        verifyOutput: "1\n2\n3",
+        verifyCode: "done: true",
+        successMessage: "Loop safe! The `done: true` signal is critical for preventing infinite loops.",
+        hint: "Return `{ done: true }` when `this.i > 3`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Big Idea</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -2,6 +2,70 @@ export const day27 = {
   day: 27,
   title: "🔥 Retry with Exponential Backoff",
   intro: "Production-grade API retry logic. Handle network failures gracefully with smart retry strategies.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 27: Reliability. When an API fails, you retry. But HOW you retry matters."
+      },
+      {
+        type: "talk",
+        message: "Retrying immediately in a tight loop is a Denial of Service attack on your own backend. You need to wait."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Infinite Loop. This retry function hammers the server immediately upon failure. Implement 'Exponential Backoff': wait 100ms, then 200ms, then 400ms, etc., before each retry.",
+        buggyCode: `async function retry(fn, maxRetries) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      console.log("Failed. Retrying immediately...");
+      // ❌ BUG: No delay! Hammers the server.
+    }
+  }
+  throw new Error("Max retries reached");
+}
+
+let attempts = 0;
+const flakyApi = async () => {
+  attempts++;
+  if (attempts < 3) throw new Error("Server Busy");
+  return "Success";
+};
+
+retry(flakyApi, 5).then(console.log);`,
+        solutionCode: `async function retry(fn, maxRetries) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === maxRetries - 1) throw e;
+      
+      // ✅ Exponential Backoff
+      const waitTime = 100 * Math.pow(2, i); 
+      console.log("Waiting", waitTime, "ms");
+      await new Promise(r => setTimeout(r, waitTime));
+    }
+  }
+}
+
+let attempts = 0;
+const flakyApi = async () => {
+  attempts++;
+  if (attempts < 3) throw new Error("Server Busy");
+  return "Success";
+};
+
+retry(flakyApi, 5).then(console.log);`,
+        verifyOutput: "Success",
+        verifyCode: "setTimeout",
+        successMessage: "Excellent. Exponential backoff gives the server breathing room to recover. In production, you'd also add 'Jitter' (randomness) to prevent all clients from retrying at the exact same millisecond.",
+        hint: "Inside the catch block, calculate `const delay = 100 * Math.pow(2, i)` and then `await new Promise(r => setTimeout(r, delay))`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-rose-500/20 to-pink-500/20 border border-rose-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-rose-400 font-bold mb-2">🎯 Real-World Essential</h4>

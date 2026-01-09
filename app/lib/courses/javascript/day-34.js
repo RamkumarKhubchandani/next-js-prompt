@@ -2,6 +2,52 @@ export const day34 = {
   day: 34,
   title: "⚡ Event Loop Deep Dive: Microtasks, Macrotasks, Starvation",
   intro: "You already know the basics. Today you build a rock-solid mental model of the event loop that explains 95% of async bugs: ordering, microtasks vs macrotasks, and starvation.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 34: Event Loop Deep Dive. You know the loop loops, but do you know what starves it?"
+      },
+      {
+        type: "talk",
+        message: "Microtasks (Promises) have priority. If you keep scheduling them, Macrotasks (UI updates, timers) will NEVER run. This is called 'Starvation'."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Starvation. This recursive function uses `Promise.resolve().then()` to repeat itself. Because microtasks run until the queue is empty, the browser never gets a chance to breathe (update UI or run timers). Fix it by 'yielding' to the macrotask queue using `setTimeout`.",
+        buggyCode: `let count = 0;
+function run() {
+  count++;
+  if (count > 1000000) return; // Eventually stops, but freezes UI until then
+
+  // ❌ Microtask Starvation
+  Promise.resolve().then(() => run());
+}
+
+console.log("Start");
+setTimeout(() => console.log("Timer fired (finally!)"), 0);
+run();`,
+        solutionCode: `let count = 0;
+function run() {
+  count++;
+  if (count > 1000000) return;
+
+  // ✅ Yield to Macrotask queue (Timer)
+  // This allows the browser to paint and run other timers
+  setTimeout(() => run(), 0);
+}
+
+console.log("Start");
+setTimeout(() => console.log("Timer fired (interleaved!)"), 0);
+run();`,
+        verifyOutput: "Timer fired", // Ideally we'd check interleaved log
+        verifyCode: "setTimeout",
+        successMessage: "Correct. By using `setTimeout`, you schedule the next step as a Macrotask. This gives the Event Loop a chance to clear the microtask queue, update the UI, and handle user input.",
+        hint: "Replace `Promise.resolve().then(() => run())` with `setTimeout(() => run(), 0)`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-sky-500/20 to-indigo-500/20 border border-sky-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-sky-300 font-bold mb-2">🎯 Outcome</h4>

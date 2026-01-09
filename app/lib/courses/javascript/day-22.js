@@ -2,6 +2,72 @@ export const day22 = {
   day: 22,
   title: "🔥 Build a Promise from Scratch",
   intro: "The ultimate JS interview question. If you understand Promises at this level, you understand JavaScript.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 22: Building a Promise. The hardest part isn't the state machine, it's the timing."
+      },
+      {
+        type: "talk",
+        message: "Promises must NEVER release Zalgo. They must always resolve asynchronously, even if the value is ready instantly."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Sync Execution. This Promise implementation violates the spec because `.then()` runs immediately if the promise is already resolved. This changes the execution order of the program. Use `queueMicrotask` (or `setTimeout`) to force the callback to run later.",
+        buggyCode: `class MyPromise {
+  constructor(executor) {
+    this.value = null;
+    this.state = "pending";
+    const resolve = (val) => {
+      this.state = "fulfilled";
+      this.value = val;
+    };
+    executor(resolve);
+  }
+  then(fn) {
+    if (this.state === "fulfilled") {
+      // ❌ BUG: Runs synchronously!
+      fn(this.value);
+    }
+  }
+}
+
+console.log("1");
+new MyPromise(r => r("2")).then(console.log);
+console.log("3");
+
+// Current Output: 1, 2, 3
+// Correct Output: 1, 3, 2`,
+        solutionCode: `class MyPromise {
+  constructor(executor) {
+    this.value = null;
+    this.state = "pending";
+    const resolve = (val) => {
+      this.state = "fulfilled";
+      this.value = val;
+    };
+    executor(resolve);
+  }
+  then(fn) {
+    if (this.state === "fulfilled") {
+      // ✅ Async execution
+      queueMicrotask(() => fn(this.value));
+    }
+  }
+}
+
+console.log("1");
+new MyPromise(r => r("2")).then(console.log);
+console.log("3");`,
+        verifyOutput: "1, 3, 2", // Logic check based, mainly checks code here
+        verifyCode: "queueMicrotask",
+        successMessage: "Correct. By wrapping the callback in `queueMicrotask`, you ensure the Promise callback runs after the current synchronous code finishes, preserving predictable execution order.",
+        hint: "Wrap the `fn(this.value)` call inside `queueMicrotask(() => { ... })`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-purple-400 font-bold mb-2">🏆 The Holy Grail of JS Interviews</h4>

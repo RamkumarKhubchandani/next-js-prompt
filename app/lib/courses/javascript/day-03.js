@@ -2,6 +2,58 @@ export const day03 = {
   day: 3,
   title: "Day 3: Closures (Memory, Power, and Footguns)",
   intro: "Closures are how JavaScript gives functions memory. Today you’ll learn to *see* the hidden environment, use it for clean APIs, and avoid accidental memory leaks.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 3! 🧠 Functions with Memory. Normally, variables die when a function finishes. Closures keep them alive."
+      },
+      {
+        type: "code",
+        code: `function outer() {
+  let memory = "I am alive!";
+  return () => console.log(memory);
+}
+const fn = outer();
+fn(); // Works!`,
+        caption: "Data surviving execution.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "But you have to put the memory in the *right place*. If you put it in the wrong scope, it resets."
+      },
+      {
+        type: "challenge",
+        instruction: "This counter is broken. It prints 1, then 1 again. It should print 1, then 2. Fix it by moving the variable to the correct scope.",
+        buggyCode: `function createCounter() {
+  return function() {
+    let count = 0; // ❌ Resets every time
+    return ++count;
+  };
+}
+
+const counter = createCounter();
+console.log(counter());
+console.log(counter());`,
+        solutionCode: `function createCounter() {
+  let count = 0; // ✅ Persistent memory
+  return function() {
+    return ++count;
+  };
+}
+
+const counter = createCounter();
+console.log(counter());
+console.log(counter());`,
+        verifyOutput: "1\\n2",
+        verifyCode: "let count",
+        successMessage: "Correct! The outer function scope is the 'backpack' where memory lives. The inner function just uses it.",
+        hint: "Move `let count = 0` outside the returned function so it isn't re-created every time."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Human-Tutor Explanation (What a Closure Really Is)</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

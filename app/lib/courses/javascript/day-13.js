@@ -2,6 +2,57 @@ export const day13 = {
   day: 13,
   title: "Day 13: Proxy + Reflect (Powerful Meta‑Programming)",
   intro: "Proxies let you intercept reads/writes/calls like a runtime firewall. Today you’ll learn the traps, how Reflect forwards correctly, and how frameworks use Proxies for reactivity.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 13! Proxies. They sound advanced, but they are just 'middlewares' for your objects. They can intercept ANY operation."
+      },
+      {
+        type: "code",
+        code: `const p = new Proxy({}, {
+  get(target, prop) {
+    console.log("Reading:", prop);
+    return target[prop] || "DEFAULT";
+  }
+});
+console.log(p.foo); // Logs "Reading: foo", Prints "DEFAULT"`,
+        caption: "Intercepting reads.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "The tricky part is `set`. If you define a `set` trap, you MUST return `true` to say 'it worked', otherwise strict mode crashes."
+      },
+      {
+        type: "challenge",
+        instruction: "This Proxy logic is correct but it throws an error in strict mode (which modules use). Fix it by making the `set` trap return `true`.",
+        buggyCode: `const p = new Proxy({}, {
+  set(target, prop, val) {
+    console.log("Setting", prop);
+    target[prop] = val;
+    // ❌ Missing return
+  }
+});
+
+p.x = 10;`,
+        solutionCode: `const p = new Proxy({}, {
+  set(target, prop, val) {
+    console.log("Setting", prop);
+    target[prop] = val;
+    return true; // ✅ Required
+  }
+});
+
+p.x = 10;`,
+        verifyCode: "return true",
+        verifyOutput: "Setting x",
+        successMessage: "Perfect. The Proxy protocol demands a boolean return for setters. Otherwise it assumes assignment failed.",
+        hint: "Add `return true;` at the end of the `set` function."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

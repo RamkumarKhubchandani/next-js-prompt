@@ -2,6 +2,58 @@ export const day11 = {
   day: 11,
   title: "Day 11: Functional Programming (Purity, Immutability, Composition)",
   intro: "FP is how you make code predictable. Today you’ll learn purity, immutability, composition, and how to build logic that is easy to test and hard to break.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 11! Functional Programming. It's not about math, it's about trust. Can you trust a function not to break something else?"
+      },
+      {
+        type: "code",
+        code: `const cart = [1, 2];
+function addToCart(c, item) {
+  c.push(item); // ❌ Mutation! External 'cart' changed.
+  return c;
+}
+addToCart(cart, 3);
+console.log(cart); // [1, 2, 3] (Whoops)`,
+        caption: "The mutation trap.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "If a function changes data outside itself, it has a 'Side Effect'. This leads to 90% of state bugs."
+      },
+      {
+        type: "challenge",
+        instruction: "This function `updateScore` modifies the original user object directly. Fix it to be 'Immutable'—it should return a *new* object, leaving the original touched.",
+        buggyCode: `const user = { name: "Sam", score: 10 };
+
+function updateScore(u) {
+  // BUG: Mutating input
+  u.score += 5;
+  return u;
+}
+
+const newUser = updateScore(user);
+console.log(user.score); // Should stay 10!`,
+        solutionCode: `const user = { name: "Sam", score: 10 };
+
+function updateScore(u) {
+  // FIX: Return a copy with spread syntax
+  return { ...u, score: u.score + 5 };
+}
+
+const newUser = updateScore(user);
+console.log(user.score); // 10 (Safe)`,
+        verifyCode: "...",
+        verifyOutput: "10 (Safe)",
+        successMessage: "Clean. You used the spread operator to create a copy. The original data is safe.",
+        hint: "Use `return { ...u, score: u.score + 5 }` to create a fresh object reference."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) What You’re Building</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

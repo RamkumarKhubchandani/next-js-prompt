@@ -2,6 +2,47 @@ export const day12 = {
   day: 12,
   title: "Day 12: Currying & Partial Application (Make APIs Cleaner)",
   intro: "Currying is not a trick — it’s a tool for building reusable, configurable functions. Today you’ll learn currying vs partial application and build tiny factories you’ll actually use.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 12! Currying. It sounds spicy, but it just means 'locking in args'. It lets you create specialized tools from generic ones."
+      },
+      {
+        type: "code",
+        code: `const add = (a) => (b) => a + b;
+const add10 = add(10); // Locking in 10
+console.log(add10(5)); // 15
+console.log(add10(20)); // 30`,
+        caption: "A function factory.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "Most bugs here happen when you forget that the first call *returns a function*, not the result."
+      },
+      {
+        type: "challenge",
+        instruction: "This code crashes because `greet` returns a function, but we aren't calling the second part. Fix line 8 to make it print 'Hello World'.",
+        buggyCode: `const greet = (greeting) => (name) => {
+  console.log(greeting + " " + name);
+};
+
+const hello = greet("Hello");
+hello; // ❌ Does nothing (it's just a function)`,
+        solutionCode: `const greet = (greeting) => (name) => {
+  console.log(greeting + " " + name);
+};
+
+const hello = greet("Hello");
+hello("World"); // ✅ Call the inner function`,
+        verifyOutput: "Hello World",
+        successMessage: "You got it. `greet('Hello')` creates the tool; `hello('World')` uses it.",
+        hint: "You need to call `hello` with a string argument like `hello('World')`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Intuition</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

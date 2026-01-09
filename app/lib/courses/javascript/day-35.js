@@ -2,6 +2,68 @@ export const day35 = {
   day: 35,
   title: "🧵 Concurrency Patterns: Limiters, Pools, Cancellation",
   intro: "Real apps must control concurrency. Today you build a limiter and a pool so you can safely run many async tasks without melting the network or UI.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 35: Concurrency. Running 10,000 requests in parallel is an amateur move. It crashes browsers and servers."
+      },
+      {
+        type: "talk",
+        message: "The professional move is to use a Concurrency Limiter (or 'Pool'). Run 5 at a time, queue the rest."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Concurrency Bomb. This code fires 10 fake requests at once. If `tasks` had 10,000 items, it would crash. Implement a `runLimit` logic that only allows 2 tasks to run at a time.",
+        buggyCode: `const tasks = [1, 2, 3, 4, 5, 6].map(i => () => new Promise(r => {
+  console.log("Start", i);
+  setTimeout(() => {
+    console.log("Done", i);
+    r(i);
+  }, 1000);
+}));
+
+// ❌ Fires all at once!
+Promise.all(tasks.map(t => t()));`,
+        solutionCode: `const tasks = [1, 2, 3, 4, 5, 6].map(i => () => new Promise(r => {
+  console.log("Start", i);
+  setTimeout(() => {
+    console.log("Done", i);
+    r(i);
+  }, 1000);
+}));
+
+async function runLimit(tasks, limit) {
+  const results = [];
+  const executing = [];
+  
+  for (const task of tasks) {
+    const p = task().then(result => {
+      // Remove self from executing list when done
+      executing.splice(executing.indexOf(p), 1);
+      return result;
+    });
+    
+    results.push(p);
+    executing.push(p);
+    
+    // ✅ Wait if hitting limit
+    if (executing.length >= limit) {
+      await Promise.race(executing);
+    }
+  }
+  return Promise.all(results);
+}
+
+runLimit(tasks, 2).then(() => console.log("All finished safely"));`,
+        verifyOutput: "All finished safely",
+        verifyCode: "Promise.race",
+        successMessage: "Smart using `Promise.race`. By waiting for *one* of the executing tasks to finish before starting the next, you maintain a steady flow of tasks without exceeding the limit.",
+        hint: "Store executing promises in an array. Whenever `executing.length >= limit`, `await Promise.race(executing)`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 p-4 rounded-xl mb-6">
   <h4 class="text-emerald-300 font-bold mb-2">🎯 Outcome</h4>

@@ -2,6 +2,56 @@ export const day10 = {
   day: 10,
   title: "Day 10: Web Workers (Real Multithreading for JS)",
   intro: "The main thread is for UI. Heavy CPU work belongs in a worker. Today you’ll learn message passing, structured cloning cost, and a practical pattern using a Blob worker.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 10! The Main Thread. It's the only thread that can touch the UI. If you hog it, the user suffers."
+      },
+      {
+        type: "code",
+        code: `// Main Thread (UI)
+button.onclick = () => {
+   // Heavy math blocks this thread!
+   while(n < 1000000000) {} 
+   // Button stays depressed until loop finishes.
+}`,
+        caption: "Why apps freeze.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "Workers run in the background. They can't touch the DOM, but they can crunch numbers."
+      },
+      {
+        type: "challenge",
+        instruction: "This code blocks the UI. Pretend `heavy` is a worker. Call it using `postMessage` syntax (mocked here) via the `worker` object, instead of calling the function directly.",
+        buggyCode: `const worker = {
+  postMessage: (data) => console.log("Worker recieved:", data)
+};
+
+function onButtonClick() {
+  // BUG: Calling logic on main thread
+  // heavyLogic(100); 
+  console.log("Blocking UI...");
+}`,
+        solutionCode: `const worker = {
+  postMessage: (data) => console.log("Worker recieved:", data)
+};
+
+function onButtonClick() {
+  // FIX: Send to worker
+  worker.postMessage(100);
+  console.log("UI free!");
+}`,
+        verifyCode: "postMessage",
+        verifyOutput: "Worker recieved: 100",
+        successMessage: "Correct! You offloaded the work. The UI stays buttery smooth.",
+        hint: "Replace the blocking logic with `worker.postMessage(100)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) Why Workers Matter</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

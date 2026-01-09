@@ -2,6 +2,55 @@ export const day06 = {
   day: 6,
   title: "Day 6: The Event Loop (Microtasks vs Macrotasks) + UI Smoothness",
   intro: "This is where JavaScript becomes predictable. You’ll learn the event loop like a timeline: what runs now, what runs next, and how to avoid freezing the UI.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 6! The Event Loop. This is the heartbeat of JavaScript. If you block it, the screen freezes. Literally."
+      },
+      {
+        type: "code",
+        code: `while(true) {} // ❌ The tab crashes.`,
+        caption: "Blocking the main thread.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "To keep 60 FPS, you must 'yield' control back to the browser occasionally so it can paint pixels."
+      },
+      {
+        type: "challenge",
+        instruction: "This loop runs 5000 times strictly and could freeze a slow phone. Fix it by making it `async` and yielding (waiting 0ms) every 1000 items.",
+        buggyCode: `let processed = 0;
+async function heavyWork() {
+  for (let i = 0; i < 5000; i++) {
+     processed++;
+     // ❌ Should yield here
+  }
+  console.log("Done:", processed);
+}
+heavyWork();`,
+        solutionCode: `let processed = 0;
+async function heavyWork() {
+  for (let i = 0; i < 5000; i++) {
+     processed++;
+     
+     // Yield every 1000 items to let the browser breathe
+     if (i % 1000 === 0) {
+       await new Promise(r => setTimeout(r, 0));
+     }
+  }
+  console.log("Done:", processed);
+}
+heavyWork();`,
+        verifyCode: "setTimeout",
+        verifyOutput: "Done: 5000",
+        successMessage: "Nice! By 'awaiting' a timeout, you let the Event Loop process clicks and repaints before continuing.",
+        hint: "Use `await new Promise(r => setTimeout(r, 0))` inside the loop conditionally."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Promise of Today</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">
