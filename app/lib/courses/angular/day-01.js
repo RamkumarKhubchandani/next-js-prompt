@@ -1,115 +1,224 @@
 export const day01 = {
   day: 1,
-  title: "Components & Templates (Bindings, Inputs/Outputs, Control Flow)",
-  intro: "Angular is a component framework. Learn the template syntax, bindings, and the modern control flow style.",
+  title: "Mental Model: Standalone & Signals",
+  intro: "Welcome to Modern Angular. Forget modules. Forget Zone.js. Today, we build with Standalone Components and Signals—the reactive glue of the future.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Welcome to Angular! I'm your AI Architect. We aren't learning 'Old Angular'. We are doing **Modern Angular** (v18+)."
+      },
+      {
+        type: "talk",
+        message: "First rule: **Everything is a Component**. And every Component should be **Standalone**. No more `NgModule` boilerplate."
+      },
+      {
+        type: "challenge",
+        instruction: "This component is stuck in the past. It references `AppModule`. Make it **standalone**.",
+        buggyCode: `// ❌ Legacy Style
+@Component({
+  selector: 'app-root',
+  template: '<h1>Hello {{ name }}</h1>',
+})
+export class AppComponent {
+  name = 'Angular';
+}`,
+        solutionCode: `// ✅ Modern Standalone
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: '<h1>Hello {{ name }}</h1>',
+  imports: [] // Add other components here directly!
+})
+export class AppComponent {
+  name = 'Angular';
+}`,
+        verifyOutput: "standalone: true",
+        successMessage: "Perfect. `standalone: true` is the default now. You import what you need, right where you need it.",
+        hint: "Add `standalone: true` and an empty `imports: []` array to the component decorator."
+      },
+      {
+        type: "talk",
+        message: "Second rule: **Reactivity is explicit**. In the past, Angular guessed when to update (Zone.js). Now, we use **Signals**."
+      },
+      {
+        type: "challenge",
+        instruction: "Change this standard variable into a **Signal**. Signals tell Angular exactly when to update the DOM.",
+        buggyCode: `import { Component } from '@angular/core';
+
+@Component({ ... })
+export class Counter {
+  // ❌ Tries to rely on magic change detection
+  count = 0;
+
+  increment() {
+    this.count++;
+  }
+}`,
+        solutionCode: `import { Component, signal } from '@angular/core';
+
+@Component({ ... })
+export class Counter {
+  // ✅ Precise, fine-grained reactivity
+  count = signal(0);
+
+  increment() {
+    this.count.update(c => c + 1);
+  }
+}`,
+        verifyOutput: "signal(0)",
+        successMessage: "Boom. ⚡ Signals are atomic units of state. Changing one updates ONLY the DOM node that uses it.",
+        hint: "Use `signal(0)` and update it with `.update(val => val + 1)`."
+      },
+      {
+        type: "ask",
+        question: "Why do we prefer Signals over standard variables in modern Angular?",
+        options: [
+          "They are faster to type",
+          "They define a dependency graph, allowing fine-grained updates without checking the whole tree",
+          "They look like React Hooks",
+          "They are required for all templates"
+        ],
+        correctAnswer: "They define a dependency graph, allowing fine-grained updates without checking the whole tree",
+        feedback: {
+          success: "Exactly. Signals let Angular know PRECISELY what changed. No guessing.",
+          error: "It's about the Dependency Graph. We want surgical updates, not full-tree checks."
+        }
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Blueprint" Mental Model</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Think of an Angular Component as a building.
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🚀 1. The "Standalone" Mental Model</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+In the past, Angular required "Modules" (NgModules) to group code. It was confusing boilerplate. 
 </p>
-<div class="grid md:grid-cols-2 gap-6 mb-8">
-  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
-    <h4 class="font-bold text-brand-primary mb-2">The Class (The Logic)</h4>
-    <p class="text-sm text-gray-600 dark:text-light-300">
-      The TypeScript class is the "smart" part. It holds the data (residents) and methods (rules). But a class alone is just a script.
-    </p>
-  </div>
-  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
-    <h4 class="font-bold text-red-600 dark:text-red-400 mb-2">The Decorator (The Permit)</h4>
-    <p class="text-sm text-gray-600 dark:text-light-300">
-      The <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">@Component</code> decorator is the building permit. It tells Angular: "This isn't just a script; it's a UI Component with a template (HTML) and styles (CSS)."
-    </p>
-  </div>
-</div>
+<p class="mb-6 text-gray-600 dark:text-gray-300">
+<strong>Modern Angular</strong> (v15+) is <strong>Standalone</strong>. 
+A component is self-contained. It imports exactly what it needs (CommonModule, other components, etc.) in its own <code>imports</code> array.
+</p>
 
-<div class="mb-8 p-5 rounded-xl border border-blue-500/30 bg-blue-500/5">
-  <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
-    <span class="text-xl">🏛️</span> Architect's Note: Why Enterprise Loves Angular
-  </h4>
-  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
-    React is flexible; Angular is strict. In a team of 100 developers, flexibility is chaos.
-  </p>
-  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
-    Angular forces everyone to write code the same way (Modules, Services, Dependency Injection).
-    This <strong>opinionated structure</strong> is why banks and large corps choose it. It scales socially, not just technically.
-  </p>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>Property binding vs event binding vs two-way binding.</li>
-  <li><code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">@Input</code> and <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">@Output</code> communication.</li>
-  <li>Template control flow (<span class="text-yellow-600 dark:text-yellow-400 font-bold">if/for</span> style) + trackBy mindset.</li>
-</ul>
-
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
-<pre>
-Parent Component
-  ├─ passes data via @Input  ─────▶ Child Component
-  └─ listens via @Output    ◀───── emits events
+<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-brand-primary">
+<pre class="text-gray-800 dark:text-white">
+@Component({
+  standalone: true, // <--- The Golden Ticket
+  imports: [CommonModule, UserProfileComponent], 
+  // ...
+})
 </pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Bindings (The 4 You Use Daily)</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-6 font-mono text-sm text-gray-700 dark:text-light-200 overflow-x-auto">
-<pre><code>
-{{ title }}                 # interpolation (text)
-[disabled]="isSaving"       # property binding
-(click)="save()"            # event binding
-[(ngModel)]="name"          # two-way binding (forms)
-</code></pre>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ 2. Signals: The Heart of Reactivity</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+Standard variables (<code>count = 0</code>) are dumb. They don't notify anyone when they change. Angular used to rely on "Zone.js" to monkey-patch the browser and guess when to check for changes.
+</p>
+<p class="mb-6 text-gray-600 dark:text-gray-300">
+<strong>Signals</strong> are smart boxes. 📦
+When you change the value inside, the box notifies everyone watching it.
+</p>
+
+<ul class="list-disc list-inside space-y-3 text-gray-600 dark:text-light-300 mb-8">
+  <li><strong class="text-brand-primary">Write:</strong> <code>count.set(5)</code> or <code>count.update(n => n + 1)</code></li>
+  <li><strong class="text-brand-primary">Read:</strong> <code>count()</code> (Always call it like a function!)</li>
+  <li><strong class="text-brand-primary">Compute:</strong> <code>double = computed(() => count() * 2)</code></li>
+</ul>
+
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common "Junior" Mistakes</h3>
+<div class="grid md:grid-cols-2 gap-4 mb-8">
+  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
+    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">The "Zone" Trap</h4>
+    <p class="text-sm">Relying on standard variables and hoping the UI updates. If you change a variable in a <code>setTimeout</code> or 3rd party lib, Angular might miss it.</p>
+  </div>
+  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
+    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Module Spaghetti</h4>
+    <p class="text-sm">Still creating <code>SharedModule</code> or <code>FeatureModule</code>. Stop it. Use Standalone Components.</p>
+  </div>
 </div>
+`,
+  code: `import { Component, signal, computed } from '@angular/core';
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Inputs/Outputs (The Clean Data Flow)</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Use <span class="text-yellow-600 dark:text-yellow-400 font-bold">Inputs</span> for data down and <span class="text-yellow-600 dark:text-yellow-400 font-bold">Outputs</span> for events up.
-Avoid a child calling parent services directly; it creates hidden coupling.
-</p>
+@Component({
+  selector: 'app-playground',
+  standalone: true,
+  template: \`
+    <div class="p-6 bg-gray-900 text-white rounded-xl">
+      <h2 class="text-2xl font-bold mb-4">🚦 Signal Traffic</h2>
+      
+      <div class="flex items-center gap-4 mb-6">
+        <button (click)="decrement()" class="px-4 py-2 bg-red-500 rounded hover:bg-red-600">-</button>
+        <span class="text-4xl font-mono">{{ count() }}</span>
+        <button (click)="increment()" class="px-4 py-2 bg-green-500 rounded hover:bg-green-600">+</button>
+      </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) List Rendering (Identity Matters)</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-When lists change, Angular must understand item identity. If identity changes, DOM churn increases.
-Always prefer stable IDs and a trackBy mindset.
-</p>
-            `,
-  code: `/**
- * Day 1: Minimal parent-child example (standalone-style)
- */
+      <div class="p-4 bg-gray-800 rounded-lg">
+        <p class="text-gray-400 text-sm">Computed Values (Update Automatically!)</p>
+        <p>Double: <strong class="text-brand-primary">{{ double() }}</strong></p>
+        <p>Status: <strong [class.text-green-400]="isPositive()" [class.text-red-400]="!isPositive()">
+          {{ isPositive() ? 'Positive' : 'Non-Positive' }}
+        </strong></p>
+      </div>
+    </div>
+  \`
+})
+export class PlaygroundComponent {
+  // 1. Define State (The Source of Truth)
+  count = signal(0);
 
-// parent.component.html
-// <app-user-card
-//   [user]="user"
-//   (deleted)="onDeleted($event)">
-// </app-user-card>
+  // 2. Define Derived State (The Consequence)
+  // Computed signals update ONLY when their dependencies (count) change.
+  double = computed(() => this.count() * 2);
+  isPositive = computed(() => this.count() > 0);
 
-// user-card.component.ts
-// export class UserCardComponent {
-//   @Input({ required: true }) user!: User;
-//   @Output() deleted = new EventEmitter<string>();
-//
-//   delete() {
-//     this.deleted.emit(this.user.id);
-//   }
-// }`,
+  constructor() {
+    // 📢 For this Playground Demo:
+    // We'll simulate clicks automatically so you see the console light up!
+    effect(() => {
+        console.log('[Effect] Count is: ' + this.count() + ' | Double: ' + this.double());
+    });
+
+    console.log("--- 🏁 Auto-Driving Component ---");
+    setTimeout(() => {
+        console.log("▶️ Incrementing...");
+        this.increment();
+    }, 1000);
+    
+    setTimeout(() => {
+        console.log("▶️ Incrementing again...");
+        this.increment();
+    }, 2000);
+
+    setTimeout(() => {
+        console.log("◀️ Decrementing...");
+        this.decrement();
+    }, 3000);
+  }
+
+  increment() {
+    this.count.update(v => v + 1);
+  }
+
+  decrement() {
+    this.count.update(v => v - 1);
+  }
+}`,
   comparison: {
-    junior: `// ❌ Tight coupling
-// child imports parent services directly`,
-    senior: `// ✅ Clear contracts
-// data down via @Input, events up via @Output`
+    junior: `// ❌ Implicit & Magic
+count = 0;
+get double() { 
+  // re-runs on EVERY change detection cycle 😱
+  console.log('Calculating...');
+  return this.count * 2; 
+}`,
+    senior: `// ✅ Explicit & Reactive
+count = signal(0);
+// Cached! Only re-runs when count changes. ⚡
+double = computed(() => this.count() * 2);`
   },
   interview: {
     questions: [
       {
-        q: "Difference between property binding and interpolation?",
-        a: "Interpolation sets text in templates. Property binding binds to DOM properties/inputs. Property binding is required for non-string values and dynamic attributes."
-      },
-      {
-        q: "Why avoid two-way binding everywhere?",
-        a: "It can hide data flow and complicate debugging. Prefer unidirectional flow: inputs + events, and use two-way where it truly helps (forms)."
-      },
-      {
-        q: "Why is trackBy important in lists?",
-        a: "It prevents unnecessary DOM destruction/recreation by giving Angular stable identity for items, improving performance."
+        q: "What is the difference between a Signal and an Observable (RxJS)?",
+        a: "Signals are for synchronous state (holding a value). Observables are for asynchronous streams (events over time). Angular uses Signals for the View and RxJS for complex events/http."
       }
     ]
   }

@@ -1,67 +1,62 @@
 export const day21 = {
   day: 21,
-  title: "Build System (esbuild/Vite-style speed, budgets, optimization)",
-  intro: "Learn what makes builds fast and bundles small: budgets, code splitting, and dependency hygiene.",
+  title: "Animations: The Angular Animations API",
+  intro: "Bring your UI to life with Angular's powerful animation system. Create smooth transitions, state-based animations, and complex sequences.",
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Bundle Discipline</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>Audit dependencies (biggest wins).</li>
-  <li>Lazy load features.</li>
-  <li>Track bundle budgets.</li>
-</ul>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎬 Angular Animations</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+Angular's animation system is built on Web Animations API, providing declarative animations with full TypeScript support.
+</p>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) What Actually Makes Bundles Big</h3>
-<div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-600 dark:text-light-300 mb-6">
-  <ul class="list-disc list-inside space-y-1 text-sm">
-    <li>Huge dependencies (chart libs, date libs, utility megabundles)</li>
-    <li>Accidental eager imports (importing whole feature from root)</li>
-    <li>Duplicate dependencies in monorepos</li>
-    <li>Shipping large JSON/data in the bundle</li>
-  </ul>
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
+<pre class="text-gray-800 dark:text-gray-100">
+import { trigger, state, style, transition, animate } from '@angular/animations';
+
+@Component({
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms', style({ opacity: 1 }))
+      ])
+    ])
+  ]
+})
+</pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Code Splitting Strategy</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Split by user intent: pages/features. Example: Admin, Billing, Reports should not be in the initial bundle.
-</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ Common Animation Patterns</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
+  <li><strong class="text-brand-primary">:enter/:leave:</strong> Element added/removed from DOM</li>
+  <li><strong class="text-brand-primary">State transitions:</strong> Animate between defined states</li>
+  <li><strong class="text-brand-primary">Keyframes:</strong> Multi-step animations</li>
+  <li><strong class="text-brand-primary">Stagger:</strong> Animate list items with delay</li>
+</ul>
+`,
+  code: `// Example: Fade in animation
+import { trigger, transition, style, animate } from '@angular/animations';
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) Build Budgets (Guardrails)</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Budgets are how teams prevent slow regressions. If a PR adds 400KB, it should fail CI and force an explicit decision.
-</p>
-            `,
-  code: `/**
- * Day 21: Practical build checklist (conceptual)
- */
-
-// 1) Budget rule:
-// - set bundle budgets in angular.json
-// - fail CI if exceeded
-//
-// 2) Dependency rule:
-// - audit dependencies quarterly
-// - prefer smaller alternatives
-//
-// 3) Split rule:
-// - lazy load feature routes
-// - avoid importing feature modules/components in root`,
+export const fadeIn = trigger('fadeIn', [
+  transition(':enter', [
+    style({ opacity: 0, transform: 'translateY(10px)' }),
+    animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+  ])
+]);`,
   comparison: {
-    junior: "// ❌ ship massive bundles",
-    senior: "// ✅ budgets + audits + lazy loading"
+    junior: `// ❌ CSS classes + setTimeout
+element.classList.add('fade-in');
+setTimeout(() => element.classList.remove('fade-in'), 300);`,
+    senior: `// ✅ Angular animations
+@Component({
+  animations: [fadeIn]
+})
+// Template: <div @fadeIn>Content</div>`
   },
   interview: {
     questions: [
       {
-        q: "What is tree-shaking?",
-        a: "Removing unused code during bundling (works best with ESM and side-effect-free modules)."
-      },
-      {
-        q: "How do you keep bundle size under control?",
-        a: "Budgets, dependency audits, code splitting, and avoiding giant utility libraries when small alternatives exist."
-      },
-      {
-        q: "Why are source maps sensitive?",
-        a: "They can expose source code and internal structure. Serve them carefully (or restrict) in production."
+        q: "What's the advantage of Angular animations over CSS?",
+        a: "TypeScript integration, programmatic control, callbacks (onDone/onStart), and better testing support."
       }
     ]
   }

@@ -1,52 +1,132 @@
 export const day16 = {
   day: 16,
-  title: "Angular CDK + Material (Design Systems Done Right)",
-  intro: "Learn to build consistent UI at scale: CDK primitives and Material components (or your own design system).",
+  title: "Content Projection: ng-content & Templates",
+  intro: "Build reusable components that accept custom content. Master ng-content, ng-template, and advanced projection patterns.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 16. **Content Projection** lets you create flexible components that accept custom HTML from parents."
+      },
+      {
+        type: "challenge",
+        instruction: "Create a Card component that accepts custom header and body content.",
+        buggyCode: `// ❌ Hardcoded content
+@Component({
+  template: \`
+    <div class="card">
+      <h3>Title</h3>
+      <p>Content</p>
+    </div>
+  \`
+})`,
+        solutionCode: `// ✅ Flexible with ng-content
+@Component({
+  template: \`
+    <div class="card">
+      <div class="header">
+        <ng-content select="[header]"></ng-content>
+      </div>
+      <div class="body">
+        <ng-content select="[body]"></ng-content>
+      </div>
+    </div>
+  \`
+})
+// Usage: <app-card>
+//   <h3 header>Custom Title</h3>
+//   <p body>Custom content</p>
+// </app-card>`,
+        verifyOutput: "ng-content",
+        successMessage: "Perfect! Now your Card component is reusable with any content.",
+        hint: "Use <ng-content select=\"[selector]\"> for multi-slot projection."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Why CDK Matters</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-CDK provides primitives (overlay, a11y, drag-drop) so you can build reusable components without reinventing hard problems.
-</p>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📦 1. Single Slot Projection</h3>
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm">
+<pre class="text-gray-800 dark:text-gray-100">
+// Component
+@Component({
+  template: \`<div class="wrapper"><ng-content></ng-content></div>\`
+})
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) CDK vs Material</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
-  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
-    <p class="font-bold text-gray-900 dark:text-white mb-1">CDK</p>
-    <p>Behavior primitives (no styling).</p>
-    <p class="text-gray-600 dark:text-gray-400">Overlay, portals, a11y, virtual scroll.</p>
-  </div>
-  <div class="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-dark-600 text-gray-700 dark:text-light-200">
-    <p class="font-bold text-gray-900 dark:text-white mb-1">Material</p>
-    <p>Pre-built components + theming.</p>
-    <p class="text-gray-600 dark:text-gray-400">Buttons, dialogs, tables, menus.</p>
-  </div>
+// Usage
+<app-wrapper>
+  <p>This content is projected!</p>
+</app-wrapper>
+</pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) A Real Design System Strategy</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>Use Material/CDK as foundation.</li>
-  <li>Create a <span class="text-yellow-600 dark:text-yellow-400 font-bold">thin wrapper</span> library (your own components) for consistent API.</li>
-  <li>Enforce A11y and UX defaults once, reuse everywhere.</li>
-</ul>
-            `,
-  code: "// Use CDK overlay for popovers, menus, tooltips (conceptual).",
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 2. Multi-Slot Projection</h3>
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
+<pre class="text-gray-800 dark:text-gray-100">
+@Component({
+  template: \`
+    <header><ng-content select="[header]"></ng-content></header>
+    <main><ng-content select="[body]"></ng-content></main>
+    <footer><ng-content select="[footer]"></ng-content></footer>
+  \`
+})
+</pre>
+</div>
+`,
+  code: `import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-card',
+  standalone: true,
+  template: \`
+    <div class="border border-gray-700 rounded-xl overflow-hidden bg-gray-800">
+      <div class="p-4 border-b border-gray-700 bg-gray-750">
+        <ng-content select="[header]"></ng-content>
+      </div>
+      <div class="p-4">
+        <ng-content select="[body]"></ng-content>
+      </div>
+      <div class="p-4 border-t border-gray-700 bg-gray-750">
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  \`
+})
+export class CardComponent {}
+
+@Component({
+  selector: 'app-projection-demo',
+  standalone: true,
+  imports: [CommonModule, CardComponent],
+  template: \`
+    <div class="p-6 bg-gray-900 text-white rounded-xl">
+      <h2 class="text-2xl font-bold mb-6">📦 Content Projection</h2>
+      
+      <app-card>
+        <h3 header class="text-xl font-bold">Custom Header</h3>
+        <p body>This is projected body content!</p>
+        <button footer class="px-4 py-2 bg-blue-600 rounded">Action</button>
+      </app-card>
+    </div>
+  \`
+})
+export class ProjectionDemoComponent {}`,
   comparison: {
-    junior: "// ❌ copy-paste UI",
-    senior: "// ✅ design system + primitives"
+    junior: `// ❌ Hardcoded
+<div class="card">
+  <h3>{{ title }}</h3>
+</div>`,
+    senior: `// ✅ Flexible
+<div class="card">
+  <ng-content></ng-content>
+</div>`
   },
   interview: {
     questions: [
       {
-        q: "What is the Angular CDK?",
-        a: "A set of behavior primitives (not styled) to build components: overlays, portals, accessibility, drag-drop, virtual scrolling."
-      },
-      {
-        q: "Why prefer a design system?",
-        a: "Consistency, speed, accessibility, and reduced maintenance across teams."
-      },
-      {
-        q: "What’s an overlay?",
-        a: "A floating UI layer rendered above the app (menus/dialogs/tooltips) with proper positioning and focus management."
+        q: "What's the difference between @Input and ng-content?",
+        a: "@Input passes data. ng-content projects entire DOM nodes/components. Use ng-content for flexible layouts."
       }
     ]
   }
