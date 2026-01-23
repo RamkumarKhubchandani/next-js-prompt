@@ -38,11 +38,106 @@ Imagine a car factory assembly line.
   <div class="bg-white dark:bg-dark-900 p-4 rounded-lg border border-gray-200 dark:border-dark-600 font-mono text-xs text-blue-700 dark:text-blue-300">
     Request ──▶ [ Auth Middleware ] ──▶ [ Rate Limit Middleware ] ──▶ [ Service A / Service B ]
   </div>
+
   <p class="mt-4 text-xs text-blue-800 dark:text-blue-200 font-bold">
     Why? Because you can update the "Auth" logic in one place (the gateway) without redeploying 50 different microservices.
   </p>
 </div>
             `,
+  aiSession: {
+    start: {
+      title: "Fix the Double-Next Chaos",
+      subTitle: "If a middleware calls next() twice, it can break the entire chain. Add a guard to prevent this.",
+      intro: "One of the most insidious bugs in middleware systems (like Express or Koa) is when a developer accidentally calls `next()` more than once. This can cause the response to be sent twice, or subsequent middleware to run unexpectedly. Let's build a safety mechanism.",
+      buggyCode: `
+function compose(middleware) {
+  return function(context, next) {
+    let index = -1;
+    return dispatch(0);
+
+    function dispatch(i) {
+      // ❌ Bug: No check if we are going backwards or calling same index twice
+      index = i;
+      let fn = middleware[i];
+      if (i === middleware.length) fn = next;
+      if (!fn) return Promise.resolve();
+      
+      try {
+        return Promise.resolve(fn(context, function next() {
+          return dispatch(i + 1);
+        }));
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
+  }
+}
+
+// CHAOS SCENARIO
+const app = compose([
+  async (ctx, next) => {
+    console.log("Middleware 1 start");
+    await next();
+    await next(); // ⚠️ CALLED TWICE!
+    console.log("Middleware 1 end");
+  },
+  async (ctx, next) => {
+    console.log("Middleware 2 ran");
+  }
+]);
+
+app({}).catch(err => console.error("Caught error:", err.message));
+`,
+      solutionCode: `
+function compose(middleware) {
+  return function(context, next) {
+    let index = -1;
+    return dispatch(0);
+
+    function dispatch(i) {
+      if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+      index = i;
+
+      let fn = middleware[i];
+      if (i === middleware.length) fn = next;
+      if (!fn) return Promise.resolve();
+
+      try {
+        return Promise.resolve(fn(context, function next() {
+          return dispatch(i + 1);
+        }));
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
+  }
+}
+
+// CHAOS SCENARIO
+const app = compose([
+  async (ctx, next) => {
+    console.log("Middleware 1 start");
+    await next();
+    await next(); // Should throw now
+    console.log("Middleware 1 end");
+  },
+  async (ctx, next) => {
+    console.log("Middleware 2 ran");
+  }
+]);
+
+app({}).catch(err => console.log("SUCCESS: Caught expected error ->", err.message));
+`,
+      verifyOutput: (output) => {
+        return output.join("").includes("next() called multiple times");
+      },
+      verifyCode: (code) => {
+        return code.includes("i <= index") || code.includes("next() called multiple times");
+      },
+      successMessage: "Brilliant! You've successfully completely eliminated the double-next class of bugs from your framework.",
+      hint: "Track the current index in a closure. If `dispatch(i)` is called with an `i` that is less than or equal to the last `index`, throw an error."
+    }
+  },
   masteryChecklist: [
     {
       id: "d40-c1",

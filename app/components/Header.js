@@ -16,9 +16,10 @@ const navigation = [
     { name: "Pricing", href: "/#pricing" },
     { name: "Testimonials", href: "/#testimonials" },
     { name: "Community", href: "/showcase" },
-    { name: "Shop", href: "/shop" },
-    { name: "DevRooms", href: "/pair" },
+    { name: "Shop", href: "/shop", authOnly: true },
+    { name: "DevRooms", href: "/pair", authOnly: true },
     { name: "Jobs", href: "/jobs" },
+    { name: "Goals", href: "/#career-goals" },
     { name: "AI Assessment", href: "/ai-quiz" },
     { name: "Tutorials", href: "/blogs" },
 ];
@@ -154,20 +155,23 @@ export function Header({ showNav = true }) {
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
                         <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7 overflow-x-auto no-scrollbar">
-                            {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    onClick={() => {
-                                        // Only show loading for actual route navigations (not hash anchors).
-                                        if (String(item.href).startsWith("/#")) return;
-                                        startNavigate(item.href);
-                                    }}
-                                    className="text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
-                                >
-                                    {item.name}
-                                </Link>
-                            ))}
+                            {navigation.map((item) => {
+                                if (item.authOnly && !session) return null;
+                                return (
+                                    <motion.div key={item.name} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
+                                        <Link
+                                            href={item.href}
+                                            onClick={() => {
+                                                if (String(item.href).startsWith("/#")) return;
+                                                startNavigate(item.href);
+                                            }}
+                                            className="text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
+                                        >
+                                            {item.name}
+                                        </Link>
+                                    </motion.div>
+                                );
+                            })}
                         </nav>
                     )}
 
@@ -341,22 +345,25 @@ export function Header({ showNav = true }) {
                                                 Live debugging • Project help • Career guidance
                                             </span>
                                         </button>
-                                        {showNav && navigation.map((item) => (
-                                            <Link
-                                                key={item.name}
-                                                href={item.href}
-                                                onClick={() => {
-                                                    if (String(item.href).startsWith("/#")) {
-                                                        setMobileMenuOpen(false);
-                                                        return;
-                                                    }
-                                                    startNavigate(item.href);
-                                                }}
-                                                className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
-                                            >
-                                                {item.name}
-                                            </Link>
-                                        ))}
+                                        {showNav && navigation.map((item) => {
+                                            if (item.authOnly && !session) return null;
+                                            return (
+                                                <Link
+                                                    key={item.name}
+                                                    href={item.href}
+                                                    onClick={() => {
+                                                        if (String(item.href).startsWith("/#")) {
+                                                            setMobileMenuOpen(false);
+                                                            return;
+                                                        }
+                                                        startNavigate(item.href);
+                                                    }}
+                                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
+                                                >
+                                                    {item.name}
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                     <div className="py-6">
                                         {session ? (

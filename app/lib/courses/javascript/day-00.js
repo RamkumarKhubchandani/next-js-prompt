@@ -2,6 +2,73 @@ export const day00 = {
   day: 0,
   title: "Day 0: Pro Setup + How to Learn JavaScript Like an Engineer",
   intro: "You don’t need a human teacher—you need a system. Today we set up a pro environment, learn the “predict → run → explain” loop, and build the debugging instincts that make the rest of this roadmap feel unfairly easy.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Welcome to Day 0! 🎓 I'm your AI Senior Engineer. Today isn't about code syntax; it's about *how to learn* fast.",
+        avatar: "gpt-4-turbo"
+      },
+      {
+        type: "talk",
+        message: "The biggest mistake juniors make: they stare at code. Seniors *predict* code. Let's test your intuition right now.",
+        delay: 1000
+      },
+      {
+        type: "code",
+        code: `console.log("A");
+setTimeout(() => console.log("B"), 0);
+console.log("C");`,
+        speed: "normal",
+        caption: "A classic interview question..."
+      },
+      {
+        type: "ask",
+        question: "Which letter prints LAST?",
+        options: ["A", "B", "C"],
+        correctAnswer: "B",
+        feedback: {
+          success: "Spot on! Even with 0ms, 'B' goes to the Task Queue and waits for the Stack to empty.",
+          error: "Actually, it's 'B'. Even with 0ms, it waits in a queue until the main Sync code (A and C) finishes."
+        }
+      },
+      {
+        type: "talk",
+        message: "This is the **Event Loop** in action. We'll master this later, but remember: logic always beats memorization."
+      },
+      {
+        type: "talk",
+        message: "One more pro tip before you drive. Old JS (`var`) was like the Wild West—you could use variables before you defined them, and they'd just be `undefined`."
+      },
+      {
+        type: "code",
+        code: `console.log(myVar); // undefined (No error!)
+var myVar = "Ghost";`,
+        caption: "Var 'hoisting' allows this. It causes silent bugs.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "Modern JS (`let` and `const`) fixes this with the **Temporal Dead Zone**. If you touch them too early, the app *crashes* to protect you."
+      },
+      {
+        type: "talk",
+        message: "Now it's your turn. I've deliberately written a TDZ crash. Use your new knowledge to fix it."
+      },
+      {
+        type: "challenge",
+        instruction: "This code crashes because of the Temporal Dead Zone (TDZ). Fix it so it prints 'Dev' without changing 'let' to 'var'.",
+        buggyCode: `console.log("User:", name);
+let name = "Dev";`,
+        solutionCode: `let name = "Dev";
+console.log("User:", name); // ✅ Declaration first`,
+        verifyOutput: "User: Dev",
+        successMessage: "Boom! You nailed it. You cannot access a 'let' variable before it's declared. Scope secured.",
+        hint: "Look at the order. The variable 'name' is being used before it exists in memory. Can you move the declaration?"
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 Your Day 0 Outcomes (What “Done” Looks Like)</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

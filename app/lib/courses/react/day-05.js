@@ -184,7 +184,8 @@ const log = (msg) => setLogs(prev => [...prev, msg]);
 //   Render 3 → Effect runs... and so on
 // ═══════════════════════════════════════════════════════════
 React.useEffect(() => {
-log('🔄 Effect: Runs on EVERY render');
+  // We use console.log here to avoid an infinite loop (since 'log' updates state!)
+  console.log('🔄 Effect: Runs on EVERY render');
 });
 
 // ═══════════════════════════════════════════════════════════

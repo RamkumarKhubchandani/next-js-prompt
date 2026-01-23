@@ -8,6 +8,63 @@ export const day37 = {
   <p class="text-gray-600 dark:text-light-300">You will build a <span class="text-yellow-700 dark:text-yellow-300 font-bold">priority queue</span> and a <span class="text-yellow-700 dark:text-yellow-300 font-bold">scheduler</span> that runs work in small chunks.</p>
 </div>
             `,
+  aiSession: {
+    start: {
+      title: "Fix the blocking scheduler",
+      subTitle: "The current implementation runs all tasks synchronously, freezing the UI. Fix it to yield between tasks.",
+      intro: "Blocking the main thread is a cardinal sin in browser JS. Our scheduler currently runs everything in one go. We need to implement 'time slicing' to yield control back to the browser.",
+      buggyCode: `
+function runTasks(tasks) {
+  // ❌ All tasks run in a single synchronous block
+  while (tasks.length > 0) {
+    const task = tasks.shift();
+    task();
+  }
+}
+
+// Simulation
+const tasks = [
+  () => console.log("Task 1"),
+  () => console.log("Task 2"),
+  () => console.log("Task 3")
+];
+runTasks(tasks);
+`,
+      solutionCode: `
+function runTasks(tasks) {
+  function step() {
+    if (tasks.length === 0) return;
+
+    // Run one task
+    const task = tasks.shift();
+    task();
+
+    // Yield to the event loop
+    setTimeout(step, 0);
+  }
+  
+  // Start the loop
+  step();
+}
+
+// Simulation
+const tasks = [
+  () => console.log("Task 1"),
+  () => console.log("Task 2"),
+  () => console.log("Task 3")
+];
+runTasks(tasks);
+`,
+      verifyOutput: (output) => {
+        return output.join("").includes("Task 1Task 2Task 3");
+      },
+      verifyCode: (code) => {
+        return code.includes("setTimeout") || code.includes("requestIdleCallback") || code.includes("Promise.resolve().then");
+      },
+      successMessage: "Nice! By yielding with setTimeout, you let the browser handle user input and rendering between tasks.",
+      hint: "Use a recursive function that runs one task, then schedules itself again using setTimeout(..., 0)."
+    }
+  },
   masteryChecklist: [
     {
       id: "d37-c1",

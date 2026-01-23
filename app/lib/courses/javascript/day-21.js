@@ -2,6 +2,67 @@ export const day21 = {
   day: 21,
   title: "🔥 Polyfills Mastery: Write Your Own JS Methods",
   intro: "The #1 interview topic. If you can't write Promise.all from scratch, you're not ready for FAANG.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 21: Polyfills. This is the ultimate test of understanding."
+      },
+      {
+        type: "talk",
+        message: "The most common implementation mistake with `Promise.all` is assuming promises finish in order."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the race condition. This implementation of `Promise.myAll` uses `.push()` to collect results. This means the fastest promise appears first in the output, which is wrong. `Promise.all` must preserve the *input* order.",
+        buggyCode: `Promise.myAll = function(promises) {
+  return new Promise((resolve) => {
+    const results = [];
+    let count = 0;
+    // ❌ BUG: .push() depends on timing!
+    promises.forEach(p => {
+      Promise.resolve(p).then(val => {
+        results.push(val); 
+        count++;
+        if (count === promises.length) resolve(results);
+      });
+    });
+  });
+};
+
+const slow = new Promise(r => setTimeout(() => r("A"), 100));
+const fast = new Promise(r => setTimeout(() => r("B"), 10));
+
+// Should be ["A", "B"], but gets ["B", "A"]
+Promise.myAll([slow, fast]).then(console.log);`,
+        solutionCode: `Promise.myAll = function(promises) {
+  return new Promise((resolve) => {
+    const results = [];
+    let count = 0;
+    
+    // ✅ Use index to preserve order
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(val => {
+        results[i] = val;
+        count++;
+        if (count === promises.length) resolve(results);
+      });
+    });
+  });
+};
+
+const slow = new Promise(r => setTimeout(() => r("A"), 100));
+const fast = new Promise(r => setTimeout(() => r("B"), 10));
+
+Promise.myAll([slow, fast]).then(console.log);`,
+        verifyOutput: `["A", "B"]`,
+        verifyCode: "results[i]",
+        successMessage: "Correct. `Promise.all` cares about the index of the Promise in the array, not when it finishes. You must assign `results[i] = val`.",
+        hint: "Use the second argument of forEach `(p, i)` and assign `results[i] = val` instead of pushing."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-red-600 dark:text-red-400 font-bold mb-2">🎯 Why Polyfills Matter</h4>

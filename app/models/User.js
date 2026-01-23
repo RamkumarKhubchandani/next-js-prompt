@@ -81,6 +81,56 @@ const userSchema = new mongoose.Schema({
     // roadmapProgress: {
     //   "frontend-roadmap-2025": { html: { status: "done", updatedAt: "..." }, react: { status: "doing", updatedAt: "..." } }
     // }
+    // Career Goals
+    careerGoals: {
+        yearly: [{
+            id: { type: String },
+            year: { type: String }, // e.g., "2025"
+            text: { type: String },
+            isCompleted: { type: Boolean, default: false },
+            isAiSuggested: { type: Boolean, default: false },
+            progress: { type: Number, default: 0 }, // 0-100
+            keyResults: [{
+                id: { type: String },
+                text: { type: String },
+                isCompleted: { type: Boolean, default: false }
+            }],
+            createdAt: { type: Date, default: Date.now }
+        }],
+        monthly: [{
+            id: { type: String },
+            month: { type: String }, // e.g., "January 2025"
+            text: { type: String },
+            isCompleted: { type: Boolean, default: false },
+            isAiSuggested: { type: Boolean, default: false },
+            progress: { type: Number, default: 0 },
+            keyResults: [{
+                id: { type: String },
+                text: { type: String },
+                isCompleted: { type: Boolean, default: false }
+            }],
+            createdAt: { type: Date, default: Date.now }
+        }],
+        weekly: [{
+            id: { type: String }, // UUID
+            week: { type: String }, // e.g., "Week 1, Jan 2025"
+            text: { type: String },
+            isCompleted: { type: Boolean, default: false },
+            isAiSuggested: { type: Boolean, default: false },
+            progress: { type: Number, default: 0 },
+            keyResults: [{
+                id: { type: String },
+                text: { type: String },
+                isCompleted: { type: Boolean, default: false }
+            }],
+            createdAt: { type: Date, default: Date.now }
+        }]
+    },
+    goalPreferences: {
+        emailEnabled: { type: Boolean, default: true },
+        emailFrequency: { type: String, enum: ['daily', 'weekly'], default: 'weekly' }
+    },
+
     roadmapProgress: {
         type: mongoose.Schema.Types.Mixed,
         default: {}

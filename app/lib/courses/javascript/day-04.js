@@ -2,6 +2,53 @@ export const day04 = {
   day: 4,
   title: "Day 4: `this` Mastery + call/apply/bind (No More Guessing)",
   intro: "If `this` feels random, you’re missing one skill: reading the call-site. Today you’ll build the “call-site scanner” that makes `this` predictable.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 4! The most hated keyword in JS: `this`. It's not magic, it's just a rule: 'Who called me?'"
+      },
+      {
+        type: "code",
+        code: `const user = { 
+  name: "Neo", 
+  ask() { console.log(this.name); }
+};
+
+user.ask(); // "Neo" (Called by user)
+const f = user.ask;
+f(); // undefined (Called by global)`,
+        caption: "Context lost when extracted.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "When you pass a method as a callback, you lose the object. It's the #1 React/Event listener bug."
+      },
+      {
+        type: "challenge",
+        instruction: "This code prints `undefined` because `setTimeout` calls the function plainly, not as a method. Fix it using an Arrow Function or bind.",
+        buggyCode: `const user = {
+  name: "Morpheus",
+  wake() { console.log("Wake up,", this.name); }
+};
+
+// BUG: Context is lost here
+setTimeout(user.wake, 100);`,
+        solutionCode: `const user = {
+  name: "Morpheus",
+  wake() { console.log("Wake up,", this.name); }
+};
+
+// FIX: Arrow function captures 'this' or uses the object
+setTimeout(() => user.wake(), 100);`,
+        verifyOutput: "Wake up, Morpheus",
+        successMessage: "Great! The arrow function wrapper ensures `user.wake()` is called ON the user object.",
+        hint: "Wrap the callback in `() => user.wake()` so you explicitly call it on the object."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The One Sentence Truth</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -2,6 +2,56 @@ export const day19 = {
   day: 19,
   title: "Day 19: Testing Strategy (Unit, Integration) + Writing Great Tests",
   intro: "Tests are how you ship changes without fear. Today you’ll learn the testing pyramid, how to write good unit tests, and how to design code that is naturally testable.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 19: Testing. You can't trust code you haven't tested. But we don't want to hit real APIs in tests."
+      },
+      {
+        type: "talk",
+        message: "We use 'Mocks' to fake expensive things. Let's practice mocking manually."
+      },
+      {
+        type: "challenge",
+        instruction: "Mocking 101. The `getUser` function takes a `fetcher` reference. Create a `mockFetcher` that returns `{ name: 'Test User' }` immediately (synchronously or as a promise), so we can test `getUser` without a network.",
+        buggyCode: `async function getUser(fetcher) {
+  const data = await fetcher('/api/user');
+  return data.name;
+}
+
+// ❌ Real network? No.
+// We need a mock here.
+const mockFetcher = null; 
+
+// Test Code (Don't touch)
+try {
+  const name = await getUser(mockFetcher);
+  console.log("Mock returned:", name);
+} catch (e) {
+  console.log("Failed:", e.message);
+}`,
+        solutionCode: `async function getUser(fetcher) {
+  const data = await fetcher('/api/user');
+  return data.name;
+}
+
+// ✅ Mock Function
+const mockFetcher = async (url) => {
+  return { name: 'Test User' };
+};
+
+// Test Code
+const name = await getUser(mockFetcher);
+console.log("Mock returned:", name);`,
+        verifyOutput: "Mock returned: Test User",
+        verifyCode: "const mockFetcher",
+        successMessage: "Nice. You just wrote a Mock. In Jest/Vitest, `vi.fn()` does this for you, but understanding it's just a function is key.",
+        hint: "Define `mockFetcher` as an async function that returns an object `{ name: 'Test User' }`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Goal</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

@@ -2,6 +2,62 @@ export const day02 = {
   day: 2,
   title: "Day 2: Scope Mastery (Lexical, Block, Function) + Modules",
   intro: "Scope is where names live. Today you’ll learn to *predict* where every variable is resolved, why some code prints undefined, why some code crashes (TDZ), and how modules eliminate global pollution.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 2! 🕵️ Today we build your 'Scope Radar'. I'm going to show you code, and you need to tell me *where* the variables live."
+      },
+      {
+        type: "code",
+        code: `const hero = "Batman";
+function outer() {
+   const hero = "Joker"; // Shadowing
+   console.log(hero); 
+}`,
+        caption: "Shadowing in action.",
+        speed: "fast"
+      },
+      {
+        type: "talk",
+        message: "Easy, right? But here is the trap. Functions remember where they were *born*, not where they are called."
+      },
+      {
+        type: "challenge",
+        instruction: "This code prints 'Global' because `printSecret` is defined outside. Fix it to print 'Local' by moving the function definition to the right place.",
+        buggyCode: `const secret = "Global";
+
+function printSecret() {
+  console.log(secret);
+}
+
+function app() {
+  const secret = "Local";
+  printSecret(); // Prints "Global" (oops)
+}
+
+app();`,
+        solutionCode: `const secret = "Global";
+
+function app() {
+  const secret = "Local";
+  
+  // Move function inside to capture local scope
+  function printSecret() {
+    console.log(secret);
+  }
+  
+  printSecret();
+}
+
+app();`,
+        verifyOutput: "Local",
+        successMessage: "Spot on! By moving the function inside, it 'closes over' the local `secret`. That's Lexical Scope.",
+        hint: "Move the `printSecret` function *inside* `app` so it can see the local `secret`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) What You’re Building Today</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

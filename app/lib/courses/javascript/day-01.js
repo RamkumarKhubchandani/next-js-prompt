@@ -2,6 +2,80 @@ export const day01 = {
   day: 1,
   title: "Day 1: V8 Architecture, Execution Contexts & Hoisting (For Real)",
   intro: "Today we build the mental model that unlocks JavaScript: compilation, memory creation, execution contexts, and why hoisting feels like magic until you can *see* it.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Hey Developer! Welcome to Day 1. 🚀 Today isn't about memorizing syntax; it's about seeing the *Matrix*—how V8 actually reads your code.",
+        avatar: "gpt-4-turbo"
+      },
+      {
+        type: "talk",
+        message: "Normally, people think code runs line-by-line like magic. But it doesn't. Watch what happens when I try to use a variable *before* I create it...",
+        delay: 1500
+      },
+      {
+        type: "code",
+        code: `console.log(myVar); // ?
+var myVar = "I am hoisted!";`,
+        speed: "fast",
+        caption: "Writing bad code..."
+      },
+      {
+        type: "ask",
+        question: "What do you think happens here?",
+        options: ["ReferenceError (Crash)", "undefined", "I am hoisted!"],
+        correctAnswer: "undefined",
+        feedback: {
+          success: "Exactly! It doesn't crash. It's just empty (`undefined`). That's **hoisting**.",
+          error: "Nope! It doesn't crash. It actually prints `undefined`. This is the weird magic of hoisting."
+        }
+      },
+      {
+        type: "talk",
+        message: "This confirms that V8 scans your code *before* running it. It allocates memory for `myVar` but leaves it empty."
+      },
+      {
+        type: "code",
+        code: `console.log(myLet); // ?
+let myLet = "I am protected!";`,
+        speed: "normal",
+        caption: "Now trying with 'let'..."
+      },
+      {
+        type: "talk",
+        message: "But modern JS is safer. `let` and `const` refuse to work if you're messy."
+      },
+      {
+        type: "action",
+        label: "Run Code",
+        trigger: "run"
+      },
+      {
+        type: "talk",
+        message: "Boom! `ReferenceError`. This safe zone is called the **Temporal Dead Zone**. Sounds cool, right? It just means 'don't touch until ready'."
+      },
+      {
+        type: "talk",
+        message: "You've mastered hoisting. Now, let's fix the most famous `var` bug in history. It's an interview favorite."
+      },
+      {
+        type: "challenge",
+        instruction: "This loop should print 0, 1, 2. But because `var` has function scope (not block scope), it prints 3, 3, 3. Fix it by changing ONE word.",
+        buggyCode: `for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}`,
+        solutionCode: `for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}`,
+        verifyCode: "let i",
+        verifyOutput: "0",
+        successMessage: "Perfect. `let` creates a new `i` binding for every iteration. No more shared scope bugs!",
+        hint: "The variable `i` is being shared across all timeouts. Use `let` to give each loop iteration its own `i`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The Promise of Day 1</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

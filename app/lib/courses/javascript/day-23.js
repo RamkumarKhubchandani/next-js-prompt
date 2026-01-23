@@ -2,6 +2,77 @@ export const day23 = {
   day: 23,
   title: "🔥 Event Emitter & Pub-Sub Pattern",
   intro: "Build Node.js EventEmitter from scratch. Used in React, Redux, Socket.io, and every event-driven system.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 23: Event Emitters. The backbone of Node.js and much of socket programming."
+      },
+      {
+        type: "talk",
+        message: "Implementing `on` and `emit` is easy. Implementing `once` correctly requires a trick."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix `once`. The `once` method should fire the listener exactly one time, then remove it. This implementation forgets to remove it, so it keeps firing forever.",
+        buggyCode: `class Emitter {
+  constructor() { this.events = {}; }
+  on(type, fn) {
+    (this.events[type] = this.events[type] || []).push(fn);
+  }
+  off(type, fn) {
+    if (this.events[type]) 
+      this.events[type] = this.events[type].filter(f => f !== fn);
+  }
+  once(type, fn) {
+    // ❌ BUG: Just delegates to 'on'
+    this.on(type, fn);
+  }
+  emit(type, data) {
+    if (this.events[type]) this.events[type].forEach(fn => fn(data));
+  }
+}
+
+const bus = new Emitter();
+bus.once("login", () => console.log("User logged in!"));
+
+bus.emit("login"); // Log 1
+bus.emit("login"); // Log 2 (Wrong!)`,
+        solutionCode: `class Emitter {
+  constructor() { this.events = {}; }
+  on(type, fn) {
+    (this.events[type] = this.events[type] || []).push(fn);
+  }
+  off(type, fn) {
+    if (this.events[type]) 
+      this.events[type] = this.events[type].filter(f => f !== fn);
+  }
+  once(type, fn) {
+    // ✅ Safe wrapper
+    const wrapper = (...args) => {
+      this.off(type, wrapper);
+      fn(...args);
+    };
+    this.on(type, wrapper);
+  }
+  emit(type, data) {
+    if (this.events[type]) this.events[type].forEach(fn => fn(data));
+  }
+}
+
+const bus = new Emitter();
+bus.once("login", () => console.log("User logged in!"));
+
+bus.emit("login"); // Log 1
+bus.emit("login"); // (Nothing)`,
+        verifyOutput: "User logged in!", // Should only appear once in logs if captured, logic check by inspecting code
+        verifyCode: "this.off(type, wrapper",
+        successMessage: "Perfect. To implement `once`, you wrap the original function in a new function that calls `off` immediately before (or after) executing the original logic. That's the 'wrapper pattern'.",
+        hint: "Create a `wrapper` function inside `once` that calls `this.off(type, wrapper)` and then `fn()`. Then pass `wrapper` to `this.on`."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-blue-400 font-bold mb-2">🎯 Where It's Used</h4>

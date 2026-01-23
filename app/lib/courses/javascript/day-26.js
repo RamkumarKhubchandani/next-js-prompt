@@ -2,6 +2,92 @@ export const day26 = {
   day: 26,
   title: "🔥 LRU Cache Implementation",
   intro: "A classic data structures interview question. Used in browser caching, memoization, and database query caching.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 26: LRU Cache. This is a favorite at Google/Meta. The concept is simple: keep the most recently used items, delete the old ones."
+      },
+      {
+        type: "talk",
+        message: "The trick in JavaScript? You can use a `Map` because it preserves insertion order. But you must manually update that order."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix the Recency Logic. This `get` method retrieves the value but forgets to update the item's position. This means 'recently used' items might still get evicted. Fix it by deleting and re-setting the key.",
+        buggyCode: `class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.cache = new Map();
+  }
+
+  get(key) {
+    if (!this.cache.has(key)) return -1;
+    // ❌ BUG: Returns value but doesn't update position!
+    return this.cache.get(key);
+  }
+
+  put(key, value) {
+    if (this.cache.has(key)) this.cache.delete(key);
+    this.cache.set(key, value);
+    if (this.cache.size > this.capacity) {
+      // Evict oldest (first inserted)
+      this.cache.delete(this.cache.keys().next().value);
+    }
+  }
+}
+
+const lru = new LRUCache(2);
+lru.put("A", 1);
+lru.put("B", 2);
+lru.get("A"); // Access A
+lru.put("C", 3); // Should evict B (LRU), keep A (MRU)
+
+// Check if A is still there
+console.log("Has A?", lru.cache.has("A")); 
+// Output: false (Wrong! A was evicted)`,
+        solutionCode: `class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.cache = new Map();
+  }
+
+  get(key) {
+    if (!this.cache.has(key)) return -1;
+    const val = this.cache.get(key);
+    
+    // ✅ Refresh position (delete + set = move to end)
+    this.cache.delete(key);
+    this.cache.set(key, val);
+    
+    return val;
+  }
+
+  put(key, value) {
+    if (this.cache.has(key)) this.cache.delete(key);
+    this.cache.set(key, value);
+    if (this.cache.size > this.capacity) {
+      this.cache.delete(this.cache.keys().next().value);
+    }
+  }
+}
+
+const lru = new LRUCache(2);
+lru.put("A", 1);
+lru.put("B", 2);
+lru.get("A");
+lru.put("C", 3);
+
+console.log("Has A?", lru.cache.has("A")); 
+// Output: true`,
+        verifyOutput: "Has A? true",
+        verifyCode: "this.cache.delete(key)",
+        successMessage: "Smart. In a JS Map, re-inserting a key moves it to the end of the iteration order. This is a clever O(1) cheat code for LRU implementations in interviews.",
+        hint: "Inside `get`, do `this.cache.delete(key)` and then `this.cache.set(key, val)` to move it to the end (most recent)."
+      }
+    ]
+  },
   content: `
 <div class="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 p-4 rounded-xl mb-6">
 <h4 class="text-indigo-400 font-bold mb-2">🎯 LeetCode #146 - Medium</h4>
