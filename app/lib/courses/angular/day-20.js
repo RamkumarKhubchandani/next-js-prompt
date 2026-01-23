@@ -1,233 +1,218 @@
 export const day20 = {
   day: 20,
-  title: "Error Handling: Global & Component-Level Strategies",
-  intro: "Handle errors gracefully with global error handlers, HTTP interceptors, and component-level error boundaries.",
+  title: "Dependency Injection: Advanced Patterns",
+  intro: "Unlock the full power of DI. Use <strong>InjectionTokens</strong>, <strong>Factories</strong>, and <strong>Tree-shakable Providers</strong> to build flexible architectures.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 20. **Error Handling** is not optional. Apps crash. Networks fail. Users make mistakes. Handle it gracefully."
+        message: "Day 20. DI isn't just about services. It's about **configuration** and **abstraction**."
+      },
+      {
+        type: "talk",
+        message: "You can inject *values* (like API URLs) using `InjectionToken`, or swap implementations based on environment."
       },
       {
         type: "challenge",
-        instruction: "Add proper error handling to this HTTP call.",
-        buggyCode: `// ❌ No error handling
-this.http.get('/api/users').subscribe(data => {
-  this.users = data; // What if it fails?
-});`,
-        solutionCode: `// ✅ Proper error handling
-this.http.get('/api/users').pipe(
-  catchError(err => {
-    console.error('Failed to load users:', err);
-    this.showError('Could not load users');
-    return of([]); // Fallback to empty array
-  })
-).subscribe(users => {
-  this.users = users;
-});`,
-        verifyOutput: "catchError",
-        successMessage: "Perfect! Always handle errors and provide fallback values.",
-        hint: "Use catchError operator and return a fallback Observable."
+        instruction: "Create an InjectionToken for an API URL and provide it.",
+        buggyCode: `// ❌ Hardcoded string
+@Injectable()
+export class ApiService {
+  url = 'https://api.example.com';
+}`,
+        solutionCode: `// ✅ Flexible Token
+export const API_URL = new InjectionToken<string>('API_URL');
+
+// In app.config.ts:
+{ provide: API_URL, useValue: 'https://api.example.com' }
+
+// In Service:
+url = inject(API_URL);`,
+        verifyOutput: "InjectionToken",
+        successMessage: "Now your Service doesn't care where the URL comes from. It just asks for the token.",
+        hint: "Use `new InjectionToken<Type>('desc')`."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Error Handling Strategies</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔑 1. Injection Tokens</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Classes are tokens, but sometimes you need to inject non-class things like configuration objects, strings, or functions. Use <code>InjectionToken</code>.
+</p>
 
-<div class="space-y-4 mb-8">
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">1. Global Error Handler</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Catches all unhandled errors app-wide</p>
-  </div>
-  <div class="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-    <h4 class="font-bold text-yellow-700 dark:text-yellow-400 mb-2">2. HTTP Interceptors</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Handle HTTP errors globally (401, 500, etc.)</p>
-  </div>
-  <div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
-    <h4 class="font-bold text-blue-700 dark:text-blue-400 mb-2">3. Component-Level</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Handle specific errors with catchError</p>
-  </div>
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+export const APP_CONFIG = new InjectionToken&lt;AppConfig&gt;('APP_CONFIG');
+
+// Usage
+constructor(@Inject(APP_CONFIG) config: AppConfig) {}
+// Or better:
+config = inject(APP_CONFIG);
+</pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔥 Global Error Handler</h3>
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-red-500">
-<pre class="text-gray-800 dark:text-gray-100">
-@Injectable()
-export class GlobalErrorHandler implements ErrorHandler {
-  handleError(error: Error) {
-    console.error('Global error:', error);
-    // Send to error tracking service (Sentry, etc.)
-  }
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏭 2. Factory Providers</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Need dynamic logic to decide WHAT to provide? Use <code>useFactory</code>.
+</p>
+
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-blue-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+{
+  provide: LoggerService,
+  useFactory: (config: AppConfig) => {
+    return config.isProd ? new CloudLogger() : new ConsoleLogger();
+  },
+  deps: [APP_CONFIG]
+}
+</pre>
+</div>
+`,
+  code: `import { Component, InjectionToken, Injectable, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+// --- DI TOKENS & INTERFACES ---
+interface Logger {
+    log(msg: string): void;
+    type: 'CONSOLE' | 'FILE' | 'CLOUD';
 }
 
-// Provide in app config
-providers: [
-  { provide: ErrorHandler, useClass: GlobalErrorHandler }
-]
-</pre>
-</div>
+const LOGGER = new InjectionToken<Logger>('LOGGER');
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ HTTP Error Handling</h3>
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-yellow-500">
-<pre class="text-gray-800 dark:text-gray-100">
-this.http.get('/api/users').pipe(
-  catchError(error => {
-    if (error.status === 401) {
-      this.router.navigate(['/login']);
-    } else if (error.status === 500) {
-      this.showError('Server error. Please try again.');
-    }
-    return of([]); // Fallback value
-  })
-).subscribe(users => this.users = users);
-</pre>
-</div>
+// --- IMPLEMENTATIONS ---
+class ConsoleLogger implements Logger {
+    type = 'CONSOLE' as const;
+    log(msg: string) { console.log(\`[Console] \${msg}\`); }
+}
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📋 Error Handling Checklist</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-  <li>✅ Always use catchError for HTTP calls</li>
-  <li>✅ Provide user-friendly error messages</li>
-  <li>✅ Log errors for debugging</li>
-  <li>✅ Provide fallback values (empty arrays, default objects)</li>
-  <li>✅ Send critical errors to monitoring service</li>
-</ul>
-`,
-  code: `import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { catchError, of, throwError, delay } from 'rxjs';
+class FileLogger implements Logger {
+    type = 'FILE' as const;
+    log(msg: string) { console.log(\`[File System] Writing: "\${msg}"\`); }
+}
+
+class CloudLogger implements Logger {
+    type = 'CLOUD' as const;
+    log(msg: string) { console.log(\`[AWS CloudWatch] Sending: "\${msg}"\`); }
+}
+
+// --- FACTORY FUNCTION ---
+// We simulate a factory that chooses implementation based on a signal configuration
+// Note: In real Angular, providers are static. To swap runtime, we usually use a Strategy pattern service
+// or conditional logic inside a wrapper service.
+// FOR DEMO: We will manually instantiation to show the concept of "Swappable Implementations"
 
 @Component({
-  selector: 'app-error-demo',
+  selector: 'app-di-lab',
   standalone: true,
   imports: [CommonModule],
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">⚠️ Error Handling Demo</h2>
-      
-      <div class="space-y-4">
-        <button
-          (click)="simulateSuccess()"
-          class="w-full px-4 py-2 bg-green-600 rounded hover:bg-green-500"
-        >
-          Simulate Successful Request
-        </button>
+    <div class="max-w-xl mx-auto bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]" style="background-color: #030712; color: white">
+        <h2 class="text-2xl font-bold text-white mb-6">💉 DI Configurator</h2>
 
-        <button
-          (click)="simulateError()"
-          class="w-full px-4 py-2 bg-red-600 rounded hover:bg-red-500"
-        >
-          Simulate Failed Request
-        </button>
+        <!-- Configuration Panel -->
+        <div class="mb-8 p-6 bg-gray-900 rounded-xl border border-gray-800">
+             <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-4 font-bold">Environment Configuration</h3>
+             
+             <div class="flex gap-2">
+                 @for (env of ['dev', 'staging', 'prod']; track env) {
+                     <button (click)="changeEnv(env)" 
+                             [class.bg-purple-600]="environment() === env"
+                             [class.bg-gray-800]="environment() !== env"
+                             class="flex-1 py-3 rounded-lg text-sm font-mono uppercase transition-all border border-gray-700 hover:border-purple-500">
+                         {{ env }}
+                     </button>
+                 }
+             </div>
+             
+             <div class="mt-6 pt-4 border-t border-gray-800 flex justify-between items-center">
+                 <span class="text-sm text-gray-400">Active Logger:</span>
+                 <span class="font-mono text-sm font-bold" 
+                       [class.text-green-400]="currentLogger.type === 'CONSOLE'"
+                       [class.text-yellow-400]="currentLogger.type === 'FILE'"
+                       [class.text-blue-400]="currentLogger.type === 'CLOUD'">
+                     {{ currentLogger.type }} LOGGER
+                 </span>
+             </div>
+        </div>
 
-        @if (loading()) {
-          <div class="p-4 bg-blue-500/20 border border-blue-500 rounded-xl">
-            <p class="text-blue-400">Loading...</p>
-          </div>
-        }
+        <!-- App Simulation -->
+        <div class="p-6 bg-black rounded-xl border border-dashed border-gray-700 relative">
+             <div class="absolute top-2 right-2 text-[10px] text-gray-500 font-mono">APP RUNTIME</div>
+             
+             <button (click)="doWork()" class="w-full py-4 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold border border-gray-600 transition-transform active:scale-95">
+                 Perform Action
+             </button>
+             
+             <!-- Logs Output -->
+             <div class="mt-6 space-y-2 font-mono text-xs">
+                 @for (log of logs(); track $index) {
+                     <div class="text-gray-400 animate-in slide-in-from-left">
+                         > {{ log }}
+                     </div>
+                 }
+             </div>
+        </div>
+        
+        <p class="mt-6 text-xs text-gray-600 text-center mx-auto max-w-sm">
+            Dependency Injection allows us to swap the <code>Logger</code> implementation without changing the component's code.
+        </p>
 
-        @if (error()) {
-          <div class="p-4 bg-red-500/20 border border-red-500 rounded-xl">
-            <p class="text-red-400 font-bold">Error!</p>
-            <p class="text-sm text-gray-300 mt-2">{{ error() }}</p>
-          </div>
-        }
-
-        @if (data()) {
-          <div class="p-4 bg-green-500/20 border border-green-500 rounded-xl">
-            <p class="text-green-400 font-bold">Success!</p>
-            <p class="text-sm text-gray-300 mt-2">{{ data() }}</p>
-          </div>
-        }
-      </div>
-
-      <div class="mt-6 p-4 bg-gray-800 rounded-xl border border-gray-700">
-        <p class="text-sm text-gray-400 mb-2">Error Handling Pattern:</p>
-        <pre class="text-xs text-green-400 font-mono overflow-x-auto">
-this.http.get('/api/data').pipe(
-  catchError(err => {
-    this.error.set(err.message);
-    return of(null); // Fallback
-  })
-).subscribe(data => this.data.set(data));
-        </pre>
-      </div>
     </div>
   \`
 })
-export class ErrorDemoComponent {
-  loading = signal(false);
-  error = signal<string | null>(null);
-  data = signal<string | null>(null);
+export class DiLab {
+    environment = signal('dev');
+    logs = signal<string[]>([]);
+    
+    // In a real app, this is resolved by DI container.
+    // Here we manage it manually to simulate re-providing.
+    currentLogger: Logger = new ConsoleLogger();
 
-  constructor() {
-    console.log('--- ⚠️ Error Handling Demo ---');
-  }
+    changeEnv(env: string) {
+        this.environment.set(env);
+        this.logs.set([]);
+        
+        // SIMULATE FACTORY PROVIDER LOGIC
+        switch (env) {
+            case 'dev': 
+                this.currentLogger = new ConsoleLogger();
+                break;
+            case 'staging':
+                this.currentLogger = new FileLogger();
+                break;
+            case 'prod':
+                this.currentLogger = new CloudLogger();
+                break;
+        }
+    }
 
-  simulateSuccess() {
-    this.reset();
-    this.loading.set(true);
-    console.log('📡 Simulating successful request...');
-
-    of('Data loaded successfully!').pipe(
-      delay(1000)
-    ).subscribe({
-      next: (result) => {
-        console.log('✅ Success:', result);
-        this.data.set(result);
-        this.loading.set(false);
-      }
-    });
-  }
-
-  simulateError() {
-    this.reset();
-    this.loading.set(true);
-    console.log('📡 Simulating failed request...');
-
-    throwError(() => new Error('Network error: Failed to fetch data')).pipe(
-      delay(1000),
-      catchError(err => {
-        console.error('❌ Error caught:', err.message);
-        this.error.set(err.message);
-        this.loading.set(false);
-        return of(null); // Fallback value
-      })
-    ).subscribe();
-  }
-
-  private reset() {
-    this.loading.set(false);
-    this.error.set(null);
-    this.data.set(null);
-  }
+    doWork() {
+        // The component just calls log(). It doesn't know WHICH logger it is.
+        const msg = \`User clicked button at \${new Date().toLocaleTimeString()}\`;
+        this.currentLogger.log(msg);
+        
+        // visual logs for demo
+        this.logs.update(l => [...l, \`[\${this.currentLogger.type}] \${msg}\`]);
+    }
 }`,
   comparison: {
-    junior: `// ❌ No error handling
-this.http.get('/api/users').subscribe(data => {
-  this.users = data; // What if it fails?
-});`,
-    senior: `// ✅ Proper error handling
-this.http.get('/api/users').pipe(
-  catchError(err => {
-    this.showError(err);
-    return of([]);
-  })
-).subscribe(users => this.users = users);`
+    junior: `// ❌ Hard dependency
+const logger = new ConsoleLogger();`,
+    senior: `// ✅ Abstraction (DI)
+// Component asks for "Logger" interface
+// DI provides specific implementation based on config.
+logger = inject(LOGGER);`
   },
   interview: {
     questions: [
       {
-        q: "What's the difference between catchError and a global error handler?",
-        a: "catchError handles specific Observable errors. Global ErrorHandler catches all unhandled errors app-wide."
+        q: "What is tree-shaking in Angular DI?",
+        a: "When you use `providedIn: 'root'`, services are only included in the final bundle if they are actually injected somewhere. If unused, they are removed."
       },
       {
-        q: "Should you always return a value from catchError?",
-        a: "Yes, either return a fallback Observable (of([])) or rethrow with throwError() to propagate the error."
-      },
-      {
-        q: "How do you handle errors in Signals?",
-        a: "Signals don't throw. For async operations, use toSignal() with error handling in the Observable, or use try/catch in effect()."
+        q: "When would you use `useExisting`?",
+        a: "When you want to alias one token to another. For example, aliasing a deprecated service to a new one, or exposing a specific interface of a service."
       }
     ]
   }

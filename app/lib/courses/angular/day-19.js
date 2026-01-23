@@ -1,159 +1,229 @@
 export const day19 = {
   day: 19,
-  title: "HTTP Interceptors: Global Request/Response Handling",
-  intro: "Intercept HTTP requests and responses to add auth tokens, handle errors globally, and log requests.",
+  title: "Advanced Templates: Content Projection",
+  intro: "Build reusable components that accept custom content. Master <strong>ng-content</strong>, <strong>ng-template</strong>, and <strong>TemplateRef</strong>.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 19. **Interceptors** are middleware for HTTP. They intercept every request/response, perfect for auth tokens and error handling."
+        message: "Day 19. Don't build rigid components. Let the parent component check in the content using **Content Projection**."
+      },
+      {
+        type: "talk",
+        message: "Angular has 3 layers of reusability: Inputs (Data), Content Projection (HTML), and TemplateRefs (Lazy HTML structure)."
       },
       {
         type: "challenge",
-        instruction: "Create an interceptor that adds an auth token to all requests.",
-        buggyCode: `// ❌ Adding token manually to every request
-this.http.get('/api/users', {
-  headers: { Authorization: 'Bearer ' + this.token }
-}).subscribe(...);
-
-this.http.post('/api/users', data, {
-  headers: { Authorization: 'Bearer ' + this.token }
-}).subscribe(...);`,
-        solutionCode: `// ✅ Interceptor adds token automatically
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).getToken();
-  
-  const authReq = req.clone({
-    setHeaders: { Authorization: \`Bearer \${token}\` }
-  });
-  
-  return next(authReq);
-};
-
-// Now all requests have the token!
-this.http.get('/api/users').subscribe(...);`,
-        verifyOutput: "HttpInterceptorFn",
-        successMessage: "Perfect! Interceptors centralize cross-cutting concerns like auth.",
-        hint: "Use HttpInterceptorFn and req.clone() to modify requests."
+        instruction: "Refactor this component to accept a custom 'footer' slot using projection.",
+        buggyCode: `// ❌ Rigid Structure
+@Component({
+  template: \`
+    <div class="modal">
+       <div class="body">{{ content }}</div>
+       <button (click)="close()">Close</button>
+    </div>
+  \`
+})
+// Can't add an "Accept" button!`,
+        solutionCode: `// ✅ Flexible Structure
+@Component({
+  template: \`
+    <div class="modal">
+       <ng-content select="[body]"></ng-content>
+       <div class="footer">
+         <!-- Default fallback if empty? No, ng-content just projects. -->
+         <ng-content select="[footer]"></ng-content>
+       </div>
+    </div>
+  \`
+})
+// <app-modal>
+//   <div body>Some text</div>
+//   <div footer><button>Confirm</button></div>
+// </app-modal>`,
+        verifyOutput: "ng-content",
+        successMessage: "Now your modal can have any footer constraints you (or your team) want!",
+        hint: "Use `<ng-content select=\"[footer]\"></ng-content>`."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔐 HTTP Interceptors</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Interceptors let you modify requests/responses globally. Perfect for auth tokens, error handling, and logging.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📦 1. ng-content (Projection)</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Like <code>{children}</code> in React, but more powerful. checks "Selectors" to slot content into the right place.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-green-500">
-<pre class="text-gray-800 dark:text-gray-100">
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).getToken();
-  
-  const authReq = req.clone({
-    setHeaders: { Authorization: \`Bearer \${token}\` }
-  });
-  
-  return next(authReq);
-};
-
-// Provide in app config
-provideHttpClient(
-  withInterceptors([authInterceptor])
-)
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+// Multi-slot projection
+&lt;ng-content select="[header]"&gt;&lt;/ng-content&gt;
+&lt;ng-content select=".body"&gt;&lt;/ng-content&gt;
+&lt;ng-content&gt;&lt;/ng-content&gt; &lt;!-- Catch-all --&gt;
 </pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ Common Use Cases</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-  <li><strong class="text-brand-primary">Authentication:</strong> Add auth tokens to all requests</li>
-  <li><strong class="text-brand-primary">Error Handling:</strong> Catch 401/403 and redirect to login</li>
-  <li><strong class="text-brand-primary">Logging:</strong> Log all requests/responses for debugging</li>
-  <li><strong class="text-brand-primary">Loading Indicators:</strong> Show/hide global spinner</li>
-  <li><strong class="text-brand-primary">Retry Logic:</strong> Automatically retry failed requests</li>
-</ul>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔥 Error Handling Interceptor</h3>
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-red-500">
-<pre class="text-gray-800 dark:text-gray-100">
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        inject(Router).navigate(['/login']);
-      }
-      return throwError(() => error);
-    })
-  );
-};
-</pre>
-</div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📄 2. ngTemplateOutlet (Dynamic Templates)</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Rent out a piece of your DOM. Passes data (context) back to the template. Used heavily in data grids, lists, and trees.
+</p>
 `,
-  code: `import { HttpInterceptorFn, HttpEventType } from '@angular/common/http';
-import { tap } from 'rxjs';
+  code: `import { Component, Input, ContentChild, TemplateRef, Directive, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-// Logging interceptor example
-export const loggingInterceptor: HttpInterceptorFn = (req, next) => {
-  const startTime = Date.now();
-  console.log(\`📡 Request: \${req.method} \${req.url}\`);
-  
-  return next(req).pipe(
-    tap(event => {
-      if (event.type === HttpEventType.Response) {
-        const duration = Date.now() - startTime;
-        console.log(\`✅ Response: \${event.status} (\${duration}ms)\`);
-      }
-    })
-  );
-};
+// --- TAB COMPONENT (Child) ---
+// This is just a marker for content
+@Directive({
+    selector: 'app-tab',
+    standalone: true
+})
+export class TabDirective {
+    @Input({ required: true }) title = '';
+    
+    // We get the structural template content
+    constructor(public template: TemplateRef<any>) {}
+}
 
-// Auth interceptor example
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // In a real app, get token from AuthService
-  const token = 'mock-jwt-token';
-  
-  const authReq = req.clone({
-    setHeaders: {
-      Authorization: \`Bearer \${token}\`
+// --- TAB GROUP COMPONENT (Container) ---
+@Component({
+    selector: 'app-tabs',
+    standalone: true,
+    imports: [CommonModule],
+    template: \`
+        <div class="flex flex-col h-full bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+            <!-- Tab Headers -->
+            <div class="flex border-b border-gray-800 bg-black/20">
+                @for (tab of tabs(); track tab.title) {
+                    <button (click)="activeTab.set(tab)"
+                            class="px-6 py-3 text-sm font-bold transition-colors border-r border-gray-800 hover:bg-white/5"
+                            [class.text-blue-400]="activeTab() === tab"
+                            [class.text-gray-500]="activeTab() !== tab"
+                            [class.bg-white_5]="activeTab() === tab">
+                        {{ tab.title }}
+                    </button>
+                }
+            </div>
+
+            <!-- Tab Body (Dynamic Template) -->
+            <div class="p-6 flex-1 bg-gray-900/50">
+                @if (activeTab(); as tab) {
+                    <div class="animate-in fade-in duration-300">
+                        <ng-container *ngTemplateOutlet="tab.template"></ng-container>
+                    </div>
+                }
+            </div>
+        </div>
+    \`
+})
+export class TabsComponent {
+    // We project the directives!
+    // But since we are mocking without Multi-provider token magic or accessing ContentChildren easily in this setup:
+    // We will use Inputs for the demo data structure, which is a common pattern too.
+    
+    // Wait, let's try to simulate ContentChildren behavior manually via Inputs to be safe in this environment.
+    // In real Angular: @ContentChildren(TabDirective) tabs: QueryList<TabDirective>
+    
+    @Input() tabs = signal<TabDirective[]>([]);
+    activeTab = signal<TabDirective | null>(null);
+
+    ngOnChanges() {
+        if (this.tabs().length > 0 && !this.activeTab()) {
+            this.activeTab.set(this.tabs()[0]);
+        }
     }
-  });
-  
-  console.log('🔐 Added auth token to request');
-  return next(authReq);
-};
+}
 
-// Error handling interceptor
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  return next(req).pipe(
-    tap({
-      error: (error) => {
-        console.error('❌ HTTP Error:', error.status, error.message);
-        // In real app: redirect to login, show toast, etc.
-      }
-    })
-  );
-};`,
+@Component({
+  selector: 'app-projection-lab',
+  standalone: true,
+  imports: [CommonModule],
+  template: \`
+    <div class="max-w-xl mx-auto bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]" style="background-color: #030712; color: white">
+        <h2 class="text-2xl font-bold text-white mb-6">📦 Content Projection Lab</h2>
+
+        <p class="text-sm text-gray-400 mb-6">
+            We are simulating a reusable Tabs component. The content inside each tab is **projected** from the parent, not hardcoded in the tabs component.
+        </p>
+
+        <!-- THE REUSABLE TABS COMPONENT -->
+        <!-- In real Angular: <app-tabs><app-tab>...</app-tab></app-tabs> -->
+        <!-- Here we manually construct the view structure for the demo -->
+
+        <div class="flex flex-col h-64 bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+             <!-- Header -->
+             <div class="flex border-b border-gray-800">
+                  <button (click)="selected = 'profile'" [class.text-blue-400]="selected === 'profile'" class="px-4 py-2 text-gray-400 font-bold border-r border-gray-800">Profile</button>
+                  <button (click)="selected = 'settings'" [class.text-blue-400]="selected === 'settings'" class="px-4 py-2 text-gray-400 font-bold border-r border-gray-800">Settings</button>
+             </div>
+             
+             <!-- Body -->
+             <div class="p-6">
+                 @if (selected === 'profile') {
+                     <!-- Projected Content 1 -->
+                     <ng-container *ngTemplateOutlet="profileTpl"></ng-container>
+                 }
+                 @if (selected === 'settings') {
+                     <!-- Projected Content 2 -->
+                     <ng-container *ngTemplateOutlet="settingsTpl"></ng-container>
+                 }
+             </div>
+        </div>
+
+        <!-- DEFINING THE CONTENT (TemplateRef) -->
+        <ng-template #profileTpl>
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center text-2xl">👤</div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">John Doe</h3>
+                    <p class="text-gray-400">Software Engineer</p>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #settingsTpl>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center text-sm text-gray-300">
+                    <span>Dark Mode</span>
+                    <div class="w-10 h-5 bg-green-600 rounded-full relative"><div class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div></div>
+                </div>
+                <div class="flex justify-between items-center text-sm text-gray-300">
+                    <span>Notifications</span>
+                     <div class="w-10 h-5 bg-gray-700 rounded-full relative"><div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div></div>
+                </div>
+            </div>
+        </ng-template>
+        
+        <p class="mt-8 text-xs text-gray-500 text-center">
+            Note: In a full app, you would use <code>@ContentChildren</code> to query these templates automatically.
+            Here we use <code>ngTemplateOutlet</code> to demonstrate the rendering mechanism.
+        </p>
+
+    </div>
+  \`
+})
+export class ProjectionLab {
+    selected = 'profile';
+}`,
   comparison: {
-    junior: `// ❌ Adding token to every request manually
-this.http.get('/api/users', {
-  headers: { Authorization: 'Bearer ' + token }
-})`,
-    senior: `// ✅ Interceptor adds token automatically
-this.http.get('/api/users') // Token added by interceptor`
+    junior: `// ❌ ngIf soup
+@Input() type: 'user' | 'admin';
+
+<!-- Template grows forever... -->
+<div *ngIf="type === 'user'">User...</div>
+<div *ngIf="type === 'admin'">Admin...</div>`,
+    senior: `// ✅ Projection
+<ng-content></ng-content>
+<!-- Parent decides what goes here! Component stays simple. -->`
   },
   interview: {
     questions: [
       {
-        q: "What are common use cases for interceptors?",
-        a: "Auth tokens, error handling, loading indicators, request/response logging, caching, retry logic."
+        q: "What is ngTemplateOutlet?",
+        a: "A directive that inserts a `TemplateRef` into the DOM. It can also pass a context object to the template, allowing for highly dynamic lists or grids."
       },
       {
-        q: "Can you have multiple interceptors?",
-        a: "Yes! They run in the order you provide them. Request: top to bottom. Response: bottom to top."
-      },
-      {
-        q: "How do you skip an interceptor for specific requests?",
-        a: "Use HttpContext to pass metadata. Check context in interceptor and skip if needed."
+        q: "What is `ng-container`?",
+        a: "A logical container that does not render a DOM element itself. Useful for grouping elements for structural directives like `*ngIf` without polluting the DOM with `div`s."
       }
     ]
   }

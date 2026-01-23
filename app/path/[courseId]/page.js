@@ -18,6 +18,7 @@ import AICodingTutorChat from '../../components/public/AICodingTutorChat';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Sandpack } from "@codesandbox/sandpack-react";
 
 function progressKey(courseId, day) {
     return `asio:path:${courseId}:day:${day}:progress`;
@@ -163,38 +164,60 @@ function ProseCopyEnhancer({ htmlContent }) {
         const pres = containerRef.current.querySelectorAll('pre');
 
         pres.forEach((pre) => {
-            // A. Apply Syntax Highlighting (Simple Regex-based)
-            // Usually content is directly in pre or pre > code. We target text content.
-
+            // A. Apply Syntax Highlighting (Safe Tokenizer)
+            // We strip existing HTML/Attributes and rebuild safely
             if (!pre.getAttribute('data-highlighted')) {
-                // Ensure base styling
-                // Removed bg, padding, border to rely on wrapper div from content
                 pre.classList.add('relative', 'group', 'font-mono', 'text-sm', 'text-gray-800', 'dark:text-gray-300', 'overflow-x-auto', 'leading-relaxed');
 
-                // Escape HTML first to prevent injection, then highlight
-                let text = pre.innerText;
+                const text = pre.innerText;
+                const tokens = [];
+                const save = (content, className) => {
+                    const id = `__TOKEN_${tokens.length}__`;
+                    tokens.push({ id, content, className });
+                    return id;
+                };
 
-                // Simplistic pipeline:
-                let html = text
-                    // Comments: // ... or # ...
-                    .replace(/(\/\/.*$|#.*$)/gm, '<span class="text-gray-500 dark:text-gray-500 italic">$1</span>')
+                // Pipeline: Strings -> Comments -> Decorators -> Keywords -> etc.
+                // Order matters to prevent matching inside strings/comments
+                let processed = text
+                    // 1. Strings
+                    .replace(/('.*?'|".*?"|`.*?`)/g, m => save(m, 'text-green-600 dark:text-green-400'))
 
-                    // Decorators: @Component
-                    .replace(/(@\w+)/g, '<span class="text-yellow-600 dark:text-yellow-400 font-bold">$1</span>')
+                    // 2. Comments
+                    .replace(/(\/\/.*$|#.*$)/gm, m => save(m, 'text-gray-500 dark:text-gray-500 italic'))
 
-                    // Strings: '...', "...", `...` (Simple non-nested)
-                    .replace(/('.*?'|".*?"|`.*?`)/g, '<span class="text-green-600 dark:text-green-400">$1</span>')
+                    // 3. Decorators
+                    .replace(/(@\w+)/g, m => save(m, 'text-yellow-600 dark:text-yellow-400 font-bold'))
 
-                    // Keywords
-                    .replace(/\b(const|let|var|function|class|import|export|from|return|if|else|this|new|constructor|true|false|null|undefined|async|await)\b/g, '<span class="text-purple-600 dark:text-purple-400 font-bold">$1</span>')
+                    // 4. Keywords
+                    .replace(/\b(const|let|var|function|class|import|export|from|return|if|else|this|new|constructor|true|false|null|undefined|async|await)\b/g, m => save(m, 'text-purple-600 dark:text-purple-400 font-bold'))
 
-                    // Types / Primitives
-                    .replace(/\b(string|number|boolean|any|void)\b/g, '<span class="text-blue-600 dark:text-blue-400 italic">$1</span>')
+                    // 5. Types
+                    .replace(/\b(string|number|boolean|any|void)\b/g, m => save(m, 'text-blue-600 dark:text-blue-400 italic'))
 
-                    // Function calls
-                    .replace(/\b([a-zA-Z0-9_]+)(?=\()/g, '<span class="text-blue-600 dark:text-blue-300">$1</span>');
+                    // 6. Function calls
+                    .replace(/\b([a-zA-Z0-9_]+)(?=\()/g, m => save(m, 'text-blue-600 dark:text-blue-300'));
 
-                pre.innerHTML = html;
+                // Escape HTML characters in the base text
+                processed = processed
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+
+                // Restore tokens (escaping their content too)
+                tokens.forEach(t => {
+                    const safeContent = t.content
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#039;");
+                    processed = processed.replace(t.id, `<span class="${t.className}">${safeContent}</span>`);
+                });
+
+                pre.innerHTML = processed;
                 pre.setAttribute('data-highlighted', 'true');
             }
 
@@ -547,6 +570,127 @@ function LessonRecap({ recap }) {
     );
 }
 
+function AngularSandpack({ initialCode, title }) {
+    // Extract selector and class name
+    const selectorMatch = initialCode.match(/selector:\s*['"]([^'"]+)['"]/);
+    const selector = selectorMatch ? selectorMatch[1] : 'app-playground';
+
+    const classNameMatch = initialCode.match(/export class (\w+)/);
+    const className = classNameMatch ? classNameMatch[1] : 'PlaygroundComponent';
+
+    // Auto-fix missing imports
+    let correctedCode = initialCode;
+    const primitives = ['effect', 'signal', 'computed', 'inject', 'input', 'output', 'viewChild', 'contentChild'];
+
+    if (!correctedCode.includes('@angular/core')) {
+        correctedCode = "import { Component } from '@angular/core';\n" + correctedCode;
+    }
+
+    primitives.forEach(prim => {
+        const isImported = new RegExp(`import\\s*{[^}]*\\b${prim}\\b[^}]*}\\s*from\\s*['"]@angular/core['"]`).test(correctedCode);
+        const isUsed = correctedCode.includes(`${prim}(`);
+
+        if (isUsed && !isImported) {
+            correctedCode = correctedCode.replace(/import\s*{([^}]*)}\s*from\s*['"]@angular\/core['"]/, (match, existingImports) => {
+                return `import { ${existingImports}, ${prim} } from '@angular/core'`;
+            });
+        }
+    });
+
+    const files = {
+        "src/polyfills.ts": {
+            code: `import 'zone.js';`
+        },
+        "src/main.ts": {
+            code: `import './polyfills';
+import '@angular/compiler';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { ${className} } from './app/app.component';
+
+bootstrapApplication(${className})
+  .then(ref => {
+    // Ensure the component is attached
+    if (!document.querySelector('${selector}')) {
+        console.error('Bootstrap success but selector "${selector}" not found.');
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+    document.body.innerHTML = \`<div style="color: red; padding: 20px; background: #2d1f1f;">
+        <h3>Bootstrap Error</h3>
+        <pre>\${err.message}\\n\${err.stack}</pre>
+    </div>\`;
+  });`
+        },
+        "src/app/app.component.ts": {
+            code: correctedCode,
+            active: true
+        },
+        "src/index.html": {
+            code: `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angular</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-4 font-sans antialiased">
+  <${selector}>
+    <div class="flex flex-col items-center justify-center h-full pt-20 space-y-4">
+        <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm text-gray-400 font-mono animate-pulse">Initializing Angular...</p>
+    </div>
+  </${selector}>
+</body>
+</html>`
+        }
+    };
+
+    return (
+        <div className="mb-12">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <Code className="text-red-500" />
+                {title || 'Angular Playground'}
+                <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-red-500/20 text-red-500 rounded-full border border-red-500/30">
+                    Real Runtime
+                </span>
+            </h3>
+            <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-dark-600 shadow-2xl">
+                <Sandpack
+                    template="angular"
+                    theme="dark"
+                    files={files}
+                    options={{
+                        showNavigator: false,
+                        showTabs: false,
+                        editorHeight: 500,
+                        showLineNumbers: true,
+                        externalResources: ["https://cdn.tailwindcss.com"]
+                    }}
+                    customSetup={{
+                        dependencies: {
+                            "@angular/core": "^17.0.0",
+                            "@angular/common": "^17.0.0",
+                            "@angular/compiler": "^17.0.0",
+                            "@angular/forms": "^17.0.0",
+                            "@angular/platform-browser": "^17.0.0",
+                            "@angular/platform-browser-dynamic": "^17.0.0",
+                            "rxjs": "~7.8.0",
+                            "zone.js": "~0.14.0"
+                        }
+                    }}
+                />
+            </div>
+            <p className="mt-3 text-sm text-gray-500 dark:text-light-400 flex items-center gap-2">
+                <span className="text-red-400">⚡</span>
+                Running full Angular 17 runtime. Initial load may take a moment.
+            </p>
+        </div>
+    );
+}
+
 // React Live Editor Component - Simple version
 function ReactLiveEditor({ initialCode }) {
     const [copied, setCopied] = useState(false);
@@ -699,7 +843,10 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
 
                     // Mock Angular 18+ Primitives for Playground
                     // We make these global so the transpiled code can reference them
-                    window.Component = (config) => (cls) => cls;
+                    window.Component = (config) => (cls) => {
+                        cls.prototype.__ngConfig = config;
+                        return cls;
+                    };
                     window.Injectable = (config) => (cls) => cls;
                     window.Directive = (config) => (cls) => cls;
                     window.Pipe = (config) => (cls) => cls;
@@ -712,15 +859,16 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                     window.signal = (initial) => {
                         let val = initial;
                         const s = () => val;
-                        s.set = (v) => { val = v; console.log('[Signal Set]', v); };
-                        s.update = (fn) => { val = fn(val); console.log('[Signal Update]', val); };
+                        s.set = (v) => { val = v; console.log('[Signal Set]', v); window._checkRender(); };
+                        s.update = (fn) => { val = fn(val); console.log('[Signal Update]', val); window._checkRender(); };
                         s.asReadonly = () => s;
                         return s;
                     };
                     window.computed = (fn) => {
-                        return () => {
+                        const s = () => {
                             try { return fn(); } catch(e) { return "Computed Error"; }
                         };
+                        return s;
                     };
                     window.effect = (fn) => { 
                         setTimeout(() => {
@@ -732,6 +880,11 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                     window.input = function(val) { return window.signal(val); };
                     window.input.required = function() { return window.signal(undefined); };
                     window.output = () => ({ emit: (val) => console.log('[Output Emit]', val) });
+                    
+                    // Renderer Hook
+                    window._checkRender = () => {
+                        if (window._renderFn) setTimeout(window._renderFn, 0);
+                    };
                     
                     // RxJS / Forms Mock
                     window.EventEmitter = class { emit(val) { console.log('[EventEmitter]', val); } };
@@ -821,6 +974,62 @@ const LiveCodeEditor = forwardRef(function LiveCodeEditor({ initialCode, predict
                                         try {
                                             const instance = new ClassRef();
                                             console.log('--- Component Instantiated Successfully ---');
+
+                                            // Simulate Angular Rendering
+                                            if (instance.__ngConfig && instance.__ngConfig.template) {
+                                                console.log('--- 🎨 Rendering Template ---');
+                                                const root = document.getElementById('root') || document.body;
+                                                
+                                                // Create Render Function
+                                                window._renderFn = () => {
+                                                    try {
+                                                        let html = instance.__ngConfig.template;
+                                                        
+                                                        // 1. Interpolation {{ val() }}
+                                                        html = html.replace(/\{\{(.*?)\}\}/g, (_, match) => {
+                                                            try {
+                                                                const code = 'return ' + match.trim();
+                                                                const val = (new Function(code)).call(instance);
+                                                                // Unbox signal if needed
+                                                                return typeof val === 'function' && !val.nodeName ? val() : val;
+                                                            } catch(e) { return '??'; }
+                                                        });
+
+                                                        // 2. Control Flow @if
+                                                        // Simple support for @if (cond) { ... }
+                                                        // Regex is tricky, but let's try basic single level replacement or just leave it for now
+                                                        // For advanced syntax, we rely on the component being simple.
+                                                        
+                                                        // 3. Bindings [disabled]="..."
+                                                        // We'll process this after setting HTML by traversing DOM
+
+                                                        root.innerHTML = '<div style="padding:20px; font-family: sans-serif;">' + html + '</div>';
+
+                                                        // 4. Events (click)="..."
+                                                        root.querySelectorAll('*').forEach(el => {
+                                                            Array.from(el.attributes).forEach(attr => {
+                                                                if (attr.name.startsWith('(') && attr.name.endsWith(')')) {
+                                                                    const eventName = attr.name.slice(1, -1);
+                                                                    const handlerCode = attr.value;
+                                                                    el.addEventListener(eventName, () => {
+                                                                        try {
+                                                                            (new Function(handlerCode)).call(instance);
+                                                                            window._checkRender(); // Re-render after event
+                                                                        } catch(e) { console.error(e); }
+                                                                    });
+                                                                }
+                                                                // [property]="value" logic could go here
+                                                            });
+                                                        });
+                                                    } catch(e) {
+                                                        console.error('Render Error:', e);
+                                                    }
+                                                };
+
+                                                // Initial Render
+                                                window._renderFn();
+                                            }
+
                                         } catch(e) {
                                             console.warn('Instantiation Error: ' + e.message);
                                         }
@@ -1462,7 +1671,10 @@ export default function LearningPathPage() {
         return checkpointsOk && labsOk;
     };
 
-    const handleSelectDay = (dayNumber) => setActiveDay(dayNumber);
+    const handleSelectDay = (dayNumber) => {
+        setActiveDay(dayNumber);
+        router.push(`?day=${dayNumber}`, { scroll: false });
+    };
 
     const updateProgress = (dayNumber, updater) => {
         setProgressByDay(prev => {
@@ -1749,9 +1961,8 @@ export default function LearningPathPage() {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
                             className="text-xl md:text-2xl text-gray-600 dark:text-light-300 leading-relaxed max-w-3xl mx-auto font-medium"
-                        >
-                            {activeContent.intro}
-                        </motion.p>
+                            dangerouslySetInnerHTML={{ __html: activeContent.intro }}
+                        />
                     </div>
 
                     {/* Progress Stats Bar */}
@@ -1870,13 +2081,15 @@ export default function LearningPathPage() {
                             activeContent.code && (
                                 courseId === 'react'
                                     ? <ReactLiveEditor initialCode={activeContent.code} />
-                                    : <LiveCodeEditor
-                                        ref={liveLabEditorRef}
-                                        initialCode={activeContent.code}
-                                        predictions={activeContent.predictions}
-                                        title="Live Lab: Try It Yourself"
-                                        subtitle="Experiment with the concepts you just learned."
-                                    />
+                                    : courseId === 'angular'
+                                        ? <AngularSandpack initialCode={activeContent.code} title="Live Lab: Try It Yourself" />
+                                        : <LiveCodeEditor
+                                            ref={liveLabEditorRef}
+                                            initialCode={activeContent.code}
+                                            predictions={activeContent.predictions}
+                                            title="Live Lab: Try It Yourself"
+                                            subtitle="Experiment with the concepts you just learned."
+                                        />
                             )
                         )}
 

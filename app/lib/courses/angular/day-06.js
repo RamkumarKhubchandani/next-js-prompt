@@ -1,249 +1,257 @@
 export const day06 = {
   day: 6,
-  title: "HTTP Client & Async Pipes: The Data Layer",
-  intro: "Every app talks to servers. Angular's HttpClient is typed, interceptable, and RxJS-powered. The async pipe makes subscriptions automatic.",
+  title: "Advanced HTTP & RxJS Patterns",
+  intro: "Fetching data is easy. Handling race conditions, error retries, and auth tokens globally is hard. Today we master `Interceptors` and `switchMap`.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 6. Time to fetch real data. Angular's **HttpClient** is your gateway to APIs. It returns Observables, not Promises."
+        message: "Day 6. Time to graduate from `http.get()`. Real apps need robust data layers."
       },
       {
         type: "talk",
-        message: "Observables are lazy streams. They don't execute until you `.subscribe()`. But there's a better way: the **async pipe**."
+        message: "We need to talk about **Race Conditions**. What happens if you search for 'A', then 'AB', but 'A' returns AFTER 'AB'?"
       },
       {
         type: "challenge",
-        instruction: "This component manually subscribes to an HTTP call. Refactor it to use the `async` pipe in the template instead.",
-        buggyCode: `import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-@Component({ ... })
-export class UserList {
-  users: any[] = [];
-
-  constructor(private http: HttpClient) {
-    // ❌ Manual subscription (memory leak risk!)
-    this.http.get('/api/users').subscribe(data => {
-      this.users = data;
-    });
-  }
+        instruction: "This search feature has a bug. If you type fast, previous requests might overwrite newer ones. Fix it using `switchMap` instead of nested subscriptions.",
+        buggyCode: `search(term: string) {
+  // ❌ Race Condition City!
+  this.http.get('/api/search?q=' + term).subscribe(res => {
+    this.results = res;
+  });
 }`,
-        solutionCode: `import { Component, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-
-@Component({ 
-  imports: [CommonModule],
-  template: \`
-    @for (user of users$ | async; track user.id) {
-      <div>{{ user.name }}</div>
-    }
-  \`
-})
-export class UserList {
-  // ✅ Observable exposed directly
-  users$ = this.http.get<User[]>('/api/users');
-
-  constructor(private http: HttpClient) {}
-}`,
-        verifyOutput: "async",
-        successMessage: "Perfect! The async pipe subscribes AND unsubscribes automatically. No memory leaks.",
-        hint: "Expose the Observable directly as `users$` and use `| async` in the template."
-      },
-      {
-        type: "ask",
-        question: "Why is the async pipe better than manual `.subscribe()`?",
-        options: [
-          "It makes the code shorter",
-          "It automatically unsubscribes when the component is destroyed, preventing memory leaks",
-          "It converts Observables to Promises",
-          "It caches the HTTP response"
-        ],
-        correctAnswer: "It automatically unsubscribes when the component is destroyed, preventing memory leaks",
-        feedback: {
-          success: "Exactly. The async pipe handles the subscription lifecycle for you. Clean and safe.",
-          error: "Think about component lifecycle. What happens when a component is destroyed while an HTTP call is pending?"
-        }
+        solutionCode: `searchControl.valueChanges.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  // ✅ Cancels previous pending request!
+  switchMap(term => this.http.get('/api/search?q=' + term))
+).subscribe(results => this.results = results);`,
+        verifyOutput: "switchMap",
+        successMessage: "Boom. `switchMap` is the unsubscribe-killer. It ensures only the LATEST request matters.",
+        hint: "Use `switchMap` to project the search term into the HTTP observable."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🌐 1. HttpClient: Typed & Interceptable</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Angular's HttpClient is not just a fetch wrapper. It's a full HTTP layer with:
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. The Interceptor Pattern</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Don't add Auth headers or error logging to every single <code>http.get()</code> call. Use <strong>HttpInterceptors</strong> to handle this globally. They sit between your app and the backend.
 </p>
-<ul class="list-disc list-inside space-y-3 text-gray-600 dark:text-gray-300 mb-8">
-  <li><strong class="text-brand-primary">Type Safety:</strong> <code>http.get&lt;User[]&gt;('/api/users')</code> gives you typed responses.</li>
-  <li><strong class="text-brand-primary">Interceptors:</strong> Add auth tokens, log requests, handle errors globally.</li>
-  <li><strong class="text-brand-primary">RxJS Integration:</strong> Chain operators like <code>map</code>, <code>catchError</code>, <code>retry</code>.</li>
-</ul>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-blue-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// Basic GET request
-users$ = this.http.get&lt;User[]&gt;('/api/users');
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30 relative">
+        <div class="absolute -top-3 left-4 px-3 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-full uppercase tracking-wider">Request Phase</div>
+        <h4 class="font-bold text-gray-900 dark:text-white mt-2 mb-2">Auth Injection</h4>
+        <pre class="text-xs font-mono text-blue-800 dark:text-blue-300">
+intercept(req, next) {
+  const token = localStorage.getItem('jwt');
+  const cloned = req.clone({
+    headers: req.headers.set('Authorization', token)
+  });
+  return next(cloned);
+}
+        </pre>
+    </div>
 
-// With error handling
-users$ = this.http.get&lt;User[]&gt;('/api/users').pipe(
+    <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30 relative">
+        <div class="absolute -top-3 left-4 px-3 py-1 bg-red-600 text-white text-[10px] font-bold rounded-full uppercase tracking-wider">Response Phase</div>
+        <h4 class="font-bold text-gray-900 dark:text-white mt-2 mb-2">Global Error Handling</h4>
+        <pre class="text-xs font-mono text-red-800 dark:text-red-300">
+return next(req).pipe(
   catchError(err => {
-    console.error('Failed to load users', err);
-    return of([]); // Return empty array as fallback
+    this.toast.error('Something went wrong!');
+    return throwError(() => err);
   })
 );
-</pre>
+        </pre>
+    </div>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ 2. The Async Pipe: Automatic Subscriptions</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-The async pipe is Angular's secret weapon. It subscribes to an Observable, extracts the value, and unsubscribes when the component is destroyed.
-</p>
-<p class="mb-6 text-gray-600 dark:text-gray-300">
-<strong>Convention:</strong> Observables are suffixed with <code>$</code> (e.g., <code>users$</code>, <code>loading$</code>).
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔀 2. Flattening Strategies (The Maps)</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300">
+When you have an Observable OF Observables (e.g. User Type Event -> triggers HTTP Call), you need to "flatten" it. Choosing the right operator is critical.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-green-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// In template
-@if (users$ | async; as users) {
-  @for (user of users; track user.id) {
-    &lt;div&gt;{{ user.name }}&lt;/div&gt;
-  }
-} @else {
-  &lt;p&gt;Loading...&lt;/p&gt;
-}
-</pre>
-</div>
+<div class="space-y-4 mb-10">
+    <!-- switchMap -->
+    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded font-mono text-xs font-bold">switchMap</div>
+        <div>
+            <h5 class="font-bold text-gray-900 dark:text-white text-sm">The "Latest & Greatest"</h5>
+            <p class="text-xs text-gray-500 mt-1">Cancels the previous pending request. Perfect for <strong>Search</strong>.</p>
+        </div>
+    </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔥 3. Combining Signals + Observables</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Modern Angular uses Signals for local state and Observables for async streams (HTTP, WebSockets, etc.).
-</p>
-<p class="mb-6 text-gray-600 dark:text-gray-300">
-Use <code>toSignal()</code> to convert an Observable to a Signal for easier template usage.
-</p>
+    <!-- concatMap -->
+    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded font-mono text-xs font-bold">concatMap</div>
+        <div>
+            <h5 class="font-bold text-gray-900 dark:text-white text-sm">The "Orderly Queue"</h5>
+            <p class="text-xs text-gray-500 mt-1">Waits for previous to complete. Perfect for <strong>Save/Update</strong> operations where order matters.</p>
+        </div>
+    </div>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm">
-<pre class="text-gray-800 dark:text-gray-100">
-import { toSignal } from '@angular/core/rxjs-interop';
-
-users = toSignal(this.http.get&lt;User[]&gt;('/api/users'), { 
-  initialValue: [] 
-});
-
-// In template: {{ users().length }} users
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common Mistakes</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Forgetting to Subscribe</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Observables are lazy. If you don't subscribe (or use async pipe), nothing happens.</p>
-  </div>
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Memory Leaks</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Manual subscriptions must be unsubscribed in <code>ngOnDestroy</code>. Use async pipe instead.</p>
-  </div>
+    <!-- mergeMap -->
+    <div class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded font-mono text-xs font-bold">mergeMap</div>
+        <div>
+            <h5 class="font-bold text-gray-900 dark:text-white text-sm">The "Chaos Mode" (Parallel)</h5>
+            <p class="text-xs text-gray-500 mt-1">Runs everything in parallel. Good for deleting multiple items at once.</p>
+        </div>
+    </div>
 </div>
 `,
-  code: `import { Component, signal } from '@angular/core';
+  code: `import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { of, delay } from 'rxjs';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { of, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap, map, catchError } from 'rxjs';
 
-interface Post {
-  id: number;
-  title: string;
-  author: string;
-}
+// Mock API Data
+const PRODUCTS = [
+    { id: 1, name: 'MacBook Pro M3', price: 1999, category: 'Laptop' },
+    { id: 2, name: 'iPhone 15 Pro', price: 999, category: 'Phone' },
+    { id: 3, name: 'Sony WH-1000XM5', price: 348, category: 'Audio' },
+    { id: 4, name: 'Dell XPS 15', price: 1499, category: 'Laptop' },
+    { id: 5, name: 'iPad Air', price: 599, category: 'Tablet' },
+    { id: 6, name: 'AirPods Max', price: 549, category: 'Audio' },
+];
 
 @Component({
-  selector: 'app-blog',
+  selector: 'app-search',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">📰 Blog Posts (Async Pipe Demo)</h2>
-      
-      <button 
-        (click)="loadPosts()" 
-        class="mb-6 px-4 py-2 bg-blue-600 rounded hover:bg-blue-500"
-      >
-        Load Posts
-      </button>
+    <div class="max-w-md mx-auto bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-white mb-2">🔎 Live Search</h2>
+            <p class="text-xs text-gray-400">Powered by <code>switchMap</code> & <code>debounceTime</code></p>
+        </div>
 
-      @if (posts$ | async; as posts) {
-        <div class="space-y-4">
-          @for (post of posts; track post.id) {
-            <article class="p-4 bg-gray-800 rounded-xl border border-gray-700">
-              <h3 class="font-bold text-lg">{{ post.title }}</h3>
-              <p class="text-gray-400 text-sm mt-2">by {{ post.author }}</p>
-            </article>
-          } @empty {
-            <p class="text-gray-500">No posts yet. Click "Load Posts"!</p>
-          }
+        <!-- Search Input -->
+        <div class="relative mb-6 group">
+            <input 
+                [formControl]="searchControl"
+                type="text" 
+                class="block w-full px-4 py-3 border border-gray-700 rounded-xl bg-gray-900 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" 
+                placeholder="Search products..."
+            >
+            <!-- Loading Spinner -->
+            @if (loading) {
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <span class="text-blue-500 text-xs font-bold animate-pulse">Loading...</span>
+                </div>
+            }
         </div>
-      } @else {
-        <div class="flex items-center gap-3 text-gray-400">
-          <div class="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-transparent"></div>
-          <p>Loading posts...</p>
+
+        <!-- System Logs -->
+        <div class="mb-4 p-3 bg-black/40 rounded-lg border border-gray-800 font-mono text-[10px] space-y-1">
+            <div class="text-gray-500 uppercase tracking-widest font-bold mb-1">Stream Monitor</div>
+            @for (log of logs; track log.id) {
+                <div [class]="log.color">> {{ log.msg }}</div>
+            }
         </div>
-      }
+        
+        <!-- Results List -->
+        <div class="space-y-3">
+             @if (results$ | async; as results) {
+                @for (product of results; track product.id) {
+                    <div class="flex items-center justify-between p-4 bg-gray-900 border border-gray-800 rounded-xl hover:border-gray-600 transition-colors">
+                        <div>
+                            <h3 class="font-bold text-white">{{ product.name }}</h3>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-gray-500 bg-gray-800 px-2 py-0.5 rounded">{{ product.category }}</span>
+                        </div>
+                        <div class="text-blue-400 font-mono font-bold">\${{ product.price }}</div>
+                    </div>
+                } @empty {
+                    @if (!loading) {
+                        <div class="text-center py-10 text-gray-600">
+                            <p>No products found.</p>
+                        </div>
+                    }
+                }
+             }
+        </div>
     </div>
   \`
 })
-export class BlogComponent {
-  posts$ = of<Post[] | null>(null); // Start with null to show loading state
+export class SearchComponent {
+  searchControl = new FormControl('');
+  loading = false;
+  logs = [];
+  logId = 0;
 
-  constructor() {
-    console.log('--- 📡 HTTP Client Demo ---');
-    console.log('Click "Load Posts" to simulate an API call');
+  results$ = this.searchControl.valueChanges.pipe(
+    // 1. Wait 300ms (Debounce)
+    tap(val => this.addLog(\`Typing: "\${val}"\`, 'text-gray-500')),
+    debounceTime(300),
     
-    // Auto-load after 1 second for demo
-    setTimeout(() => {
-      console.log('▶️ Auto-loading posts...');
-      this.loadPosts();
-    }, 1000);
+    // 2. Distinct
+    distinctUntilChanged(),
+    
+    // 3. SwitchMap
+    switchMap(term => {
+        if (!term || typeof term !== 'string' || !term.trim()) return of([]);
+        
+        this.addLog(\`🚀 Request: "\${term}"\`, 'text-blue-400');
+        this.loading = true;
+
+        return this.mockHttpCall(term).pipe(
+            tap(() => {
+                this.loading = false;
+                this.addLog(\`✅ Response: "\${term}"\`, 'text-green-400');
+            }),
+            catchError(() => {
+                this.loading = false;
+                return of([]);
+            })
+        );
+    })
+  );
+
+  mockHttpCall(term) {
+      const delayMs = 500 + Math.random() * 1000;
+      return timer(delayMs).pipe(
+          map(() => {
+              const lower = term.toLowerCase();
+              return PRODUCTS.filter(p => 
+                  p.name.toLowerCase().includes(lower) || 
+                  p.category.toLowerCase().includes(lower)
+              );
+          })
+      );
   }
 
-  loadPosts() {
-    console.log('🌐 Fetching posts from API...');
-    
-    // Simulate HTTP call with delay
-    this.posts$ = of([
-      { id: 1, title: 'Understanding Signals', author: 'Angular Team' },
-      { id: 2, title: 'Async Pipe Mastery', author: 'RxJS Expert' },
-      { id: 3, title: 'Modern Angular Patterns', author: 'Senior Dev' }
-    ]).pipe(delay(1500));
-
-    console.log('✅ Observable created (lazy - waits for subscription)');
+  addLog(msg, color) {
+      this.logs = [{id: this.logId++, msg, color}, ...this.logs].slice(0, 4);
   }
 }`,
   comparison: {
-    junior: `// ❌ Manual subscription hell
-ngOnInit() {
-  this.http.get('/api/users').subscribe(data => {
-    this.users = data;
-  }); // Forgot to unsubscribe! 💣
+    junior: `// ❌ The Junior Way
+onType(e) {
+  // Spamming the API on every keypress!
+  // No cancellation = Race conditions 🏎️
+  this.http.get('/search?q=' + e.target.value)
+    .subscribe(res => this.results = res);
 }`,
-    senior: `// ✅ Async pipe handles everything
-users$ = this.http.get<User[]>('/api/users');
-// Template: @for (user of users$ | async; track user.id)`
+    senior: `// ✅ The Senior Way
+term$.pipe(
+  debounceTime(300), // Calm down
+  distinctUntilChanged(), // Don't repeat
+  switchMap(q => get(q)) // Kill stale requests
+).subscribe();`
   },
   interview: {
     questions: [
       {
-        q: "What is the difference between an Observable and a Promise?",
-        a: "Observables are lazy, cancellable, and can emit multiple values over time. Promises are eager, not cancellable, and emit a single value."
+        q: "Why use switchMap for search?",
+        a: "It cancels the previous inner subscription (HTTP request) if a new value arrives. This prevents 'race conditions' where an old request overwrites the newest one."
       },
       {
-        q: "How do you handle HTTP errors in Angular?",
-        a: "Use the `catchError` operator from RxJS in the pipe chain. Return a fallback Observable (e.g., `of([])`) or rethrow the error."
-      },
-      {
-        q: "When should you use toSignal() vs async pipe?",
-        a: "Use `toSignal()` when you need to derive computed values from the Observable. Use async pipe for simple template display."
+        q: "What is an Interceptor?",
+        a: "A middleware for HttpClient. It can inspect/modify requests (adding Auth headers) and responses (global error handling) for the entire app."
       }
     ]
   }

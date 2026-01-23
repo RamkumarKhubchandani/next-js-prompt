@@ -53,43 +53,83 @@ area = computed(() => this.width() * this.height());`,
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🧠 1. Computed: The "Smart" Value</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-In the past, we manually updated state. 
-</p>
-<div class="bg-red-50 dark:bg-red-900/10 p-4 rounded-xl mb-4 text-xs font-mono">
-// ❌ Imperative (The Old Way)
-updateUser(name) {
-  this.user.name = name;
-  this.fullName = name + ' ' + this.user.lastName; // Easy to forget!
-}
-</div>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-With <code>computed()</code>, state is <strong>Declarative</strong>. You define <i>what</i> it is, not <i>when</i> to change it.
-</p>
-<div class="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl mb-8 text-xs font-mono">
-// ✅ Declarative (The New Way)
-fullName = computed(() => this.firstName() + ' ' + this.lastName());
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧠 Deep Dive: The Signal Graph</h3>
+
+<div class="bg-gray-50 dark:bg-gray-900/30 p-6 rounded-xl border border-gray-200 dark:border-gray-800 mb-8">
+  <h4 class="font-bold text-lg mb-4 text-gray-800 dark:text-gray-200">The "Glitch-Free" Guarantee</h4>
+  <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+    One of the hardest things in reactive programming (like RxJS) is the "Diamond Problem" — where a value updates via two different paths, causing a temporary incorrect state (a "glitch").
+  </p>
+  <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+    <div class="bg-red-100 dark:bg-red-900/20 p-3 rounded">
+        <strong>RxJS / Streams (Push)</strong><br>
+        1. A changes<br>
+        2. B updates from A<br>
+        3. C updates from A (reads old B??)<br>
+        4. C updates from B logic<br>
+        <span class="text-red-600 dark:text-red-400 font-bold">⚠️ Possible Glitch</span>
+    </div>
+    <div class="bg-green-100 dark:bg-green-900/20 p-3 rounded">
+        <strong>Signals (Push/Pull)</strong><br>
+        1. A changes<br>
+        2. Mark B & C as "Dirty"<br>
+        3. Read C?<br>
+        4. C pulls new A & B values lazily.<br>
+        <span class="text-green-600 dark:text-green-400 font-bold">✅ Glitch Free</span>
+    </div>
+  </div>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ 2. Effect: The "Escape Hatch"</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Sometimes you need to do something <strong>outside</strong> the signal graph. Like logging to console, saving to localStorage, or manipulating the DOM manually.
-</p>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Use <code>effect()</code> for this. It runs automatically whenever any signal it reads changes.
-</p>
-<div class="bg-gray-100 dark:bg-dark-900 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
-<pre class="text-gray-800 dark:text-gray-100">
-constructor() {
-  effect(() => {
-    // Runs whenever count() changes
-    console.log('Count changed to:', this.count());
-    localStorage.setItem('count', this.count());
-  });
-}
-</pre>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ Advanced Patterns</h3>
+
+<div class="space-y-6 mb-10">
+    <!-- Pattern 1 -->
+    <div class="flex gap-4">
+        <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center shrink-0">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div>
+            <h5 class="font-bold text-gray-900 dark:text-white mb-1">Effect Cleanup</h5>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Effects can return a cleanup function. Useful for timers or subscriptions.
+            </p>
+            <div class="mt-2 bg-gray-100 dark:bg-black/40 p-2 rounded text-xs font-mono text-gray-700 dark:text-gray-300">
+                effect((onCleanup) => {<br>
+                &nbsp;&nbsp;const timer = setInterval(...)<br>
+                &nbsp;&nbsp;onCleanup(() => clearInterval(timer));<br>
+                });
+            </div>
+        </div>
+    </div>
+
+    <!-- Pattern 2 -->
+    <div class="flex gap-4">
+        <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center shrink-0">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4"/><path d="M12 16V8"/></svg>
+        </div>
+        <div>
+            <h5 class="font-bold text-gray-900 dark:text-white mb-1">Equality Functions</h5>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                By default, signals use <code>===</code>. If you mutate an array/object, it won't trigger updates. You can pass a custom equality check.
+            </p>
+            <div class="mt-2 bg-gray-100 dark:bg-black/40 p-2 rounded text-xs font-mono text-gray-700 dark:text-gray-300">
+                signal({ id: 1 }, { equal: _.isEqual });
+            </div>
+        </div>
+    </div>
 </div>
+
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚠️ When NOT to use Signals</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300">
+Signals are for <strong>synchronous UI state</strong>. They are NOT a replacement for RxJS when dealing with:
+</p>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-8">
+    <li>Race conditions (debounce, throttle, switchMap)</li>
+    <li>Complex event streams (WebSocket messages, drag-and-drop coordination)</li>
+</ul>
+<p class="text-sm text-gray-500 italic bg-yellow-50 dark:bg-yellow-900/10 p-3 rounded-lg border border-yellow-200 dark:border-yellow-900/30">
+    <strong>Best Practice:</strong> Use RxJS for Events, Use Signals for State.
+</p>
 `,
   code: `import { Component, signal, computed, effect } from '@angular/core';
 
@@ -97,67 +137,97 @@ constructor() {
   selector: 'app-cart',
   standalone: true,
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">🛒 Reactive Cart</h2>
+    <div class="max-w-md mx-auto p-6 bg-white dark:bg-gray-950 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">🛍️ Reactive Cart</h2>
+        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-xs font-mono rounded text-gray-500">v1.0</span>
+      </div>
 
-      <div class="flex gap-4 mb-6">
-        <div class="p-4 bg-gray-800 rounded-lg">
-          <p class="text-gray-400 text-xs uppercase">Price</p>
-          <p class="text-2xl font-mono">\${{ price() }}</p>
-          <button (click)="changePrice()" class="text-xs text-blue-400 mt-2">Change Price</button>
+      <!-- Product Row -->
+      <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl mb-6">
+        <div class="flex justify-between items-start mb-4">
+             <div>
+                <h3 class="font-bold text-gray-900 dark:text-gray-200">Titanium Watch</h3>
+                <p class="text-sm text-gray-500">Premium Series</p>
+             </div>
+             <p class="font-mono font-bold text-lg dark:text-white">\${{ price() }}</p>
         </div>
-        <div class="p-4 bg-gray-800 rounded-lg">
-          <p class="text-gray-400 text-xs uppercase">Quantity</p>
-          <div class="flex items-center gap-2">
-            <button (click)="updateQty(-1)" class="px-2 bg-gray-700 rounded">-</button>
-            <span class="text-2xl font-mono">{{ qty() }}</span>
-            <button (click)="updateQty(1)" class="px-2 bg-gray-700 rounded">+</button>
-          </div>
+
+        <div class="flex items-center justify-between bg-white dark:bg-black rounded-lg p-2 border border-gray-200 dark:border-gray-800">
+            <button (click)="updateQty(-1)" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold transition-colors">-</button>
+            <span class="font-mono font-bold w-8 text-center dark:text-white">{{ qty() }}</span>
+            <button (click)="updateQty(1)" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold transition-colors">+</button>
         </div>
       </div>
 
-      <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-        <p class="text-green-400 text-xs uppercase font-bold">Total (Computed)</p>
-        <p class="text-4xl font-bold text-green-400">\${{ total() }}</p>
+      <!-- Totals Section -->
+      <div class="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-800">
+        <div class="flex justify-between text-sm text-gray-500">
+            <span>Subtotal</span>
+            <span>\${{ subtotal() }}</span>
+        </div>
+        <div class="flex justify-between text-sm text-gray-500">
+            <span>Tax (10%)</span>
+            <span>\${{ tax() }}</span>
+        </div>
+         <div class="flex justify-between text-sm text-green-600 font-medium">
+            <span>Discount (Qty > 5)</span>
+            <span>-\${{ discount() }}</span>
+        </div>
+        
+        <div class="flex justify-between items-center pt-3 mt-3 border-t border-dashed border-gray-200 dark:border-gray-800 text-xl font-bold text-gray-900 dark:text-white">
+            <span>Total</span>
+            <span>\${{ total() }}</span>
+        </div>
       </div>
       
-      <p class="mt-4 text-xs text-gray-500">
-        Check console! <code>effect()</code> is logging changes.
-      </p>
+      <div class="mt-6 p-3 bg-yellow-50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900/30 text-xs text-yellow-700 dark:text-yellow-400 flex gap-2">
+        <span>💡</span>
+        <p>Open console! <code>effect()</code> is logging changes automatically.</p>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-3 mt-6">
+         <button (click)="randomizePrice()" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Random Price</button>
+         <button (click)="reset()" class="py-2 px-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">Reset</button>
+      </div>
     </div>
   \`
 })
 export class CartComponent {
-  price = signal(100);
+  price = signal(150);
   qty = signal(1);
 
-  // Computed: Derived state
-  total = computed(() => this.price() * this.qty());
+  // ⛓️ The Reactive Chain
+  // Notice: We NEVER manually set these. They update simply because 'qty' or 'price' changed.
+  subtotal = computed(() => this.price() * this.qty());
+  tax = computed(() => this.subtotal() * 0.1);
+  discount = computed(() => this.qty() > 5 ? this.subtotal() * 0.2 : 0);
+  
+  total = computed(() => this.subtotal() + this.tax() - this.discount());
 
   constructor() {
-    // Effect: Side effects (Logging)
+    // 🔥 Side Effect
     effect(() => {
-      console.log('Cart Update: ' + this.qty() + ' items @ $' + this.price() + ' = $' + this.total());
+      // Automatic Logging whenever TOTAL changes
+      console.log(\`🧾 Cart Updated: Items: \${this.qty()} | Total: $\${this.total().toFixed(2)}\`);
+      
+      if (this.qty() > 5) {
+          console.log("🎉 Bulk discount applied!");
+      }
     });
-
-    console.log("--- 🛒 Auto-Shopping Spree ---");
-    setTimeout(() => {
-        console.log("▶️ Adding item...");
-        this.updateQty(1);
-    }, 1000);
-
-    setTimeout(() => {
-        console.log("▶️ Price hike!");
-        this.changePrice();
-    }, 2000);
   }
 
   updateQty(delta) {
     this.qty.update(q => Math.max(0, q + delta));
   }
   
-  changePrice() {
-    this.price.set(Math.floor(Math.random() * 100) + 50);
+  randomizePrice() {
+     this.price.set(Math.floor(Math.random() * 200) + 50);
+  }
+
+  reset() {
+      this.qty.set(1);
+      this.price.set(150);
   }
 }`,
   comparison: {

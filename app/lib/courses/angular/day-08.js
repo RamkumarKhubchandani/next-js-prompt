@@ -1,245 +1,238 @@
 export const day08 = {
   day: 8,
-  title: "Dependency Injection: The Modern Way",
-  intro: "DI is Angular's superpower. Inject services, configure providers, and understand hierarchical injection like a pro.",
+  title: "Dependency Injection Masterclass",
+  intro: "DI is more than just services. Master <strong>InjectionTokens</strong>, <strong>Resolution Modifiers</strong>, and <strong>Factories</strong> to build truly modular apps.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 8. **Dependency Injection** (DI) is how Angular gives your components what they need. No more manual `new Service()`."
+        message: "Day 8. You know `inject()`. But do you know how to inject *data*, *configurations*, or *interfaces*? That's where **InjectionTokens** come in."
       },
       {
         type: "talk",
-        message: "Modern Angular uses the `inject()` function. It's cleaner than constructor injection and works in more places."
+        message: "Also, what if you want to skip the current component and find a service in the parent? **Resolution Modifiers** give you control."
       },
       {
         type: "challenge",
-        instruction: "Refactor this constructor-based injection to use the modern `inject()` function.",
-        buggyCode: `import { Component } from '@angular/core';
-import { UserService } from './user.service';
-
-@Component({ ... })
-export class UserList {
-  // ❌ Old: Constructor injection
-  constructor(private userService: UserService) {}
+        instruction: "This component hardcodes the API URL. Refactor it to use an `InjectionToken` so we can swap it for testing.",
+        buggyCode: `export class UserList {
+  // ❌ Hardcoded Dependency
+  apiUrl = 'https://api.myapp.com';
   
-  ngOnInit() {
-    this.userService.loadUsers();
-  }
+  http = inject(HttpClient);
 }`,
-        solutionCode: `import { Component, inject } from '@angular/core';
-import { UserService } from './user.service';
+        solutionCode: `export const API_URL = new InjectionToken<string>('API_URL');
 
-@Component({ ... })
 export class UserList {
-  // ✅ Modern: inject() function
-  private userService = inject(UserService);
-  
-  constructor() {
-    this.userService.loadUsers();
-  }
+  // ✅ Injected Configuration
+  apiUrl = inject(API_URL);
+  http = inject(HttpClient);
 }`,
-        verifyOutput: "inject(UserService)",
-        successMessage: "Perfect! `inject()` is more flexible and works in initializers, not just constructors.",
-        hint: "Use `private userService = inject(UserService);` at the class level."
-      },
-      {
-        type: "ask",
-        question: "What is the benefit of providedIn: 'root' for services?",
-        options: [
-          "It makes the service faster",
-          "It creates a single instance shared across the entire app (singleton)",
-          "It prevents the service from being injected",
-          "It makes the service tree-shakeable if unused"
-        ],
-        correctAnswer: "It makes the service tree-shakeable if unused",
-        feedback: {
-          success: "Correct! providedIn: 'root' makes services tree-shakeable AND creates a singleton. Angular removes unused services from the bundle.",
-          error: "Think about bundle size. providedIn: 'root' enables tree-shaking AND creates a singleton."
-        }
+        verifyOutput: "InjectionToken",
+        successMessage: "Nice! Now you can provide `{ provide: API_URL, useValue: 'mock-api' }` in your tests.",
+        hint: "Create `const API_URL = new InjectionToken<string>('API_URL')` and inject it."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">💉 1. The inject() Function</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-The <code>inject()</code> function is the modern way to get dependencies. It's cleaner and more flexible than constructor injection.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔑 1. Injection Tokens</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Classes are valid tokens, but interfaces and primitives (strings, objects) are not. Use <code>InjectionToken</code> to make them injectable.
 </p>
-<ul class="list-disc list-inside space-y-3 text-gray-600 dark:text-gray-300 mb-8">
-  <li><strong class="text-brand-primary">Works Everywhere:</strong> Use in class fields, functions, and even outside constructors.</li>
-  <li><strong class="text-brand-primary">Type-Safe:</strong> Full TypeScript support without manual type annotations.</li>
-  <li><strong class="text-brand-primary">Composable:</strong> Easy to create custom injection functions.</li>
-</ul>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-blue-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// Modern DI
-export class MyComponent {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  
-  // Can even use in computed!
-  user = toSignal(this.http.get('/api/user'));
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-gray-50 dark:bg-dark-900/40 p-5 rounded-xl border border-gray-200 dark:border-dark-700">
+        <h4 class="font-bold text-gray-800 dark:text-white mb-3">Define Token</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+interface AppConfig {
+  title: string;
+  version: number;
 }
-</pre>
-</div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🌳 2. Hierarchical Injection</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Angular has multiple injector levels. Understanding this is crucial for state management.
-</p>
-
-<div class="bg-gray-100 dark:text-gray-300 dark:bg-gray-800 p-4 rounded-xl mb-8">
-  <ul class="list-disc list-inside space-y-2 text-sm text-gray-700 dark:text-gray-300">
-    <li><strong>Root:</strong> App-wide singleton (providedIn: 'root')</li>
-    <li><strong>Route:</strong> Scoped to a route and its children</li>
-    <li><strong>Component:</strong> New instance per component</li>
-  </ul>
-</div>
-
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-green-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// Root-level service (singleton)
-@Injectable({ providedIn: 'root' })
-export class AuthService {}
-
-// Component-level service (new instance per component)
-@Component({
-  providers: [CartService] // Fresh instance!
-})
-export class CheckoutComponent {
-  cart = inject(CartService);
+export const APP_CONFIG = 
+  new InjectionToken&lt;AppConfig&gt;('APP_CONFIG');
+        </pre>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30">
+        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">Provide & Inject</h4>
+        <pre class="text-xs font-mono text-blue-900 dark:text-blue-200">
+// In providers array:
+{ 
+  provide: APP_CONFIG, 
+  useValue: { title: 'My App', version: 1 } 
 }
-</pre>
+
+// In Component:
+config = inject(APP_CONFIG);
+        </pre>
+    </div>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔧 3. Custom Injection Tokens</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Use <code>InjectionToken</code> for configuration or non-class dependencies.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🕵️ 2. Resolution Modifiers</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Control <i>how</i> Angular searches for dependencies in the injector tree. Use these flags in <code>inject()</code>.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm">
-<pre class="text-gray-800 dark:text-gray-100">
-// Define token
-export const API_URL = new InjectionToken&lt;string&gt;('API_URL');
-
-// Provide value
-bootstrapApplication(App, {
-  providers: [
-    { provide: API_URL, useValue: 'https://api.example.com' }
-  ]
-});
-
-// Inject
-apiUrl = inject(API_URL);
-</pre>
+<div class="grid grid-cols-1 gap-4 mb-10 text-sm">
+    <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded font-mono text-xs font-bold">@Optional()</div>
+        <p class="text-gray-600 dark:text-gray-300">Don't crash if not found. Return <code>null</code>.</p>
+    </div>
+    <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded font-mono text-xs font-bold">@SkipSelf()</div>
+        <p class="text-gray-600 dark:text-gray-300">Start searching in the <strong>parent</strong> injector. Useful for recursive components.</p>
+    </div>
+    <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-dark-900/40">
+        <div class="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded font-mono text-xs font-bold">@Host()</div>
+        <p class="text-gray-600 dark:text-gray-300">Stop searching at the host component's view boundary.</p>
+    </div>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common Mistakes</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Providing Everywhere</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Don't provide the same service in multiple places unless you want multiple instances.</p>
-  </div>
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Circular Dependencies</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Service A injects Service B which injects Service A. Use forwardRef or redesign.</p>
-  </div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏭 3. Factory Providers</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Sometimes a service needs to be created dynamically based on other services.
+</p>
+<div class="bg-gray-100 dark:bg-dark-800 p-4 rounded-xl mb-8 font-mono text-sm">
+<code>{ provide: LOG_LEVEL, useFactory: (config) => config.isDev ? 'DEBUG' : 'INFO', deps: [APP_CONFIG] }</code>
 </div>
 `,
-  code: `import { Component, Injectable, inject, signal } from '@angular/core';
+
+  // Re-writing code for correctness. Dynamic provider from Input is hard in AOT.
+  // Using 3 simpler wrapper components.
+  code: `import { Component, InjectionToken, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// Service with providedIn: 'root' (singleton)
-@Injectable({ providedIn: 'root' })
-export class CounterService {
-  count = signal(0);
-  
-  increment() {
-    this.count.update(v => v + 1);
-    console.log(\`📊 Global counter: \${this.count()}\`);
-  }
+// 1. Token & Intefaces
+interface Theme {
+    bg: string;
+    text: string;
+    border: string;
+    name: string;
 }
+
+const THEME = new InjectionToken<Theme>('THEME');
+
+const DARK: Theme = { bg: '#1f2937', text: '#f9fafb', border: '#374151', name: 'Dark' };
+const LIGHT: Theme = { bg: '#ffffff', text: '#111827', border: '#e5e7eb', name: 'Light' };
+const CYBER: Theme = { bg: '#09090b', text: '#22d3ee', border: '#f472b6', name: 'Cyberpunk' };
+
+// 2. The Consumer Component
+// It blindly asks for "THEME". It doesn't know which one.
+@Component({
+  selector: 'app-card',
+  standalone: true,
+  imports: [CommonModule],
+  template: \`
+    <div class="p-5 rounded-xl border-2 transition-all shadow-lg"
+         [style.backgroundColor]="theme.bg"
+         [style.color]="theme.text"
+         [style.borderColor]="theme.border">
+        <h3 class="font-bold text-lg mb-1">I am a Card</h3>
+        <p class="text-sm opacity-80">I consume <code>inject(THEME)</code></p>
+        <div class="mt-3 inline-block px-2 py-12 rounded text-[10px] font-mono border border-current opacity-60">
+            Active Theme: {{ theme.name }}
+        </div>
+    </div>
+  \`
+})
+class CardComponent {
+  theme = inject(THEME);
+}
+
+// 3. Scope Providers
+// These components create a new "Branch" in the DI tree
+@Component({
+  selector: 'scope-dark',
+  standalone: true,
+  imports: [CardComponent],
+  providers: [{ provide: THEME, useValue: DARK }],
+  template: '<app-card></app-card>'
+})
+class ScopeDark {}
+
+@Component({
+  selector: 'scope-light',
+  standalone: true,
+  imports: [CardComponent],
+  providers: [{ provide: THEME, useValue: LIGHT }],
+  template: '<app-card></app-card>'
+})
+class ScopeLight {}
+
+@Component({
+  selector: 'scope-cyber',
+  standalone: true,
+  imports: [CardComponent],
+  providers: [{ provide: THEME, useValue: CYBER }],
+  template: '<app-card></app-card>'
+})
+class ScopeCyber {}
+
 
 @Component({
   selector: 'app-di-demo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ScopeDark, ScopeLight, ScopeCyber],
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">💉 Dependency Injection Demo</h2>
-      
-      <div class="space-y-4">
-        <div class="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p class="text-sm text-gray-400 mb-2">Global Counter (Singleton Service)</p>
-          <p class="text-3xl font-bold text-green-400">{{ counter.count() }}</p>
-          <button 
-            (click)="counter.increment()" 
-            class="mt-3 px-4 py-2 bg-green-600 rounded hover:bg-green-500"
-          >
-            Increment Global
-          </button>
+    <div class="max-w-2xl mx-auto bg-gray-950 p-8 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]" style="background-color: #030712; color: white">
+        <h2 class="text-2xl font-bold text-white mb-2">💉 The DI Hierachy</h2>
+        <p class="text-gray-400 mb-8 text-sm">
+            The <code>AppCard</code> component is defined ONCE. But it behaves differently depending on where it sits in the injector tree.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Scope 1 -->
+            <div class="flex flex-col gap-2">
+                <div class="text-xs font-mono text-gray-500 text-center">provider: DARK</div>
+                <scope-dark></scope-dark>
+            </div>
+
+            <!-- Scope 2 -->
+            <div class="flex flex-col gap-2">
+                <div class="text-xs font-mono text-gray-500 text-center">provider: LIGHT</div>
+                <scope-light></scope-light>
+            </div>
+
+            <!-- Scope 3 -->
+            <div class="flex flex-col gap-2">
+                <div class="text-xs font-mono text-gray-500 text-center">provider: CYBER</div>
+                <scope-cyber></scope-cyber>
+            </div>
         </div>
 
-        <div class="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-          <p class="text-xs text-blue-400 mb-2">💡 Tip</p>
-          <p class="text-sm text-gray-300">
-            This service is injected using <code class="text-yellow-400">inject(CounterService)</code>.
-            It's a singleton shared across the entire app.
-          </p>
+        <div class="mt-8 p-4 bg-blue-900/20 border border-blue-500/30 rounded-xl">
+            <h4 class="text-blue-400 font-bold text-sm mb-2">Why this matters?</h4>
+            <p class="text-gray-400 text-xs leading-relaxed">
+                This is how libraries like Material or PrimeNG work. You set a global config, but can override it for specific sections (like a dark sidebar in a light app) just by re-providing the token!
+            </p>
         </div>
-
-        <div class="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p class="text-sm text-gray-400 mb-2">Injection Method</p>
-          <pre class="text-xs text-green-400 font-mono">counter = inject(CounterService);</pre>
-        </div>
-      </div>
     </div>
   \`
 })
-export class DIDemo {
-  // Modern injection using inject()
-  counter = inject(CounterService);
-  
-  constructor() {
-    console.log('--- 💉 Dependency Injection Demo ---');
-    console.log('Service injected using inject() function');
-    
-    setTimeout(() => {
-      console.log('▶️ Auto-incrementing...');
-      this.counter.increment();
-    }, 1000);
-    
-    setTimeout(() => {
-      console.log('▶️ Incrementing again...');
-      this.counter.increment();
-    }, 2000);
-  }
-}`,
+export class DIPlayground {}
+`,
   comparison: {
-    junior: `// ❌ Manual instantiation (breaks DI)
-export class MyComponent {
-  service = new MyService(); // Don't do this!
+    junior: `// ❌ Hard dependency
+export class UserList {
+  // Hard to test, hard to configure
+  config = { api: 'https://...' }; 
 }`,
-    senior: `// ✅ Proper injection
-export class MyComponent {
-  service = inject(MyService);
+    senior: `// ✅ Injected Dependency
+export class UserList {
+  // Easy to swap (mock vs real)
+  config = inject(APP_CONFIG);
 }`
   },
   interview: {
     questions: [
       {
-        q: "What's the difference between providedIn: 'root' and providing in a component?",
-        a: "providedIn: 'root' creates a singleton shared app-wide and is tree-shakeable. Component providers create a new instance per component."
+        q: "What is the 'Resolution Modifier' @Self()?",
+        a: "It tells Angular to ONLY look in the current component's injector. It won't walk up the tree. If the service isn't found right here, it throws an error."
       },
       {
-        q: "Can you use inject() outside of a component?",
-        a: "Yes! inject() works in services, directives, pipes, and even in factory functions, as long as it's called within an injection context."
-      },
-      {
-        q: "How do you inject an optional dependency?",
-        a: "Use inject(Service, { optional: true }). It returns null if the service isn't provided."
+        q: "What is a 'Tree-shakable Provider'?",
+        a: "A service provided with { providedIn: 'root' }. If no component injects it, the build tool removes it from the final bundle entirely."
       }
     ]
   }

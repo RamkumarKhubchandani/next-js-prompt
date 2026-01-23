@@ -1,304 +1,234 @@
 export const day13 = {
   day: 13,
-  title: "Directives: Structural & Attribute Directives",
-  intro: "Directives are Angular's way to manipulate the DOM. Learn to create custom structural and attribute directives.",
+  title: "Advanced Directives: Composition & Signals",
+  intro: "Directives are superpowers for your HTML. Learn <strong>HostDirectives</strong> (composition) and how to drive them with <strong>Signals</strong>.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 13. **Directives** are instructions for the DOM. Structural directives change the structure (@if, @for). Attribute directives change appearance or behavior."
+        message: "Day 13. Stop making massive components. Extract behavior into **Directives**. If you need 'drag and drop' or 'copy to clipboard', that's a directive."
       },
       {
         type: "talk",
-        message: "You've been using built-in directives. Now you'll create your own custom ones."
+        message: "Angular 15+ introduced **Directive Composition**. You can chain directives together like Lego blocks using `hostDirectives`."
       },
       {
         type: "challenge",
-        instruction: "Create a custom attribute directive that highlights an element on hover.",
-        buggyCode: `// ❌ Inline styles (not reusable)
-<div (mouseenter)="highlight()" (mouseleave)="unhighlight()">
-  Hover me
-</div>`,
-        solutionCode: `// ✅ Reusable directive
-@Directive({
-  selector: '[appHighlight]',
-  standalone: true
-})
-export class HighlightDirective {
-  el = inject(ElementRef);
-  
-  @HostListener('mouseenter')
-  onEnter() {
-    this.el.nativeElement.style.backgroundColor = 'yellow';
-  }
-  
-  @HostListener('mouseleave')
-  onLeave() {
-    this.el.nativeElement.style.backgroundColor = '';
-  }
-}
-
-// Usage: <div appHighlight>Hover me</div>`,
-        verifyOutput: "@HostListener",
-        successMessage: "Perfect! Now you can apply this behavior to any element with appHighlight.",
-        hint: "Use @HostListener to listen to DOM events on the host element."
-      },
-      {
-        type: "ask",
-        question: "What's the difference between a structural and attribute directive?",
-        options: [
-          "They're the same",
-          "Structural directives change DOM structure (add/remove elements). Attribute directives change appearance/behavior.",
-          "Attribute directives are faster",
-          "Structural directives are deprecated"
-        ],
-        correctAnswer: "Structural directives change DOM structure (add/remove elements). Attribute directives change appearance/behavior.",
-        feedback: {
-          success: "Exactly! Structural = structure (@if, @for). Attribute = styling/behavior (ngClass, custom directives).",
-          error: "Think about what they do. Structural adds/removes DOM nodes. Attribute modifies existing ones."
-        }
+        instruction: "This mouse tracker uses `@HostListener` which runs change detection on every event. Optimize it to use RxJS `fromEvent` outside Angular's zone.",
+        buggyCode: `// ❌ Triggers CD on every pixel move (Laggy!)
+@HostListener('mousemove', ['$event'])
+onMove(e: MouseEvent) {
+  this.x = e.clientX;
+  this.y = e.clientY;
+}`,
+        solutionCode: `// ✅ Zone-free (RunOutsideAngular)
+constructor(private ngZone: NgZone, private el: ElementRef) {
+  this.ngZone.runOutsideAngular(() => {
+    fromEvent<MouseEvent>(el.nativeElement, 'mousemove')
+      .subscribe(e => {
+        // Update DOM directly or signal without CD
+        this.updatePosition(e.clientX, e.clientY);
+      });
+  });
+}`,
+        verifyOutput: "runOutsideAngular",
+        successMessage: "Silky smooth! By running outside the zone, we prevent Angular from re-rendering the whole app on every pixel mouse move.",
+        hint: "Inject `NgZone` and use `runOutsideAngular`."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 1. Two Types of Directives</h3>
-
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
-    <h4 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Structural Directives</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
-      Change the DOM structure by adding or removing elements.
-    </p>
-    <code class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded block">
-      @if, @for, @switch, @defer
-    </code>
-  </div>
-
-  <div class="p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl">
-    <h4 class="font-bold text-green-700 dark:text-green-400 mb-2">Attribute Directives</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
-      Change the appearance or behavior of existing elements.
-    </p>
-    <code class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded block">
-      ngClass, ngStyle, custom directives
-    </code>
-  </div>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ 2. Creating Attribute Directives</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Attribute directives use <code>@Directive</code> decorator and can access the host element via <code>ElementRef</code>.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧩 1. Directive Composition API</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Inheritance is dead. Long live Composition. You can apply directives AUTOMATICALLY when another directive is used.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-green-500">
-<pre class="text-gray-800 dark:text-gray-100">
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
 @Directive({
-  selector: '[appTooltip]',
-  standalone: true
+  selector: '[appButton]',
+  standalone: true,
+  // Automatically adds Ripple and Tooltip behavior!
+  hostDirectives: [RippleDirective, TooltipDirective]
 })
-export class TooltipDirective {
-  @Input() appTooltip = '';
-  el = inject(ElementRef);
-  
-  @HostListener('mouseenter')
-  show() {
-    // Show tooltip
-  }
-  
-  @HostListener('mouseleave')
-  hide() {
-    // Hide tooltip
-  }
-}
+export class ButtonDirective { ... }
 </pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔥 3. Host Bindings & Listeners</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Directives can bind to host element properties and listen to events.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🖱️ 2. Zone-Free Event Handling</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+For high-frequency events (scroll, mousemove, drag), do NOT use output bindings or <code>@HostListener</code> blindly. They trigger global Change Detection. Run them outside the zone.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
-<pre class="text-gray-800 dark:text-gray-100">
-@Directive({ selector: '[appClickTracker]' })
-export class ClickTrackerDirective {
-  @HostBinding('class.clicked') isClicked = false;
-  
-  @HostListener('click')
-  onClick() {
-    this.isClicked = true;
-    console.log('Element clicked!');
-  }
-}
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📋 4. Common Use Cases</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-  <li><strong class="text-brand-primary">Validation:</strong> Custom form validators</li>
-  <li><strong class="text-brand-primary">Accessibility:</strong> Auto-focus, ARIA attributes</li>
-  <li><strong class="text-brand-primary">Behavior:</strong> Click outside, lazy load images</li>
-  <li><strong class="text-brand-primary">Styling:</strong> Conditional classes, themes</li>
-</ul>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common Mistakes</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Direct DOM Manipulation</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Use Renderer2 instead of directly accessing nativeElement for SSR safety.</p>
-  </div>
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Overusing Directives</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">If it's complex logic, use a component instead.</p>
-  </div>
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Slow Way</h4>
+        <p class="text-xs text-gray-600 dark:text-gray-400">
+            <code>(mousemove)="update()"</code><br>
+            Fires ~60 CD cycles per second. Kills battery and FPS.
+        </p>
+    </div>
+    <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Fast Way</h4>
+        <p class="text-xs text-gray-600 dark:text-gray-400">
+            <code>ngZone.runOutsideAngular()</code><br>
+            Update the style directly on the DOM element. Sync with Angular only when done.
+        </p>
+    </div>
 </div>
 `,
-  code: `import { Directive, ElementRef, HostListener, Input, inject } from '@angular/core';
-import { Component } from '@angular/core';
+  code: `import { Directive, ElementRef, Input, inject, NgZone, Component, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// Custom Highlight Directive
+// --- DRAGGABLE DIRECTIVE ---
 @Directive({
-  selector: '[appHighlight]',
+  selector: '[appDraggable]',
   standalone: true
 })
-export class HighlightDirective {
-  @Input() appHighlight = 'yellow';
+export class DraggableDirective {
   private el = inject(ElementRef);
+  private ngZone = inject(NgZone);
+  
+  // State
+  isDragging = false;
+  startX = 0;
+  startY = 0;
+  initialLeft = 0;
+  initialTop = 0;
 
-  @HostListener('mouseenter')
-  onMouseEnter() {
-    this.highlight(this.appHighlight);
+  constructor() {
+    this.el.nativeElement.style.cursor = 'grab';
+    this.el.nativeElement.style.position = 'absolute';
+    this.el.nativeElement.style.userSelect = 'none';
+    
+    // We bind mousedown in the zone (to start logic)
+    this.el.nativeElement.addEventListener('mousedown', this.onMouseDown.bind(this));
   }
 
-  @HostListener('mouseleave')
-  onMouseLeave() {
-    this.highlight('');
+  onMouseDown(e: MouseEvent) {
+    this.isDragging = true;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+    
+    const rect = this.el.nativeElement.getBoundingClientRect();
+    // Assuming parent is relatively positioned for this demo
+    this.initialLeft = this.el.nativeElement.offsetLeft;
+    this.initialTop = this.el.nativeElement.offsetTop;
+
+    this.el.nativeElement.style.cursor = 'grabbing';
+    this.el.nativeElement.style.zIndex = '1000';
+    this.el.nativeElement.style.transform = 'scale(1.05)';
+    this.el.nativeElement.style.transition = 'none';
+
+    // Hook up global listeners OUTSIDE Angular to prevent CD spam
+    this.ngZone.runOutsideAngular(() => {
+      window.addEventListener('mousemove', this.onMouseMove);
+      window.addEventListener('mouseup', this.onMouseUp);
+    });
   }
 
-  private highlight(color: string) {
-    this.el.nativeElement.style.backgroundColor = color;
-    if (color) {
-      console.log(\`✨ Highlighted with color: \${color}\`);
-    }
-  }
-}
+  // Arrow function to preserve 'this'
+  onMouseMove = (e: MouseEvent) => {
+    if (!this.isDragging) return;
+    
+    const dx = e.clientX - this.startX;
+    const dy = e.clientY - this.startY;
+    
+    this.el.nativeElement.style.left = \`\${this.initialLeft + dx}px\`;
+    this.el.nativeElement.style.top = \`\${this.initialTop + dy}px\`;
+  };
 
-// Custom Click Counter Directive
-@Directive({
-  selector: '[appClickCounter]',
-  standalone: true
-})
-export class ClickCounterDirective {
-  private clicks = 0;
-
-  @HostListener('click')
-  onClick() {
-    this.clicks++;
-    console.log(\`🖱️ Element clicked \${this.clicks} times\`);
-  }
+  onMouseUp = () => {
+    this.isDragging = false;
+    this.el.nativeElement.style.cursor = 'grab';
+    this.el.nativeElement.style.zIndex = '';
+    this.el.nativeElement.style.transform = '';
+    this.el.nativeElement.style.transition = 'transform 0.2s';
+    
+    // Remove listeners
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onMouseUp);
+  };
 }
 
 @Component({
   selector: 'app-directive-demo',
   standalone: true,
-  imports: [CommonModule, HighlightDirective, ClickCounterDirective],
+  imports: [CommonModule, DraggableDirective],
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">🎯 Custom Directives Demo</h2>
-      
-      <div class="space-y-4 mb-6">
-        <div
-          appHighlight="lightblue"
-          class="p-4 bg-gray-800 rounded-xl border border-gray-700 cursor-pointer transition"
-        >
-          <p class="font-bold mb-2">Hover Highlight (Blue)</p>
-          <p class="text-sm text-gray-400">
-            Uses <code class="text-yellow-400">appHighlight</code> directive
-          </p>
+    <div class="h-[500px] bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl relative overflow-hidden" 
+         style="background-color: #030712; color: white">
+        
+        <h2 class="text-2xl font-bold text-white mb-2 pointer-events-none select-none">🖱️ Zone-Free Drag</h2>
+        <p class="text-gray-500 mb-6 text-sm pointer-events-none select-none">
+            These elements are draggable. The drag events happen <strong>outside</strong> Angular's zone for 60fps performance.
+        </p>
+
+        <!-- Container for drag area -->
+        <div class="absolute inset-0 top-24 pointer-events-none">
+             <!-- Note: ponter-events-auto needed on children -->
+             
+             <!-- Card 1 -->
+             <div appDraggable style="left: 50px; top: 50px;" 
+                  class="pointer-events-auto absolute w-48 bg-blue-600 rounded-xl p-4 shadow-xl border border-white/10 flex flex-col items-center justify-center gap-2">
+                 <div class="text-3xl">🧊</div>
+                 <div class="font-bold">Drag Me</div>
+                 <div class="text-[10px] bg-black/20 px-2 py-1 rounded">No Change Detection</div>
+             </div>
+
+             <!-- Card 2 -->
+             <div appDraggable style="left: 300px; top: 100px;" 
+                  class="pointer-events-auto absolute w-40 h-40 bg-purple-600 rounded-full p-4 shadow-xl border border-white/10 flex items-center justify-center">
+                 <div class="text-center">
+                     <div class="text-3xl mb-1">🟣</div>
+                     <div class="font-bold text-sm">Me Too</div>
+                 </div>
+             </div>
+
+             <!-- Card 3 -->
+             <div appDraggable style="left: 150px; top: 250px;" 
+                  class="pointer-events-auto absolute w-64 bg-gray-800 rounded-xl p-4 shadow-xl border border-green-500/50 flex items-center gap-4">
+                 <div class="w-10 h-10 rounded bg-green-500 flex items-center justify-center font-bold text-black">JS</div>
+                 <div>
+                     <div class="font-bold text-green-400">Pure DOM</div>
+                     <div class="text-xs text-gray-400">Direct style manipulation</div>
+                 </div>
+             </div>
         </div>
 
-        <div
-          appHighlight="lightgreen"
-          class="p-4 bg-gray-800 rounded-xl border border-gray-700 cursor-pointer transition"
-        >
-          <p class="font-bold mb-2">Hover Highlight (Green)</p>
-          <p class="text-sm text-gray-400">
-            Same directive, different color input
-          </p>
+        <!-- FPS Counter Simulation -->
+        <div class="absolute bottom-4 right-4 text-xs font-mono text-green-500 opacity-50 select-none pointer-events-none">
+             Performance: 60 FPS (Zone Free)
         </div>
-
-        <div
-          appClickCounter
-          class="p-4 bg-gray-800 rounded-xl border border-gray-700 cursor-pointer transition hover:border-purple-500"
-        >
-          <p class="font-bold mb-2">Click Counter</p>
-          <p class="text-sm text-gray-400">
-            Click me and check the console! Uses <code class="text-yellow-400">appClickCounter</code>
-          </p>
-        </div>
-
-        <div
-          appHighlight="pink"
-          appClickCounter
-          class="p-4 bg-gray-800 rounded-xl border border-gray-700 cursor-pointer transition"
-        >
-          <p class="font-bold mb-2">Combined Directives</p>
-          <p class="text-sm text-gray-400">
-            Both directives applied to the same element!
-          </p>
-        </div>
-      </div>
-
-      <div class="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-        <p class="text-xs text-blue-400 mb-2">💡 Directive Benefits</p>
-        <ul class="text-sm text-gray-300 space-y-1">
-          <li>• Reusable across components</li>
-          <li>• Composable (multiple directives per element)</li>
-          <li>• Clean separation of concerns</li>
-        </ul>
-      </div>
     </div>
   \`
 })
 export class DirectiveDemoComponent {
-  constructor() {
-    console.log('--- 🎯 Custom Directives Demo ---');
-    console.log('Hover over elements to see highlight directive');
-    console.log('Click elements to see click counter directive');
-  }
+    // Component is empty! All logic is in the directive.
 }`,
   comparison: {
-    junior: `// ❌ Inline event handlers everywhere
-<div (mouseenter)="highlight()" (mouseleave)="unhighlight()">
-  Item 1
-</div>
-<div (mouseenter)="highlight()" (mouseleave)="unhighlight()">
-  Item 2
-</div>`,
-    senior: `// ✅ Reusable directive
-@Directive({ selector: '[appHighlight]' })
-export class HighlightDirective {
-  @HostListener('mouseenter') onEnter() { ... }
-  @HostListener('mouseleave') onLeave() { ... }
-}
-
-// Usage: <div appHighlight>Item</div>`
+    junior: `// ❌ Janky Drag
+@HostListener('mousemove', ['$event'])
+onMove(e) {
+  this.x = e.clientX; // Triggers CD 500 times
+}`,
+    senior: `// ✅ Smooth Drag
+ngZone.runOutsideAngular(() => {
+  window.addEventListener('mousemove', (e) => {
+    element.style.transform = ...; // Zero CD cost
+  });
+});`
   },
   interview: {
     questions: [
       {
-        q: "When should you use a directive vs a component?",
-        a: "Use directives for behavior/styling without a template. Use components when you need a template/view. If it has HTML structure, it's a component."
+        q: "What is 'Directive Composition'?",
+        a: "A feature in Angular 15+ allowing you to add directives to a host element from *within* another directive (using `hostDirectives`), enabling powerful code reuse without inheritance."
       },
       {
-        q: "Why use Renderer2 instead of direct DOM access?",
-        a: "Renderer2 is platform-agnostic and works with SSR, Web Workers, and native mobile. Direct DOM access (nativeElement) only works in browsers."
-      },
-      {
-        q: "Can you apply multiple directives to one element?",
-        a: "Yes! Directives are composable. You can apply as many as you need to a single element."
+        q: "Why run events outside Angular's Zone?",
+        a: "Angular's Zone.js patches global events. High-frequency events like scroll/mousemove trigger Change Detection continuously, killing performance. Running outside Zone bypasses this."
       }
     ]
   }

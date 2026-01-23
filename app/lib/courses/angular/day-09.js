@@ -1,278 +1,287 @@
 export const day09 = {
   day: 9,
-  title: "RxJS Essentials: Observables You'll Actually Use",
-  intro: "RxJS powers Angular's async layer. Master the operators you'll use daily: map, filter, switchMap, and combineLatest.",
+  title: "Advanced RxJS: State Management",
+  intro: "Don't just subscribe. Compose. Master <strong>combineLatest</strong> for View Models, <strong>scan</strong> for state, and <strong>Subject</strong> for actions.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 9. **RxJS** is Angular's async toolkit. You don't need to know all 100+ operators. Just the essential 10."
+        message: "Day 9. RxJS isn't just for HTTP. It's a full State Management system if you know how to use it."
       },
       {
         type: "talk",
-        message: "Think of Observables as arrays over time. Operators like `map` and `filter` work the same way, but for async streams."
+        message: "We'll build a 'ViewModel' stream that combines all data sources into one. The template then only needs `vm$ | async`."
       },
       {
         type: "challenge",
-        instruction: "This code makes a new HTTP call for every keystroke. Use `switchMap` to cancel previous requests and only use the latest.",
-        buggyCode: `searchTerm$.subscribe(term => {
-  // ❌ Race condition! Multiple requests in flight
-  this.http.get(\`/api/search?q=\${term}\`).subscribe(results => {
-    this.results = results;
-  });
-});`,
-        solutionCode: `// ✅ switchMap cancels previous requests
-searchTerm$.pipe(
-  debounceTime(300), // Wait for user to stop typing
-  switchMap(term => this.http.get(\`/api/search?q=\${term}\`))
-).subscribe(results => {
-  this.results = results;
-});`,
-        verifyOutput: "switchMap",
-        successMessage: "Perfect! switchMap cancels the previous request when a new one starts. No race conditions.",
-        hint: "Use `switchMap` to flatten the inner Observable and cancel previous emissions."
-      },
-      {
-        type: "ask",
-        question: "What's the difference between switchMap, mergeMap, and concatMap?",
-        options: [
-          "They're all the same",
-          "switchMap cancels previous, mergeMap runs all concurrently, concatMap queues them",
-          "switchMap is faster",
-          "mergeMap is deprecated"
-        ],
-        correctAnswer: "switchMap cancels previous, mergeMap runs all concurrently, concatMap queues them",
-        feedback: {
-          success: "Exactly! switchMap = cancel previous, mergeMap = run all, concatMap = queue in order.",
-          error: "Think about timing. switchMap cancels, mergeMap allows concurrent, concatMap waits for each to finish."
-        }
+        instruction: "This code manually updates state. Refactor it to use `scan` to accumulate the total count reactively.",
+        buggyCode: `// ❌ Imperative State
+count = 0;
+increment() {
+  this.count++; 
+}
+decrement() {
+  this.count--;
+}`,
+        solutionCode: `// ✅ Reactive State accumulation
+action$ = new Subject<number>();
+
+count$ = this.action$.pipe(
+  startWith(0),
+  scan((acc, val) => acc + val, 0)
+);
+
+increment() { this.action$.next(1); }
+decrement() { this.action$.next(-1); }`,
+        verifyOutput: "scan",
+        successMessage: "Exactly! `scan` is like `Array.reduce` but over time. Perfect for accumulating state.",
+        hint: "Use `action$.pipe(scan(...))` to maintain the state manually."
       }
     ]
   },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🌊 1. The Essential Operators</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-You don't need to memorize all RxJS operators. Here are the 10 you'll use 90% of the time:
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🎼 1. The ViewModel Pattern</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Stop defining multiple variables in your component (<code>user</code>, <code>posts</code>, <code>isLoading</code>). Define <strong>ONE</strong> Observable <code>vm$</code> that contains everything.
 </p>
 
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
-    <h4 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Transformation</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li><code>map</code> - Transform each value</li>
-      <li><code>switchMap</code> - Flatten + cancel previous</li>
-      <li><code>mergeMap</code> - Flatten + run concurrent</li>
-    </ul>
-  </div>
-  <div class="p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl">
-    <h4 class="font-bold text-green-700 dark:text-green-400 mb-2">Filtering</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li><code>filter</code> - Only emit if condition is true</li>
-      <li><code>debounceTime</code> - Wait for pause</li>
-      <li><code>distinctUntilChanged</code> - Skip duplicates</li>
-    </ul>
-  </div>
-  <div class="p-4 bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-xl">
-    <h4 class="font-bold text-purple-700 dark:text-purple-400 mb-2">Combination</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li><code>combineLatest</code> - Wait for all, emit on any change</li>
-      <li><code>forkJoin</code> - Wait for all to complete</li>
-    </ul>
-  </div>
-  <div class="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-    <h4 class="font-bold text-yellow-700 dark:text-yellow-400 mb-2">Error Handling</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li><code>catchError</code> - Handle errors gracefully</li>
-      <li><code>retry</code> - Retry failed requests</li>
-    </ul>
-  </div>
-</div>
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+// component.ts
+vm$ = combineLatest({
+  user: this.auth.user$,
+  posts: this.posts$,
+  filter: this.filter.valueChanges
+}).pipe(
+  map(({user, posts, filter}) => ({
+    user,
+    visiblePosts: posts.filter(p => p.includes(filter))
+  }))
+);
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ 2. The Search Bar Pattern</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-The most common RxJS pattern: debounced search with auto-cancel.
-</p>
-
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-green-500">
-<pre class="text-gray-800 dark:text-gray-100">
-searchControl.valueChanges.pipe(
-  debounceTime(300),           // Wait 300ms after typing stops
-  distinctUntilChanged(),      // Skip if same as previous
-  switchMap(term =>            // Cancel previous search
-    this.http.get(\`/api/search?q=\${term}\`)
-  ),
-  catchError(err => {          // Handle errors
-    console.error(err);
-    return of([]);
-  })
-).subscribe(results => {
-  this.results = results;
-});
+// component.html
+@if (vm$ | async; as vm) {
+  Hello {{ vm.user.name }}!
+}
 </pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔥 3. Combining Multiple Streams</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Use <code>combineLatest</code> when you need multiple values to compute a result.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧠 2. Accumulating State (scan)</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Need to keep a running total or history? <code>scan</code> is your friend. It's Redux in a single operator.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// Wait for both user and settings, emit on any change
-combineLatest([
-  this.http.get('/api/user'),
-  this.http.get('/api/settings')
-]).pipe(
-  map(([user, settings]) => ({ user, settings }))
-).subscribe(data => {
-  console.log(data.user, data.settings);
-});
-</pre>
+<div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30 mb-8">
+    <code class="text-blue-700 dark:text-blue-300 font-bold block mb-2">actions$.pipe( scan((state, action) => newState, initialState) )</code>
+    <p class="text-xs text-gray-600 dark:text-gray-400">This is how NgRx/Redux works under the hood!</p>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚠️ Common Mistakes</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Nested Subscriptions</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Never subscribe inside subscribe. Use switchMap/mergeMap instead.</p>
-  </div>
-  <div class="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl">
-    <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">Not Unsubscribing</h4>
-    <p class="text-sm text-gray-700 dark:text-gray-300">Manual subscriptions leak memory. Use async pipe or takeUntilDestroyed().</p>
-  </div>
-</div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 3. Polling (timer + switchMap)</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Need live data? Don't use <code>setInterval</code>. Use <code>timer</code> composed with <code>switchMap</code> to fetch fresh data cleanly.
+</p>
 `,
-  code: `import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, map } from 'rxjs';
+  code: `import { Component } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
+import { Subject, combineLatest, timer, map, scan, startWith, switchMap, withLatestFrom, of, shareReplay } from 'rxjs';
+
+// --- TYPES ---
+interface Trade {
+    type: 'BUY' | 'SELL';
+    price: number;
+    amount: number;
+    timestamp: number;
+}
+
+interface MarketTick {
+    price: number;
+    trend: 'UP' | 'DOWN' | 'FLAT';
+}
 
 @Component({
-  selector: 'app-search',
+  selector: 'app-crypto-trader',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   template: \`
-    <div class="p-6 bg-gray-900 text-white rounded-xl">
-      <h2 class="text-2xl font-bold mb-6">🔍 RxJS Search Demo</h2>
-      
-      <input
-        [(ngModel)]="searchTerm"
-        (input)="onSearch(searchTerm)"
-        placeholder="Type to search..."
-        class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 outline-none"
-      />
+    <div class="max-w-2xl mx-auto bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]" style="background-color: #030712; color: white">
+        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="text-3xl">🚀</span> Crypto Trader Pro
+        </h2>
 
-      <div class="mt-4 p-4 bg-gray-800 rounded-xl border border-gray-700">
-        <p class="text-sm text-gray-400 mb-2">Search Results:</p>
-        @if (results().length > 0) {
-          <ul class="space-y-2">
-            @for (result of results(); track result) {
-              <li class="p-2 bg-gray-700 rounded">{{ result }}</li>
-            }
-          </ul>
+        <!-- LOADING / ERROR / CONTENT -->
+        @if (vm$ | async; as vm) {
+            
+            <!-- HEADER STATS -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="p-4 rounded-xl bg-gray-900 border border-gray-800">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Current Price</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-3xl font-mono font-bold text-white">
+                            \${{ vm.market.price | number:'1.2-2' }}
+                        </span>
+                        <span class="text-xs mb-1 font-bold px-2 py-0.5 rounded"
+                              [class.bg-green-500_20]="vm.market.trend === 'UP'"
+                              [class.text-green-400]="vm.market.trend === 'UP'"
+                              [class.bg-red-500_20]="vm.market.trend === 'DOWN'"
+                              [class.text-red-400]="vm.market.trend === 'DOWN'">
+                            {{ vm.market.trend }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="p-4 rounded-xl bg-gray-900 border border-gray-800">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Your Balance</p>
+                    <div class="text-3xl font-mono font-bold text-blue-400">
+                        \${{ vm.balance | number:'1.2-2' }}
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        Holding: <span class="text-white font-bold">{{ vm.holding | number:'1.4-4' }} BTC</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                 <button (click)="trade('BUY', vm.market.price)" 
+                         [disabled]="vm.balance < vm.market.price"
+                         class="p-4 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-lg transition-transform active:scale-95 flex flex-col items-center">
+                     <span>BUY 1 BTC</span>
+                     <span class="text-xs font-normal opacity-80">Cost: \${{ vm.market.price | number:'1.0-0' }}</span>
+                 </button>
+                 
+                 <button (click)="trade('SELL', vm.market.price)"
+                         [disabled]="vm.holding < 1"
+                         class="p-4 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-lg transition-transform active:scale-95 flex flex-col items-center">
+                     <span>SELL 1 BTC</span>
+                     <span class="text-xs font-normal opacity-80">Value: \${{ vm.market.price | number:'1.0-0' }}</span>
+                 </button>
+            </div>
+
+            <!-- HISTORY LIST (scan in action) -->
+            <div class="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
+                <div class="px-4 py-3 bg-gray-900 border-b border-gray-800 flex justify-between items-center">
+                    <h3 class="font-bold text-sm text-gray-300">Transaction History</h3>
+                    <span class="text-xs text-gray-500">{{ vm.history.length }} trades</span>
+                </div>
+                <div class="max-h-48 overflow-y-auto p-2 space-y-2">
+                    @for (trade of vm.history; track trade.timestamp) {
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-black/20 text-sm animate-in slide-in-from-left duration-300">
+                            <div class="flex items-center gap-3">
+                                <span [class.text-green-400]="trade.type === 'BUY'" 
+                                      [class.text-red-400]="trade.type === 'SELL'"
+                                      class="font-bold">
+                                    {{ trade.type }}
+                                </span>
+                                <span class="text-gray-500 text-xs">
+                                    {{ trade.timestamp | date:'HH:mm:ss' }}
+                                </span>
+                            </div>
+                            <div class="font-mono text-gray-300">
+                                @if (trade.type === 'BUY') { - } @else { + }
+                                \${{ trade.price | number:'1.0-0' }}
+                            </div>
+                        </div>
+                    } @empty {
+                         <div class="p-8 text-center text-gray-500 text-sm italic">
+                            No trades yet. Market is moving...
+                        </div>
+                    }
+                </div>
+            </div>
+
         } @else {
-          <p class="text-gray-500 text-sm">Type something to search...</p>
+            <div class="text-center py-20 text-blue-400 animate-pulse">
+                Connect to Exchange...
+            </div>
         }
-      </div>
-
-      <div class="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-        <p class="text-xs text-blue-400 mb-2">💡 RxJS Magic</p>
-        <p class="text-sm text-gray-300">
-          Using <code class="text-yellow-400">debounceTime(300)</code> + 
-          <code class="text-yellow-400">distinctUntilChanged()</code>
-        </p>
-        <p class="text-xs text-gray-400 mt-2">
-          Searches only happen 300ms after you stop typing, and only if the value changed.
-        </p>
-      </div>
     </div>
   \`
 })
-export class SearchComponent {
-  searchTerm = '';
-  results = signal<string[]>([]);
-  
-  private searchSubject = new Subject<string>();
+export class CryptoTrader {
+    // 1. INPUT STREAMS (Actions)
+    tradeAction$ = new Subject<{ type: 'BUY' | 'SELL', price: number }>();
 
-  constructor() {
-    console.log('--- 🔍 RxJS Search Demo ---');
-    
-    // Set up the search stream
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      map(term => this.mockSearch(term))
-    ).subscribe(results => {
-      console.log(\`📊 Search results for "\${this.searchTerm}": \`, results);
-      this.results.set(results);
-    });
-
-    // Auto-demo
-    setTimeout(() => {
-      console.log('▶️ Auto-typing "angular"...');
-      this.simulateTyping('angular');
-    }, 1000);
-  }
-
-  onSearch(term: string) {
-    this.searchSubject.next(term);
-  }
-
-  private mockSearch(term: string): string[] {
-    if (!term) return [];
-    
-    const allItems = [
-      'Angular Signals',
-      'Angular Router',
-      'Angular Forms',
-      'RxJS Operators',
-      'Angular HttpClient',
-      'Angular Directives'
-    ];
-    
-    return allItems.filter(item => 
-      item.toLowerCase().includes(term.toLowerCase())
+    // 2. DATA STREAMS (Source)
+    // Simulate WebSocket with polling
+    market$ = timer(0, 2000).pipe(
+        scan((acc) => {
+            const change = (Math.random() - 0.5) * 1000;
+            const newPrice = Math.max(100, acc.price + change);
+            return {
+                price: newPrice,
+                trend: change > 0 ? 'UP' : change < 0 ? 'DOWN' : 'FLAT'
+            } as MarketTick;
+        }, { price: 45000, trend: 'FLAT' } as MarketTick),
+        shareReplay(1)
     );
-  }
 
-  private simulateTyping(text: string) {
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < text.length) {
-        this.searchTerm += text[i];
-        this.onSearch(this.searchTerm);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 150);
-  }
+    // 3. STATE STREAMS (Accumulated)
+    // Use scan to maintain balance/holding state based on actions
+    wallet$ = this.tradeAction$.pipe(
+        startWith(null), // Trigger initial state
+        scan((state, action) => {
+            if (!action) return state;
+            
+            const newBalance = action.type === 'BUY' 
+                ? state.balance - action.price 
+                : state.balance + action.price;
+                
+            const newHolding = action.type === 'BUY'
+                ? state.holding + 1
+                : state.holding - 1;
+
+            return { 
+                balance: newBalance, 
+                holding: newHolding,
+                history: [{ ...action, amount: 1, timestamp: Date.now() }, ...state.history]
+            };
+        }, { balance: 100000, holding: 0, history: [] as Trade[] }),
+        shareReplay(1)
+    );
+
+    // 4. VIEW MODEL (Combined)
+    // One stream for the template!
+    vm$ = combineLatest({
+        market: this.market$,
+        wallet: this.wallet$
+    }).pipe(
+        map(({ market, wallet }) => ({
+            market,
+            balance: wallet.balance,
+            holding: wallet.holding,
+            history: wallet.history
+        }))
+    );
+
+    trade(type: 'BUY' | 'SELL', price: number) {
+        this.tradeAction$.next({ type, price });
+    }
 }`,
   comparison: {
-    junior: `// ❌ No debounce, searches on every keystroke
-input.addEventListener('input', (e) => {
-  fetch(\`/api/search?q=\${e.target.value}\`); // Spam!
-});`,
-    senior: `// ✅ Debounced, cancellable, clean
-searchControl.valueChanges.pipe(
-  debounceTime(300),
-  switchMap(term => this.http.get(\`/api/search?q=\${term}\`))
-).subscribe(results => this.results = results);`
+    junior: `// ❌ Managing multiple async values
+user: User;
+settings: Settings;
+
+ngOnInit() {
+  this.user$.subscribe(u => this.user = u);
+  this.settings$.subscribe(s => this.settings = s);
+}`,
+    senior: `// ✅ Single Source of Truth
+vm$ = combineLatest({
+  user: this.user$,
+  settings: this.settings$
+});`
   },
   interview: {
     questions: [
       {
-        q: "When would you use mergeMap instead of switchMap?",
-        a: "Use mergeMap when you want all requests to complete (e.g., uploading multiple files). Use switchMap when only the latest matters (e.g., search)."
+        q: "What happens if one Observable in combineLatest hasn't emitted yet?",
+        a: "combineLatest will NOT emit anything until *every* source Observable has emitted at least once. Use startWith() to fix this if needed."
       },
       {
-        q: "How do you handle errors in an Observable chain?",
-        a: "Use catchError operator. Return a fallback Observable (e.g., of([])) to continue the stream, or rethrow to propagate the error."
-      },
-      {
-        q: "What's the difference between combineLatest and forkJoin?",
-        a: "combineLatest emits whenever ANY source emits (after all have emitted once). forkJoin waits for ALL to complete, then emits once."
+        q: "What is a 'Higher Order Observable'?",
+        a: "An Observable that emits *other* Observables. Operators like switchMap and mergeMap are used to 'flatten' them into a single stream of values."
       }
     ]
   }
