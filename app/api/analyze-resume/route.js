@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import PDFParser from 'pdf2json';
+import mammoth from 'mammoth';
 
 // Initialize Gemini AI with v1 API (FREE)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'YOUR_API_KEY_HERE');
@@ -23,7 +25,6 @@ export async function POST(request) {
 
       if (fileType.endsWith('.pdf')) {
         // Use pdf2json which is more reliable for Node.js
-        const PDFParser = (await import('pdf2json')).default;
         const pdfParser = new PDFParser(null, 1); // 1 = text only
 
         resumeText = await new Promise((resolve, reject) => {
@@ -35,7 +36,6 @@ export async function POST(request) {
           pdfParser.parseBuffer(buffer);
         });
       } else if (fileType.endsWith('.docx') || fileType.endsWith('.doc')) {
-        const mammoth = (await import('mammoth')).default;
         const result = await mammoth.extractRawText({ buffer });
         resumeText = result.value;
       }

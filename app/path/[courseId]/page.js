@@ -45,6 +45,7 @@ import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
 import { Sandpack } from "@codesandbox/sandpack-react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import CssSandbox from "../../components/public/CssSandbox";
 
 function progressKey(courseId, day) {
   return `asio:path:${courseId}:day:${day}:progress`;
@@ -189,14 +190,14 @@ function MasteryChecklist({ items = [], progress, onProgress }) {
             <label
               key={it.id}
               className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-all border ${checked
-                  ? "bg-green-500/5 border-green-500/20"
-                  : "bg-white dark:bg-dark-800 border-gray-200 dark:border-dark-700 hover:border-brand-primary/30"
+                ? "bg-green-500/5 border-green-500/20"
+                : "bg-white dark:bg-dark-800 border-gray-200 dark:border-dark-700 hover:border-brand-primary/30"
                 }`}
             >
               <div
                 className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors ${checked
-                    ? "bg-green-500 border-green-500 text-dark-900"
-                    : "border-gray-300 dark:border-dark-500 bg-transparent"
+                  ? "bg-green-500 border-green-500 text-dark-900"
+                  : "border-gray-300 dark:border-dark-500 bg-transparent"
                   }`}
               >
                 {checked && <Check size={12} strokeWidth={4} />}
@@ -215,8 +216,8 @@ function MasteryChecklist({ items = [], progress, onProgress }) {
               />
               <span
                 className={`text-sm font-medium ${checked
-                    ? "text-dark-900/60 dark:text-light-400 line-through"
-                    : "text-dark-900 dark:text-light-200"
+                  ? "text-dark-900/60 dark:text-light-400 line-through"
+                  : "text-dark-900 dark:text-light-200"
                   }`}
               >
                 {it.text}
@@ -396,8 +397,8 @@ function LearningCheckpoints({
                   {isAnswered && (
                     <span
                       className={`text-xs font-bold px-2 py-1 rounded-full border ${isCorrect
-                          ? "text-green-300 bg-green-500/10 border-green-500/30"
-                          : "text-red-300 bg-red-500/10 border-red-500/30"
+                        ? "text-green-300 bg-green-500/10 border-green-500/30"
+                        : "text-red-300 bg-red-500/10 border-red-500/30"
                         }`}
                     >
                       {isCorrect ? "Correct" : "Not quite"}
@@ -433,18 +434,18 @@ function LearningCheckpoints({
                           });
                         }}
                         className={`text-left w-full p-3 rounded-xl border transition ${picked
-                            ? "border-brand-primary/60 bg-brand-primary/10"
-                            : "border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-900/30 hover:bg-dark-900/5 dark:hover:bg-dark-700"
+                          ? "border-brand-primary/60 bg-brand-primary/10"
+                          : "border-dark-700/10 dark:border-dark-600 bg-white/70 dark:bg-dark-900/30 hover:bg-dark-900/5 dark:hover:bg-dark-700"
                           } ${showCorrect ? "ring-1 ring-green-500/40" : ""} ${showWrongPicked ? "ring-1 ring-red-500/40" : ""
                           }`}
                       >
                         <div className="flex items-start gap-3">
                           <span
                             className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${showCorrect
-                                ? "border-green-500/40 text-green-300 bg-green-500/10"
-                                : showWrongPicked
-                                  ? "border-red-500/40 text-red-300 bg-red-500/10"
-                                  : "border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800"
+                              ? "border-green-500/40 text-green-300 bg-green-500/10"
+                              : showWrongPicked
+                                ? "border-red-500/40 text-red-300 bg-red-500/10"
+                                : "border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800"
                               }`}
                           >
                             {String.fromCharCode(65 + optIdx)}
@@ -461,8 +462,8 @@ function LearningCheckpoints({
                 {isAnswered && (
                   <div
                     className={`p-4 rounded-xl border ${isCorrect
-                        ? "border-green-500/30 bg-green-500/5"
-                        : "border-yellow-500/30 bg-yellow-500/5"
+                      ? "border-green-500/30 bg-green-500/5"
+                      : "border-yellow-500/30 bg-yellow-500/5"
                       }`}
                   >
                     <p className="text-xs font-bold tracking-widest uppercase mb-2 text-dark-900/60 dark:text-light-300">
@@ -516,15 +517,15 @@ function GuidedLab({ steps = [], onLoad }) {
                   key={s.id || i}
                   onClick={() => setActiveIdx(i)}
                   className={`w-full text-left p-3 rounded-xl border transition ${i === activeIdx
-                      ? "border-green-500/40 bg-green-500/10"
-                      : "border-dark-700/10 dark:border-dark-700 bg-white/70 dark:bg-dark-900/20 hover:bg-dark-900/5 dark:hover:bg-dark-700"
+                    ? "border-green-500/40 bg-green-500/10"
+                    : "border-dark-700/10 dark:border-dark-700 bg-white/70 dark:bg-dark-900/20 hover:bg-dark-900/5 dark:hover:bg-dark-700"
                     }`}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${i === activeIdx
-                          ? "border-green-500/40 text-green-300 bg-green-500/10"
-                          : "border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800"
+                        ? "border-green-500/40 text-green-300 bg-green-500/10"
+                        : "border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400 bg-white/80 dark:bg-dark-800"
                         }`}
                     >
                       {i + 1}
@@ -567,8 +568,8 @@ function GuidedLab({ steps = [], onLoad }) {
                   onClick={() => setActiveIdx((i) => Math.max(0, i - 1))}
                   disabled={activeIdx === 0}
                   className={`px-3 py-2 rounded-xl text-xs font-bold border ${activeIdx === 0
-                      ? "opacity-50 cursor-not-allowed bg-dark-900/5 dark:bg-dark-700 border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400"
-                      : "bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border-dark-700/10 dark:border-dark-600 text-dark-900/70 dark:text-light-200"
+                    ? "opacity-50 cursor-not-allowed bg-dark-900/5 dark:bg-dark-700 border-dark-700/10 dark:border-dark-600 text-dark-900/50 dark:text-light-400"
+                    : "bg-dark-900/5 dark:bg-dark-700 hover:bg-dark-900/10 dark:hover:bg-dark-600 border-dark-700/10 dark:border-dark-600 text-dark-900/70 dark:text-light-200"
                     }`}
                 >
                   Prev
@@ -579,8 +580,8 @@ function GuidedLab({ steps = [], onLoad }) {
                   }
                   disabled={activeIdx === steps.length - 1}
                   className={`px-3 py-2 rounded-xl text-xs font-bold border ${activeIdx === steps.length - 1
-                      ? "opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400"
-                      : "bg-dark-700 hover:bg-dark-600 border-dark-600 text-light-200"
+                    ? "opacity-50 cursor-not-allowed bg-dark-700 border-dark-600 text-light-400"
+                    : "bg-dark-700 hover:bg-dark-600 border-dark-600 text-light-200"
                     }`}
                 >
                   Next
@@ -1235,8 +1236,8 @@ export default function LearningPathPage() {
       {/* Top Navigation Bar (Floating/Glass) */}
       <div
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${didScrollOnMountRef.current
-            ? "bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 py-3"
-            : "bg-transparent py-5"
+          ? "bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 py-3"
+          : "bg-transparent py-5"
           }`}
       >
         <div className="w-full px-4 md:px-6 flex items-center justify-between">
@@ -1391,16 +1392,16 @@ export default function LearningPathPage() {
                         setSidebarOpen(false);
                       }}
                       className={`w-full flex items-start text-left p-4 rounded-xl transition-all group border ${isActive
-                          ? "bg-brand-primary/10 dark:bg-brand-primary/5 border-brand-primary/20"
-                          : "border-transparent hover:bg-gray-50 dark:hover:bg-white/5"
+                        ? "bg-brand-primary/10 dark:bg-brand-primary/5 border-brand-primary/20"
+                        : "border-transparent hover:bg-gray-50 dark:hover:bg-white/5"
                         }`}
                     >
                       <div
                         className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors ${isActive
-                            ? "bg-brand-primary text-dark-900 shadow-sm"
-                            : isCompleted
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-gray-200 dark:bg-dark-700 text-dark-400"
+                          ? "bg-brand-primary text-dark-900 shadow-sm"
+                          : isCompleted
+                            ? "bg-green-500/20 text-green-500"
+                            : "bg-gray-200 dark:bg-dark-700 text-dark-400"
                           }`}
                       >
                         {isCompleted && !isActive ? (
@@ -1412,8 +1413,8 @@ export default function LearningPathPage() {
                       <div className="ml-4 min-w-0">
                         <p
                           className={`text-sm font-bold ${isActive
-                              ? "text-dark-900 dark:text-white"
-                              : "text-gray-600 dark:text-light-400 group-hover:text-dark-900 dark:group-hover:text-light-200"
+                            ? "text-dark-900 dark:text-white"
+                            : "text-gray-600 dark:text-light-400 group-hover:text-dark-900 dark:group-hover:text-light-200"
                             }`}
                         >
                           {day.title}
@@ -1562,10 +1563,59 @@ export default function LearningPathPage() {
             </motion.div>
           )}
 
+
           {/* Main Text Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none mb-20 text-dark-900/80 dark:text-light-200 prose-headings:font-bold prose-p:leading-relaxed prose-pre:rounded-2xl prose-pre:shadow-xl prose-img:rounded-2xl prose-pre:bg-transparent prose-pre:min-w-0 prose-pre:text-gray-900 dark:prose-pre:text-gray-200">
             <ProseCopyEnhancer htmlContent={activeContent.content} />
           </div>
+
+          {/* CSS Interactive Sandbox */}
+          {activeContent.sandbox && (
+            <CssSandbox
+              sandbox={activeContent.sandbox}
+              title={`${activeContent.title} - Live Example`}
+            />
+          )}
+
+          {/* Property-by-Property Examples */}
+          {activeContent.propertyExamples && activeContent.propertyExamples.length > 0 && (
+            <div className="mb-20">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-dark-900 dark:text-white mb-4">
+                  Property Reference & Examples
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-light-300">
+                  Visual examples for every property - see them in action!
+                </p>
+              </div>
+
+              <div className="space-y-16">
+                {activeContent.propertyExamples.map((example, index) => (
+                  <div key={index} className="bg-white dark:bg-dark-800 rounded-3xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-lg">
+                    {/* Property Header */}
+                    <div className="bg-gradient-to-r from-brand-primary/10 to-purple-500/10 px-8 py-6 border-b border-gray-200 dark:border-dark-700">
+                      <h3 className="text-2xl font-bold text-dark-900 dark:text-white mb-2">
+                        <code className="bg-dark-900/10 dark:bg-white/10 px-3 py-1 rounded-lg text-brand-primary">
+                          {example.property}
+                        </code>
+                      </h3>
+                      <p className="text-gray-600 dark:text-light-300 leading-relaxed">
+                        {example.description}
+                      </p>
+                    </div>
+
+                    {/* Property Example */}
+                    <div className="p-8">
+                      <CssSandbox
+                        sandbox={{ html: example.html, css: example.css }}
+                        title={example.property}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Interactive Modules Container */}
           <div className="space-y-20">
