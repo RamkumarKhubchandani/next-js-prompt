@@ -1,85 +1,84 @@
 export const day11 = {
   day: 11,
   title: "Extreme Performance Patterns",
-  intro: "Make your app fly. Master <strong>OnPush</strong>, <strong>@defer</strong>, and <strong>Zoneless</strong> patterns to eliminate lag.",
+  intro: "Does your app feel laggy? The culprit is likely <strong>Change Detection</strong>. Today, we learn the 'Golden Rule' of Angular performance: <strong>OnPush</strong>.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 11. The #1 perf killer in Angular is <strong>Change Detection</strong> checking too many components too often."
-      },
-      {
-        type: "talk",
-        message: "By default, if you click a button, Angular checks the ENTIRE app. With <strong>OnPush</strong>, it only checks what changed."
+        message: "Day 11. Angular checks for changes too often. `OnPush` tells Angular: \"Relax. Don't check me unless my input changes.\""
       },
       {
         type: "challenge",
-        instruction: "This component is slow because it re-renders on every global event. Enable `OnPush` and use a `computed` signal to fix it.",
-        buggyCode: `// ❌ Default: Checks on every click/timer in the app
-@Component({ ... })
-export class SlowCard {
-  @Input() data: any;
-  
-  // ❌ Called on every CD cycle (hundreds of times!)
-  get heavyComputation() {
-    return fibonacci(this.data.num);
+        instruction: "Enable `OnPush` change detection and use a Signal to trigger updates.",
+        buggyCode: `// ❌ Default Strategy (Slow)
+@Component({
+  template: '{{ count }}'
+})
+class Counter {
+  count = 0;
+  constructor() {
+    setInterval(() => this.count++, 1000);
   }
 }`,
-        solutionCode: `// ✅ OnPush: Checks only when input/signal changes
+        solutionCode: `// ✅ OnPush + Signals (Fast)
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  ...
+  template: '{{ count() }}' 
 })
-export class FastCard {
-  data = input.required<any>();
-  
-  // ⚡ Computed: Memoized and only runs when data changes
-  heavyComputation = computed(() => fibonacci(this.data().num));
+class Counter {
+  count = signal(0);
+  constructor() {
+    // Signals automatically notify OnPush components!
+    setInterval(() => this.count.update(c => c + 1), 1000);
+  }
 }`,
-        verifyOutput: "OnPush",
-        successMessage: "Boom! Now resizing the window or clicking elsewhere won't trigger this expensive calculation.",
-        hint: "Add `changeDetection: ChangeDetectionStrategy.OnPush`."
+        verifyOutput: "ChangeDetectionStrategy.OnPush",
+        successMessage: "Speed boost! 🚀 Your component now sleeps until the signal specifically wakes it up.",
+        hint: "Set `changeDetection: ChangeDetectionStrategy.OnPush` in the component metadata."
       }
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 1. The Golden Rule: OnPush</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 1. How Angular Updates the Screen</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+By default (<code>Default</code> strategy), whenever <strong>ANYTHING</strong> happens (click, timer, HTTP request), Angular checks <strong>EVERY</strong> component in your app.
+</p>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Never use the default strategy in production. OnPush tells Angular: "Don't check me unless my Input references change or *I* tell you to."
+Imagine if you clicked a "Like" button, and your app re-calculated the entire User Profile, Sidebar, and Footer. That's what happens by default!
+</p>
+
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛑 2. The Solution: OnPush</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+When you set <code>changeDetection: ChangeDetectionStrategy.OnPush</code>, you tell Angular: <strong>"Ignore me unless my inputs change."</strong>
 </p>
 
 <div class="grid md:grid-cols-2 gap-6 mb-10">
     <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
-        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Default (Slow)</h4>
-        <p class="text-xs text-gray-600 dark:text-gray-400">
-            Angular assumes ANY event might have changed your data. It dirty-checks every binding in the entire tree.
-        </p>
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Default (The Panic Mode)</h4>
+        <ul class="text-xs text-gray-600 dark:text-gray-400 space-y-2">
+            <li>• Window resize? -> <strong>CHECK EVERYTHING</strong></li>
+            <li>• Mouse move? -> <strong>CHECK EVERYTHING</strong></li>
+            <li>• HTTP done? -> <strong>CHECK EVERYTHING</strong></li>
+        </ul>
     </div>
     <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
-        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">OnPush (Fast)</h4>
-        <p class="text-xs text-gray-600 dark:text-gray-400">
-            Angular sleeps until:
-            <br>1. An <code>@Input()</code> reference changes
-            <br>2. A Signal used in template updates
-            <br>3. An Async Pipe emits
-        </p>
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">OnPush (The Zen Mode)</h4>
+        <ul class="text-xs text-gray-600 dark:text-gray-400 space-y-2">
+            <li>• Only check if <strong>@Input()</strong> reference changes.</li>
+            <li>• Only check if a <strong>Signal</strong> referenced in HTML updates.</li>
+            <li>• Only check if an <strong>Async Pipe</strong> emits.</li>
+        </ul>
     </div>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">💤 2. Lazy Loading Views (@defer)</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">💤 3. Lazy Loading with @defer</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Don't load heavy components (charts, maps) until the user needs them.
+Why load a heavy chart if the user hasn't scrolled down to see it? Use <code>@defer</code> to load components only when needed.
 </p>
-
-<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
-<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-@defer (on viewport) {
-  <heavy-chart />
-} @placeholder {
-  <div>Loading chart...</div>
-}
-</pre>
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10 font-mono text-sm">
+@defer (on viewport) { <heavy-chart /> }
 </div>
 `,
   code: `import { Component, ChangeDetectionStrategy, signal, computed, effect, Input, ElementRef, ViewChild, Renderer2 } from '@angular/core';

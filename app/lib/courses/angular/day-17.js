@@ -1,7 +1,7 @@
 export const day17 = {
   day: 17,
   title: "Advanced HTTP: Functional Interceptors & Caching",
-  intro: "Master the <strong>HttpInterceptorFn</strong> architecture. Build robust auth handling, caching strategies, and request context pipelines.",
+  intro: "Class-based interceptors are dead. Long live <strong>Functional Interceptors</strong>. We'll build a modern HTTP pipeline with caching, auth, and logging handled by simple functions.",
   aiSession: {
     enabled: true,
     steps: [
@@ -38,31 +38,32 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛑 1. HttpContext</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛑 1. The Old Way vs New Way</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Don't cache everything. Use <code>HttpContext</code> to pass metadata to your interceptors per-request.
+We used to implement <code>HttpInterceptor</code> interface and provide it in a confusing array. Now, an interceptor is just a function: <code>(req, next) => next(req)</code>.
+</p>
+
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧠 2. Smart Caching with HttpContext</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+If you put your caching logic in the Service, you are doing it wrong. Put it in an Interceptor so it works for ALL requests.
+</p>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+But wait! You don't want to cache *everything*. Use <code>HttpContext</code> to pass "metadata" from your component/service to the interceptor perfectly safely.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
 <pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-// Define Token
-const CACHE_ENABLED = new HttpContextToken(() => false);
+// In your component
+http.get('/api/users', { 
+  context: new HttpContext().set(CACHE_TOKEN, true) 
+})
 
-// Usage in Service
-http.get('/api/data', {
-  context: new HttpContext().set(CACHE_ENABLED, true)
-});
-
-// Access in Interceptor
-if (req.context.get(CACHE_ENABLED)) { ... }
+// In your interceptor
+if (req.context.get(CACHE_TOKEN)) {
+  // Check cache...
+}
 </pre>
 </div>
-
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. Functional Pipelines</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Chain interceptors easily in <code>app.config.ts</code>:
-<br><code>provideHttpClient(withInterceptors([auth, cache, logging]))</code>
-</p>
 `,
   code: `import { Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';

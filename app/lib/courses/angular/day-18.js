@@ -1,7 +1,7 @@
 export const day18 = {
   day: 18,
   title: "Routing Security: Functional Guards",
-  intro: "Protect your routes with <strong>Functional Guards</strong>. Learn to inspect User Roles and prevent unauthorized access with simple functions.",
+  intro: "Security is not optional. Today, we drop the deprecated class-based guards for <strong>Functional Guards</strong> (`CanActivateFn`). They are composable, testable, and require zero boilerplate.",
   aiSession: {
     enabled: true,
     steps: [
@@ -42,9 +42,31 @@ export const authGuard: CanActivateFn = (route, state) => {
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. CanActivateFn</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. Why Functional Guards?</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-This function returns <code>true</code>, <code>false</code>, or a <code>UrlTree</code> (redirect). It can also return an Observable or Promise for async checks.
+Class-based guards required you to create a whole file, decorate it, add it to providers... just to check if a boolean is true.
+Functional guards are just... functions.
+</p>
+
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+// app.routes.ts
+const adminGuard = () => inject(AuthService).isAdmin();
+
+export const routes = [
+  { 
+    path: 'admin', 
+    canActivate: [adminGuard] 
+  }
+];
+</pre>
+</div>
+
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">👻 2. CanMatch: The Ghost Guard</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+<code>CanActivate</code> prevents you from entering a room.
+<code>CanMatch</code> hides the door entirely.
+If <code>CanMatch</code> returns false, the Router pretends the route doesn't even exist. This is perfect for <strong>Feature Flags</strong>.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">

@@ -1,80 +1,90 @@
 export const day10 = {
-  day: 10,
-  title: "Advanced State Management",
-  intro: "Stop prop-drilling. Start managing state like a pro using the <strong>SignalStore Pattern</strong>. Architect your app for scale.",
-  aiSession: {
-    enabled: true,
-    steps: [
-      {
-        type: "talk",
-        message: "Day 10. State is the heart of your app. Managing it with just services is good, but managing it with a <strong>Store Pattern</strong> is better."
-      },
-      {
-        type: "talk",
-        message: "We're going to build a 'Mini-SignalStore' - a Service that holds state privately and exposes <strong>signals</strong> for reading and <strong>methods</strong> for writing."
-      },
-      {
-        type: "challenge",
-        instruction: "This service exposes a writable signal directly. This is dangerous! Refactor it to expose a `readonly` signal and an action method.",
-        buggyCode: `export class TaskService {
-  // ❌ Dangerous! Anyone can set() this from anywhere.
-  tasks = signal<Task[]>([]);
+    day: 10,
+    title: "Advanced State Management",
+    intro: "State management is the #1 source of complexity in frontend apps. Today, we master the <strong>SignalStore Pattern</strong>—a simple, scalable way to manage data without the massive boilerplate of Redux or NgRx.",
+    aiSession: {
+        enabled: true,
+        steps: [
+            {
+                type: "talk",
+                message: "Day 10. Redux is overkill for 95% of Angular apps. NgRx is great but boilerplate-heavy."
+            },
+            {
+                type: "talk",
+                message: "The **SignalStore** pattern is lighter. It uses a Service with private signals (`_state`) and public computed signals (`state`)."
+            },
+            {
+                type: "challenge",
+                instruction: "This store exposes the raw signal, allowing any component to modify it. Fix it by making the signal private and exposing a readonly version.",
+                buggyCode: `// ❌ Unsafe Store
+@Injectable()
+export class UserStore {
+  // Anyone can set() this!
+  users = signal<User[]>([]); 
 }`,
-        solutionCode: `export class TaskService {
-  // 🔒 Private Writable
-  private _tasks = signal<Task[]>([]);
-  
-  // 📢 Public Read-only
-  tasks = this._tasks.asReadonly();
-  
-  // ⚡ Explicit Action
-  addTask(t: Task) {
-    this._tasks.update(tasks => [...tasks, t]);
+                solutionCode: `// ✅ Safe Store
+@Injectable()
+export class UserStore {
+  // 1. Private State
+  private _users = signal<User[]>([]);
+
+  // 2. Read-only Public API
+  users = this._users.asReadonly();
+
+  // 3. Controlled Actions
+  addUser(user: User) {
+    this._users.update(u => [...u, user]);
   }
 }`,
-        verifyOutput: "asReadonly",
-        successMessage: "Secure! Now your components can only READ state, not break it. All logic stays inside the service.",
-        hint: "Use `private _signal` and `public readonly = _signal.asReadonly()`."
-      }
-    ]
-  },
-  content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏛️ 1. The SignalStore Pattern</h3>
+                verifyOutput: "asReadonly",
+                successMessage: "Secure! Now components can read `users()` but must use `addUser()` to change them. This is true Encapsulation.",
+                hint: "Use `private _name` and `name = this._name.asReadonly()`."
+            }
+        ]
+    },
+    content: `
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏛️ 1. Why do we need a "Store"?</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+When you pass data between components using only <code>@Input</code> (down) and <code>@Output</code> (up), you create "Prop Drilling Hell". If a Deeply Nested Component needs to update the Main Header, you have to pass an event up 5 layers.
+</p>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-You don't always need NgRx. You can build a robust store using just a Service class. Follow the <strong>Read-Only / Action</strong> contract.
+A <strong>Store</strong> is a dedicated Service that acts as the "Single Source of Truth". Think of it as a Database running in the user's browser.
 </p>
 
-<div class="grid md:grid-cols-2 gap-6 mb-10">
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔒 2. The SignalStore Contract</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+We don't need external libraries for most apps. We can build a perfect store using Angular Signals. We just need to follow one rule: <strong>The Service owns the State.</strong>
+</p>
+
+<div class="grid md:grid-cols-3 gap-6 mb-10">
     <div class="bg-gray-50 dark:bg-dark-900/40 p-5 rounded-xl border border-gray-200 dark:border-dark-700">
-        <h4 class="font-bold text-gray-800 dark:text-white mb-3">The Contract</h4>
-        <ul class="text-sm space-y-2 text-gray-600 dark:text-gray-400">
-            <li>🔒 <strong>State:</strong> Private writable signal</li>
-            <li>📢 <strong>Selectors:</strong> Public computed/readonly signals</li>
-            <li>⚡ <strong>Actions:</strong> Public methods that update state</li>
-        </ul>
+        <h4 class="font-bold text-gray-800 dark:text-white mb-3">1. State (Private)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">The raw data.</p>
+        <code class="text-xs bg-black/10 dark:bg-black/30 px-2 py-1 rounded">private _users = signal([]);</code>
+        <p class="text-xs text-red-500 mt-2">Never expose this directly!</p>
     </div>
     <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30">
-        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">Implementation</h4>
-        <pre class="text-xs font-mono text-blue-900 dark:text-blue-200">
-// Selectors (derived state)
-count = computed(() => this.tasks().length);
-done = computed(() => 
-  this.tasks().filter(t => t.completed)
-);
-        </pre>
+        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">2. Selectors (Public)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Read-only views or computed values.</p>
+        <code class="text-xs bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">users = this._users.asReadonly();</code>
+    </div>
+    <div class="bg-purple-50 dark:bg-purple-900/10 p-5 rounded-xl border border-purple-200 dark:border-purple-900/30">
+        <h4 class="font-bold text-purple-800 dark:text-purple-300 mb-3">3. Actions (Public)</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Methods to modify state.</p>
+        <code class="text-xs bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded">addUser(u) { ... }</code>
     </div>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔄 2. Unidirectional Data Flow</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔄 3. Unidirectional Data Flow</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Data flows DOWN (Signals). Events flow UP (Actions). This loop makes your app predictable and easy to debug.
+This pattern enforces a strict loop. Components can NEVER change data directly. They must ask the Store to do it.
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10 text-center font-mono text-sm text-gray-800 dark:text-gray-200">
-Action() ➔ Service.update() ➔ Signal Changes ➔ UI Re-renders
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10 text-center font-mono text-sm text-gray-800 dark:text-gray-200 shadow-inner">
+Component calls Action() ➔ Store Updates Signal ➔ View Re-renders Automatically
 </div>
 `,
-  code: `import { Component, Injectable, computed, signal, inject } from '@angular/core';
+    code: `import { Component, Injectable, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // --- MODELS ---
@@ -201,25 +211,25 @@ export class BoardStore {
 export class KanbanBoard {
     store = inject(BoardStore);
 }`,
-  comparison: {
-    junior: `// ❌ Prop Drilling
+    comparison: {
+        junior: `// ❌ Prop Drilling
 <app-list [tasks]="tasks" (update)="onUpdate($event)"></app-list>
 // And then passing it down 3 more levels...`,
-    senior: `// ✅ Signal Store
+        senior: `// ✅ Signal Store
 // Child component access state directly:
 store = inject(BoardStore);
 // UI updates automatically via Signals.`
-  },
-  interview: {
-    questions: [
-      {
-        q: "Why use computed() signals?",
-        a: "They automatically update when their dependencies change AND they are memoized (cached). They are perfect for filtering derived state like 'tasks.filter(...)' without re-running on every CD cycle."
-      },
-      {
-        q: "What is the Container/Presenter pattern?",
-        a: "A pattern where 'Smart' components manage state (inject stores) and 'Dumb' components just take inputs and emit outputs."
-      }
-    ]
-  }
+    },
+    interview: {
+        questions: [
+            {
+                q: "Why use computed() signals?",
+                a: "They automatically update when their dependencies change AND they are memoized (cached). They are perfect for filtering derived state like 'tasks.filter(...)' without re-running on every CD cycle."
+            },
+            {
+                q: "What is the Container/Presenter pattern?",
+                a: "A pattern where 'Smart' components manage state (inject stores) and 'Dumb' components just take inputs and emit outputs."
+            }
+        ]
+    }
 };

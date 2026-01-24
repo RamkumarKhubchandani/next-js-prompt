@@ -1,7 +1,7 @@
 export const day16 = {
   day: 16,
   title: "Modern Routing: Inputs & View Transitions",
-  intro: "Routing has changed. Learn <strong>Router Inputs</strong> to access params cleanly and <strong>View Transitions</strong> for native-like animations.",
+  intro: "Reading route params like `this.route.params.subscribe()` is the old way. Today, we switch to **Component Input Binding** and free Native animations with **View Transitions**.",
   aiSession: {
     enabled: true,
     steps: [
@@ -42,28 +42,28 @@ export class ProductPage {
   content: `
 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔗 1. Component Input Binding</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Enable <code>withComponentInputBinding()</code> in your <code>app.config.ts</code>. Now, route params, query params, and resolve data are available as Inputs.
+If your route is <code>path: 'product/:id'</code>, you shouldn't have to inject <code>ActivatedRoute</code> to get the ID. Angular can just give it to you as an <code>@Input()</code>.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
 <pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-// URL: /search?q=angular
+// app.config.ts
+provideRouter(routes, withComponentInputBinding());
 
-@Component({...})
-export class SearchPage {
-  // Query param 'q' maps here!
-  @Input() q = ''; 
-  
-  // Works with Signals too
-  query = input('', { alias: 'q' }); 
-}
+// product.component.ts
+@Input() id!: string; // Done!
 </pre>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">✨ 2. View Transitions</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">✨ 2. View Transitions API</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Enable <code>withViewTransitions()</code> in <code>app.config.ts</code>. Angular will snapshot the DOM before navigation and animate the differences. Use CSS <code>view-transition-name</code> to morph elements.
+Want your app to feel like a native mobile app? Enable View Transitions. The browser will automatically morph the old page into the new page.
 </p>
+<div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
+    <p class="text-sm text-blue-700 dark:text-blue-300">
+        <strong>Tip:</strong> Give two elements on different pages the same <code>view-transition-name</code> (like 'hero-image'), and they will fly across the screen to morph into each other.
+    </p>
+</div>
 `,
   code: `import { Component, Input, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';

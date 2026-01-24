@@ -1,86 +1,87 @@
 export const day12 = {
-  day: 12,
-  title: "Angular Testing Masterclass",
-  intro: "Stop writing brittle tests. Learn to use <strong>Component Harnesses</strong> and test <strong>Behavior</strong> instead of implementation details.",
-  aiSession: {
-    enabled: true,
-    steps: [
-      {
-        type: "talk",
-        message: "Day 12. Most Angular tests break when you refactor the HTML. That's annoying. The solution? <strong>Component Harnesses</strong>."
-      },
-      {
-        type: "talk",
-        message: "A Harness is an API for your component's template. Your test interacts with the *Harness*, not the `querySelector`."
-      },
-      {
-        type: "challenge",
-        instruction: "This test relies on extensive CSS selectors. Refactor it to use a Component Harness pattern (simulated).",
-        buggyCode: `// ❌ Brittle selector
+    day: 12,
+    title: "Angular Testing Masterclass",
+    intro: "Most Angular tests break when you touch the HTML. That's sustainable. Today, we learn the <strong>Component Harness</strong> pattern to write bulletproof tests.",
+    aiSession: {
+        enabled: true,
+        steps: [
+            {
+                type: "talk",
+                message: "Day 12. Most Angular tests break when you refactor the HTML. That's annoying. The solution? <strong>Component Harnesses</strong>."
+            },
+            {
+                type: "talk",
+                message: "A Harness is an API for your component's template. Your test interacts with the *Harness*, not the `querySelector`."
+            },
+            {
+                type: "challenge",
+                instruction: "This test relies on extensive CSS selectors. Refactor it to use a Component Harness pattern (simulated).",
+                buggyCode: `// ❌ Brittle selector
 it('should click button', () => {
   const btn = fixture.nativeElement.querySelector('.btn-primary.large');
   btn.click();
 });`,
-        solutionCode: `// ✅ Robust Harness
+                solutionCode: `// ✅ Robust Harness
 it('should click button', async () => {
   const btn = await loader.getHarness(ButtonHarness);
   await btn.click();
 });`,
-        verifyOutput: "getHarness",
-        successMessage: "Cleaner! If you change the CSS class of the button, the Harness updates *once*, and all 100 tests keep working.",
-        hint: "Use `loader.getHarness(MyHarness)`."
-      }
-    ]
-  },
-  content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧪 1. Component Harnesses</h3>
+                verifyOutput: "getHarness",
+                successMessage: "Cleaner! If you change the CSS class of the button, the Harness updates *once*, and all 100 tests keep working.",
+                hint: "Use `loader.getHarness(MyHarness)`."
+            }
+        ]
+    },
+    content: `
+            < h3 class= "text-2xl font-bold text-gray-900 dark:text-white mb-6" >💥 1. The Problem: "Implementation Details"</h3 >
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+If your test says <code>querySelector('button.blue-btn')</code>, and you change the class to <code>.red-btn</code>, your test fails. Even though the button still works!
+</p>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Don't use <code>querySelector</code> in tests. It couples your test to your DOM structure. Use Harnesses (from Angular Material CDK).
+This is testing <strong>implementation details</strong> (how it looks) instead of <strong>behavior</strong> (what it does).
+</p>
+
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 2. The Solution: Harnesses</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+A Harness is a "Page Object" for a component. It's a class that handles the DOM querying for you.
 </p>
 
 <div class="grid md:grid-cols-2 gap-6 mb-10">
     <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
-        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Without Harness</h4>
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Bad Test ❌</h4>
         <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+// Relies on DOM structure
 const el = fixture.nativeElement
-  .querySelector('.user-card h3');
+  .querySelector('div > h3');
 expect(el.innerText).toBe('John');
         </pre>
     </div>
     <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
-        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">With Harness</h4>
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Good Test ✅</h4>
         <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+// Relies on Public API
 const card = await loader
   .getHarness(UserCardHarness);
+  
 expect(await card.getName()).toBe('John');
         </pre>
     </div>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. Testing Signals</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 3. Testing Signals</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Testing components with Signals is easier. No <code>fixture.detectChanges()</code> needed for simple signal updates (mostly).
+Testing components with Signals is delightful. You can update the signal and checking the DOM (usually <code>fixture.detectChanges()</code>) is straightforward.
 </p>
-
-<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
-<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-it('should update count', () => {
-  component.count.set(10);
-  fixture.detectChanges(); // Sync with template
-  expect(element.textContent).toContain('10');
-});
-</pre>
-</div>
 `,
-  code: `import { Component, signal, Input, Injectable, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+    code: `import { Component, signal, Input, Injectable, inject } from '@angular/core';
+        import { CommonModule } from '@angular/common';
 
 // --- THE COMPONENT UNDER TEST ---
 @Component({
-  selector: 'app-user-profile',
-  standalone: true,
-  imports: [CommonModule],
-  template: \`
+            selector: 'app-user-profile',
+            standalone: true,
+            imports: [CommonModule],
+            template: \`
     <div class="p-4 bg-gray-800 rounded-xl border border-gray-700" data-testid="profile-card">
         @if (loading()) {
             <div data-testid="loading-state" class="animate-pulse flex space-x-4">
@@ -241,8 +242,8 @@ export class TestRunner {
     }
 }
 `,
-  // Re-writing to import ViewChild properly
-  code: `import { Component, signal, Input, Injectable, inject, ViewChild, ElementRef } from '@angular/core';
+    // Re-writing to import ViewChild properly
+    code: `import { Component, signal, Input, Injectable, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // --- THE COMPONENT UNDER TEST ---
@@ -408,30 +409,30 @@ export class TestRunner {
     }
 }
 `,
-  comparison: {
-    junior: `// ❌ Implementation Testing
+    comparison: {
+        junior: `// ❌ Implementation Testing
 it('should have h3 tag', () => {
   const h3 = fixture.nativeElement.querySelector('h3');
   expect(h3).toBeTruthy(); 
   // Fails if I change h3 to h2!
 });`,
-    senior: `// ✅ Behavior Testing (Harness)
+        senior: `// ✅ Behavior Testing (Harness)
 it('should display user name', async () => {
   const profile = await loader.getHarness(ProfileHarness);
   expect(await profile.getName()).toBe('Alice');
   // Works regardless of HTML structure!
 });`
-  },
-  interview: {
-    questions: [
-      {
-        q: "What is a 'Test Bed'?",
-        a: "TestBed is Angular's primary API for testing. It configures a testing module where you can declare components, provide mock services, and import modules for your test."
-      },
-      {
-        q: "Why use 'waitForAsync' or 'fakeAsync'?",
-        a: "To test asynchronous code. fakeAsync allows you to control time (tick) and flush timers synchronously, making tests fast and deterministic."
-      }
-    ]
-  }
+    },
+    interview: {
+        questions: [
+            {
+                q: "What is a 'Test Bed'?",
+                a: "TestBed is Angular's primary API for testing. It configures a testing module where you can declare components, provide mock services, and import modules for your test."
+            },
+            {
+                q: "Why use 'waitForAsync' or 'fakeAsync'?",
+                a: "To test asynchronous code. fakeAsync allows you to control time (tick) and flush timers synchronously, making tests fast and deterministic."
+            }
+        ]
+    }
 };

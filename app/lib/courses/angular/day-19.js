@@ -1,7 +1,7 @@
 export const day19 = {
   day: 19,
   title: "Advanced Templates: Content Projection",
-  intro: "Build reusable components that accept custom content. Master <strong>ng-content</strong>, <strong>ng-template</strong>, and <strong>TemplateRef</strong>.",
+  intro: "Don't build rigid components that take 20 inputs. Learn to use <strong>Content Projection</strong> to let the parent components decide what gets rendered.",
   aiSession: {
     enabled: true,
     steps: [
@@ -49,9 +49,12 @@ export const day19 = {
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📦 1. ng-content (Projection)</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📦 1. ng-content (The Slot Machine)</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Like <code>{children}</code> in React, but more powerful. checks "Selectors" to slot content into the right place.
+Think of your component as a customized laptop. You (the component author) provide the screen and keyboard, but you let the user plug in *any* USB device they want.
+</p>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+<code>ng-content</code> is that USB port. It allows the *parent* to decide what goes inside.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
@@ -59,13 +62,13 @@ Like <code>{children}</code> in React, but more powerful. checks "Selectors" to 
 // Multi-slot projection
 &lt;ng-content select="[header]"&gt;&lt;/ng-content&gt;
 &lt;ng-content select=".body"&gt;&lt;/ng-content&gt;
-&lt;ng-content&gt;&lt;/ng-content&gt; &lt;!-- Catch-all --&gt;
+&lt;ng-content&gt;&lt;/ng-content&gt; &lt;!-- The Catch-all --&gt;
 </pre>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📄 2. ngTemplateOutlet (Dynamic Templates)</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">📄 2. ngTemplateOutlet (The Stamp)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Rent out a piece of your DOM. Passes data (context) back to the template. Used heavily in data grids, lists, and trees.
+Sometimes you want to render the SAME piece of content multiple times (like a row in a list). <code>ng-content</code> moves the element. <code>ngTemplateOutlet</code> *stamps* a copy of it.
 </p>
 `,
   code: `import { Component, Input, ContentChild, TemplateRef, Directive, signal } from '@angular/core';

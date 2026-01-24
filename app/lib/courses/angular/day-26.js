@@ -1,34 +1,74 @@
 export const day26 = {
   day: 26,
   title: "SSR (Server-Side Rendering) Fundamentals",
-  intro: "Render Angular apps on the server for better SEO, faster first paint, and improved performance.",
+  intro: "A blank white screen on load is unacceptable in 2025. Today, we enable <strong>Server-Side Rendering (SSR)</strong> to deliver HTML instantly to your users.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 26. Single Page Apps (SPAs) have a flaw: they download an empty HTML file. SEO bots hate this."
+      },
+      {
+        type: "talk",
+        message: "SSR runs your Angular app on the Server (Node.js) to generate the full HTML string before sending it to the browser."
+      },
+      {
+        type: "challenge",
+        instruction: "This code accesses `window` directly, which crashes the server. Wrap it in a platform check.",
+        buggyCode: `// ❌ Crashes on Server (Node.js has no window)
+constructor() {
+  this.width = window.innerWidth;
+}`,
+        solutionCode: `// ✅ Safe Platform Check
+constructor(@Inject(PLATFORM_ID) private pid: object) {
+  if (isPlatformBrowser(this.pid)) {
+    this.width = window.innerWidth;
+  }
+}`,
+        verifyOutput: "isPlatformBrowser",
+        successMessage: "Safe! Now your app won't crash when the server tries to render it.",
+        hint: "Inject `PLATFORM_ID` and use `isPlatformBrowser`."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🌐 Server-Side Rendering</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-SSR renders your Angular app on the server, sending fully-rendered HTML to the browser. Better for SEO and initial load.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🌐 1. What is SSR?</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+By default (CSR), your browser downloads an empty <code>index.html</code> and waits for JS to execute.
+With SSR, the <strong>Server</strong> executes the JS and sends a fully populated HTML page.
 </p>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-purple-500">
-<pre class="text-gray-800 dark:text-gray-100">
-// Enable SSR in Angular 18+
-ng add @angular/ssr
-
-// Server configuration
-export const serverConfig: ApplicationConfig = {
-  providers: [
-    provideServerRendering()
-  ]
-};
-</pre>
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<p class="text-xs font-bold text-purple-500 uppercase mb-2">Command</p>
+<code class="text-lg font-mono text-gray-800 dark:text-gray-200">ng add @angular/ssr</code>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ SSR Benefits</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
-  <li><strong class="text-brand-primary">SEO:</strong> Search engines see fully-rendered content</li>
-  <li><strong class="text-brand-primary">Performance:</strong> Faster first contentful paint</li>
-  <li><strong class="text-brand-primary">Social Sharing:</strong> Preview cards work correctly</li>
-  <li><strong class="text-brand-primary">Accessibility:</strong> Content available without JavaScript</li>
-</ul>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. The Browser Check</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Your code now runs on the Server (Node.js) AND the Browser.
+<code>window</code>, <code>document</code>, and <code>localStorage</code> do NOT exist on the server. Accessing them will crash your app.
+</p>
+
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Crash 💥</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+constructor() {
+  localStorage.setItem('x', 'y');
+  // Error: localStorage is not defined
+}
+        </pre>
+    </div>
+    <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Safe ✅</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+if (isPlatformBrowser(this.platformId)) {
+   localStorage.setItem('x', 'y');
+}
+        </pre>
+    </div>
+</div>
 `,
   code: `// Check if running in browser or server
 import { isPlatformBrowser } from '@angular/common';

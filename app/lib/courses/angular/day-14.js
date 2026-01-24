@@ -1,7 +1,7 @@
 export const day14 = {
   day: 14,
   title: "Mastering Pipes: Performance & Injection",
-  intro: "Pipes aren't just for dates. Learn how to build <strong>Performant Pure Pipes</strong> and how to inject services into pipes for advanced transformations.",
+  intro: "Calling a function in your template like <code>{{ calculate() }}</code> is a performance death trap. Today, we fix it with <strong>Pure Pipes</strong> and learn to inject services into them.",
   aiSession: {
     enabled: true,
     steps: [
@@ -44,12 +44,12 @@ class HeavyPipe implements PipeTransform {
   content: `
 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛑 1. The "Method Call" Trap</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Never bind a function call in your template unless you want performance issues.
+If you write <code>{{ getBigData() }}</code> in your HTML, Angular runs that function <strong>hundreds of times</strong>. It runs on every button click, every hover, every time *anything* happens.
 </p>
 
 <div class="grid md:grid-cols-2 gap-6 mb-10">
     <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
-        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Function Call</h4>
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Function Call (Bad)</h4>
         <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
 {{ calculate(data) }}
 // Reruns on:
@@ -59,18 +59,19 @@ Never bind a function call in your template unless you want performance issues.
         </pre>
     </div>
     <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
-        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Pure Pipe</h4>
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Pure Pipe (Good)</h4>
         <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
 {{ data | calculate }}
 // Reruns ONLY if:
 // - 'data' reference changes
+// Result is CACHED!
         </pre>
     </div>
 </div>
 
 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">💉 2. Injecting Services into Pipes</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Pipes are classes. You can inject dependencies! Use this for things like translations, currency conversion, or permission checks.
+Pipes are just classes. You can inject dependencies! This is perfect for pipes that need global state, like translations or user permissions.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">

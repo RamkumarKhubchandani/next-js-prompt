@@ -1,7 +1,7 @@
 export const day20 = {
   day: 20,
   title: "Dependency Injection: Advanced Patterns",
-  intro: "Unlock the full power of DI. Use <strong>InjectionTokens</strong>, <strong>Factories</strong>, and <strong>Tree-shakable Providers</strong> to build flexible architectures.",
+  intro: "DI isn't just for services. It's for <strong>Configuration</strong>. Learn to inject strings, functions, and swap implementations at runtime using <strong>InjectionTokens</strong>.",
   aiSession: {
     enabled: true,
     steps: [
@@ -36,25 +36,29 @@ url = inject(API_URL);`,
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔑 1. Injection Tokens</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🔑 1. What if it's not a class?</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+You can't write <code>constructor(private url: string)</code> because "string" isn't a unique token. There are many strings!
+</p>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Classes are tokens, but sometimes you need to inject non-class things like configuration objects, strings, or functions. Use <code>InjectionToken</code>.
+Use an <code>InjectionToken</code> to give that string a unique name.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
 <pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-export const APP_CONFIG = new InjectionToken&lt;AppConfig&gt;('APP_CONFIG');
+export const API_URL = new InjectionToken&lt;string&gt;('API_URL');
 
-// Usage
-constructor(@Inject(APP_CONFIG) config: AppConfig) {}
-// Or better:
-config = inject(APP_CONFIG);
+// app.config.ts
+{ provide: API_URL, useValue: 'https://api.com' }
+
+// component
+url = inject(API_URL); // 'https://api.com'
 </pre>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏭 2. Factory Providers</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏭 2. Dynamic Providers (Factories)</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Need dynamic logic to decide WHAT to provide? Use <code>useFactory</code>.
+Want to provide a <code>ConsoleLogger</code> in Dev and a <code>CloudLogger</code> in Prod? Use a Factory.
 </p>
 
 <div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-blue-500 mb-10">

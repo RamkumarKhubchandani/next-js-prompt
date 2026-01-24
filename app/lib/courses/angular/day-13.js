@@ -1,80 +1,78 @@
 export const day13 = {
   day: 13,
   title: "Advanced Directives: Composition & Signals",
-  intro: "Directives are superpowers for your HTML. Learn <strong>HostDirectives</strong> (composition) and how to drive them with <strong>Signals</strong>.",
+  intro: "Directives are superpowers for your HTML. Why wrap a button in a component just to add a tooltip? Today, we master <strong>Directive Composition</strong> and <strong>Zoneless Events</strong>.",
   aiSession: {
     enabled: true,
     steps: [
       {
         type: "talk",
-        message: "Day 13. Stop making massive components. Extract behavior into **Directives**. If you need 'drag and drop' or 'copy to clipboard', that's a directive."
-      },
-      {
-        type: "talk",
-        message: "Angular 15+ introduced **Directive Composition**. You can chain directives together like Lego blocks using `hostDirectives`."
+        message: "Day 13. Components are for *UI*, but Directives are for *Behavior*. Don't mix them."
       },
       {
         type: "challenge",
-        instruction: "This mouse tracker uses `@HostListener` which runs change detection on every event. Optimize it to use RxJS `fromEvent` outside Angular's zone.",
-        buggyCode: `// ❌ Triggers CD on every pixel move (Laggy!)
-@HostListener('mousemove', ['$event'])
-onMove(e: MouseEvent) {
-  this.x = e.clientX;
-  this.y = e.clientY;
-}`,
-        solutionCode: `// ✅ Zone-free (RunOutsideAngular)
-constructor(private ngZone: NgZone, private el: ElementRef) {
-  this.ngZone.runOutsideAngular(() => {
-    fromEvent<MouseEvent>(el.nativeElement, 'mousemove')
-      .subscribe(e => {
-        // Update DOM directly or signal without CD
-        this.updatePosition(e.clientX, e.clientY);
-      });
-  });
-}`,
-        verifyOutput: "runOutsideAngular",
-        successMessage: "Silky smooth! By running outside the zone, we prevent Angular from re-rendering the whole app on every pixel mouse move.",
-        hint: "Inject `NgZone` and use `runOutsideAngular`."
+        instruction: "Create a `ClickLog` directive that logs to the console whenever the host element is clicked.",
+        buggyCode: `// ❌ Wrapper Component (Overkill)
+@Component({
+  selector: 'app-btn',
+  template: '<button (click)="log()"><ng-content></ng-content></button>'
+})
+class Btn { log() { console.log('Clicked'); } }`,
+        solutionCode: `// ✅ Directive (Reusable on ANY element)
+@Directive({
+  selector: '[appLog]',
+  standalone: true
+})
+class LogDirective {
+  // Listen to host event
+  @HostListener('click') onClick() {
+    console.log('Clicked element!');
+  }
+}
+// Usage: <div appLog>...</div> or <button appLog>...</button>`,
+        verifyOutput: "HostListener",
+        successMessage: "Nice! Now you can add logging behavior to divs, buttons, or even other components without wrapping them.",
+        hint: "Use `@HostListener('click')` inside a Directive."
       }
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧩 1. Directive Composition API</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🧩 1. Composition over Inheritance</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Inheritance is dead. Long live Composition. You can apply directives AUTOMATICALLY when another directive is used.
+In the past, if you wanted a "Draggable Button with a Tooltip", you created a messy inheritance chain.
+</p>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Now, you can just slap directives together:
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
-<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-@Directive({
-  selector: '[appButton]',
-  standalone: true,
-  // Automatically adds Ripple and Tooltip behavior!
-  hostDirectives: [RippleDirective, TooltipDirective]
-})
-export class ButtonDirective { ... }
-</pre>
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10 font-mono text-sm">
+&lt;button appDraggable appTooltip="Save" appRipple&gt;Save&lt;/button&gt;
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🖱️ 2. Zone-Free Event Handling</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🖱️ 2. The "Zone Pollution" Problem</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-For high-frequency events (scroll, mousemove, drag), do NOT use output bindings or <code>@HostListener</code> blindly. They trigger global Change Detection. Run them outside the zone.
+Angular listens to every event by default. If you listen to <code>mousemove</code>, Angular runs Change Detection <strong>60 times per second</strong>. Your app will freeze.
 </p>
 
 <div class="grid md:grid-cols-2 gap-6 mb-10">
     <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
-        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">Slow Way</h4>
-        <p class="text-xs text-gray-600 dark:text-gray-400">
-            <code>(mousemove)="update()"</code><br>
-            Fires ~60 CD cycles per second. Kills battery and FPS.
-        </p>
+        <h4 class="font-bold text-red-800 dark:text-red-300 mb-3">⛔ The Wrapper Way</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+@HostListener('mousemove')
+onMove() {
+  // Triggers Global CD
+  // Kills Battery
+}
+        </pre>
     </div>
     <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
-        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Fast Way</h4>
-        <p class="text-xs text-gray-600 dark:text-gray-400">
-            <code>ngZone.runOutsideAngular()</code><br>
-            Update the style directly on the DOM element. Sync with Angular only when done.
-        </p>
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">✅ The Zone-Free Way</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+ngZone.runOutsideAngular(() => {
+  el.addEventListener('mousemove', ...);
+  // Zero Angular Overhead
+});
+        </pre>
     </div>
 </div>
 `,

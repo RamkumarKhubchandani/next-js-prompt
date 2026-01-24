@@ -1,7 +1,7 @@
 export const day15 = {
   day: 15,
   title: "Modern Reactive Forms: Typed & Signal-Driven",
-  intro: "Say goodbye to `any`. Master <strong>Typed Forms</strong> and learn to sync deeply nested form state with <strong>Signals</strong>.",
+  intro: "Untyped forms are a source of constant bugs. Today, we switch to <strong>Strictly Typed Forms</strong> and learn to sync them with <strong>Signals</strong> for reactive perfection.",
   aiSession: {
     enabled: true,
     steps: [
@@ -36,28 +36,35 @@ const form = fb.group({
     ]
   },
   content: `
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. Typed Forms</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. Why Typed Forms?</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Before Angular 14, accessing <code>form.value.email</code> returned <code>any</code>. If you made a typo (e.g., <code>emial</code>), Angular wouldn't care, but your app would crash at runtime.
+</p>
 <p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
-Since Angular 14, forms are generic. <code>FormControl&lt;string&gt;</code> guarantees the value is a string. Use <code>getRawValue()</code> to get the complete object (ignoring disabled state).
+Now, <code>form.value.email</code> is a string. If you try to assign a number to it, TypeScript yells at you.
 </p>
 
-<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
-<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
-interface UserForm {
-  email: FormControl&lt;string&gt;;
-  stats: FormGroup&lt;{
-    level: FormControl&lt;number&gt;;
-  }&gt;;
-}
-
-// Strictly Typed Form
-const form = new FormGroup&lt;UserForm&gt;({ ... });
-</pre>
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-gray-50 dark:bg-dark-900/40 p-5 rounded-xl border border-gray-200 dark:border-dark-700">
+        <h4 class="font-bold text-gray-800 dark:text-white mb-3">Nullable (Standard)</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+name: FormControl&lt;string | null&gt;
+// Value can be 'Bob' or null (if reset)
+        </pre>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30">
+        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">NonNullable (Better)</h4>
+        <pre class="text-xs font-mono text-blue-900 dark:text-blue-200">
+name: FormControl&lt;string&gt;
+// Value is ALWAYS a string. 
+// Reset() -> goes back to initial value ('')
+        </pre>
+    </div>
 </div>
 
-<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. Async Validators & Signals</h3>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. Forms + Signals</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
-Async validators (like checking if a username is taken) run after sync validators. You can also easily push form values into Signals using <code>toSignal(form.valueChanges)</code>.
+Forms are reactive (Observables). Signals are reactive (Primitives). You can bridge them using <code>toSignal(form.valueChanges)</code>.
 </p>
 `,
   code: `import { Component, inject, signal, computed, effect } from '@angular/core';

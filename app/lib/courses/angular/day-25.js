@@ -1,46 +1,64 @@
 export const day25 = {
   day: 25,
   title: "Template-Driven Forms: Quick Forms",
-  intro: "Build simple forms quickly with template-driven approach. Perfect for basic forms and rapid prototyping.",
+  intro: "Need a form in 5 minutes? <strong>Template-Driven Forms</strong> are your friend. They are simple, powerful, and now strictly typed in Angular 15+.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 25. People say \"Always use Reactive Forms\". They are wrong. For simple login forms, Template-Driven is faster and less code."
+      },
+      {
+        type: "talk",
+        message: "The key is `[(ngModel)]`. It syncs your JS object with the input box automatically."
+      },
+      {
+        type: "challenge",
+        instruction: "Wire up this input using Template-Driven syntax (`ngModel`) so it updates the `user.name` property.",
+        buggyCode: `// ❌ No binding
+<input name="username">
+<p>Hello, {{ user.name }}!</p>`,
+        solutionCode: `// ✅ Banana in a Box
+<input [(ngModel)]="user.name" name="username">
+<p>Hello, {{ user.name }}!</p>`,
+        verifyOutput: "ngModel",
+        successMessage: "It works! As you type, the paragraph updates instantly. No `FormGroup` boilerplate required.",
+        hint: "Use `[(ngModel)]=\"user.name\"`."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📝 Template-Driven Forms</h3>
-<p class="mb-4 text-gray-600 dark:text-gray-300">
-Simpler than Reactive Forms. Logic lives in the template. Good for basic forms.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🍌 1. Banana in a Box</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+The syntax <code>[(ngModel)]="user.name"</code> is iconic. It means "Two-Way Binding".
 </p>
+<ul class="list-disc pl-5 mb-6 text-gray-600 dark:text-light-300 space-y-2">
+    <li><strong>[ ]</strong> = Input (Data goes in)</li>
+    <li><strong>( )</strong> = Output (Events come out)</li>
+    <li><strong>[( )]</strong> = Both (Sync!)</li>
+</ul>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-blue-500">
-<pre class="text-gray-800 dark:text-gray-100">
-<form #form="ngForm" (ngSubmit)="onSubmit(form)">
-  <input 
-    name="email"
-    [(ngModel)]="user.email"
-    required
-    email
-  />
-  
-  <button [disabled]="form.invalid">Submit</button>
-</form>
-</pre>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ When to Use Each</h3>
-<div class="grid md:grid-cols-2 gap-4 mb-8">
-  <div class="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-xl">
-    <h4 class="font-bold text-blue-700 dark:text-blue-400 mb-2">Template-Driven</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li>• Simple forms</li>
-      <li>• Rapid prototyping</li>
-      <li>• Less code</li>
-    </ul>
-  </div>
-  <div class="p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl">
-    <h4 class="font-bold text-green-700 dark:text-green-400 mb-2">Reactive Forms</h4>
-    <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
-      <li>• Complex forms</li>
-      <li>• Dynamic fields</li>
-      <li>• Unit testable</li>
-    </ul>
-  </div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. When to use it?</h3>
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30">
+        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">Template-Driven</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+            • Login forms<br>
+            • Search bars<br>
+            • Simple settings<br>
+            • <strong>Logic is simple.</strong>
+        </p>
+    </div>
+    <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
+        <h4 class="font-bold text-green-800 dark:text-green-300 mb-3">Reactive Forms</h4>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+            • Dynamic fields (Arrays)<br>
+            • Complex validation (Cross-field)<br>
+            • Unit testing required<br>
+            • <strong>Logic is complex.</strong>
+        </p>
+    </div>
 </div>
 `,
   code: `import { Component } from '@angular/core';
