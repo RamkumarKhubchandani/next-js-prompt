@@ -2,6 +2,33 @@ export const day29 = {
   day: 29,
   title: "Machine Coding: Modal & Toast System",
   intro: "Build a professional modal and toast notification system with portals, animations, and accessibility.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 29. Modals are famously hard to get right. 'z-index' wars are real."
+      },
+      {
+        type: "challenge",
+        instruction: "This modal will be clipped if the parent has `overflow: hidden`. How do we solve this?",
+        buggyCode: `// ❌ Clipped by parent
+return (
+  <div className="modal-overlay">
+    <div className="modal">Content</div>
+  </div>
+);`,
+        solutionCode: `// ✅ Escapes parent (Portal)
+return createPortal(
+  <div className="modal-overlay">...</div>,
+  document.body
+);`,
+        verifyOutput: "createPortal",
+        successMessage: "Correct! Portals let your component render outside its parent (usually to `document.body`) while keeping React events connected.",
+        hint: "Use `createPortal(..., document.body)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Build</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

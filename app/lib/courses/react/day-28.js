@@ -2,6 +2,31 @@ export const day28 = {
   day: 28,
   title: "Performance Profiling & React DevTools Mastery",
   intro: "Find and fix performance bottlenecks. Profiler, Chrome DevTools, and why-did-you-render.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 28. React is fast, but you can make it slow. Common culprit: inline objects."
+      },
+      {
+        type: "challenge",
+        instruction: "This component passes a new style object to `Child` on every render, causing re-renders. Fix it.",
+        buggyCode: `// ❌ Unstable Prop
+function Parent() {
+  return <Child style={{ color: 'red' }} />;
+}`,
+        solutionCode: `// ✅ Stable Prop
+const style = { color: 'red' };
+function Parent() {
+  return <Child style={style} />;
+}`,
+        verifyOutput: "const style =",
+        successMessage: "Correct! Defining objects outside the component (or using `useMemo`) keeps the reference stable, allowing `React.memo` to work.",
+        hint: "Move `const style = ...` outside the component function."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Master</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

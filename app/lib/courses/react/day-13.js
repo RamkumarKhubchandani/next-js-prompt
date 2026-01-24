@@ -2,6 +2,37 @@ export const day13 = {
   day: 13,
   title: "Compound Components",
   intro: "Build flexible UI libraries. `Select.Option` instead of `options={[]}`.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 13. Stop passing giant config objects. Let users compose your component's parts."
+      },
+      {
+        type: "challenge",
+        instruction: "This is a 'Compound Component'. The parent `<Tabs>` needs to share state with `<Tab>` without props. How?",
+        buggyCode: `// ❌ Props don't magically pass down
+function Tabs({ children }) {
+  const [active, setActive] = useState(0);
+  return <div>{children}</div>; // Children can't see 'active'!
+}`,
+        solutionCode: `// ✅ Context fills the gap
+const TabCtx = createContext();
+function Tabs({ children }) {
+  const [active, setActive] = useState(0);
+  return (
+    <TabCtx.Provider value={{ active, setActive }}>
+      <div>{children}</div>
+    </TabCtx.Provider>
+  );
+}`,
+        verifyOutput: "createContext",
+        successMessage: "Perfect! Context is the glue that makes Compound Components work invisibly.",
+        hint: "Create a Context and wrap the children in a Provider."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,35 @@ export const day31 = {
   day: 31,
   title: "Streaming SSR & Asset Preloading",
   intro: "React 19's streaming server rendering and resource preloading APIs for instant page loads.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 31. Streaming SSR means 'Show something NOW, load the rest later'. No more blank screens."
+      },
+      {
+        type: "challenge",
+        instruction: "This server code blocks until the ENTIRE page is ready. Switch to streaming.",
+        buggyCode: `// ❌ Slow TTFB (Time to First Byte)
+app.get('/', (req, res) => {
+  const html = renderToString(<App />);
+  res.send(html);
+});`,
+        solutionCode: `// ✅ Streaming
+app.get('/', (req, res) => {
+  const { pipe } = renderToPipeableStream(<App />, {
+    onShellReady() {
+      pipe(res);
+    }
+  });
+});`,
+        verifyOutput: "renderToPipeableStream",
+        successMessage: "Correct! `renderToPipeableStream` sends the HTML 'shell' immediately, then streams the rest as it generates.",
+        hint: "Use `renderToPipeableStream` instead of `renderToString`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

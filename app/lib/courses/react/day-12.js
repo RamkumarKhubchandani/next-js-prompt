@@ -2,6 +2,36 @@ export const day12 = {
   day: 12,
   title: "Suspense & Concurrent Mode",
   intro: "Tell React to 'wait' for data before showing the UI. No more `isLoading` booleans.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 12. Suspense lets you say 'Show this fallback until the data/code is ready'. It's declarative."
+      },
+      {
+        type: "challenge",
+        instruction: "This lazy-loaded component will crash if it's not wrapped in Suspense. Wrap it.",
+        buggyCode: `// ❌ Crashing: "A component was suspended without a generic fallback..."
+const Heavy = React.lazy(() => import('./Heavy'));
+function App() {
+  return <Heavy />;
+}`,
+        solutionCode: `// ✅ Working
+const Heavy = React.lazy(() => import('./Heavy'));
+function App() {
+  return (
+    <Suspense fallback="Loading...">
+      <Heavy />
+    </Suspense>
+  );
+}`,
+        verifyOutput: "Suspense",
+        successMessage: "Great! Any component that suspends (like `React.lazy` or data fetching) must have a `Suspense` boundary above it.",
+        hint: "Wrap `<Heavy />` with `<Suspense fallback=...>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

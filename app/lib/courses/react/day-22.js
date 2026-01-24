@@ -2,6 +2,38 @@ export const day22 = {
   day: 22,
   title: "Advanced Patterns: Headless UI & Slots",
   intro: "Build reusable, accessible component libraries. Separate logic from UI using Headless Hooks and Composition.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 22. Headless UI means 'Brains without Beauty'. You provide the logic, the user provides the CSS."
+      },
+      {
+        type: "challenge",
+        instruction: "This hook is NOT headless because it returns JSX. Refactor it to return *props* only.",
+        buggyCode: `// ❌ Not Headless
+function useToggle() {
+  const [on, setOn] = useState(false);
+  return <button onClick={() => setOn(!on)}>{on ? 'ON' : 'OFF'}</button>;
+}`,
+        solutionCode: `// ✅ Headless Hook
+function useToggle() {
+  const [on, setOn] = useState(false);
+  return { 
+    on, 
+    toggleProps: { 
+      onClick: () => setOn(!on),
+      'aria-pressed': on 
+    }
+  };
+}`,
+        verifyOutput: "toggleProps",
+        successMessage: "Excellent! By returning props instead of JSX, the consumer can apply these props to ANY element (button, div, switch) and style it however they want.",
+        hint: "Return an object with `toggleProps` instead of JSX."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

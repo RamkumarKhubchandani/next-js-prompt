@@ -2,6 +2,30 @@ export const day04 = {
   day: 4,
   title: "State Management & Batching",
   intro: "React 18 batches state updates automatically to prevent unnecessary renders.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 04. Before React 18, updates inside `setTimeout` were NOT batched. Now, they are!"
+      },
+      {
+        type: "challenge",
+        instruction: "This code triggers two re-renders in React 17. In React 18, it's one. How do you update state based on previous state safely?",
+        buggyCode: `// ❌ Stale closure risk
+setCount(count + 1);
+setCount(count + 1);
+// Result: +1 (not +2)`,
+        solutionCode: `// ✅ Functional Updates
+setCount(prev => prev + 1);
+setCount(prev => prev + 1);
+// Result: +2`,
+        verifyOutput: "prev =>",
+        successMessage: "Correct! Always use the functional update form `setCount(prev => ...)` when the new state depends on the old one.",
+        hint: "Use `setCount(prev => prev + 1)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1. Automatic Batching</h3>
 <p>Multiple <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">setState</code> calls are grouped into one render.</p>

@@ -2,6 +2,32 @@ export const day01 = {
   day: 1,
   title: "Virtual DOM & Reconciliation",
   intro: "Why is React so fast? Because it never touches the Real DOM directly. It uses a clever trick called the Virtual DOM.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 01. React is fast because it minimizes DOM updates. The DOM is slow; JavaScript is fast."
+      },
+      {
+        type: "challenge",
+        instruction: "React requires a `key` prop for lists to perform efficient diffing. Add keys to this list.",
+        buggyCode: `// ❌ React warning: "Each child in a list should have a unique 'key' prop."
+<ul>
+  {items.map(item => <li>{item.name}</li>)}
+</ul>`,
+        solutionCode: `// ✅ Efficient Diffing
+<ul>
+  {items.map(item => (
+    <li key={item.id}>{item.name}</li>
+  ))}
+</ul>`,
+        verifyOutput: "key={item.id}",
+        successMessage: "Perfect! Now React knows exactly which item changed if you reorder or filter the list.",
+        hint: "Add `key={item.id}` to the `<li>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Chef's Station" Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

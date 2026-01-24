@@ -2,6 +2,34 @@ export const day06 = {
   day: 6,
   title: "Refs & The DOM",
   intro: "Need to focus an input or measure a div? Use `useRef`. It persists values without re-rendering.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 06. Use `useRef` for side effects that don't involve the UI, like DOM access or timers."
+      },
+      {
+        type: "challenge",
+        instruction: "This code tries to focus an input using document.getElementById. This is bad in React. Use a Ref instead.",
+        buggyCode: `// ❌ Manual DOM manipulation
+function search() {
+  document.getElementById('search-input').focus();
+}`,
+        solutionCode: `// ✅ useRef
+const inputRef = useRef(null);
+
+function search() {
+  inputRef.current.focus();
+}
+
+return <input ref={inputRef} />;`,
+        verifyOutput: "useRef",
+        successMessage: "Excellent! `useRef` gives you safe, direct access to the DOM node without querying the document.",
+        hint: "Initialize `useRef(null)` and attach it to the input."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

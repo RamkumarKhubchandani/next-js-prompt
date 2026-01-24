@@ -2,6 +2,47 @@ export const day26 = {
   day: 26,
   title: "Custom Hooks Mastery: 10 Production Hooks",
   intro: "Build your own hook library. useDebounce, useThrottle, useLocalStorage, usePrevious, and more.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 26. Custom Hooks separate logic from UI. Let's fix a common bug in `useDebounce`."
+      },
+      {
+        type: "challenge",
+        instruction: "This debounce hook is buggy. It sets multiple timers if the value changes fast. Fix it by cleaning up.",
+        buggyCode: `// ❌ Memory Leak / Race Condition
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+  
+  useEffect(() => {
+    setTimeout(() => {
+      setDebounced(value);
+    }, delay);
+  }, [value, delay]);
+  
+  return debounced;
+}`,
+        solutionCode: `// ✅ Cleaned up
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounced(value);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  
+  return debounced;
+}`,
+        verifyOutput: "clearTimeout",
+        successMessage: "Correct! Always return a cleanup function from `useEffect` when using timers or subscriptions.",
+        hint: "Store the timer ID and clear it in the return function: `return () => clearTimeout(timer)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 Hooks You'll Build</h3>
 <ol class="list-decimal list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

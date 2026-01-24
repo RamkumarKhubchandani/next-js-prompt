@@ -3,6 +3,24 @@ export const day00 = {
   title: "Day 0: Pro Setup + How to Learn HTML Like an Engineer",
   intro:
     "You don’t need a human teacher—you need a system. Today you’ll build a repeatable workflow: inspect → change → verify → explain, using semantic HTML as your foundation.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 0. The Loop. Great engineers don't guess. They `inspect`, `change`, `verify`. Let's prove you can do it."
+      },
+      {
+        type: "challenge",
+        "instruction": "We have a `div` soup here. Replace the generic `div` with a semantic `header` element.",
+        "buggyCode": "<!-- ❌ Generic wrapper -->\n<div class=\"header\">...</div>",
+        "solutionCode": "<!-- ✅ Semantic wrapper -->\n<header class=\"header\">...</header>",
+        "verifyOutput": "<header",
+        "successMessage": "Done. Semantic tags are the first step in the professional loop. They tell the browser *what* the content is.",
+        "hint": "Change `<div>` to `<header>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 Outcomes (What “Done” Looks Like)</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,36 @@ export const day09 = {
   day: 9,
   title: "Custom Hooks",
   intro: "Reuse logic, not UI. If you find yourself copying `useEffect`, make a hook.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 09. Custom hooks are just functions that use other hooks. They let you share *logic* without sharing *UI*."
+      },
+      {
+        type: "challenge",
+        instruction: "This hook violates the 'Rules of Hooks'. It calls useState inside an if statement. Fix it.",
+        buggyCode: `// ❌ Conditional Hook Call
+function useFetch(url) {
+  if (url) {
+    const [data, setData] = useState(null); // Error!
+  }
+}`,
+        solutionCode: `// ✅ Top Level Call
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  
+  useEffect(() => {
+    if (url) { ... }
+  }, [url]);
+}`,
+        verifyOutput: "useState",
+        successMessage: "Correct! Hooks must always run in the exact same order on every render. Never put them inside conditions or loops.",
+        hint: "Move `useState` to the top level of the function."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

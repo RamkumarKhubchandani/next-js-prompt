@@ -2,6 +2,31 @@ export const day05 = {
   day: 5,
   title: "Effects & Lifecycle",
   intro: "useEffect is how React talks to the outside world - APIs, timers, subscriptions. Master this hook!",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 05. `useEffect` is powerful but dangerous. A missing dependency array can crash your browser."
+      },
+      {
+        type: "challenge",
+        instruction: "This effect creates an infinite loop. Fix it by adding the dependency array.",
+        buggyCode: `// ❌ Infinite Loop!
+useEffect(() => {
+  console.log("Fetching...");
+  setCount(c => c + 1); // Triggers re-render -> runs effect -> triggers re-render...
+});`,
+        solutionCode: `// ✅ Run Once
+useEffect(() => {
+  console.log("Fetching...");
+}, []); // Empty array = Mount only`,
+        verifyOutput: "[]",
+        successMessage: "Crisis averted! The empty dependency array `[]` ensures the effect only runs once when the component mounts.",
+        hint: "Add `[]` as the second argument to `useEffect`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

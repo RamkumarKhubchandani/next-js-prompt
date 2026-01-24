@@ -3,6 +3,24 @@ export const day08 = {
   title: "Day 8: SEO-Ready HTML (Metadata, Headings, Link Strategy, and Crawlable Structure)",
   intro:
     "SEO isn’t magic—it’s structure. Today you’ll learn the HTML signals that make pages understandable to crawlers and humans: metadata, headings, link text, and content hierarchy.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 8. SEO. Google is blind. It relies on structure. If your link says 'Click here', Google has no idea where it goes."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This link text is bad for SEO and accessibility. Rewrite it to be meaningful.",
+        "buggyCode": "<!-- ❌ Mystery meat link -->\n<a href=\"/pricing\">Click here</a> to see plans.",
+        "solutionCode": "<!-- ✅ Descriptive link -->\n<a href=\"/pricing\">View pricing plans</a>.",
+        "verifyOutput": "pricing",
+        "successMessage": "Better. Descriptive links tell users and search engines what to expect *before* they click.",
+        "hint": "Change 'Click here' to 'View pricing plans'."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

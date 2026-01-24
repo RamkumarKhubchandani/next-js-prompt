@@ -2,6 +2,39 @@ export const day25 = {
   day: 25,
   title: "Machine Coding: Drag & Drop from Scratch",
   intro: "Build a Kanban board drag-and-drop system using native HTML5 APIs. No libraries.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 25. HTML5 Drag & Drop is powerful but tricky. There is ONE line of code everyone forgets."
+      },
+      {
+        type: "challenge",
+        instruction: "This drop zone is broken. The `onDrop` event never fires. Fix it.",
+        buggyCode: `// ❌ Broken Drop Zone
+<div 
+  onDragOver={() => console.log('hovering')}
+  onDrop={handleDrop}
+>
+  Drop Here
+</div>`,
+        solutionCode: `// ✅ Fixed
+<div 
+  onDragOver={(e) => {
+    e.preventDefault(); // REQUIRED to allow dropping!
+    console.log('hovering');
+  }}
+  onDrop={handleDrop}
+>
+  Drop Here
+</div>`,
+        verifyOutput: "preventDefault",
+        successMessage: "You got it! Browsers block drops by default. You must call `e.preventDefault()` in `onDragOver` to enable `onDrop`.",
+        hint: "Call `e.preventDefault()` inside `onDragOver`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Build</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

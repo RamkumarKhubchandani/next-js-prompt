@@ -2,6 +2,30 @@ export const day19 = {
   day: 19,
   title: "React 19: Web Components & Error Reporting",
   intro: "First-class support for Custom Elements and better error handling hooks.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 19. React finally plays nice with Web Components (Custom Elements) without ugly hacks."
+      },
+      {
+        type: "challenge",
+        instruction: "In React 18, you had to manually attach complex data to Web Components using refs. How do you do it in React 19?",
+        buggyCode: `// ❌ React 18 Hack
+const ref = useRef();
+useEffect(() => {
+  ref.current.userData = { name: 'John' };
+}, []);
+return <user-card ref={ref} />;`,
+        solutionCode: `// ✅ React 19 Native
+return <user-card userData={{ name: 'John' }} />;`,
+        verifyOutput: "<user-card userData",
+        successMessage: "It just works! React 19 creates a perfect bridge to the Web Component ecosystem.",
+        hint: "Pass the object prop directly: `<user-card userData={{...}} />`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

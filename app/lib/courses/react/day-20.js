@@ -2,6 +2,30 @@ export const day20 = {
   day: 20,
   title: "The \"use\" API Deep Dive",
   intro: "The universal API for unwrapping resources. Promises, Context, and future data types.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 20. The `use()` API lets you unwrap Promises and read Context conditionally. It breaks the 'Rules of Hooks'."
+      },
+      {
+        type: "challenge",
+        instruction: "This code throws a 'Hooks must be called at the top level' error. Fix it using the new `use()` API.",
+        buggyCode: `// ❌ Error: Conditional Hook
+if (isDark) {
+  const theme = useContext(ThemeContext);
+}`,
+        solutionCode: `// ✅ Working in React 19+
+if (isDark) {
+  const theme = use(ThemeContext);
+}`,
+        verifyOutput: "use(",
+        successMessage: "Correct! Unlike `useContext`, `use()` can be called inside loops and if statements.",
+        hint: "Replace `useContext` with `use`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,30 @@ export const day03 = {
   day: 3,
   title: "Props vs State",
   intro: "This is the MOST important concept in React. Master this, and everything else becomes easy.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 03. Props are passed down. State is managed inside. Events bubble up."
+      },
+      {
+        type: "challenge",
+        instruction: "This child component tries to modify its props directly. Fix it by notifying the parent instead.",
+        buggyCode: `// ❌ Mutating Props (Read-only!)
+function Counter({ count }) {
+  return <button onClick={() => count++}>+</button>;
+}`,
+        solutionCode: `// ✅ Calling Parent Callback
+function Counter({ count, onIncrement }) {
+  return <button onClick={onIncrement}>+</button>;
+}`,
+        verifyOutput: "onIncrement",
+        successMessage: "Great! The child is now 'dumb' and just reports the click. The parent owns the 'smart' logic.",
+        hint: "Accept an `onIncrement` prop and call it on click."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

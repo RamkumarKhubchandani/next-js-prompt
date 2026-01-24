@@ -2,6 +2,28 @@ export const day07 = {
   day: 7,
   title: "Memoization (useMemo & useCallback)",
   intro: "Don't optimize prematurely. But when you do, use Memoization to skip expensive calculations.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 07. React re-calculates everything on every render. `useMemo` is like a cache."
+      },
+      {
+        type: "challenge",
+        instruction: "This expensive function runs on every render. Wrap it in `useMemo` so it only runs when `data` changes.",
+        buggyCode: `// ❌ Slows down every render
+const sorted = data.sort((a, b) => a - b);`,
+        solutionCode: `// ✅ Cached result
+const sorted = useMemo(() => {
+  return data.sort((a, b) => a - b);
+}, [data]);`,
+        verifyOutput: "useMemo",
+        successMessage: "Smart! Now the sort operation only happens when the data actually changes, saving CPU cycles.",
+        hint: "Wrap the calculation in `useMemo(() => ..., [data])`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -3,6 +3,24 @@ export const day07 = {
   title: "Day 7: ARIA Essentials (Rules of Use, Landmarks, Focus, and Labels)",
   intro:
     "ARIA is powerful—and dangerous. Today you’ll learn the rules of ARIA, when to use it, and how to build accessible components without turning your HTML into an ARIA soup.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 7. ARIA. First rule of ARIA: Don't use ARIA correctly... wait. No. The first rule is: Don't use ARIA if HTML works."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This `div` is trying to be a button using ARIA. Replace it with a native HTML element.",
+        "buggyCode": "<!-- ❌ Fake button -->\n<div role=\"button\" tabindex=\"0\" onclick=\"...\">Click me</div>",
+        "solutionCode": "<!-- ✅ Real button -->\n<button onclick=\"...\">Click me</button>",
+        "verifyOutput": "<button",
+        "successMessage": "Native wins. A `<button>` gives you focus, keyboard support, and screen reader announcements for free.",
+        "hint": "Replace the `div` (and its attributes) with `<button>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

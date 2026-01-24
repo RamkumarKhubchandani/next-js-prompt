@@ -2,6 +2,33 @@ export const day10 = {
   day: 10,
   title: "Patterns: HOCs vs Render Props",
   intro: "Historical patterns are still useful, but Hooks have replaced most of them.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 10. Before Hooks, we used High Order Components (HOCs) and Render Props to share logic."
+      },
+      {
+        type: "challenge",
+        instruction: "This HOC pattern is hard to read. Rewrite it using a custom hook.",
+        buggyCode: `// ❌ Wrapper Hell
+const Enhanced = withAuth(withTheme(withLogger(Component)));`,
+        solutionCode: `// ✅ Hook Composition
+function Component() {
+  const user = useAuth();
+  const theme = useTheme();
+  useLogger();
+  
+  if (!user) return <Login />;
+  return <div style={theme.style}>...</div>;
+}`,
+        verifyOutput: "useAuth",
+        successMessage: "Much better! Hooks let you compose logic linearly without nesting components like an onion.",
+        hint: "Replace `withAuth` and `withTheme` with `useAuth` and `useTheme`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Snapshot" Mental Model (State Updates)</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

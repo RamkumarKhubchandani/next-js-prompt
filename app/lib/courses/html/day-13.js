@@ -3,6 +3,24 @@ export const day13 = {
   title: "Day 13: Final Review — HTML Mastery Rubric (You Can Teach Yourself Now)",
   intro:
     "You’re not done when you “read the lesson”. You’re done when you can predict and explain outcomes. Today you’ll validate mastery with a rubric and fix your weak spots without a human.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 13. Mastery. HTML is not just tags. It's the contract between you, the user, and the machine."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This is the final test. The image is decoration, the heading is missing, and the link is generic. Fix all three.",
+        "buggyCode": "<div>\n  <img src=\"deco.png\" alt=\"blue line\" />\n  <p>Content</p>\n  <a href=\"/more\">Read</a>\n</div>",
+        "solutionCode": "<section>\n  <img src=\"deco.png\" alt=\"\" />\n  <h2>Title</h2>\n  <p>Content</p>\n  <a href=\"/more\">Read article</a>\n</section>",
+        "verifyOutput": "alt=\"\"",
+        "successMessage": "Mastery. Semantic container, valid heading structure, empty alt for decoration, and descriptive link text.",
+        "hint": "Use `<section>`, `<h2>`, `alt=''`, and 'Read article'."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Your mastery rubric (no human required)</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

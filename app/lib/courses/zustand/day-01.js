@@ -2,6 +2,24 @@ export const day01 = {
   day: 1,
   title: "Why Zustand? The Minimalist Mental Model",
   intro: "Redux is powerful but verbose. Context is built-in but rerenders everything. Zustand sits in the sweet spot: a tiny, hook-based store that scales.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 1. Zustand. It's the 'just enough' state manager. No boilerplate, just hooks."
+      },
+      {
+        type: "challenge",
+        instruction: "This store returns `undefined` because of a common arrow function mistake. Fix the syntax.",
+        buggyCode: "// ❌ Returns undefined (block body without return)\nconst useStore = create((set) => {\n  bears: 0\n});",
+        "solutionCode": "// ✅ Returns object (wrapped in parens)\nconst useStore = create((set) => ({\n  bears: 0\n}));",
+        "verifyOutput": "({",
+        "successMessage": "Correct! When returning an object literal from an arrow function, wrap it in `({})` or use `return { ... }`.",
+        "hint": "Wrap the object in parentheses: `create((set) => ({ ... }))`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The "Hook" Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

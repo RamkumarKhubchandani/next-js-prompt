@@ -3,6 +3,24 @@ export const day01 = {
   title: "Day 1: Document Structure, Headings, and Landmarks (A11y + SEO)",
   intro:
     "Today you’ll learn how browsers, screen readers, and search engines understand your page: correct document structure, headings hierarchy, and landmarks that make navigation effortless.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 1. Hierarchy. Screen readers surf by headings. If your H1 is missing or H2 is below H3, the map is broken."
+      },
+      {
+        type: "challenge",
+        "instruction": "This document outline is skipping a level. Fix the heading hierarchy so it goes `h1` -> `h2` -> `h3`.",
+        "buggyCode": "<h1>Title</h1>\n<h3>Subsection</h3> <!-- ❌ Skipped h2 -->",
+        "solutionCode": "<h1>Title</h1>\n<h2>Section</h2>\n<h3>Subsection</h3>",
+        "verifyOutput": "<h2>",
+        "successMessage": "Correct. Never skip heading levels. It confuses the document outline used by search engines and screen readers.",
+        "hint": "Change `<h3>` to `<h2>` or insert an `<h2>` in between."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">
