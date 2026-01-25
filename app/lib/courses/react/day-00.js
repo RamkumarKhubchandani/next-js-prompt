@@ -2,6 +2,31 @@ export const day00 = {
   day: 0,
   title: "Day 0: The Professional Setup",
   intro: "Stop using Create-React-App. Learn the professional toolchain: Vite, ESLint, Prettier, and VS Code extensions.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Welcome to Day 0. The first step to writing pro React code is a pro environment."
+      },
+      {
+        type: "talk",
+        message: "Many tutorials use `create-react-app`, but that tool is deprecated and slow. We use **Vite**."
+      },
+      {
+        type: "challenge",
+        instruction: "Which command creates a new React project with TypeScript using Vite?",
+        buggyCode: `// ❌ Deprecated/Wrong
+npm create-react-app my-app --typescript
+// npx create-react-app my-app`,
+        solutionCode: `// ✅ Modern & Fast
+npm create vite@latest my-app -- --template react-ts`,
+        verifyOutput: "npm create vite@latest",
+        successMessage: "Correct! Vite is orders of magnitude faster than Webpack-based CRA.",
+        hint: "It starts with `npm create vite@latest...`"
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1. Why Not Create-React-App?</h3>
 <p class="mb-4 text-gray-600 dark:text-light-300">CRA is great for beginners, but it's slow and opinionated. Modern development uses faster bundlers like Vite.</p>

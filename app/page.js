@@ -6,7 +6,8 @@ import { FeaturedBlogs } from './components/landing-page/FeaturedBlogs';
 import { AiQuizCta } from './components/landing-page/AiQuizCta';
 import { CareerGoalPromo } from './components/landing-page/CareerGoalPromo';
 import { HowItWorks } from './components/landing-page/HowItWorks';
-import { Pricing } from './components/landing-page/Pricing';
+import { CompleteCurriculumRoadmap } from './components/landing-page/CurriculumRoadmap';
+// import { Pricing } from './components/landing-page/Pricing'; // Hidden - shown only on /pricing page
 import { Testimonials } from './components/landing-page/Testimonials';
 import { Footer } from './components/Footer';
 
@@ -17,12 +18,13 @@ export default function Home() {
       <main>
         <Hero />
         <Features />
+        <CompleteCurriculumRoadmap />
         <DailyChallenges />
         <FeaturedBlogs />
         <AiQuizCta />
         <CareerGoalPromo />
         <HowItWorks />
-        <Pricing />
+        {/* Pricing hidden from homepage - users see it when they click "Upgrade to Pro" */}
         <Testimonials />
       </main>
       <Footer />

@@ -2,6 +2,35 @@ export const day15 = {
   day: 15,
   title: "React Server Components (RSC)",
   intro: "The future. Server Components run on the server, send zero JS to the client, and can access DB directly.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 15. React Server Components (RSC) are default in Next.js. They run on the server and send zero JS to the browser."
+      },
+      {
+        type: "challenge",
+        instruction: "This Server Component tries to use an interactive event listener (`onClick`). This will crash. Fix it.",
+        buggyCode: `// ❌ Server Components can't have interactivity
+export default async function Post({ id }) {
+  // Error: Event handlers cannot be passed to Client Component props...
+  return <button onClick={() => alert('Like!')}>Like</button>;
+}`,
+        solutionCode: `// ✅ Client Component
+"use client";
+
+import { useState } from 'react';
+
+export default function Post({ id }) {
+  return <button onClick={() => alert('Like!')}>Like</button>;
+}`,
+        verifyOutput: "use client",
+        successMessage: "Correct! To use event listeners (`onClick`, `onChange`) or Hooks (`useState`), you must marking the file as a Client Component with `'use client'`.",
+        hint: "Add `'use client'` at the top of the file."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -3,6 +3,24 @@ export const day06 = {
   title: "Day 6: Semantic Composition (article/section/aside) + Content Strategy",
   intro:
     "Today you’ll learn how to structure real pages: when to use section vs article, how to design scalable content blocks, and how semantics reduces CSS complexity.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 6. Composition. `div` is the last resort. Use `section` for thematic groups and `article` for standalone content."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This `section` is missing a heading, which makes it semantically meaningless (it's just a div). Add an `h2`.",
+        "buggyCode": "<!-- ❌ Section without heading -->\n<section>\n  <p>Content</p>\n</section>",
+        "solutionCode": "<!-- ✅ Labeled section -->\n<section>\n  <h2>About</h2>\n  <p>Content</p>\n</section>",
+        "verifyOutput": "<h2>",
+        "successMessage": "Rule of thumb: Every `<section>` needs a heading. If it doesn't have a heading, it's probably just a `<div>`.",
+        "hint": "Add an `<h2>` inside the section."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

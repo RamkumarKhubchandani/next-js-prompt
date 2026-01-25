@@ -2,6 +2,31 @@ export const day11 = {
   day: 11,
   title: "Portals & Error Boundaries",
   intro: "Render outside the parent hierarchy (Modals) and catch crashes gracefully.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 11. Sometimes you need to break out of the DOM tree (Portals) or catch errors (Boundaries)."
+      },
+      {
+        type: "challenge",
+        instruction: "This modal is being clipped by a parent with `overflow: hidden`. Use a Portal to fix it.",
+        buggyCode: `// ❌ Clipped by parent
+return (
+  <div className="modal">I am a modal</div>
+);`,
+        solutionCode: `// ✅ Escapes parent
+return createPortal(
+  <div className="modal">I am a modal</div>,
+  document.body
+);`,
+        verifyOutput: "createPortal",
+        successMessage: "Correct! `createPortal` renders the element into `document.body`, visually breaking out of the parent container while keeping React events intact.",
+        hint: "Use `createPortal(JSX, document.body)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

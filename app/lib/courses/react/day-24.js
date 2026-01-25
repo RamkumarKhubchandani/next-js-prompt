@@ -2,6 +2,33 @@ export const day24 = {
   day: 24,
   title: "Machine Coding: Infinite Scroll with Virtualization",
   intro: "Render 10,000 items without killing the browser. Master Intersection Observer, windowing, and virtual lists.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 24. Infinite Scroll is tricky. Scroll event listeners are bad for performance. Use Intersection Observer."
+      },
+      {
+        type: "challenge",
+        instruction: "This code uses a scroll listener, which fires 100x per second. Switch to Intersection Observer.",
+        buggyCode: `// ❌ Performance killer
+useEffect(() => {
+  window.addEventListener('scroll', checkPosition);
+  return () => window.removeEventListener('scroll', checkPosition);
+}, []);`,
+        solutionCode: `// ✅ Efficient
+useEffect(() => {
+  const observer = new IntersectionObserver(onIntersect);
+  if (ref.current) observer.observe(ref.current);
+  return () => observer.disconnect();
+}, []);`,
+        verifyOutput: "IntersectionObserver",
+        successMessage: "Perfect! Intersection Observer handles visibility checks efficiently in the browser's background thread.",
+        hint: "Use `new IntersectionObserver(...)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Build</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

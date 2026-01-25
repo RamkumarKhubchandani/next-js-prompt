@@ -2,6 +2,40 @@ export const day32 = {
   day: 32,
   title: "System Design for React: Interview Mastery",
   intro: "The ultimate interview prep. Design complex React applications like a senior architect.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 32. Congratulations! you made it to the end. The final boss is System Design."
+      },
+      {
+        type: "challenge",
+        instruction: "You are designing a Twitter feed. Storing 1 million tweets in a simple array will crash the browser. How should you structure the state?",
+        buggyCode: `// ❌ Slow lookups, duplication
+const state = {
+  tweets: [
+    { id: 1, author: { name: 'Dan', ... } },
+    { id: 2, author: { name: 'Dan', ... } } 
+  ]
+};`,
+        solutionCode: `// ✅ Normalized Data
+const state = {
+  tweetsById: {
+    "1": { id: "1", authorId: "u1", ... },
+    "2": { id: "2", authorId: "u1", ... }
+  },
+  authors: {
+    "u1": { name: 'Dan', ... }
+  },
+  feedOrder: ["1", "2"]
+};`,
+        verifyOutput: "tweetsById",
+        successMessage: "Correct! Normalizing data (like a database) prevents duplication and makes updates (e.g., changing a user's avatar) instant across all their tweets.",
+        hint: "Use specific maps like `tweetsById` and list of IDs for order."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Master</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

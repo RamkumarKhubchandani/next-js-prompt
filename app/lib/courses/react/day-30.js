@@ -2,6 +2,35 @@ export const day30 = {
   day: 30,
   title: "useDeferredValue & useTransition Deep Dive",
   intro: "Master React 19's concurrent features. Keep UI responsive during heavy computations.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 30. Concurrent React allows you to render non-urgent updates in the background. No more frozen UI."
+      },
+      {
+        type: "challenge",
+        instruction: "This search filter freezes the UI on every keystroke. Use `useDeferredValue` to fix it.",
+        buggyCode: `// ❌ Freezes while typing
+function Search({ query }) {
+  // Heavy computation blocks the thread
+  const results = expensiveFilter(query);
+  return <List items={results} />;
+}`,
+        solutionCode: `// ✅ Responsive typing
+function Search({ query }) {
+  // Delays the heavy computation
+  const deferredQuery = useDeferredValue(query);
+  const results = expensiveFilter(deferredQuery);
+  return <List items={results} />;
+}`,
+        verifyOutput: "useDeferredValue",
+        successMessage: "Perfect! `useDeferredValue` lets React prioritize the input update (typing) and defer the expensive list rendering.",
+        hint: "Create a `deferredQuery` variable using `useDeferredValue(query)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Master</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

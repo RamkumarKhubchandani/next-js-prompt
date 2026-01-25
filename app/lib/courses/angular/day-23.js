@@ -1,50 +1,89 @@
 export const day23 = {
   day: 23,
-  title: "Accessibility (A11y) (Keyboard, Focus, ARIA)",
-  intro: "A11y is not optional. Learn keyboard navigation, focus management, and ARIA the correct way.",
+  title: "Guards: Route Protection & Authorization",
+  intro: "Guards aren't just for Auth. Use guard functions to validate parameters, check permissions, or prevent users from losing unsaved work (`CanDeactivate`).",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 23. We covered the basics of `CanActivate`. Now let's handle the tricky stuff: Unsaved Changes."
+      },
+      {
+        type: "talk",
+        message: "A `CanDeactivate` guard can ask the component \"Is it safe to leave?\" before allowing navigation."
+      },
+      {
+        type: "challenge",
+        instruction: "Implement a `canDeactivate` guard that checks if the component's form is dirty.",
+        buggyCode: `// ❌ No checks (User loses data!)
+export const unsavedChangesGuard = () => true;`,
+        solutionCode: `// ✅ Check component state
+export const unsavedChangesGuard: CanDeactivateFn<any> = (component) => {
+  if (component.form.dirty) {
+    return confirm('Discard unsaved changes?');
+  }
+  return true;
+};`,
+        verifyOutput: "CanDeactivateFn",
+        successMessage: "Disaster averted! The user will now be prompted before accidentally navigating away from a half-filled form.",
+        hint: "Use `CanDeactivateFn<Type>` and access component properties."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">A11y Checklist</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>Keyboard navigation always works.</li>
-  <li>Focus is visible and correct.</li>
-  <li>Semantic HTML first, ARIA second.</li>
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🔒 The Gatekeepers</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+Guards return <code>true</code> (allow), <code>false</code> (block), or a <code>UrlTree</code> (redirect).
+Modern Angular guards are just functional: <code>(route, state) => boolean</code>.
+</p>
+
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-yellow-500">
+<pre class="text-gray-800 dark:text-gray-100">
+export const authGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  return inject(AuthService).isLoggedIn() 
+    ? true 
+    : router.createUrlTree(['/login']);
+};
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ Know Your Guards</h3>
+<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300 mb-8">
+  <li><strong class="text-brand-primary">canActivate:</strong> "Do you have the key to this room?"</li>
+  <li><strong class="text-brand-primary">canMatch:</strong> "Does this room even exist for you?" (Lazy Loading)</li>
+  <li><strong class="text-brand-primary">canDeactivate:</strong> "Are you sure you want to leave?" (Unsaved changes)</li>
 </ul>
+`,
+  code: `// Auth guard example
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Keyboard First</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-If your app can be used with only a keyboard, you’ve solved a large chunk of accessibility.
-Tab order, Enter/Space activation, and visible focus are mandatory.
-</p>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) ARIA: Use Only When Needed</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Prefer semantic elements (<code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">&lt;button&gt;</code>, <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">&lt;label&gt;</code>).
-ARIA is for filling gaps, not for replacing HTML.
-</p>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) Modals Need Focus Management</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Trap focus inside dialogs and return focus to the trigger on close. CDK helps you do this correctly.
-</p>
-            `,
-  code: "// Use CDK a11y utilities for focus trapping in dialogs/menus.",
+export const authGuard: CanActivateFn = () => {
+  const isLoggedIn = true; // Check auth state
+  
+  if (isLoggedIn) {
+    return true;
+  }
+  
+  return inject(Router).createUrlTree(['/login']);
+};`,
   comparison: {
-    junior: "// ❌ div buttons",
-    senior: "// ✅ semantic elements + correct focus"
+    junior: `// ❌ No protection
+{ path: 'admin', component: AdminComponent }`,
+    senior: `// ✅ Protected with guard
+{ 
+  path: 'admin',
+  canActivate: [authGuard, adminGuard],
+  component: AdminComponent
+}`
   },
   interview: {
     questions: [
       {
-        q: "Why is semantic HTML important for accessibility?",
-        a: "It provides built-in keyboard and screen reader behavior. ARIA cannot fully replace correct semantics."
-      },
-      {
-        q: "What is focus trapping?",
-        a: "Keeping keyboard focus inside a modal/dialog until it is closed, preventing users from tabbing behind it."
-      },
-      {
-        q: "What’s a common a11y mistake?",
-        a: "Clickable divs without role/keyboard handlers, missing labels, and poor focus states."
+        q: "What's the difference between canActivate and canMatch?",
+        a: "canActivate runs after route is matched. canMatch prevents route from matching at all (better for lazy loading)."
       }
     ]
   }

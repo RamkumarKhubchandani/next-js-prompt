@@ -3,6 +3,24 @@ export const day10 = {
   title: "Day 10: Internationalization Mindset (RTL, Neutral Copy, Logical Order)",
   intro:
     "Great frontends work globally by default. Today you’ll learn RTL basics, neutral content patterns, and how HTML structure supports internationalization without extra humans.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 10. i18n. Left is not always 'back'. Right is not always 'forward'. Use logical properties."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This arrow icon assumes Left-To-Right (LTR) direction. If we switch to RTL (Hebrew/Arabic), it points the wrong way. Mark it to flip.",
+        "buggyCode": "<!-- ❌ Static arrow -->\n<img src=\"arrow-right.svg\" alt=\"Next\" />",
+        "solutionCode": "<!-- ✅ Flippable arrow -->\n<img src=\"arrow-right.svg\" alt=\"Next\" class=\"rtl:flip\" />",
+        "verifyOutput": "rtl:flip",
+        "successMessage": "Good. In RTL, 'Next' is usually to the left. We need CSS (or logic) to flip directional icons.",
+        "hint": "Add a class like `rtl:flip`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,24 @@ export const day11 = {
   "day": 11,
   "title": "Utility Types: The Basics",
   "intro": "TypeScript ships with powerful utilities to transform types. Learn Partial, Pick, Omit, and Record to avoid repetition.",
+  "aiSession": {
+    "enabled": true,
+    "steps": [
+      {
+        "type": "talk",
+        "message": "Day 11. Utility Types. Never duplicate an interface just to make some fields optional. Use `Partial`."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This update function demands a complete `User` object, but we only want to update the name. Fix it.",
+        "buggyCode": "// ❌ Requires full object\ninterface User { id: number; name: string; email: string; }\n\nfunction update(id: number, fields: User) { ... }\n\nupdate(1, { name: \"New Name\" }); // Error: missing 'email', 'id'",
+        "solutionCode": "// ✅ Allows subset\nfunction update(id: number, fields: Partial<User>) { ... }",
+        "verifyOutput": "Partial<User>",
+        "successMessage": "Correct! `Partial<T>` creates a new type where every property of T is optional.",
+        "hint": "Wrap `User` in `Partial<...>`."
+      }
+    ]
+  },
   "content": "\n<h3 class=\"text-xl font-bold text-gray-900 dark:text-white mb-4\">1) Partial & Required</h3>\n<p class=\"mb-6 text-gray-600 dark:text-light-300\">\n    <code>Partial&lt;T&gt;</code> makes all properties optional. <code>Required&lt;T&gt;</code> makes them all required.\n</p>\n",
   "code": "// Day 11: Utility Types\n\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// 1. Partial (Good for updates)\nfunction updateUser(id: number, fields: Partial<User>) {\n  // fields.name is string | undefined\n}\n\n// 2. Pick (Select subset)\ntype UserPreview = Pick<User, \"id\" | \"name\">;\n\n// 3. Omit (Remove subset)\ntype UserInput = Omit<User, \"id\">;\n\n// 4. Record (Map type)\ntype Roles = \"admin\" | \"user\" | \"guest\";\nconst permissions: Record<Roles, number> = {\n  admin: 100,\n  user: 10,\n  guest: 1\n};",
   "labSteps": [

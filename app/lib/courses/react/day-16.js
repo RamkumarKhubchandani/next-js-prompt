@@ -2,6 +2,43 @@ export const day16 = {
   day: 16,
   title: "React 19: Actions & Optimistic UI",
   intro: "React 19 brings the biggest changes in years. Built-in Actions, useOptimistic, and useActionState simplify forms and mutations.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 16. React 19 Actions replace manual form handling. No more `e.preventDefault()`!"
+      },
+      {
+        type: "challenge",
+        instruction: "This form uses old school manual submission. Upgrade it to use React 19's `useActionState`.",
+        buggyCode: `// ❌ The Old Way
+function Form() {
+  const [isPending, setIsPending] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsPending(true);
+    await saveData();
+    setIsPending(false);
+  };
+  return <form onSubmit={handleSubmit}><button disabled={isPending}>Save</button></form>;
+}`,
+        solutionCode: `// ✅ React 19 Actions
+function Form() {
+  const [state, action, isPending] = useActionState(saveData, null);
+  
+  return (
+    <form action={action}>
+      <button disabled={isPending}>Save</button>
+    </form>
+  );
+}`,
+        verifyOutput: "useActionState",
+        successMessage: "Welcome to the future! `useActionState` automatically handles the pending state and response, handling errors gracefully.",
+        hint: "Use `const [state, action, isPending] = useActionState(...)`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

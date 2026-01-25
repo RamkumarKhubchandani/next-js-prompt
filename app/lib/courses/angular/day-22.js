@@ -1,46 +1,94 @@
 export const day22 = {
   day: 22,
-  title: "PWA (Offline, Caching, Updates)",
-  intro: "PWAs require careful caching strategy. Learn service workers, offline mode, and safe update flows.",
+  title: "Lazy Loading & Code Splitting",
+  intro: "Don't send the Admin Dashboard code to a user who just landed on the Home Page. Use <strong>Lazy Loading</strong> to split your app into small chunks.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 22. The fastest code is the code you never load. **Lazy Loading** splits your bundle so users only download what they see."
+      },
+      {
+        type: "talk",
+        message: "In modern Angular, we use `loadComponent` or `loadChildren` in the router config to define lazy boundaries."
+      },
+      {
+        type: "challenge",
+        instruction: "This route configuration eagerly loads the Admin Component. Refactor it to lazy load.",
+        buggyCode: `// ❌ Eagerly imported
+import { AdminComponent } from './admin.component';
+
+export const routes = [
+  { path: 'admin', component: AdminComponent }
+];`,
+        solutionCode: `// ✅ Lazy loaded
+export const routes = [
+  { 
+    path: 'admin', 
+    loadComponent: () => import('./admin.component').then(m => m.AdminComponent) 
+  }
+];`,
+        verifyOutput: "loadComponent",
+        successMessage: "Great! Now the `AdminComponent` code won't be downloaded until the user visits `/admin`.",
+        hint: "Use `loadComponent: () => import(...)`."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">PWA Reality</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Caching is power and risk. If you cache the wrong assets you can ship broken apps until caches expire.
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">📦 Code Splitting</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+By default, all your code is in one big file (<code>main.js</code>). This is bad.
+Lazy loading creates separate "chunks" (<code>chunk-1.js</code>, <code>chunk-2.js</code>) that are only downloaded when needed.
 </p>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) What Should Be Cached</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">App shell</span>: JS/CSS assets with hashed filenames.</li>
-  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">Static content</span>: icons, fonts (careful with cache headers).</li>
-  <li><span class="text-yellow-600 dark:text-yellow-400 font-bold">API responses</span>: only if you have a correctness strategy.</li>
-</ul>
+<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mb-8 font-mono text-sm border-l-4 border-blue-500">
+<pre class="text-gray-800 dark:text-gray-100">
+// 1. Lazy Component (Single File)
+{
+  path: 'admin',
+  loadComponent: () => import('./admin/admin.component')
+    .then(m => m.AdminComponent)
+}
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Update Strategy (The Hard Part)</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Users can stay on old versions. You need an update UX: detect new version, prompt reload, and avoid “half-updated” apps.
+// 2. Lazy Feature (Multiple Routes)
+{
+  path: 'dashboard',
+  loadChildren: () => import('./dashboard/routes')
+    .then(m => m.DASHBOARD_ROUTES)
+}
+</pre>
+</div>
+
+<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">⚡ Preloading</h3>
+<p class="mb-4 text-gray-600 dark:text-gray-300">
+Lazy loading makes the *initial* load fast, but the *navigation* slow (network delay).
+<strong>Preloading</strong> fixes this by downloading the lazy chunks in the background while the user is reading the current page.
 </p>
-            `,
-  code: `// PWA checklist:
-// - cache immutable assets
-// - handle update prompts
-// - test offline flows explicitly`,
+`,
+  code: `// Preloading configuration
+import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
+
+export const appConfig = {
+  providers: [
+    provideRouter(routes, withPreloading(PreloadAllModules))
+  ]
+};`,
   comparison: {
-    junior: "// ❌ enable SW and forget",
-    senior: "// ✅ caching strategy + update UX"
+    junior: `// ❌ Everything eager loaded
+import { AdminComponent } from './admin';
+{ path: 'admin', component: AdminComponent }`,
+    senior: `// ✅ Lazy loaded
+{ 
+  path: 'admin',
+  loadComponent: () => import('./admin').then(m => m.AdminComponent)
+}`
   },
   interview: {
     questions: [
       {
-        q: "What’s the hardest part of PWAs?",
-        a: "Update strategy and cache invalidation. Users can stay on old versions if you don’t manage updates."
-      },
-      {
-        q: "When is PWA a bad idea?",
-        a: "When data must always be real-time and offline caching would cause incorrect behavior, or when you can’t support update complexity."
-      },
-      {
-        q: "What is a service worker?",
-        a: "A background script that can intercept requests, cache assets, and enable offline behavior."
+        q: "What's the benefit of lazy loading?",
+        a: "Smaller initial bundle, faster first paint, better performance. Users only download what they need."
       }
     ]
   }

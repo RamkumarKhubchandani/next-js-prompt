@@ -2,6 +2,46 @@ export const day01 = {
   day: 1,
   title: "The TypeScript Mental Model & Compiler",
   intro: "TypeScript is not just 'Java for JavaScript'. It's a powerful static analysis tool that erases itself at runtime. Today we build the correct mental model: Structural Typing and Erasure.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 1. TypeScript doesn't care about the *name* of your type. It only cares about the *shape*. This is called Structural Typing."
+      },
+      {
+        type: "challenge",
+        instruction: "Logic says I can't pass a 'Cat' to a function expecting a 'Dog'. But TypeScript allows it if they share the same properties. Prove it.",
+        buggyCode: `// ❌ Logic says this should fail, but it passes
+interface Dog { breed: string; }
+interface Cat { breed: string; }
+
+function checkDog(d: Dog) {}
+const myCat: Cat = { breed: "Persian" };
+
+// Why does this work?
+checkDog(myCat);`,
+        solutionCode: `// ✅ To enforce nominal typing, we need "Branding"
+interface Dog { 
+  _brand: "dog";
+  breed: string; 
+}
+interface Cat { 
+  _brand: "cat";
+  breed: string; 
+}
+
+function checkDog(d: Dog) {}
+const myCat = { _brand: "cat", breed: "Persian" } as Cat;
+
+// Now it fails as expected!
+// checkDog(myCat);`,
+        verifyOutput: "_brand",
+        successMessage: "Correct! To get 'Nominal' typing (where names matter) in TS, we use 'Branding' (adding a unique property).",
+        hint: "Add a unique `_brand` property to each interface to make them structurally different."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) The "Erasure" Mental Model</h3>
 <p class="mb-6 text-gray-600 dark:text-light-300">

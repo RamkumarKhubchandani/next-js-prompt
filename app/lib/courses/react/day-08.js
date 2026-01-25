@@ -2,6 +2,39 @@ export const day08 = {
   day: 8,
   title: "Context API",
   intro: "Avoid Prop Drilling. Share global data like User Auth or Theme.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 08. Passing props down 10 levels is called 'Prop Drilling'. Context teleports data."
+      },
+      {
+        type: "challenge",
+        instruction: "This component is trying to use Context data but isn't wrapped in a Provider. What happens?",
+        buggyCode: `// ❌ Missing Provider
+const UserContext = createContext();
+function App() {
+  return <UserProfile />; 
+}
+function UserProfile() {
+  const user = useContext(UserContext); // Returns undefined!
+  return <div>{user.name}</div>; // Crash!
+}`,
+        solutionCode: `// ✅ Wrapped in Provider
+function App() {
+  return (
+    <UserContext.Provider value={{ name: 'Alice' }}>
+      <UserProfile />
+    </UserContext.Provider>
+  );
+}`,
+        verifyOutput: ".Provider",
+        successMessage: "Correct! `useContext` looks UP the tree for the nearest Provider. If it finds none, it returns the default value (or undefined).",
+        hint: "Wrap the component tree in `<UserContext.Provider value={...}>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -3,6 +3,24 @@ export const day11 = {
   title: "Day 11: Capstone (Part 1) — Build a Semantic Landing Page Skeleton",
   intro:
     "Today you’ll assemble everything into a real page: header/nav, hero, sections, cards, pricing, FAQ, and footer—using semantic structure that makes styling easy.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 11. Capstone Part 1. Structure first. If you write CSS before your HTML structure is solid, you are wasting time."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This FAQ section uses `div`s. Convert it to the native `details` and `summary` elements for free accordion behavior.",
+        "buggyCode": "<!-- ❌ Custom JS needed -->\n<div>\n  <button>Question?</button>\n  <div>Answer</div>\n</div>",
+        "solutionCode": "<!-- ✅ Native behavior -->\n<details>\n  <summary>Question?</summary>\n  <p>Answer</p>\n</details>",
+        "verifyOutput": "<details>",
+        "successMessage": "Native wins again. No JavaScript needed for open/close state, and it's fully accessible.",
+        "hint": "Use `<details>` wrapper and `<summary>` for the question."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">The goal</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,41 @@ export const day18 = {
   day: 18,
   title: "React 19: Metadata & Asset Loading",
   intro: "No more `react-helmet`. React 19 handles `<title>`, `<meta>`, and asset preloading natively.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 18. React 19 now understands metadata tags. You can render `<title>` anywhere!"
+      },
+      {
+        type: "challenge",
+        instruction: "This code uses a 3rd party library for SEO. Convert it to native React 19 metadata.",
+        buggyCode: `// ❌ Extra dependency
+import { Helmet } from 'react-helmet';
+
+function Page() {
+  return (
+    <Helmet>
+      <title>My Cool Page</title>
+    </Helmet>
+  );
+}`,
+        solutionCode: `// ✅ Native Support
+function Page() {
+  return (
+    <>
+      <title>My Cool Page</title>
+      <meta name="description" content="My page description" />
+    </>
+  );
+}`,
+        verifyOutput: "<title>",
+        successMessage: "Correct! React 19 automatically hoists `<title>`, `<meta>`, and `<link>` tags to the `<head>`.",
+        hint: "Just write `<title>...</title>` directly in your component."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

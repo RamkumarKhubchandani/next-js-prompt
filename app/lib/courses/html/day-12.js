@@ -3,6 +3,24 @@ export const day12 = {
   title: "Day 12: Capstone (Part 2) — Polish (Performance, Print, and Export-Ready HTML)",
   intro:
     "Today you’ll make the capstone production-ready: performance-safe media decisions, print/export support, and structure that survives copy/paste and rendering changes.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 12. Polish. Your page should look good when printed or saved. And it shouldn't crush the CPU."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This huge hero image is lazy-loaded, which is bad for LCP (Largest Contentful Paint). Make it eager.",
+        "buggyCode": "<!-- ❌ Slow LCP -->\n<img src=\"hero.jpg\" loading=\"lazy\" />",
+        "solutionCode": "<!-- ✅ Fast LCP -->\n<img src=\"hero.jpg\" loading=\"eager\" decoding=\"async\" />",
+        "verifyOutput": "loading=\"eager\"",
+        "successMessage": "Correct. Above-the-fold images should be eager. Below-the-fold images should be lazy.",
+        "hint": "Change `loading` to `eager`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Why this matters</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

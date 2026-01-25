@@ -3,6 +3,24 @@ export const day02 = {
   title: "Day 2: Links, Buttons, and Navigation That Works (Keyboard + Screen Reader)",
   intro:
     "Today you’ll stop guessing semantics: when it’s a link vs a button, how to build nav that’s tabbable, and how to avoid the classic accessibility traps.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 2. Interactivity. The golden rule: Links go somewhere. Buttons do something."
+      },
+      {
+        type: "challenge",
+        "instruction": "This 'button' is actually a link styled to look like one. Change it to a semantic `<button>` tag.",
+        "buggyCode": "<!-- ❌ Div disguised as button -->\n<div class=\"btn\" onclick=\"submit()\">Save</div>",
+        "solutionCode": "<!-- ✅ Real button -->\n<button class=\"btn\" type=\"button\" onclick=\"submit()\">Save</button>",
+        "verifyOutput": "<button",
+        "successMessage": "Crucial. `div`s are not keyboard accessible by default. Real `<button>`s get focus and enter/space support for free.",
+        "hint": "Change `div` to `button`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

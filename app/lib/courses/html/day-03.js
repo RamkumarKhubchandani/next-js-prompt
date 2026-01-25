@@ -3,6 +3,24 @@ export const day03 = {
   title: "Day 3: Forms That People Can Actually Use (Labels, Groups, Errors)",
   intro:
     "Forms are where products win or lose. Today you’ll build accessible forms with correct labels, grouping, error messaging, and keyboard-first UX.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 3. Forms. A form input without a label is like a door without a handle—blind users can't use it."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This input has no accessible name. Connect the label to the input using `for` and `id`.",
+        "buggyCode": "<!-- ❌ Unlinked label -->\n<label>Email</label>\n<input type=\"email\" />",
+        "solutionCode": "<!-- ✅ Linked label -->\n<label for=\"email\">Email</label>\n<input id=\"email\" type=\"email\" />",
+        "verifyOutput": "for=\"email\"",
+        "successMessage": "Perfect. Now clicking the label focuses the input, and screen readers announce 'Email edit text'.",
+        "hint": "Add `id='email'` to the input and `for='email'` to the label."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

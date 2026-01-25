@@ -3,6 +3,24 @@ export const day09 = {
   title: "Day 9: Component Thinking in HTML (BEM, Reusable Card/List Patterns)",
   intro:
     "Today you’ll learn the HTML side of component systems: predictable structure, BEM naming, and patterns you can reuse without rewriting CSS for every screen.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 9. Components. BEM (Block Element Modifier) helps you avoid CSS conflicts. Name based on *meaning*, not style."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This class name describes layout (bad). Rename it to describe the component part (BEM).",
+        "buggyCode": "<!-- ❌ Visual naming -->\n<div class=\"card-top-left-text\">Title</div>",
+        "solutionCode": "<!-- ✅ Semantic naming -->\n<div class=\"card__title\">Title</div>",
+        "verifyOutput": "card__title",
+        "successMessage": "Clean. `card__title` tells us what it is. `card-top-left-text` breaks if we move it to the right.",
+        "hint": "Change class to `card__title`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,30 @@ export const day17 = {
   day: 17,
   title: "React 19: Ref Improvements & Cleanup",
   intro: "The end of `forwardRef`. React 19 simplifies refs significantly and adds cleanup functions to ref callbacks.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 17. Good riddance, `forwardRef`. In React 19, `ref` is just a prop."
+      },
+      {
+        type: "challenge",
+        instruction: "Update this component to use the new React 19 ref pattern. Remove `forwardRef`.",
+        buggyCode: `// ❌ The old, complicated way
+const Input = forwardRef((props, ref) => {
+  return <input ref={ref} {...props} />;
+});`,
+        solutionCode: `// ✅ The React 19 way
+function Input({ ref, ...props }) {
+  return <input ref={ref} {...props} />;
+}`,
+        verifyOutput: "function Input({ ref",
+        successMessage: "Much cleaner! In React 19, `ref` works like any other prop.",
+        hint: "Just destructure `ref` from props: `function Input({ ref, ...props })`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -11,13 +11,12 @@ import { useSession, signOut } from "next-auth/react";
 import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 
 const navigation = [
+    { name: "Events", href: "/events", isNew: true },
+    { name: "Find Mentor", href: "/mentorship", isNew: true },
     { name: "Features", href: "/#features" },
     { name: "How It Works", href: "/#how-it-works" },
-    { name: "Pricing", href: "/#pricing" },
     { name: "Testimonials", href: "/#testimonials" },
     { name: "Community", href: "/showcase" },
-    { name: "Shop", href: "/shop", authOnly: true },
-    { name: "DevRooms", href: "/pair", authOnly: true },
     { name: "Jobs", href: "/jobs" },
     { name: "Goals", href: "/#career-goals" },
     { name: "AI Assessment", href: "/ai-quiz" },
@@ -165,9 +164,14 @@ export function Header({ showNav = true }) {
                                                 if (String(item.href).startsWith("/#")) return;
                                                 startNavigate(item.href);
                                             }}
-                                            className="text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap"
+                                            className="relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2"
                                         >
                                             {item.name}
+                                            {item.isNew && (
+                                                <span className="inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
+                                                    New
+                                                </span>
+                                            )}
                                         </Link>
                                     </motion.div>
                                 );
@@ -361,6 +365,11 @@ export function Header({ showNav = true }) {
                                                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
                                                 >
                                                     {item.name}
+                                                    {item.isNew && (
+                                                        <span className="ml-2 inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
+                                                            New
+                                                        </span>
+                                                    )}
                                                 </Link>
                                             );
                                         })}

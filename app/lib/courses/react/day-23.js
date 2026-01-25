@@ -2,6 +2,43 @@ export const day23 = {
   day: 23,
   title: "Machine Coding: Build Autocomplete from Scratch",
   intro: "The #1 frontend interview problem. Build a production-grade typeahead with debouncing, keyboard navigation, and caching.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 23. You have 45 minutes to build an Autocomplete. If you fetch on every keystroke, you fail."
+      },
+      {
+        type: "challenge",
+        instruction: "This search function fires on every keystroke. Optimise it with a 'debounce' strategy.",
+        buggyCode: `// ❌ API Spam
+function Search({ onSearch }) {
+  const handleChange = (e) => {
+    fetch('/api?q=' + e.target.value);
+  };
+  return <input onChange={handleChange} />;
+}`,
+        solutionCode: `// ✅ Debounced
+function Search({ onSearch }) {
+  const handleChange = (e) => {
+    const value = e.target.value;
+    // Clear previous timer
+    if (timer) clearTimeout(timer);
+    
+    // Set new timer
+    timer = setTimeout(() => {
+      fetch('/api?q=' + value);
+    }, 300);
+  };
+  return <input onChange={handleChange} />;
+}`,
+        verifyOutput: "setTimeout",
+        successMessage: "Correct! Debouncing waits for the user to pause typing before making a request, saving API quota and reducing lag.",
+        hint: "Use `setTimeout` to delay the fetch, and `clearTimeout` to cancel previous ones."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Build</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -2,6 +2,38 @@ export const day02 = {
   day: 2,
   title: "JSX & React.createElement",
   intro: "JSX looks like HTML but it's actually JavaScript in disguise. Understanding this is key to mastering React.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 02. JSX is not HTML. It's JavaScript syntax extension. That's why `class` becomes `className`."
+      },
+      {
+        type: "challenge",
+        instruction: "Fix this JSX. It tries to return two siblings without a parent wrapper.",
+        buggyCode: `// ❌ Parse Error: Adjacent JSX elements must be wrapped
+function App() {
+  return (
+    <h1>Hello</h1>
+    <p>World</p>
+  );
+}`,
+        solutionCode: `// ✅ Fragment Wrapper
+function App() {
+  return (
+    <>
+      <h1>Hello</h1>
+      <p>World</p>
+    </>
+  );
+}`,
+        verifyOutput: "<>",
+        successMessage: "Correct! Fragments `<>...</>` allow you to group elements without adding an extra `div` to the DOM.",
+        hint: "Wrap the elements in `<> ... </>` or `<div> ... </div>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -212,6 +212,24 @@ export const day05 = {
   title: "Day 5: Lists + Tables (Data UI With Correct Semantics)",
   intro:
     "You’ll build data UI the right way: lists for collections, tables for relationships—plus captions, scopes, and accessible patterns.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 5. Tables. Tables are not for layout. They are for *data*. And data needs headers."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This table is inaccessible because it uses `td` for headers. Change the header cells to `th` and add `scope`.",
+        "buggyCode": "<!-- ❌ No semantics -->\n<tr><td>Name</td><td>Age</td></tr>",
+        "solutionCode": "<!-- ✅ Scoped headers -->\n<tr><th scope=\"col\">Name</th><th scope=\"col\">Age</th></tr>",
+        "verifyOutput": "scope=\"col\"",
+        "successMessage": "Correct. `th` with `scope` tells screen readers exactly how to read the data cell by cell.",
+        "hint": "Change `<td>` to `<th scope='col'>`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

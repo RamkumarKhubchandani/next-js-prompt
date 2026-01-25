@@ -2,6 +2,34 @@ export const day27 = {
   day: 27,
   title: "React Testing: RTL & Vitest Mastery",
   intro: "Write tests that give confidence without testing implementation details. React Testing Library philosophy.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 27. Test potential user behavior, not your code structure. If a user can find it, your test should too."
+      },
+      {
+        type: "challenge",
+        instruction: "This test relies on an implementation detail (`data-testid`). Rewrite it to use an accessible role query.",
+        buggyCode: `// ❌ Implementation Detail
+test('renders submit button', () => {
+  render(<Form />);
+  const btn = screen.getByTestId('submit-btn');
+  expect(btn).toBeInTheDocument();
+});`,
+        solutionCode: `// ✅ Accessible Query
+test('renders submit button', () => {
+  render(<Form />);
+  const btn = screen.getByRole('button', { name: /submit/i });
+  expect(btn).toBeInTheDocument();
+});`,
+        verifyOutput: "getByRole",
+        successMessage: "Great! `getByRole` ensures your app is accessible. If a screen reader can't find it, neither should your test.",
+        hint: "Use `screen.getByRole('button', { name: ... })`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

@@ -1,97 +1,214 @@
 export const day15 = {
   day: 15,
-  title: "Security (Sanitization, Trusted Types, CSP, Safe DOM)",
-  intro: "Security is not optional. Learn Angular’s sanitization model and how to avoid XSS and unsafe DOM patterns.",
+  title: "Modern Reactive Forms: Typed & Signal-Driven",
+  intro: "Untyped forms are a source of constant bugs. Today, we switch to <strong>Strictly Typed Forms</strong> and learn to sync them with <strong>Signals</strong> for reactive perfection.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 15. In modern Angular, forms are strictly typed. No more `form.value.someProp` returning `any`."
+      },
+      {
+        type: "talk",
+        message: "We also prefer `NonNullableFormBuilder` (nnfb) because it removes `undefined` from the value type, making it safer to use."
+      },
+      {
+        type: "challenge",
+        instruction: "Refactor this untyped form to a strictly Typed Form using NonNullableFormBuilder.",
+        buggyCode: `// ❌ Untyped (Angular <14)
+const form = new FormGroup({
+  name: new FormControl(''),
+  age: new FormControl(0)
+});
+// value is any or partial`,
+        solutionCode: `// ✅ Strictly Typed
+const fb = inject(NonNullableFormBuilder);
+const form = fb.group({
+  name: [''], // Infered as FormControl<string>
+  age: [0]    // Infered as FormControl<number>
+});
+// form.getRawValue() returns {name: string, age: number}`,
+        verifyOutput: "NonNullableFormBuilder",
+        successMessage: "Type safety achieved! Now TypeScript will yell at you if you assume 'age' is a string.",
+        hint: "Inject `NonNullableFormBuilder` and use `fb.group()`."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Golden Rule</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Never trust user input. Prefer data binding. Avoid injecting raw HTML unless you fully control it.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛡️ 1. Why Typed Forms?</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Before Angular 14, accessing <code>form.value.email</code> returned <code>any</code>. If you made a typo (e.g., <code>emial</code>), Angular wouldn't care, but your app would crash at runtime.
+</p>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Now, <code>form.value.email</code> is a string. If you try to assign a number to it, TypeScript yells at you.
 </p>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">0) The "Plumbing" Mental Model (RxJS)</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Think of data in your app as water.
-</p>
-<div class="grid md:grid-cols-2 gap-6 mb-8">
-  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
-    <h4 class="font-bold text-brand-primary mb-2">Promises (The Bucket)</h4>
-    <p class="text-sm text-gray-600 dark:text-light-300">
-      A Promise is like a bucket of water. You get it <strong>once</strong>. If you want more water, you need another bucket (another request).
-    </p>
-  </div>
-  <div class="bg-white dark:bg-dark-800 p-5 rounded-xl border border-gray-200 dark:border-dark-600">
-    <h4 class="font-bold text-purple-600 dark:text-purple-400 mb-2">Observables (The Pipe)</h4>
-    <p class="text-sm text-gray-600 dark:text-light-300">
-      An Observable is a water pipe. You open the tap (subscribe), and water (data) flows continuously over time. You can attach filters (operators) to the pipe to clean the water before it reaches the glass (component).
-    </p>
-  </div>
+<div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="bg-gray-50 dark:bg-dark-900/40 p-5 rounded-xl border border-gray-200 dark:border-dark-700">
+        <h4 class="font-bold text-gray-800 dark:text-white mb-3">Nullable (Standard)</h4>
+        <pre class="text-xs font-mono text-gray-600 dark:text-gray-400">
+name: FormControl&lt;string | null&gt;
+// Value can be 'Bob' or null (if reset)
+        </pre>
+    </div>
+    <div class="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-200 dark:border-blue-900/30">
+        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-3">NonNullable (Better)</h4>
+        <pre class="text-xs font-mono text-blue-900 dark:text-blue-200">
+name: FormControl&lt;string&gt;
+// Value is ALWAYS a string. 
+// Reset() -> goes back to initial value ('')
+        </pre>
+    </div>
 </div>
 
-<div class="mb-8 p-5 rounded-xl border border-purple-500/30 bg-purple-500/5">
-  <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
-    <span class="text-xl">⚔️</span> War Story: The Memory Leak
-  </h4>
-  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
-    A bank dashboard was crashing every 4 hours. Why?
-    A developer subscribed to a data stream in <code>ngOnInit</code> but forgot to unsubscribe in <code>ngOnDestroy</code>.
-  </p>
-  <p class="text-sm text-gray-700 dark:text-light-200 mb-4">
-    Every time the user navigated away and back, a NEW subscription was created. 100 navigations = 100 open pipes leaking memory.
-  </p>
-  <p class="text-xs text-purple-800 dark:text-purple-200 font-bold">
-    Fix: Always use the <code>async</code> pipe (which handles unsubscription automatically) or the <code>takeUntilDestroyed</code> operator.
-  </p>
-</div>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You’ll Learn</h3>
-<ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">
-  <li>How Angular sanitization works (what it blocks and why).</li>
-  <li>The difference between <span class="text-yellow-600 dark:text-yellow-400 font-bold">XSS</span>, <span class="text-yellow-600 dark:text-yellow-400 font-bold">CSRF</span>, and <span class="text-yellow-600 dark:text-yellow-400 font-bold">CSP</span>.</li>
-  <li>How to safely render rich content (allowlists).</li>
-  <li>Why <code class="bg-gray-100 dark:bg-dark-700 text-gray-800 dark:text-brand-primary px-1 rounded">bypassSecurityTrust*</code> is almost always wrong.</li>
-</ul>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Angular’s Default is Safe</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-Angular escapes template bindings by default. The dangerous cases usually appear when you:
-<span class="text-yellow-600 dark:text-yellow-400 font-bold">inject HTML</span>, build URLs unsafely, or add inline scripts.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">⚡ 2. Forms + Signals</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+Forms are reactive (Observables). Signals are reactive (Primitives). You can bridge them using <code>toSignal(form.valueChanges)</code>.
 </p>
+`,
+  code: `import { Component, inject, signal, computed, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, NonNullableFormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, debounceTime, startWith, switchMap, timer, of } from 'rxjs';
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) Common Unsafe Patterns</h3>
-<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 p-4 rounded-xl mb-6">
-  <ul class="list-disc list-inside space-y-2 text-red-800 dark:text-red-200 text-sm">
-    <li>Rendering user HTML via <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">[innerHTML]</code> without sanitizing/allowlisting</li>
-    <li>Using <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">bypassSecurityTrustHtml</code> on attacker-controlled content</li>
-    <li>Building URLs from untrusted input and binding into <code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">href</code>/<code class="bg-gray-100 dark:bg-dark-900 px-1 rounded">src</code></li>
-  </ul>
-</div>
+// --- ASYNC VALIDATOR (Simulated) ---
+const usernameValidator = (control: AbstractControl) => {
+    // Debounce is usually handled in the pipe, but for ValidatorFn we just simulate delay
+    if (!control.value) return of(null);
+    return timer(1000).pipe(
+        map(() => ['admin', 'root', 'user'].includes(control.value.toLowerCase()) 
+            ? { taken: true } 
+            : null
+        )
+    );
+};
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">3) CSP (Defense in Depth)</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Content Security Policy reduces XSS impact by blocking inline scripts and restricting allowed sources.
-Even with Angular, CSP is a strong extra safety belt.
-</p>
-            `,
-  code: `// If you must render HTML:
-// use Angular sanitization; never bypass unless you understand the risk.
-// DomSanitizer.bypassSecurityTrustHtml(...) is a last resort.`,
+@Component({
+  selector: 'app-typed-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: \`
+    <div class="max-w-xl mx-auto bg-gray-950 p-6 rounded-2xl border border-gray-800 shadow-2xl min-h-[500px]" style="background-color: #030712; color: white">
+        <h2 class="text-2xl font-bold text-white mb-6">🛡️ Strictly Typed Signal Form</h2>
+
+        <form [formGroup]="form" class="space-y-6">
+            
+            <!-- Username Input -->
+            <div class="space-y-2">
+                <label class="text-sm text-gray-400 font-bold uppercase">Username</label>
+                <div class="relative">
+                    <input formControlName="username" 
+                           class="w-full bg-gray-900 border text-white rounded-lg px-4 py-3 outline-none transition-all"
+                           [class.border-red-500]="username?.invalid && username?.touched"
+                           [class.border-green-500]="username?.valid && username?.touched"
+                           [class.border-gray-700]="username?.untouched"
+                           placeholder="Type 'admin' to fail..." />
+                    
+                    @if (username?.pending) {
+                        <div class="absolute right-3 top-3 text-xs text-blue-400 font-mono animate-pulse">Checking...</div>
+                    }
+                </div>
+                <!-- Errors -->
+                @if (username?.hasError('required') && username?.touched) {
+                    <p class="text-xs text-red-500">Username is required.</p>
+                }
+                @if (username?.hasError('taken')) {
+                    <p class="text-xs text-red-500">❌ Username is already taken.</p>
+                }
+                @if (username?.valid && username?.touched) {
+                     <p class="text-xs text-green-500">✓ Available</p>
+                }
+            </div>
+
+            <!-- Email Input -->
+             <div class="space-y-2">
+                <label class="text-sm text-gray-400 font-bold uppercase">Email</label>
+                <input formControlName="email" 
+                       class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:border-blue-500 outline-none transition-all"
+                       placeholder="john@example.com" />
+            </div>
+
+             <!-- Bio Input -->
+             <div class="space-y-2">
+                <label class="text-sm text-gray-400 font-bold uppercase">Bio</label>
+                <textarea formControlName="bio" rows="3"
+                       class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-3 focus:border-blue-500 outline-none transition-all"
+                       placeholder="Tell us about yourself..."></textarea>
+            </div>
+            
+            <!-- Read-only Signal Sync Demo -->
+            <div class="mt-8 p-4 bg-gray-900 rounded-xl border border-dashed border-gray-700">
+                <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-4">Live Signal store Sync</h3>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm font-mono">
+                    <div class="p-2 bg-black/30 rounded">
+                        <span class="block text-gray-500 text-[10px]">RAW VALUE (Signal)</span>
+                        <span class="text-green-400 break-all">{{ signalValue() | json }}</span>
+                    </div>
+                     <div class="p-2 bg-black/30 rounded">
+                        <span class="block text-gray-500 text-[10px]">FORM STATUS</span>
+                         <span [class.text-green-400]="form.valid" [class.text-red-400]="form.invalid">
+                             {{ form.status }}
+                         </span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-2 bg-blue-900/10 border border-blue-500/20 rounded text-center">
+                    <p class="text-xs text-blue-400">
+                        Is Valid & Complete: <strong class="text-white">{{ isValidAndComplete() ? 'YES' : 'NO' }}</strong>
+                    </p>
+                </div>
+            </div>
+            
+             <button [disabled]="form.invalid || form.pending" type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-900/20">
+                Submit Account
+            </button>
+        </form>
+    </div>
+  \`
+})
+export class TypedFormLab {
+    fb = inject(NonNullableFormBuilder);
+
+    form = this.fb.group({
+        username: ['', [Validators.required, Validators.minLength(3)], [usernameValidator]],
+        email: ['', [Validators.required, Validators.email]],
+        bio: ['']
+    });
+
+    // ⚡ SYNC: Convert form stream to Signal
+    // We use toSignal with 'initialValue' to avoid undefined issues
+    signalValue = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
+
+    // ⚡ COMPUTED: Derive state from formula
+    isValidAndComplete = computed(() => {
+        const val = this.signalValue();
+        // Reactive check on values + internal state check manually if needed (signals don't track validity state automatically yet without custom wrappers)
+        return this.form.valid && !!val.bio;
+    });
+
+    get username() { return this.form.get('username'); }
+}`,
   comparison: {
-    junior: "// ❌ bypassSecurityTrustHtml everywhere",
-    senior: "// ✅ sanitize + allowlist"
+    junior: `// ❌ Manual "any" casting
+const val = form.value as any; 
+console.log(val.usernam); // Typo! No error. Runtime crash.`,
+    senior: `// ✅ Strict Types
+const val = form.getRawValue();
+console.log(val.username); // Autocomplete works!
+// console.log(val.usernam); // Compile Error!`
   },
   interview: {
     questions: [
       {
-        q: "What is XSS and how does Angular help?",
-        a: "XSS is injecting malicious scripts into pages. Angular sanitizes dangerous bindings and escapes values by default in templates."
+        q: "Why use 'NonNullableFormBuilder'?",
+        a: "It creates controls where the value is non-nullable (e.g. `string` instead of `string | null`). Also, `reset()` resets to the initial value instead of `null`."
       },
       {
-        q: "Why is bypassSecurityTrustHtml dangerous?",
-        a: "It disables sanitization. If content is attacker-controlled, it can execute scripts and compromise users."
-      },
-      {
-        q: "What is CSP?",
-        a: "Content Security Policy limits what scripts/resources can load, reducing XSS impact. It’s a strong defense-in-depth layer."
+        q: "What is 'toSignal'?",
+        a: "An interop function that converts an Observable (like `valueChanges`) into a Signal, allowing you to use reactive form data in `computed()` signals."
       }
     ]
   }

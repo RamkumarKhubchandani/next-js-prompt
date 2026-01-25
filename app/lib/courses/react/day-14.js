@@ -2,6 +2,26 @@ export const day14 = {
   day: 14,
   title: "Performance: Virtualization & Profiler",
   intro: "Render 100,000 items at 60fps.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 14. Rendering 10k DOM nodes will kill your browser. Virtualization pretends to render them."
+      },
+      {
+        type: "challenge",
+        instruction: "Which library is the industry standard for virtualization in React?",
+        buggyCode: `// ❌ Too heavy
+import { List } from 'react-virtualized';`,
+        solutionCode: `// ✅ Lightweight & Modern
+import { FixedSizeList } from 'react-window';`,
+        verifyOutput: "react-window",
+        successMessage: "Correct! `react-window` is the lighter, modern successor to `react-virtualized`.",
+        hint: "It starts with `react-w...`"
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

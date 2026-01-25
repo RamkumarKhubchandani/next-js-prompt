@@ -2,6 +2,24 @@ export const day04 = {
   "day": 4,
   "title": "Selecting State: Performance",
   "intro": "The secret to Zustand's speed is Selectors. Learn how to subscribe to only the data you need to prevent unnecessary re-renders.",
+  "aiSession": {
+    "enabled": true,
+    "steps": [
+      {
+        "type": "talk",
+        "message": "Day 4. Selectors. Don't be lazy. Use atomic selectors to prevent your component from rendering when unrelated state changes."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This component renders every time *anything* in the store changes. Optimise it to only render when `bears` changes.",
+        "buggyCode": "// ❌ Rerenders constantly\nconst { bears } = useStore();",
+        "solutionCode": "// ✅ Atomic Selector\nconst bears = useStore((state) => state.bears);",
+        "verifyOutput": "state.bears",
+        "successMessage": "Performance unlocked! By selecting only `bears`, this component ignores updates to `fish`, `user`, etc.",
+        "hint": "Pass a selector function: `useStore(state => state.bears)`."
+      }
+    ]
+  },
   "content": "\n<h3 class=\"text-xl font-bold text-gray-900 dark:text-white mb-4\">1) Auto-Selectors</h3>\n<p class=\"mb-6 text-gray-600 dark:text-light-300\">\n    By default, Zustand detects strict equality (===). If you return a new object, it will re-render.\n</p>\n",
   "code": "// Day 4: Selectors\n\n// 1. Good: Primitive (Re-renders only if 'bears' changes)\nconst bears = useStore((state) => state.bears);\n\n// 2. Bad: New Object (Re-renders EVERY time)\nconst { bears, fish } = useStore((state) => ({ \n  bears: state.bears, \n  fish: state.fish \n})); \n\n// 3. Fix for #2: shallow comparison\nimport { useShallow } from 'zustand/react/shallow';\nconst { bears, fish } = useStore(\n  useShallow((state) => ({ bears: state.bears, fish: state.fish }))\n);",
   "labSteps": [

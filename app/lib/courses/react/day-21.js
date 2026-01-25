@@ -2,6 +2,30 @@ export const day21 = {
   day: 21,
   title: "The React Compiler (React Forget)",
   intro: "The end of manual memoization. Learn how the new compiler automatically optimizes your code so you can delete useMemo and useCallback.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 21. The React Compiler handles memoization for you. `useMemo` and `useCallback` are mostly obsolete."
+      },
+      {
+        type: "challenge",
+        instruction: "This code uses manual optimization. Simplify it for the React Compiler.",
+        buggyCode: `// ❌ Manual Optimization
+const fn = useCallback(() => {
+  console.log(count);
+}, [count]);`,
+        solutionCode: `// ✅ Compiler Ready
+const fn = () => {
+  console.log(count);
+};`,
+        verifyOutput: "const fn = () =>",
+        successMessage: "So fresh and clean! The compiler detects dependencies automatically, so you don't need to list them manually.",
+        hint: "Just write a normal function without `useCallback`."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">🎯 What You'll Learn</h3>
 <ul class="list-disc list-inside space-y-2 text-gray-600 dark:text-light-300 mb-6">

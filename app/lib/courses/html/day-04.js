@@ -255,6 +255,24 @@ export const day04 = {
   title: "Day 4: Images + Media That Don’t Break (Alt Text, Responsive, Video)",
   intro:
     "You’ll ship media like a pro: meaningful alt text, responsive images, safe aspect ratios, and accessible video/audio patterns—without layout jumps.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        "type": "talk",
+        "message": "Day 4. Media. Images convey meaning. If you don't describe that meaning in `alt` text, you are hiding content."
+      },
+      {
+        "type": "challenge",
+        "instruction": "This image is informative (a chart) but has generic alt text. Fix it to describe the content.",
+        "buggyCode": "<!-- ❌ Useless alt -->\n<img src=\"chart.png\" alt=\"image\" />",
+        "solutionCode": "<!-- ✅ Descriptive -->\n<img src=\"chart.png\" alt=\"Sales chart showing 20% growth in Q4\" />",
+        "verifyOutput": "Sales chart",
+        "successMessage": "Much better. Use empty alt (`alt=''`) for decoration, but descriptive text for data/content.",
+        "hint": "Change `alt='image'` to something descriptive."
+      }
+    ]
+  },
   content: `
 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Problem framing</h3>
 <p class="text-gray-600 dark:text-light-300 mb-6">

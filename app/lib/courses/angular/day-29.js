@@ -1,28 +1,66 @@
 export const day29 = {
   day: 29,
   title: "Architecture Patterns (Core/Shared/Feature + Clean Boundaries)",
-  intro: "Angular at scale requires boundaries. Learn folder structure patterns that keep teams productive.",
+  intro: "Spaghetti code happens when you don't have boundaries. Today, we learn the <strong>Nx-style</strong> architecture (Core, Shared, Features) applicable to any Angular workspace.",
+  aiSession: {
+    enabled: true,
+    steps: [
+      {
+        type: "talk",
+        message: "Day 29. Angular scales infinitely, but only if you respect **Boundaries**. Feature slices are the key."
+      },
+      {
+        type: "talk",
+        message: "The Golden Rule: Features can import Shared. Shared explicitly CANNOT import Features. If you break this, you get circular dependency hell."
+      },
+      {
+        type: "challenge",
+        instruction: "This import violates the dependency rule. Fix it by moving the reusable code.",
+        buggyCode: `// ❌ In 'libs/shared/ui-button.ts'
+import { AuthService } from 'libs/features/auth'; // BAD!
+
+@Component({ ... })
+export class Button {
+  auth = inject(AuthService); // Coupled!
+}`,
+        solutionCode: `// ✅ Parent passes data (Dumb Component)
+@Component({ ... })
+export class Button {
+  // Just an input! No dependency on Auth feature.
+  isLoggedIn = input(false); 
+}`,
+        verifyOutput: "input",
+        successMessage: "Correct! The Shared Button is now \"dumb\" and reusable. It relies on Inputs, not Feature Services.",
+        hint: "Remove the service injection and use an `@Input()` instead."
+      }
+    ]
+  },
   content: `
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">A Practical Pattern</h3>
-<div class="bg-gray-100 dark:bg-dark-900 p-6 rounded-xl border border-gray-200 dark:border-dark-600 font-mono text-xs md:text-sm text-cyan-700 dark:text-cyan-300 mb-6 overflow-x-auto">
-<pre>
-/core        (singleton services, auth, config)
-/shared      (reusable UI, pipes, directives)
-/features    (vertical slices: routes + components + data-access)
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🏘️ 1. The Folder Structure</h3>
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+Don't organize by type (<code>/components</code>, <code>/services</code>). Organize by <strong>Domain</strong>.
+</p>
+
+<div class="bg-gray-100 dark:bg-dark-800 p-6 rounded-xl border-l-4 border-purple-500 mb-10">
+<pre class="text-sm font-mono text-gray-800 dark:text-gray-200">
+/src/app
+  /core       <-- Singleton services (Auth, Logging), Interceptors
+  /shared     <-- Reusable UI (Buttons, Cards), Pipes
+  /features   <-- Business Logic (Dashboards, Settings, Profile)
+     /dashboard
+     /settings
 </pre>
 </div>
 
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">1) Dependency Direction (Non‑Negotiable)</h3>
-<p class="mb-4 text-gray-600 dark:text-light-300">
-If everything imports everything, refactors become impossible. Enforce a single direction:
-features → shared/core, never the reverse.
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">🛑 2. The Golden Rule</h3>
+<p class="mb-4 text-gray-600 dark:text-light-300 leading-relaxed">
+<strong>Features can import Shared.</strong><br>
+<strong>Shared can NEVER import Features.</strong>
 </p>
-
-<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">2) “Feature = Vertical Slice”</h3>
-<p class="mb-6 text-gray-600 dark:text-light-300">
-Put route + UI + state + data-access together. This keeps ownership clear and reduces cross-folder jumping.
+<p class="mb-6 text-gray-600 dark:text-light-300 leading-relaxed">
+If <code>SharedButton</code> imports <code>AuthService</code> (from a feature), you have a circular dependency. Keep Shared "dumb" and Features "smart".
 </p>
-            `,
+`,
   code: "// Rule: features should depend on shared/core; shared should not depend on features.",
   comparison: {
     junior: "// ❌ spaghetti imports",
