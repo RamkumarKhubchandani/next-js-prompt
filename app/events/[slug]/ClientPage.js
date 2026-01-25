@@ -265,7 +265,7 @@ export default function EventDetailPage({ params }) {
                                 </div>
 
                                 <div className="space-y-4">
-                                    {event.dates.length > 0 ? (
+                                    {!event.isComingSoon && event.dates.length > 0 ? (
                                         event.dates.map(date => (
                                             <button
                                                 key={date.id}
@@ -273,7 +273,7 @@ export default function EventDetailPage({ params }) {
                                                 className="w-full py-4 rounded-xl bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold hover:opacity-90 transition-all hover:scale-[1.02] shadow-lg flex justify-between items-center px-6"
                                             >
                                                 <div className="text-left">
-                                                    <div className="text-sm opacity-80 font-medium">Cohort Start</div>
+                                                    <div className="text-sm opacity-80 font-medium">Workshop Starts</div>
                                                     <div>{date.date}</div>
                                                 </div>
                                                 <ArrowRight size={20} />
