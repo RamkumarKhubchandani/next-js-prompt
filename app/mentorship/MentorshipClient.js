@@ -37,8 +37,8 @@ export default function MentorshipClient() {
         contact: { name: '', email: '', details: '' }
     });
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // ... (Keep existing data structures)
     const goals = [
         { id: 'kid', label: 'For My Child', icon: Baby, desc: 'Fun & engaging coding lessons for kids.' },
         { id: 'career', label: 'Career Pivot', icon: Briefcase, desc: 'Switching to tech? We guide you.' },
@@ -80,11 +80,44 @@ export default function MentorshipClient() {
         setStep(4);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setTimeout(() => {
-            setSubmitted(true);
-        }, 1500);
+        setIsSubmitting(true);
+
+        try {
+            const formElement = e.target;
+            const submitData = {
+                name: formElement.name.value,
+                email: formElement.email.value,
+                budget: formElement.budget.value,
+                description: formElement.description.value,
+                goal: formData.goal,
+                stack: formData.stack,
+                otherStack: formData.otherStack,
+                urgency: formData.urgency
+            };
+
+            const response = await fetch('/api/mentorship/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submitData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                setSubmitted(true);
+            } else {
+                alert('Failed to submit. Please try again.');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -182,8 +215,8 @@ export default function MentorshipClient() {
                                                                 key={tech}
                                                                 onClick={() => handleStackToggle(tech)}
                                                                 className={`py-2 px-4 rounded-full border text-sm font-medium transition-all ${formData.stack.includes(tech)
-                                                                        ? 'bg-brand-primary text-white border-brand-primary shadow-md'
-                                                                        : 'bg-white dark:bg-dark-700 border-gray-200 dark:border-dark-600 hover:border-brand-primary/50'
+                                                                    ? 'bg-brand-primary text-white border-brand-primary shadow-md'
+                                                                    : 'bg-white dark:bg-dark-700 border-gray-200 dark:border-dark-600 hover:border-brand-primary/50'
                                                                     }`}
                                                             >
                                                                 {tech}
@@ -285,11 +318,11 @@ export default function MentorshipClient() {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                                                    <input required type="text" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="Your Name" />
+                                                    <input name="name" required type="text" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="Your Name" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Budget ($)</label>
-                                                    <select className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none">
+                                                    <select name="budget" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none">
                                                         <option value="">Flexible / Not Sure</option>
                                                         <option value="free">Looking for Free/Scholarship</option>
                                                         <option value="low">Under $20/hr</option>
@@ -300,17 +333,17 @@ export default function MentorshipClient() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                                                <input required type="email" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="email@example.com" />
+                                                <input name="email" required type="email" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="email@example.com" />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Brief Description</label>
-                                                <textarea className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none h-24" placeholder="I need help with..." />
+                                                <textarea name="description" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none h-24" placeholder="I need help with..." />
                                             </div>
 
                                             <div className="pt-4 flex items-center justify-between">
-                                                <button type="button" onClick={() => setStep(3)} className="text-gray-500 font-bold">Back</button>
-                                                <button type="submit" className="px-8 py-4 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/30 w-full md:w-auto">
-                                                    Connect Me
+                                                <button type="button" onClick={() => setStep(3)} className="text-gray-500 font-bold" disabled={isSubmitting}>Back</button>
+                                                <button type="submit" disabled={isSubmitting} className="px-8 py-4 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/30 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                                                    {isSubmitting ? 'Sending...' : 'Connect Me'}
                                                 </button>
                                             </div>
                                         </form>
