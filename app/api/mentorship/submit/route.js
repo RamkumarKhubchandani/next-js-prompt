@@ -1,12 +1,33 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import connectDB from '@/app/lib/mongodb';
+import MentorshipRequest from '@/models/MentorshipRequest';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { name, email, budget, description, goal, stack, otherStack, urgency } = body;
+        const { name, email, phone, budget, description, goal, stack, otherStack, urgency } = body;
+
+        // Connect to database
+        await connectDB();
+
+        // Save to database
+        const mentorshipRequest = await MentorshipRequest.create({
+            name,
+            email,
+            phone,
+            budget,
+            description,
+            goal,
+            stack,
+            otherStack,
+            urgency,
+            status: 'pending'
+        });
+
+        console.log('✅ Saved to database:', mentorshipRequest._id);
 
         // Format the tech stack
         const techList = [...(stack || []), otherStack].filter(Boolean).join(', ');
@@ -35,6 +56,10 @@ export async function POST(request) {
                                 <td style="padding: 12px 0; color: #1f2937;"><a href="mailto:${email}" style="color: #667eea;">${email}</a></td>
                             </tr>
                             <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px 0; font-weight: bold; color: #6b7280;">WhatsApp:</td>
+                                <td style="padding: 12px 0; color: #1f2937;"><a href="https://wa.me/${phone?.replace(/\D/g, '')}" style="color: #25D366; font-weight: bold;">${phone}</a></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
                                 <td style="padding: 12px 0; font-weight: bold; color: #6b7280;">Goal:</td>
                                 <td style="padding: 12px 0; color: #1f2937;">${goal || 'Not specified'}</td>
                             </tr>
@@ -58,13 +83,13 @@ export async function POST(request) {
 
                         <div style="margin-top: 30px; padding: 20px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 5px;">
                             <p style="margin: 0; color: #92400e; font-weight: bold;">⚡ Action Required</p>
-                            <p style="margin: 5px 0 0 0; color: #92400e;">Please respond to ${email} within 60 minutes to maintain our quality promise.</p>
+                            <p style="margin: 5px 0 0 0; color: #92400e;">Please respond to ${email} or WhatsApp ${phone} within 60 minutes to maintain our quality promise.</p>
                         </div>
 
                         <div style="margin-top: 20px; padding: 15px; background-color: #e0f2fe; border-left: 4px solid #0284c7; border-radius: 5px;">
                             <p style="margin: 0; color: #075985; font-size: 13px;">
-                                <strong>Note:</strong> User confirmation emails are currently disabled on free tier. 
-                                You'll need to manually email ${email} to confirm their request.
+                                <strong>Database ID:</strong> ${mentorshipRequest._id}<br/>
+                                <strong>Submitted:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
                             </p>
                         </div>
                     </div>

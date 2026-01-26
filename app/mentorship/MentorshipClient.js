@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import {
     Code,
     Bug,
@@ -34,6 +36,7 @@ export default function MentorshipClient() {
         otherStack: '',
         urgency: '',
         budget: '',
+        phone: '',
         contact: { name: '', email: '', details: '' }
     });
     const [submitted, setSubmitted] = useState(false);
@@ -49,11 +52,14 @@ export default function MentorshipClient() {
     ];
 
     const techCategories = {
-        "Popular": ["React", "Python", "JavaScript", "Node.js", "Java"],
+        "Popular": ["React", "JavaScript", "TypeScript", "Python", "Node.js", "HTML", "CSS", "Java"],
+        "Frontend": ["Vue", "Angular", "Next.js", "Svelte", "Tailwind CSS", "Redux", "Zustand", "MobX", "Recoil", "Jotai"],
+        "Backend": ["Node.js", "Express.js", "NestJS", "Django", "Flask", "Spring Boot", "FastAPI", "GraphQL", "REST APIs"],
+        "Database": ["SQL", "NoSQL", "MongoDB", "PostgreSQL", "MySQL", "Redis", "Firebase", "Supabase"],
         "Kids": ["Scratch", "Roblox", "Minecraft Code", "Python for Kids"],
-        "Mobile": ["Flutter", "React Native", "iOS/Swift", "Android/Kotlin"],
-        "Data & AI": ["Data Science", "Machine Learning", "SQL", "Pandas"],
-        "Cloud": ["AWS", "Docker", "Kubernetes", "Azure"]
+        "Mobile": ["Flutter", "React Native", "iOS/Swift", "Android/Kotlin", "Expo"],
+        "AI & ML": ["Agentic AI", "Machine Learning", "Data Science", "ChatGPT/LLMs", "TensorFlow", "PyTorch"],
+        "Cloud": ["AWS", "Docker", "Kubernetes", "Azure", "Firebase", "Vercel", "Netlify"]
     };
 
     const urgency = [
@@ -89,6 +95,7 @@ export default function MentorshipClient() {
             const submitData = {
                 name: formElement.name.value,
                 email: formElement.email.value,
+                phone: formData.phone,
                 budget: formElement.budget.value,
                 description: formElement.description.value,
                 goal: formData.goal,
@@ -334,6 +341,18 @@ export default function MentorshipClient() {
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Email</label>
                                                 <input name="email" required type="email" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="email@example.com" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">WhatsApp Number *</label>
+                                                <PhoneInput
+                                                    international
+                                                    defaultCountry="IN"
+                                                    value={formData.phone}
+                                                    onChange={(value) => setFormData({ ...formData, phone: value })}
+                                                    className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none phone-input-custom"
+                                                    placeholder="Enter phone number"
+                                                    required
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Brief Description</label>

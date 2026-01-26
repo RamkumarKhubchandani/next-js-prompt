@@ -65,6 +65,27 @@ export default function AdminUsersPage() {
         fetchUsers();
     };
 
+    const handleEmailPhoneRequest = async (userId, userName, userEmail) => {
+        const ok = confirm(`Send email to ${userName} (${userEmail}) requesting their phone number?`);
+        if (!ok) return;
+
+        try {
+            const res = await fetch('/api/admin/request-phone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, userName, userEmail })
+            });
+
+            if (res.ok) {
+                alert('Email sent successfully!');
+            } else {
+                alert('Failed to send email');
+            }
+        } catch (error) {
+            alert('Error sending email');
+        }
+    };
+
     const filteredUsers = users.filter(u =>
         u.name.toLowerCase().includes(search.toLowerCase()) ||
         u.email.toLowerCase().includes(search.toLowerCase())
@@ -114,6 +135,7 @@ export default function AdminUsersPage() {
                             <tr className="bg-dark-900 text-light-400 text-sm uppercase tracking-wider">
                                 <th className="p-4">User</th>
                                 <th className="p-4">Status</th>
+                                <th className="p-4">Phone</th>
                                 <th className="p-4">Plan</th>
                                 <th className="p-4">Pro Ends</th>
                                 <th className="p-4">Joined</th>
@@ -141,6 +163,20 @@ export default function AdminUsersPage() {
                                             <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold border border-green-500/20">PRO</span>
                                         ) : (
                                             <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs font-bold">FREE</span>
+                                        )}
+                                    </td>
+                                    <td className="p-4">
+                                        {user.phone?.number ? (
+                                            <div className="text-sm text-light-300">
+                                                {user.phone.countryCode} {user.phone.number}
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleEmailPhoneRequest(user._id, user.name, user.email); }}
+                                                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                                            >
+                                                📧 Email Request
+                                            </button>
                                         )}
                                     </td>
                                     <td className="p-4 text-sm capitalize text-light-300">
