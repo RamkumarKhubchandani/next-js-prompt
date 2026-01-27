@@ -6,7 +6,7 @@ export const metadata = {
     description: 'Get instant 1:1 coding help from vetted experts. Find the best JavaScript tutor, Python mentor, or React coach. We connect you in 60 minutes. Global 24/7 support.',
     keywords: ['1:1 coding tutor', 'javascript mentor', 'python tutor', 'react mentorship', 'find coding teacher', 'best java tutor', 'coding help for kids'],
     alternates: {
-        canonical: 'https://example.com/mentorship',
+        canonical: 'https://nextjsprompt.com/mentorship',
     },
     openGraph: {
         title: 'Find Your Perfect Coding Mentor | 1:1 Help',
