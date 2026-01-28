@@ -27,7 +27,7 @@ export const SKILLS = [
     { id: 'mongodb', name: 'MongoDB', keywords: ['mongo', 'nosql', 'mongoose'] },
 
     // Testing & DevOps
-    { id: 'playwright', name: 'Playwright', keywords: ['e2e', 'testing', 'automation'] },
+    { id: 'playwright', name: 'Playwright', keywords: ['e2e', 'testing', 'automation', 'playwright-automation'] },
     { id: 'cypress', name: 'Cypress', keywords: ['e2e', 'testing'] },
     { id: 'aws', name: 'AWS', keywords: ['cloud', 'amazon-web-services', 'ec2', 'lambda'] },
     { id: 'docker', name: 'Docker', keywords: ['containers', 'kubernetes'] },
@@ -107,6 +107,14 @@ export const LOCATIONS = [
 ];
 
 export const SUFFIXES = [
+    // Student / Assignment Intent
+    'assignment-help',
+    'homework-help',
+    'project-support',
+    'project-help',
+    'tutoring-help',
+    'coursework-help',
+
     // Plural
     'tutors',
     'mentors',
@@ -115,6 +123,7 @@ export const SUFFIXES = [
     'coaches',
     'consultants',
     'trainers',
+    'instructors',
     // Singular (for "Find a Javascript Tutor")
     'tutor',
     'mentor',
@@ -123,13 +132,29 @@ export const SUFFIXES = [
     'coach',
     'consultant',
     'trainer',
+    'instructor',
+];
+
+export const PREFIXES = [
+    'one-to-one',
+    '1-on-1',
+    'private',
+    'online',
+    'personal',
+    'best',
+    'top',
+    'professional',
+    'senior',
+    'hire',
+    'find',
 ];
 
 export function parseSeoSlug(slug) {
     // Expected formats: 
-    // [skill]-tutors-in-[location]
+    // [prefix]-[skill]-tutors-in-[location]
     // [skill]-tutor-near-me
     // [skill]-teachers-in-[location]
+    // one-to-one-[skill]-teacher-in-[location]
 
     let normalizedSlug = slug.toLowerCase();
 
@@ -144,10 +169,20 @@ export function parseSeoSlug(slug) {
 
     if (parts.length !== 2) return null;
 
-    const skillPart = parts[0]; // e.g., "javascript-tutors"
+    let skillPart = parts[0]; // e.g., "one-to-one-javascript-tutors"
     const locationPart = parts[1]; // e.g., "london"
 
-    // 3. Extract Skill
+    // 3. Extract PREFIX (e.g. "one-to-one")
+    let usedPrefix = '';
+    for (const prefix of PREFIXES) {
+        if (skillPart.startsWith(prefix + '-')) {
+            usedPrefix = prefix;
+            skillPart = skillPart.replace(prefix + '-', ''); // Remove prefix to find skill
+            break;
+        }
+    }
+
+    // 4. Extract Skill
     let foundSkill = null;
     let usedSuffix = '';
 
@@ -179,7 +214,7 @@ export function parseSeoSlug(slug) {
         foundSkill = SKILLS.find(s => s.id === skillPart || s.keywords.includes(skillPart));
     }
 
-    // 4. Extract Location
+    // 5. Extract Location
     let foundLocation = LOCATIONS.find(l => l.id === locationPart);
 
     // AUTO-GENERATE location if not found (Infinite Locations Feature)
@@ -200,6 +235,7 @@ export function parseSeoSlug(slug) {
     return {
         skill: foundSkill,
         location: foundLocation,
-        suffix: usedSuffix || 'mentors'
+        suffix: usedSuffix || 'mentors',
+        prefix: usedPrefix // Pass this back so we can use it in titles
     };
 }

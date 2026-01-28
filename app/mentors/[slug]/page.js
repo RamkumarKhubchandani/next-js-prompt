@@ -27,20 +27,31 @@ export async function generateMetadata({ params }) {
 
     if (!data) return {};
 
-    const { skill, location, suffix } = data;
+    const { skill, location, suffix, prefix } = data;
 
-    // SEO MAGIC: Target "Best", "Top", "Hire" all at once
-    const title = `Best ${skill.name} ${capitalize(suffix)} in ${location.name} | Top Rated Experts`;
-    const description = `Looking for the best ${skill.name} ${suffix} in ${location.name}? Hire top-rated experts for 1:1 coding help, debugging, and career mentorship. value-driven results.`;
+    // SEO MAGIC: Dynamic Title Construction based on user intent (prefix)
+    let titleStr = '';
+
+    if (prefix) {
+        // e.g. "One-to-one Javascript Tutor in London | Top Rated Experts"
+        titleStr = `${capitalize(prefix.replace(/-/g, ' '))} ${skill.name} ${capitalize(suffix)} in ${location.name}`;
+    } else {
+        // Default: "Best Javascript Tutors in London | Top Rated Experts"
+        titleStr = `Best ${skill.name} ${capitalize(suffix)} in ${location.name}`;
+    }
+
+    const title = `${titleStr} | Top Rated Experts`;
+
+    const description = `Looking for ${prefix ? prefix.replace(/-/g, ' ') + ' ' : ''}${skill.name} ${suffix} in ${location.name}? Hire top-rated experts for 1:1 coding help, debugging, and career mentorship.`;
 
     return {
         title,
         description,
         keywords: [
-            `best ${skill.name} ${suffix} in ${location.name}`,
+            `${prefix ? prefix.replace(/-/g, ' ') + ' ' : 'best '}${skill.name} ${suffix} in ${location.name}`,
             `top ${skill.name} tutors ${location.name}`,
             `hire ${skill.name} mentor ${location.name}`,
-            `learn ${skill.name} in ${location.name}`,
+            `one to one ${skill.name} teacher`,
             `${skill.name} coaching ${location.name}`
         ],
         openGraph: {

@@ -24,62 +24,82 @@ const social = [
 
 export function Footer() {
   return (
-    <footer className="bg-light-100 dark:bg-dark-900 border-t border-dark-700/10 dark:border-dark-700 pt-16 pb-8">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <h3 className="text-sm font-bold text-dark-900 dark:text-white uppercase tracking-wider mb-4">Training For</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Coding for Kids (Age 10+)</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Junior Developers</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Senior Architects</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Career Switchers</a></li>
+    <footer className="relative bg-[#050510] pt-24 pb-12 overflow-hidden border-t border-white/5">
+      {/* GLOW EFFECTS & TEXTURE */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/50 to-transparent shadow-[0_0_20px_2px_rgba(0,245,160,0.3)]" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px]" />
+      <div className="absolute top-20 -left-20 w-72 h-72 bg-purple-500/5 rounded-full blur-[80px]" />
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8 z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-8 mb-20">
+
+          {/* Column 1 */}
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Expertise</h3>
+            <ul className="space-y-4">
+              <li><Link href="/mentors/react-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Mentors</Link></li>
+              <li><Link href="/mentors/node-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Experts</Link></li>
+              <li><Link href="/mentors/playwright-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Playwright Helpers</Link></li>
+              <li><Link href="/mentors/aws-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">AWS Consultants</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-dark-900 dark:text-white uppercase tracking-wider mb-4">Learning Modes</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">1-on-1 Mentorship</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">5-Person Squads</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Corporate Group Training</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Weekend Workshops</a></li>
+
+          {/* Column 2 */}
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Services</h3>
+            <ul className="space-y-4">
+              <li><Link href="/mentorship" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">1-on-1 Mentorship</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Code Review</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Mock Interviews</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Team Training</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-dark-900 dark:text-white uppercase tracking-wider mb-4">Top Skills</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">React & Next.js</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Node.js Microservices</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Playwright Automation</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Generative AI Engineering</a></li>
+
+          {/* Column 3 */}
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Company</h3>
+            <ul className="space-y-4">
+              <li><Link href="/about" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">About Us</Link></li>
+              <li><Link href="/careers" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ JSPrompt</Link></li>
+              <li><Link href="/blog" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
+              <li><Link href="/contact" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Contact Support</Link></li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-dark-900 dark:text-white uppercase tracking-wider mb-4">Legal</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Privacy Policy</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Terms of Service</a></li>
-              <li><a href="#" className="text-sm text-gray-500 hover:text-brand-primary">Cookie Policy</a></li>
+
+          {/* Column 4 */}
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Legal</h3>
+            <ul className="space-y-4">
+              <li><Link href="/privacy" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Terms of Service</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-800 pt-8 md:flex md:items-center md:justify-between">
-          <div className="flex justify-center md:order-1 mb-4 md:mb-0">
-            <Logo />
+        {/* BOTTOM BAR */}
+        <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Brand */}
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-green-600 flex items-center justify-center font-black text-dark-900 shadow-lg shadow-brand-primary/20 text-lg">JS</div>
+            <div>
+              <span className="block text-xl font-bold text-white tracking-tight">JSPrompt</span>
+              <span className="block text-xs text-gray-500 uppercase tracking-widest">Premium Mentorship</span>
+            </div>
           </div>
-          <div className="flex justify-center space-x-6 md:order-2">
+
+          <p className="text-sm text-gray-600 font-medium">
+            &copy; {new Date().getFullYear()} JSPrompt Inc. <span className="hidden sm:inline">|</span> Designed for Excellence.
+          </p>
+
+          {/* Socials - Glass Effect */}
+          <div className="flex items-center gap-2 bg-white/5 p-2 rounded-full border border-white/5">
             {social.map((item) => (
-              <a key={item.name} href={item.href} className="text-dark-900/60 dark:text-light-200 hover:text-brand-primary transition-colors">
+              <a key={item.name} href={item.href} className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-300">
                 <span className="sr-only">{item.name}</span>
-                <item.icon className="h-6 w-6" aria-hidden="true" />
+                <item.icon className="h-5 w-5" aria-hidden="true" />
               </a>
             ))}
-          </div>
-          <div className="mt-8 md:order-3 md:mt-0">
-            <p className="text-center text-xs leading-5 text-dark-900/60 dark:text-light-200">
-              &copy; {new Date().getFullYear()} JSPrompt. Rated 4.9/5 by 2,000+ Students.
-            </p>
           </div>
         </div>
       </div>

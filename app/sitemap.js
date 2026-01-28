@@ -27,11 +27,29 @@ export default function sitemap() {
 
     SKILLS.forEach(skill => {
         LOCATIONS.forEach(location => {
+            // Standard: javascript-mentors-in-london
             mentorRoutes.push({
                 url: `${baseUrl}/mentors/${skill.id}-mentors-in-${location.id}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.8,
+            });
+
+            // High Intent: one-to-one-javascript-teacher-in-london
+            // We'll generate these for all valid locations to capture the "private/1:1" market
+            mentorRoutes.push({
+                url: `${baseUrl}/mentors/one-to-one-${skill.id}-teacher-in-${location.id}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.9, // Higher priority as these are high-conversion keywords
+            });
+
+            // Student/Assignment Intent: playwright-assignment-help-in-london
+            mentorRoutes.push({
+                url: `${baseUrl}/mentors/${skill.id}-assignment-help-in-${location.id}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.85,
             });
         });
     });
