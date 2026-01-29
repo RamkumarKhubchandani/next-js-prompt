@@ -47,7 +47,7 @@ export function DailyChallenges() {
             <p className="text-lg text-gray-600 dark:text-gray-400">
               Fresh combat scenarios dropped every 24 hours. Fix real-world bugs in React, Node, and Rust.
               Earn XP, climb the global leaderboard, and prove your engineering mettle.
-              {dateKey && <span className="block mt-2 text-brand-primary font-mono text-sm border border-brand-primary/20 bg-brand-primary/5 px-2 py-1 rounded w-fit">Combat Date: {dateKey}</span>}
+              {dateKey && <span className="block mt-2 text-teal-700 dark:text-brand-primary font-mono text-sm border border-teal-700/20 dark:border-brand-primary/20 bg-teal-50 dark:bg-brand-primary/5 px-2 py-1 rounded w-fit">Combat Date: {dateKey}</span>}
             </p>
           </div>
 

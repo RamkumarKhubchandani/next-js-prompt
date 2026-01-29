@@ -1350,7 +1350,7 @@ export function CompleteCurriculumRoadmap() {
                 {/* Header */}
                 <div className="text-center mb-20">
                     <div className="inline-block mb-6">
-                        <span className="px-6 py-3 bg-gradient-to-r from-brand-primary/20 to-purple-500/20 text-brand-primary rounded-full text-sm font-bold border-2 border-brand-primary/30">
+                        <span className="px-6 py-3 bg-gradient-to-r from-teal-50 to-purple-50 dark:from-brand-primary/20 dark:to-purple-500/20 text-teal-700 dark:text-brand-primary rounded-full text-sm font-bold border-2 border-teal-700/20 dark:border-brand-primary/30">
                             🌳 Complete Learning Tree
                         </span>
                     </div>

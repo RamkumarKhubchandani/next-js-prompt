@@ -13,12 +13,12 @@ import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 const navigation = [
     { name: "Events", href: "/events", isNew: true },
     { name: "Find Mentor", href: "/mentorship", isNew: true },
+    { name: "Become Mentor", href: "/become-mentor" },
     { name: "Features", href: "/#features" },
     { name: "How It Works", href: "/#how-it-works" },
     { name: "Testimonials", href: "/#testimonials" },
     { name: "Community", href: "/showcase" },
     { name: "Jobs", href: "/jobs" },
-    { name: "Goals", href: "/#career-goals" },
     { name: "AI Assessment", href: "/ai-quiz" },
     { name: "Tutorials", href: "/blogs" },
 ];
@@ -153,7 +153,7 @@ export function Header({ showNav = true }) {
 
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
-                        <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7 overflow-x-auto no-scrollbar">
+                        <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7">
                             {navigation.map((item) => {
                                 if (item.authOnly && !session) return null;
                                 return (
@@ -168,8 +168,8 @@ export function Header({ showNav = true }) {
                                         >
                                             {item.name}
                                             {item.isNew && (
-                                                <span className="inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
-                                                    New
+                                                <span className="absolute -top-3.5 -right-5 z-10 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
+                                                    NEW
                                                 </span>
                                             )}
                                         </Link>
