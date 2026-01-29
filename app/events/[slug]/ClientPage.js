@@ -9,10 +9,8 @@ import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { RegistrationModal } from '../../components/events/RegistrationModal';
 
-export default function EventDetailPage({ params }) {
-    // Unwrap params using React.use()
-    const { slug } = use(params);
-    const event = eventsData.find(e => e.slug === slug);
+export default function EventDetailPage({ initialEvent }) {
+    const event = initialEvent;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openModule, setOpenModule] = useState(null);

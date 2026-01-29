@@ -176,9 +176,9 @@ export const Hero = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest mb-6"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-teal-700 dark:text-brand-primary text-xs font-bold uppercase tracking-widest mb-6"
               >
-                <Zap size={14} fill="currentColor" />
+                <Zap size={14} className="text-teal-700 dark:text-brand-primary" fill="currentColor" />
                 The Future of Coding is Here
               </motion.div>
 
@@ -342,7 +342,7 @@ export const Hero = () => {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold">AI Tutor Status</p>
-                      <p className="text-xs text-brand-primary font-bold truncate">Thinking: Optimization...</p>
+                      <p className="text-xs text-teal-700 dark:text-brand-primary font-bold truncate">Thinking: Optimization...</p>
                     </div>
                   </div>
                   <div className="space-y-1.5">

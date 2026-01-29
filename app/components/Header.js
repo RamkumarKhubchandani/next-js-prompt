@@ -168,7 +168,7 @@ export function Header({ showNav = true }) {
                                         >
                                             {item.name}
                                             {item.isNew && (
-                                                <span className="inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
+                                                <span className="inline-flex items-center rounded-md bg-teal-50 dark:bg-brand-primary/10 px-2 py-0.5 text-xs font-bold text-teal-700 dark:text-brand-primary ring-1 ring-inset ring-teal-600/20 dark:ring-brand-primary/20">
                                                     New
                                                 </span>
                                             )}

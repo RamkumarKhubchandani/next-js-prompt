@@ -81,5 +81,47 @@ export default function sitemap() {
         });
     });
 
-    return [...routes, ...mentorRoutes];
+    // ---------------------------------------------------------
+    // EVENT ROUTES (High Volume Lead Gen)
+    // ---------------------------------------------------------
+    const eventRoutes = [];
+
+    // Core workshop topics we actually support content for
+    // Core workshop topics (Now dynamically using ALL skills for maximum coverage)
+    // This generates URLs like /events/free-python-workshop, /events/learn-aws-bootcamp
+    const WORKSHOP_TOPICS = SKILLS.map(s => s.id);
+
+    // Suffixes that map to "Events"
+    const EVENT_TYPES = [
+        'workshop',
+        'masterclass',
+        'bootcamp',
+        'webinar',
+        'training',
+        'crash-course',
+        'demo-class',
+        'free-class'
+    ];
+
+    WORKSHOP_TOPICS.forEach(topic => {
+        EVENT_TYPES.forEach(type => {
+            // e.g. /events/free-react-workshop
+            eventRoutes.push({
+                url: `${baseUrl}/events/free-${topic}-${type}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.9,
+            });
+
+            // e.g. /events/learn-angular-bootcamp
+            eventRoutes.push({
+                url: `${baseUrl}/events/learn-${topic}-${type}`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly',
+                priority: 0.85,
+            });
+        });
+    });
+
+    return [...routes, ...mentorRoutes, ...eventRoutes];
 }
