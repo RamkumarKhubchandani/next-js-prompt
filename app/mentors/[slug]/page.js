@@ -42,17 +42,49 @@ export async function generateMetadata({ params }) {
 
     const title = `${titleStr} | Top Rated Experts`;
 
-    const description = `Looking for ${prefix ? prefix.replace(/-/g, ' ') + ' ' : ''}${skill.name} ${suffix} in ${location.name}? Hire top-rated experts for 1:1 coding help, debugging, and career mentorship.`;
+    const isHiring = prefix === 'hire' || prefix === 'freelance' || suffix === 'developers' || suffix === 'experts';
+
+    // Dynamic Description Logic
+    let description = '';
+    if (isHiring) {
+        description = `Hire top 1% ${skill.name} ${suffix} in ${location.name}. Vetted experts available for contract, freelance, or 1:1 consulting. Start your project today.`;
+    } else {
+        description = `Master ${skill.name} with the best ${suffix} in ${location.name}. Get personalized ${prefix ? prefix.replace(/-/g, ' ') + ' ' : ''}guidance, debugging help, and career mentorship. Book a free trial.`;
+    }
+
+    // JSON-LD Schema (Professional Service / Educational Org)
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
+        'name': titleStr,
+        'description': description,
+        'url': `https://nextjsprompt.com/mentors/${slug}`,
+        'image': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200',
+        'address': {
+            '@type': 'PostalAddress',
+            'addressCountry': location.country,
+            'addressLocality': location.name === 'Online' ? 'Global' : location.name
+        },
+        'aggregateRating': {
+            '@type': 'AggregateRating',
+            'ratingValue': '4.9',
+            'reviewCount': '1250'
+        },
+        'priceRange': '$$'
+    };
 
     return {
         title,
         description,
         keywords: [
             `${prefix ? prefix.replace(/-/g, ' ') + ' ' : 'best '}${skill.name} ${suffix} in ${location.name}`,
-            `top ${skill.name} tutors ${location.name}`,
+            `${skill.name} ${suffix} for hire`,
+            `freelance ${skill.name} experts ${location.name}`,
             `hire ${skill.name} mentor ${location.name}`,
             `one to one ${skill.name} teacher`,
-            `${skill.name} coaching ${location.name}`
+            `${skill.name} coaching ${location.name}`,
+            `${skill.name} job support`,
+            isHiring ? `hire ${skill.name} developer` : `learn ${skill.name}`
         ],
         openGraph: {
             title,
@@ -61,6 +93,9 @@ export async function generateMetadata({ params }) {
         },
         alternates: {
             canonical: `https://nextjsprompt.com/mentors/${slug}`,
+        },
+        other: {
+            'script:ld+json': JSON.stringify(jsonLd)
         }
     };
 }

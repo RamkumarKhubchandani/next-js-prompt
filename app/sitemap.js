@@ -27,7 +27,7 @@ export default function sitemap() {
 
     SKILLS.forEach(skill => {
         LOCATIONS.forEach(location => {
-            // Standard: javascript-mentors-in-london
+            // 1. Standard: javascript-mentors-in-london (Volume)
             mentorRoutes.push({
                 url: `${baseUrl}/mentors/${skill.id}-mentors-in-${location.id}`,
                 lastModified: new Date(),
@@ -35,22 +35,49 @@ export default function sitemap() {
                 priority: 0.8,
             });
 
-            // High Intent: one-to-one-javascript-teacher-in-london
-            // We'll generate these for all valid locations to capture the "private/1:1" market
+            // 2. High Intent: one-to-one-javascript-teacher-in-london (Conversion)
             mentorRoutes.push({
-                url: `${baseUrl}/mentors/one-to-one-${skill.id}-teacher-in-${location.id}`,
+                url: `${baseUrl}/mentors/one-to-one-${skill.id}-tutors-in-${location.id}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
-                priority: 0.9, // Higher priority as these are high-conversion keywords
+                priority: 0.9,
             });
 
-            // Student/Assignment Intent: playwright-assignment-help-in-london
+            // 3. Hiring & Freelancing: hire-react-developers-in-san-francisco (Commercial)
+            // Only strictly generate these for "hiring" type prefixes/suffixes to avoid spam
+            if (['react', 'node', 'python', 'java', 'devops', 'aws'].includes(skill.id)) {
+                mentorRoutes.push({
+                    url: `${baseUrl}/mentors/hire-${skill.id}-developers-in-${location.id}`,
+                    lastModified: new Date(),
+                    changeFrequency: 'daily',
+                    priority: 1.0,
+                });
+
+                mentorRoutes.push({
+                    url: `${baseUrl}/mentors/freelance-${skill.id}-experts-in-${location.id}`,
+                    lastModified: new Date(),
+                    changeFrequency: 'daily',
+                    priority: 0.95,
+                });
+            }
+
+            // 4. Problem Specific: react-debugging-help-in-london (Niche)
             mentorRoutes.push({
-                url: `${baseUrl}/mentors/${skill.id}-assignment-help-in-${location.id}`,
+                url: `${baseUrl}/mentors/${skill.id}-debugging-help-in-${location.id}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: 0.85,
             });
+
+            // 5. Job Support: job-support-for-java-in-bangalore (Indian Market Specific)
+            if (location.country === 'India' || location.id === 'online') {
+                mentorRoutes.push({
+                    url: `${baseUrl}/mentors/${skill.id}-job-support-in-${location.id}`,
+                    lastModified: new Date(),
+                    changeFrequency: 'weekly',
+                    priority: 0.9,
+                });
+            }
         });
     });
 
