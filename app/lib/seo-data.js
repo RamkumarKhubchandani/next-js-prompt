@@ -115,6 +115,13 @@ export const SUFFIXES = [
     'tutoring-help',
     'coursework-help',
 
+    // High-Value / Professional Intent
+    'interview-prep',
+    'mock-interviews',
+    'technical-consultants',
+    'debugging-experts',
+    'corporate-training',
+
     // Plural
     'tutors',
     'mentors',
