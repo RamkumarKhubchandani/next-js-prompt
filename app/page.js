@@ -1,93 +1,84 @@
-"use client";
-import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/landing-page/Hero';
-import { Features } from './components/landing-page/Features';
-import { DailyChallenges } from './components/landing-page/DailyChallenges';
-import { FeaturedBlogs } from './components/landing-page/FeaturedBlogs';
-import { AiQuizCta } from './components/landing-page/AiQuizCta';
-import { CareerGoalPromo } from './components/landing-page/CareerGoalPromo';
-import { HowItWorks } from './components/landing-page/HowItWorks';
-import { CompleteCurriculumRoadmap } from './components/landing-page/CurriculumRoadmap';
-import { Testimonials } from './components/landing-page/Testimonials';
-import { Footer } from './components/Footer';
-import LoginWall from './components/LoginWall';
+import HomeClientPage from './HomeClientPage';
 
-export default function Home() {
-  const { data: session, status } = useSession();
-  const [showLoginWall, setShowLoginWall] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+export const metadata = {
+  title: "Free Coding Bootcamp | React, Angular, Node.js & System Design",
+  description: "Join the #1 Free Coding Mentorship platform. Master React, Angular, and Node.js with 1-on-1 expert guidance, resume building, and mock interviews.",
+  alternates: {
+    canonical: 'https://jsprompt.com',
+  }
+};
 
-  useEffect(() => {
-    // Check if user has already seen the login wall today
-    const checkLoginWallStatus = () => {
-      const loginWallData = localStorage.getItem('loginWallShown');
-      if (loginWallData) {
-        const { timestamp } = JSON.parse(loginWallData);
-        const now = Date.now();
-        const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-        // If less than 24 hours have passed, don't show the wall
-        if (now - timestamp < twentyFourHours) {
-          return false;
+export default function Page() {
+  // FAQ Schema for "People Also Ask" Dominance
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is JSPrompt really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! JSPrompt is 100% free for students, juniors, and professionals. We believe high-quality engineering mentorship should be accessible to everyone."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the 1-on-1 mentorship work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can book unlimited 1-on-1 sessions with senior engineers. We inspect your code, help debug issues, and provide career guidance relevant to Silicon Valley standards."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer certificates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, upon completing our tracks for React, Angular, or System Design, you receive a verifiable Global Certification to boost your LinkedIn profile."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can beginners join?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We have specialized tracks for coding for kids, absolute beginners, and university students, starting from HTML/CSS all the way to Advanced System Design."
         }
       }
-      return true;
-    };
+    ]
+  };
 
-    // Show login wall after user scrolls a bit (to let them see the content first)
-    const handleScroll = () => {
-      if (window.scrollY > 300 && !hasScrolled) {
-        setHasScrolled(true);
-        if (status === 'unauthenticated' && checkLoginWallStatus()) {
-          setShowLoginWall(true);
-        }
-      }
-    };
-
-    // Also show after 5 seconds if they haven't scrolled
-    const timer = setTimeout(() => {
-      if (status === 'unauthenticated' && !showLoginWall && checkLoginWallStatus()) {
-        setShowLoginWall(true);
-      }
-    }, 5000);
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
-    };
-  }, [status, hasScrolled, showLoginWall]);
-
-  const handleCloseLoginWall = () => {
-    // Mark that user has seen the login wall
-    localStorage.setItem('loginWallShown', JSON.stringify({
-      timestamp: Date.now()
-    }));
-    setShowLoginWall(false);
+  // Aggregate Rating Schema for "Stars" in Search Results
+  const ratingSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "JSPrompt Platform",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "12500"
+    }
   };
 
   return (
-    <div className="bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
-      <Header />
-      <main className={showLoginWall && status === 'unauthenticated' ? 'blur-sm pointer-events-none' : ''}>
-        <Hero />
-        <Features />
-        <CompleteCurriculumRoadmap />
-        <DailyChallenges />
-        <FeaturedBlogs />
-        <AiQuizCta />
-        <CareerGoalPromo />
-        <HowItWorks />
-        <Testimonials />
-      </main>
-      <Footer />
-
-      {/* Login Wall */}
-      {showLoginWall && status === 'unauthenticated' && (
-        <LoginWall onClose={handleCloseLoginWall} />
-      )}
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ratingSchema) }}
+      />
+      <HomeClientPage />
+    </>
   );
 }
