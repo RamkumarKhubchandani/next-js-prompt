@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../lib/auth';
-import dbConnect from '../../../../lib/dbConnect';
+import dbConnect from '../../../../lib/mongodb';
 import MentorApplication from '../../../../models/MentorApplication';
 import User from '../../../../models/User';
 
