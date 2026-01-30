@@ -168,7 +168,7 @@ export function Header({ showNav = true }) {
                                         >
                                             {item.name}
                                             {item.isNew && (
-                                                <span className="absolute -top-3.5 -right-5 z-10 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
+                                                <span className="absolute -top-1.5 -right-6 z-20 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
                                                     NEW
                                                 </span>
                                             )}

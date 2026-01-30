@@ -9,48 +9,43 @@ import XPNotification from "./components/public/XPNotification";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL('https://jsprompt.com'), // Replace with actual domain
+  metadataBase: new URL('https://outlinedev.com'), // Updated domain
   title: {
-    default: "Free Coding Bootcamp | Master React, Angular & System Design | 100% Free Mentorship",
-    template: "%s | JSPrompt - #1 Free Coding Platform"
+    default: "OutlineDev | Master React, Node & System Design | Elite Mentorship",
+    template: "%s | OutlineDev - The Career Roadmap"
   },
-  description: "The world's first fully free 1-on-1 Mentorship & Coding Bootcamps. Learn React, Angular, Node.js, and System Design step-by-step. Includes Free Resume Builder, Interview Prep, and Live 5-Person Agile Squads. Start your developer career today.",
+  description: "Outline your path to Senior Engineer. Join OutlineDev for 1-on-1 Mentorship, Code Reviews, and tailored Career Roadmaps. Learn React, Angular, Node.js, and System Design.",
   keywords: [
-    "free coding bootcamp",
-    "learn react free",
-    "angular masterclass",
-    "resume builder",
-    "interview preparation",
-    "system design course",
-    "javascript tutorial",
-    "coding for beginners",
-    "full stack developer training",
-    "free programming classes",
-    "1 on 1 coding mentorship",
-    "coding metrics",
-    "agile squad experience",
-    "coding for kids",
-    "senior developer training"
+    "outline dev",
+    "coding mentorship",
+    "developer bootcamp",
+    "learn react",
+    "senior engineer roadmap",
+    "system design interview",
+    "full stack developer",
+    "1 on 1 coding mentor",
+    "career outline",
+    "resume review"
   ],
-  authors: [{ name: "JSPrompt Mentors" }],
-  creator: "JSPrompt",
-  publisher: "JSPrompt",
+  authors: [{ name: "OutlineDev Mentors" }],
+  creator: "OutlineDev",
+  publisher: "OutlineDev",
   icons: {
     icon: `/favicon.svg?v=${new Date().getTime()}`,
   },
   openGraph: {
-    title: "Free Coding Bootcamp | Master React, Angular & System Design",
-    description: "Unlock your potential with 100% Free Learning. Step-by-step roadmaps, Resume Building, and Interview Prep. Join the revolution.",
-    url: 'https://jsprompt.com',
-    siteName: 'JSPrompt',
+    title: "OutlineDev | Master React, Node & System Design",
+    description: "Outline your path to Senior Engineer. 1-on-1 Mentorship & Career Roadmaps.",
+    url: 'https://outlinedev.com',
+    siteName: 'OutlineDev',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Free Coding Bootcamp | Master React, Angular & System Design",
-    description: "Unlock your potential with 100% Free Learning. Step-by-step roadmaps, Resume Building, and Interview Prep. Join the revolution.",
-    creator: "@jsprompt",
+    title: "OutlineDev | Master React, Node & System Design",
+    description: "Outline your path to Senior Engineer. 1-on-1 Mentorship & Career Roadmaps.",
+    creator: "@outlinedev",
   },
   robots: {
     index: true,
@@ -74,30 +69,30 @@ export default async function RootLayout({ children }) {
     "@graph": [
       {
         "@type": "WebSite",
-        "name": "JSPrompt Free Coding Bootcamp",
-        "url": "https://jsprompt.com",
+        "name": "OutlineDev Career Platform",
+        "url": "https://outlinedev.com",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://jsprompt.com/search?q={search_term_string}",
+          "target": "https://outlinedev.com/search?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "EducationalOrganization",
-        "name": "JSPrompt",
-        "url": "https://jsprompt.com",
-        "logo": "https://jsprompt.com/logo.png",
+        "name": "OutlineDev",
+        "url": "https://outlinedev.com",
+        "logo": "https://outlinedev.com/logo-outlinedev-transparent.png", // Updated to our new logo
         "sameAs": [
-          "https://twitter.com/jsprompt",
-          "https://linkedin.com/company/jsprompt",
-          "https://github.com/jsprompt"
+          "https://twitter.com/outlinedev",
+          "https://linkedin.com/company/outlinedev",
+          "https://github.com/outlinedev"
         ],
-        "description": "The world's #1 Free Coding Mentorship platform offering 1-on-1 guidance, Resume Building, and Interview Prep.",
+        "description": "The world's premium Coding Mentorship platform offering 1-on-1 guidance and Career Outlines.",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD",
-          "category": "Free"
+          "category": "Education"
         }
       }
     ]

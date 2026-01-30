@@ -67,7 +67,7 @@ export async function generateMetadata({ params }) {
             images: [event.image],
         },
         alternates: {
-            canonical: `https://nextjsprompt.com/events/${slug}`,
+            canonical: `https://outlinedev.com/events/${slug}`,
         }
     };
 }
@@ -99,8 +99,8 @@ export default async function Page({ params }) {
         "description": displayEvent.fullDescription,
         "provider": {
             "@type": "Organization",
-            "name": "JSPrompt Mentorship",
-            "sameAs": "https://jsprompt.com"
+            "name": "OutlineDev Mentorship",
+            "sameAs": "https://outlinedev.com"
         },
         "aggregateRating": {
             "@type": "AggregateRating",
@@ -121,7 +121,7 @@ export default async function Page({ params }) {
         "educationalLevel": "Beginner to Advanced",
         "teaches": ["Generative AI", "React", "Node.js", "System Design"],
         "isAccessibleForFree": true,
-        "url": `https://nextjsprompt.com/events/${slug}`
+        "url": `https://outlinedev.com/events/${slug}`
     };
 
     // Event Schema for "Workshops"
@@ -135,14 +135,14 @@ export default async function Page({ params }) {
         "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
         "location": {
             "@type": "VirtualLocation",
-            "url": "https://jsprompt.com/events"
+            "url": "https://outlinedev.com/events"
         },
         "image": [displayEvent.image],
         "description": `Free workshop for ${displayEvent.title}. Learn in 5-person squads.`,
         "organizer": {
             "@type": "Organization",
-            "name": "JSPrompt",
-            "url": "https://jsprompt.com"
+            "name": "OutlineDev",
+            "url": "https://outlinedev.com"
         }
     };
 

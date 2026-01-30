@@ -58,7 +58,7 @@ export async function generateMetadata({ params }) {
         '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
         'name': titleStr,
         'description': description,
-        'url': `https://nextjsprompt.com/mentors/${slug}`,
+        'url': `https://outlinedev.com/mentors/${slug}`,
         'image': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200',
         'address': {
             '@type': 'PostalAddress',
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }) {
             images: ['https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop'],
         },
         alternates: {
-            canonical: `https://nextjsprompt.com/mentors/${slug}`,
+            canonical: `https://outlinedev.com/mentors/${slug}`,
         },
         other: {
             'script:ld+json': JSON.stringify(jsonLd)

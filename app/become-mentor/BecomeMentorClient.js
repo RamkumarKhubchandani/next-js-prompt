@@ -203,7 +203,7 @@ export default function BecomeMentorClient() {
                                         <Users size={32} className="text-gray-400" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-4 text-dark-900 dark:text-white">Create an Account to Apply</h3>
-                                    <p className="text-gray-500 mb-8">You need a JSPrompt profile to become a mentor.</p>
+                                    <p className="text-gray-500 mb-8">You need a OutlineDev profile to become a mentor.</p>
                                     <button
                                         onClick={() => signIn()}
                                         className="w-full py-4 bg-brand-primary text-dark-900 font-bold text-lg rounded-xl hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(0,255,178,0.3)]"

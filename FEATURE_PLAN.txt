@@ -87,7 +87,7 @@ Instead of a flat list of posts, we need "Tracks".
 
 ### 5.2 Certification
 - Auto-generated PDF certificates upon completing a Learning Path.
-- Verifiable URL (e.g., `nextjsprompt.com/cert/12345`).
+- Verifiable URL (e.g., `outlinedev.com/cert/12345`).
 
 ---
 
