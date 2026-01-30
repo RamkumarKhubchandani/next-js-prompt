@@ -4,7 +4,7 @@ export const metadata = {
   title: "Free Coding Bootcamp | React, Angular, Node.js & System Design",
   description: "Join the #1 Free Coding Mentorship platform. Master React, Angular, and Node.js with 1-on-1 expert guidance, resume building, and mock interviews.",
   alternates: {
-    canonical: 'https://jsprompt.com',
+    canonical: 'https://outlinedev.com',
   }
 };
 
@@ -16,10 +16,10 @@ export default function Page() {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "Is JSPrompt really free?",
+        "name": "Is OutlineDev really free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes! JSPrompt is 100% free for students, juniors, and professionals. We believe high-quality engineering mentorship should be accessible to everyone."
+          "text": "Yes! OutlineDev is 100% free for students, juniors, and professionals. We believe high-quality engineering mentorship should be accessible to everyone."
         }
       },
       {
@@ -53,7 +53,7 @@ export default function Page() {
   const ratingSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "JSPrompt Platform",
+    "name": "OutlineDev Platform",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Web",
     "offers": {

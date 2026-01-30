@@ -1,8 +1,7 @@
 import { SKILLS, LOCATIONS } from './lib/seo-data';
 
 export default function sitemap() {
-    const baseUrl = 'https://nextjsprompt.com'; // Replace with actual production URL
-
+    const baseUrl = 'https://outlinedev.com'; // Production URL
     // Base routes
     const routes = [
         '',
@@ -19,9 +18,8 @@ export default function sitemap() {
     }));
 
     // Dynamic SEO routes
-    // We don't want to generate millions of URLs in one go if Vercel limits it, 
-    // but let's generate the top tier (e.g. all skills x all locations)
-    // SKILLS (15) * LOCATIONS (19) = ~285 URLs. This is totally fine.
+    // We generate URLs for high-value combinations
+    // SKILLS (15+) * LOCATIONS (100+) = ~1500+ Combinations per category
 
     const mentorRoutes = [];
 

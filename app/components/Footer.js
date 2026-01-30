@@ -61,7 +61,7 @@ export function Footer() {
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">About Us</Link></li>
-              <li><Link href="/careers" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ JSPrompt</Link></li>
+              <li><Link href="/careers" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ OutlineDev</Link></li>
               <li><Link href="/blog" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Contact Support</Link></li>
             </ul>
@@ -81,15 +81,15 @@ export function Footer() {
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Brand */}
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-green-600 flex items-center justify-center font-black text-dark-900 shadow-lg shadow-brand-primary/20 text-lg">JS</div>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-green-600 flex items-center justify-center font-black text-dark-900 shadow-lg shadow-brand-primary/20 text-lg">OD</div>
             <div>
-              <span className="block text-xl font-bold text-white tracking-tight">JSPrompt</span>
+              <span className="block text-xl font-bold text-white tracking-tight">OutlineDev</span>
               <span className="block text-xs text-gray-500 uppercase tracking-widest">Premium Mentorship</span>
             </div>
           </div>
 
           <p className="text-sm text-gray-600 font-medium">
-            &copy; {new Date().getFullYear()} JSPrompt Inc. <span className="hidden sm:inline">|</span> Designed for Excellence.
+            &copy; {new Date().getFullYear()} OutlineDev Inc. <span className="hidden sm:inline">|</span> Designed for Excellence.
           </p>
 
           {/* Socials - Glass Effect */}

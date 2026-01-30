@@ -1,12 +1,12 @@
 import BecomeMentorClient from './BecomeMentorClient';
 
 export const metadata = {
-    title: "Become a Mentor | Share Knowledge & Earn Money | JSPrompt",
+    title: "Become a Mentor | Share Knowledge & Earn Money | OutlineDev",
     description: "Join our elite network of engineering mentors. Teach React, Node.js, and System Design to students worldwide. Set your own rates and work from anywhere.",
     keywords: "become a coding mentor, teach programming online, react mentor jobs, javascript tutor jobs, earn money coding, developer mentorship program",
     openGraph: {
         title: "Become a Coding Mentor - Earn Globally",
-        description: "Share your engineering expertise with the next generation. Join JSPrompt's global mentor network.",
+        description: "Share your engineering expertise with the next generation. Join OutlineDev's global mentor network.",
         images: ['/assets/mentor-hero.png'],
     }
 };
@@ -20,13 +20,13 @@ export default function BecomeMentorPage() {
         "description": "We are looking for experienced software engineers to mentor students in React, Angular, Node.js, and System Design. You will conduct 1-on-1 sessions and code reviews.",
         "identifier": {
             "@type": "PropertyValue",
-            "name": "JSPrompt",
+            "name": "OutlineDev",
             "value": "MENTOR-001"
         },
         "hiringOrganization": {
             "@type": "Organization",
-            "name": "JSPrompt",
-            "sameAs": "https://jsprompt.com"
+            "name": "OutlineDev",
+            "sameAs": "https://outlinedev.com"
         },
         "employmentType": "CONTRACTOR",
         "jobLocationType": "TELECOMMUTE",

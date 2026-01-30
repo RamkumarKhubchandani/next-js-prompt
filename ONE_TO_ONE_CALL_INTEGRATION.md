@@ -101,7 +101,7 @@ Each 1:1 call request includes:
 
 1. **Open any course page** or click "Book a 1:1 call" in header
 2. **Fill out the form** - notice phone auto-detection
-3. **Submit** - check your email at `infojsprompt@gmail.com`
+3. **Submit** - check your email at `contact@outlinedev.com`
 4. **Click WhatsApp link** in email - opens chat directly
 
 ---
