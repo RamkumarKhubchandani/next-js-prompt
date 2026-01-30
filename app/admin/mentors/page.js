@@ -60,8 +60,8 @@ export default function MentorAdmin() {
                                     <h3 className="text-xl font-bold dark:text-white flex items-center gap-2">
                                         {app.userId?.name || 'Unknown User'}
                                         <span className={`text-xs px-2 py-1 rounded-full ${app.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                    'bg-red-100 text-red-800'
+                                            app.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                                'bg-red-100 text-red-800'
                                             }`}>
                                             {app.status.toUpperCase()}
                                         </span>
@@ -93,6 +93,11 @@ export default function MentorAdmin() {
                                         <a href={app.linkedin} target="_blank" className="text-sm text-brand-primary flex items-center gap-1 mt-1 hover:underline">
                                             <Linkedin size={14} /> LinkedIn Profile
                                         </a>
+                                    )}
+                                    {app.phone && (
+                                        <p className="text-sm dark:text-gray-300 flex items-center gap-1 mt-1">
+                                            <span className="font-bold text-xs text-gray-500 uppercase">WhatsApp:</span> {app.phone}
+                                        </p>
                                     )}
                                 </div>
                             </div>

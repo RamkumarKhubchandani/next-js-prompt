@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { Users, FileText, PlusCircle, BarChart, Settings, Shield, ClipboardList, Calendar } from 'lucide-react';
+import { Users, FileText, PlusCircle, BarChart, Settings, Shield, ClipboardList, Calendar, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -39,6 +39,13 @@ export default function AdminDashboard() {
             icon: <Calendar size={32} />, // Make sure to import Calendar
             href: "/admin/events",
             color: "bg-pink-500"
+        },
+        {
+            title: "Manage Mentors",
+            desc: "Review and approve mentor applications.",
+            icon: <CheckCircle size={32} />,
+            href: "/admin/mentors",
+            color: "bg-indigo-500"
         },
         {
             title: "Platform Settings",

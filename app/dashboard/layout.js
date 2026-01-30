@@ -3,7 +3,7 @@ import { Header } from '../components/Header';
 export default function DashboardLayout({ children }) {
     return (
         <div>
-            <Header showNav={false} />
+            <Header showNav={true} />
             <main>{children}</main>
         </div>
     );

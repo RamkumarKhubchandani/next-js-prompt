@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo";
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2 } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2, GraduationCap } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSession, signOut } from "next-auth/react";
@@ -156,6 +156,12 @@ export function Header({ showNav = true }) {
                         <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7">
                             {navigation.map((item) => {
                                 if (item.authOnly && !session) return null;
+
+                                // On dashboard, ONLY show "Become Mentor" in the center nav
+                                if (pathname === '/dashboard' && item.href !== '/become-mentor') {
+                                    return null;
+                                }
+
                                 return (
                                     <motion.div key={item.name} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
                                         <Link
@@ -252,6 +258,14 @@ export function Header({ showNav = true }) {
                                                         {navLoading && navTarget === "/dashboard" && (
                                                             <Loader2 size={16} className="ml-auto animate-spin text-light-300" />
                                                         )}
+                                                    </Link>
+                                                    <Link
+                                                        href="/become-mentor"
+                                                        onClick={() => startNavigate("/become-mentor")}
+                                                        className="flex items-center px-4 py-3 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
+                                                    >
+                                                        <GraduationCap size={16} className="mr-3 text-purple-400" />
+                                                        Become Mentor
                                                     </Link>
                                                     <Link
                                                         href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}

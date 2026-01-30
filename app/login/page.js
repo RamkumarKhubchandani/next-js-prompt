@@ -32,7 +32,9 @@ export default function LoginPage() {
                 return;
             }
 
-            router.replace('/dashboard');
+            const urlParams = new URLSearchParams(window.location.search);
+            const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
+            router.replace(callbackUrl);
         } catch (error) {
             setError('An unexpected error occurred.');
         } finally {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video } from 'lucide-react';
@@ -49,6 +49,35 @@ export default function BecomeMentorClient() {
         education: '',
         videoIntro: '' // Optional URL
     });
+
+    // Fetch existing application
+    useEffect(() => {
+        if (!session) return;
+
+        async function loadApp() {
+            try {
+                const res = await fetch('/api/mentor/apply');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.application) {
+                        setFormData(prev => ({
+                            ...prev,
+                            ...data.application,
+                            // Ensure arrays are arrays
+                            skills: data.application.skills || []
+                        }));
+                        // If they are already pending/approved, we might show the success screen initially?
+                        // Or let them edit. The user asked to "edit and send back".
+                        // So we just load the data.
+                        if (data.application.status === 'pending') {
+                            setIsSuccess(true); // Show "Received" screen first, but provide "Edit" button there?
+                        }
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+        loadApp();
+    }, [session]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -107,9 +136,17 @@ export default function BecomeMentorClient() {
                         <p className="text-gray-600 dark:text-gray-300 mb-8">
                             Thank you for applying to join the Elite Mentor League. Our team will review your profile and schedule a <strong>Skill Assessment Interview</strong> within 48 hours.
                         </p>
-                        <Link href="/" className="block w-full py-3 bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity">
-                            Return Home
-                        </Link>
+                        <div className="space-y-3">
+                            <button
+                                onClick={() => setIsSuccess(false)}
+                                className="block w-full py-3 bg-brand-primary text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity"
+                            >
+                                Edit Application
+                            </button>
+                            <Link href="/" className="block w-full py-3 bg-dark-900 dark:bg-white text-dark-900 dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity bg-opacity-10 dark:bg-opacity-10 border border-dark-900/10 dark:border-white/10">
+                                Return Home
+                            </Link>
+                        </div>
                     </motion.div>
                 </main>
                 <Footer />
@@ -203,9 +240,16 @@ export default function BecomeMentorClient() {
                                         <Users size={32} className="text-gray-400" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-4 text-dark-900 dark:text-white">Create an Account to Apply</h3>
-                                    <p className="text-gray-500 mb-8">You need a OutlineDev profile to become a mentor.</p>
+                                    <div className="text-left text-gray-500 mb-8 space-y-2 bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
+                                        <p className="font-semibold text-dark-900 dark:text-white">How to apply:</p>
+                                        <ol className="list-decimal list-inside space-y-1 text-sm">
+                                            <li>Click the button below to <strong>Log In</strong> or <strong>Register</strong>.</li>
+                                            <li>Once logged in, return to this page (or check your Dashboard).</li>
+                                            <li>Fill out this form to submit your application.</li>
+                                        </ol>
+                                    </div>
                                     <button
-                                        onClick={() => signIn()}
+                                        onClick={() => signIn(undefined, { callbackUrl: '/become-mentor' })}
                                         className="w-full py-4 bg-brand-primary text-dark-900 font-bold text-lg rounded-xl hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(0,255,178,0.3)]"
                                     >
                                         Sign In / Register
