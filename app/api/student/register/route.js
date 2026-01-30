@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
-import bcrypt from 'bcrypt';
 
 export async function POST(request) {
     try {
@@ -14,16 +13,15 @@ export async function POST(request) {
             return NextResponse.json({ message: "User with this email already exists." }, { status: 400 });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         // Set 7-day trial
         const trialEndsAt = new Date();
         trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
+        // Pass plain password; User model pre-save hook handles hashing
         await User.create({
             name,
             email,
-            password: hashedPassword,
+            password,
             plan: 'pro_trial',
             trialEndsAt
         });
