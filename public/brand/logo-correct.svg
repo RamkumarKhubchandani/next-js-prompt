@@ -1,0 +1,34 @@
+<svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#05c285" />
+      <stop offset="100%" stopColor="#0099cc" />
+    </linearGradient>
+    <style>
+      .text { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 50px; }
+      .outline { fill: #111827; } /* gray-900 */
+      .dev { fill: #0d9488; } /* teal-600 */
+      @media (prefers-color-scheme: dark) {
+        .outline { fill: #ffffff; }
+        .dev { fill: #05c285; }
+      }
+    </style>
+  </defs>
+
+  <!-- ICON SECTION (0,0 to 100,100) -->
+  <g transform="translate(0, 0)">
+    <!-- Outer Ring -->
+    <circle cx="50" cy="50" r="42" stroke="url(#logo-gradient)" stroke-width="10" stroke-linecap="round" opacity="0.4" fill="none" />
+    
+    <!-- Dynamic Arc -->
+    <path d="M50 8 A 42 42 0 0 1 92 50" stroke="url(#logo-gradient)" stroke-width="10" stroke-linecap="round" fill="none" />
+    
+    <!-- Chevron -->
+    <path d="M35 35 L65 50 L35 65" stroke="url(#logo-gradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+
+  <!-- TEXT SECTION -->
+  <text x="110" y="68" class="text">
+    <tspan class="outline">Outline</tspan><tspan class="dev">Dev</tspan>
+  </text>
+</svg>

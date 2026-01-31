@@ -49,23 +49,36 @@ export default function Page() {
     ]
   };
 
-  // Aggregate Rating Schema for "Stars" in Search Results
+  // Enhanced Rating Schema for Homepage (Conservative numbers)
   const ratingSchema = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "OutlineDev Platform",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
+    "@type": "Organization",
+    "@id": "https://outlinedev.com/#homepage-org",
+    "name": "OutlineDev",
+    "url": "https://outlinedev.com",
+    "logo": "https://outlinedev.com/logo-outlinedev-transparent.png",
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "12500"
+      "ratingValue": "5.0",
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": "3",
+      "reviewCount": "3"
     }
+  };
+
+  // Breadcrumb Schema for Homepage
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://outlinedev.com"
+      }
+    ]
   };
 
   return (
@@ -77,6 +90,10 @@ export default function Page() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ratingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <HomeClientPage />
     </>
