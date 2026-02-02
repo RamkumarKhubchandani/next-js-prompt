@@ -2,9 +2,10 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/app/components/Header';
-import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate, PenTool } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
+import ManualResumeForm from './ManualResumeForm';
 
 export default function ResumeAuditPage() {
     const [auditState, setAuditState] = useState('idle');
@@ -25,8 +26,15 @@ export default function ResumeAuditPage() {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
             setFile(selectedFile);
+            setResumeText(''); // Clear manual text if any
             setAuditState('job-input');
         }
+    };
+
+    const handleManualSubmit = (text) => {
+        setResumeText(text);
+        setFile(null); // Clear file if any
+        setAuditState('job-input');
     };
 
     const startAnalysis = async () => {
@@ -39,7 +47,16 @@ export default function ResumeAuditPage() {
             await new Promise(resolve => setTimeout(resolve, 500));
 
             const formData = new FormData();
-            formData.append('resume', file);
+            if (file) {
+                formData.append('resume', file);
+            } else if (resumeText) {
+                formData.append('resumeText', resumeText);
+            } else {
+                alert("No resume provided");
+                setAuditState('idle');
+                return;
+            }
+
             formData.append('jobDescription', jobDescription);
 
             setProgress(40);
@@ -315,6 +332,121 @@ export default function ResumeAuditPage() {
             renderCommonSections(addSectionHeader, fontName);
         };
 
+        const renderTech = () => {
+            const fontName = 'courier';
+            const accentColor = [22, 163, 74]; // Green-600
+
+            // NAME
+            doc.setFontSize(22);
+            doc.setTextColor(...accentColor);
+            doc.setFont(fontName, 'bold');
+            doc.text(`<${optimizedResume.personalInfo.name} />`, margin, yPos);
+            yPos += 8;
+
+            // CONTACT
+            doc.setFontSize(10);
+            doc.setTextColor(50, 50, 50);
+            doc.setFont(fontName, 'normal');
+            const contactInfo = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin,
+                optimizedResume.personalInfo.location
+            ].filter(Boolean).join(' // ');
+            doc.text(`// ${contactInfo}`, margin, yPos);
+            yPos += 15;
+
+            const addSectionHeader = (title) => {
+                checkPageBreak(20);
+                doc.setFontSize(12);
+                doc.setTextColor(...accentColor);
+                doc.setFont(fontName, 'bold');
+                doc.text(`> ${title}`, margin, yPos);
+                yPos += 2;
+                doc.setDrawColor(...accentColor);
+                doc.setLineWidth(0.5);
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += 8;
+                doc.setTextColor(0, 0, 0);
+            };
+
+            renderCommonSections(addSectionHeader, fontName);
+        };
+
+        const renderGlacial = () => {
+            const fontName = 'helvetica';
+            const accentColor = [30, 64, 175]; // Blue-800
+
+            // NAME
+            doc.setFontSize(28);
+            doc.setTextColor(...accentColor);
+            doc.setFont(fontName, 'bold');
+            doc.text(optimizedResume.personalInfo.name, margin, yPos);
+            yPos += 10;
+
+            // CONTACT
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139); // Slate-500
+            doc.setFont(fontName, 'normal');
+            const contactInfo = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin,
+                optimizedResume.personalInfo.location
+            ].filter(Boolean).join(' | ');
+            doc.text(contactInfo, margin, yPos);
+            yPos += 15;
+
+            const addSectionHeader = (title) => {
+                checkPageBreak(25);
+
+                // Background block for header
+                doc.setFillColor(239, 246, 255); // Blue-50
+                doc.rect(margin - 2, yPos - 5, pageWidth - (margin * 2) + 4, 8, 'F');
+
+                doc.setFontSize(11);
+                doc.setTextColor(...accentColor);
+                doc.setFont(fontName, 'bold');
+                doc.text(title.toUpperCase(), margin, yPos);
+                yPos += 8;
+                doc.setTextColor(0, 0, 0);
+            };
+
+            renderCommonSections(addSectionHeader, fontName);
+        };
+
+        const renderMinimal = () => {
+            const fontName = 'times';
+
+            // NAME (Centered, Small Caps styled via Uppercase)
+            doc.setFontSize(18);
+            doc.setFont(fontName, 'normal');
+            doc.text(optimizedResume.personalInfo.name.toUpperCase(), pageWidth / 2, yPos, { align: 'center', charSpace: 3 });
+            yPos += 8;
+
+            // CONTACT
+            doc.setFontSize(9);
+            doc.setTextColor(80, 80, 80);
+            const contactInfo = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin
+            ].filter(Boolean).join('  ·  ');
+            doc.text(contactInfo, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            const addSectionHeader = (title) => {
+                checkPageBreak(20);
+                doc.setFontSize(10);
+                doc.setFont(fontName, 'bold');
+                doc.setTextColor(0, 0, 0);
+                doc.text(title.toUpperCase(), pageWidth / 2, yPos, { align: 'center', charSpace: 1 });
+                yPos += 6;
+            };
+
+            renderCommonSections(addSectionHeader, fontName);
+        };
+
 
         // --- SHARED SECTION RENDERING LOGIC ---
         const renderCommonSections = (addSectionHeader, fontName) => {
@@ -414,12 +546,13 @@ export default function ResumeAuditPage() {
         };
 
         // EXECUTE SELECTED LAYOUT
-        if (selectedLayout === 'modern') {
-            renderModern();
-        } else if (selectedLayout === 'executive') {
-            renderExecutive();
-        } else {
-            renderClassic();
+        switch (selectedLayout) {
+            case 'modern': renderModern(); break;
+            case 'executive': renderExecutive(); break;
+            case 'tech': renderTech(); break;
+            case 'glacial': renderGlacial(); break;
+            case 'minimal': renderMinimal(); break;
+            default: renderClassic();
         }
 
         const fileName = `${optimizedResume.personalInfo.name.replace(/\s+/g, '_')}_Resume_${selectedLayout}.pdf`;
@@ -642,11 +775,12 @@ export default function ResumeAuditPage() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                className="max-w-2xl mx-auto"
+                                className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6"
                             >
+                                {/* Upload Card */}
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl"
+                                    className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
                                 >
                                     <input
                                         type="file"
@@ -656,21 +790,54 @@ export default function ResumeAuditPage() {
                                         className="hidden"
                                     />
 
-                                    <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                    <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                                         <Upload size={32} className="text-purple-600 dark:text-purple-400" />
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                        Drop your resume here
+                                        Upload Existing Resume
                                     </h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                        PDF or DOCX • We'll analyze and optimize it
+                                        PDF or DOCX
                                     </p>
-                                    <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
-                                        <span className="flex items-center gap-1"><ShieldCheck size={12} /> Privacy First</span>
-                                        <span className="flex items-center gap-1"><FileText size={12} /> PDF/DOCX</span>
-                                        <span className="flex items-center gap-1"><Wand2 size={12} /> AI AGENT</span>
+                                    <div className="flex items-center gap-2 text-xs text-gray-400">
+                                        <span className="flex items-center gap-1"><FileText size={12} /> Auto-Parsing</span>
                                     </div>
                                 </div>
+
+                                {/* Manual Input Card */}
+                                <div
+                                    onClick={() => setAuditState('manual-input')}
+                                    className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
+                                >
+                                    <div className="w-20 h-20 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                        <PenTool size={32} className="text-pink-600 dark:text-pink-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                        Create from Scratch
+                                    </h3>
+                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                        Enter details manually
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs text-gray-400">
+                                        <span className="flex items-center gap-1"><Wand2 size={12} /> AI Generator</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* MANUAL INPUT STATE */}
+                        {auditState === 'manual-input' && (
+                            <motion.div
+                                key="manual-input"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="max-w-4xl mx-auto"
+                            >
+                                <ManualResumeForm
+                                    onSubmit={handleManualSubmit}
+                                    onCancel={() => setAuditState('idle')}
+                                />
                             </motion.div>
                         )}
 
@@ -706,7 +873,7 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
 
                                     <div className="flex gap-3 mt-6">
                                         <button
-                                            onClick={() => setAuditState('idle')}
+                                            onClick={() => setAuditState(resumeText ? 'manual-input' : 'idle')}
                                             className="px-6 py-3 bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-slate-700 transition-all"
                                         >
                                             ← Back
@@ -946,7 +1113,10 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                         {[
                                             { id: 'classic', label: 'Classic ATS', desc: 'Clean & Standard' },
                                             { id: 'modern', label: 'Modern', desc: 'Stylish & Bold' },
-                                            { id: 'executive', label: 'Executive', desc: 'Professional Serif' }
+                                            { id: 'executive', label: 'Executive', desc: 'Professional Serif' },
+                                            { id: 'tech', label: 'Tech / Dev', desc: 'Monospace Code Style' },
+                                            { id: 'glacial', label: 'Glacial', desc: 'Cool Blue & Clean' },
+                                            { id: 'minimal', label: 'Minimal', desc: 'Less is More' }
                                         ].map(layout => (
                                             <button
                                                 key={layout.id}
