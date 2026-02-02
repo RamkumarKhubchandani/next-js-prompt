@@ -1079,14 +1079,14 @@ function DayNode({ day, weekColor, techName, isLast }) {
                 </div>
 
                 {/* Day Content Card */}
-                <div className={`flex-1 p-5 rounded-xl border-2 ${colors.border} ${colors.light} hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]`}>
+                <div className={`flex-1 p-4 md:p-5 rounded-xl border-2 ${colors.border} ${colors.light} hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]`}>
                     <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                                <h5 className="font-bold text-lg text-dark-900 dark:text-white">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                                <h5 className="font-bold text-base md:text-lg text-dark-900 dark:text-white leading-tight">
                                     {day.title}
                                 </h5>
-                                <span className="text-xs px-2 py-1 rounded-full bg-gray-200 dark:bg-dark-700 text-gray-600 dark:text-light-300">
+                                <span className="text-xs px-2 py-1 rounded-full bg-gray-200 dark:bg-dark-700 text-gray-600 dark:text-light-300 whitespace-nowrap">
                                     {day.duration}
                                 </span>
                             </div>
@@ -1162,14 +1162,14 @@ function WeekBranch({ week, techName, isExpanded, onToggle }) {
             {/* Week Header */}
             <button
                 onClick={onToggle}
-                className={`w-full p-6 rounded-2xl border-3 ${colors.border} ${colors.light} hover:shadow-2xl transition-all duration-300 flex items-center justify-between group`}
+                className={`w-full p-4 md:p-6 rounded-2xl border-3 ${colors.border} ${colors.light} hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row items-center justify-between group gap-4`}
             >
-                <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-xl ${colors.bg} flex items-center justify-center text-white font-bold text-2xl shadow-lg group-hover:scale-110 transition-transform`}>
+                <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-xl ${colors.bg} flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-lg group-hover:scale-110 transition-transform flex-shrink-0`}>
                         W{week.week}
                     </div>
-                    <div className="text-left">
-                        <div className="flex items-center gap-3 mb-1">
+                    <div className="text-center md:text-left">
+                        <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
                             <span className={`text-sm font-bold ${colors.text}`}>
                                 Week {week.week}
                             </span>
@@ -1177,13 +1177,13 @@ function WeekBranch({ week, techName, isExpanded, onToggle }) {
                                 {week.days.length} Days
                             </span>
                         </div>
-                        <h4 className="font-bold text-xl text-dark-900 dark:text-white">
+                        <h4 className="font-bold text-lg md:text-xl text-dark-900 dark:text-white leading-tight">
                             {week.title}
                         </h4>
                     </div>
                 </div>
-                <div className={`${colors.text} transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                    <ChevronDown size={32} />
+                <div className={`${colors.text} transition-transform ${isExpanded ? 'rotate-180' : ''} mt-2 md:mt-0`}>
+                    <ChevronDown size={28} className="md:w-8 md:h-8" />
                 </div>
             </button>
 
@@ -1237,32 +1237,32 @@ function TechnologyTree({ tech, data }) {
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={`w-full p-8 bg-gradient-to-r ${data.gradient} hover:opacity-90 transition-all`}
             >
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                        <div className="text-8xl drop-shadow-2xl">{data.icon}</div>
-                        <div className="text-left text-white">
-                            <h3 className="text-4xl font-black mb-2 drop-shadow-lg">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                        <div className="text-6xl md:text-8xl drop-shadow-2xl">{data.icon}</div>
+                        <div className="text-center md:text-left text-white w-full md:w-auto">
+                            <h3 className="text-2xl md:text-4xl font-black mb-2 drop-shadow-lg leading-tight">
                                 {data.title}
                             </h3>
-                            <p className="text-xl font-semibold mb-3 opacity-90">
+                            <p className="text-lg md:text-xl font-semibold mb-3 opacity-90">
                                 {data.subtitle}
                             </p>
-                            <div className="flex items-center gap-4">
-                                <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-bold text-sm">
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4">
+                                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-white/20 backdrop-blur rounded-full font-bold text-xs md:text-sm whitespace-nowrap">
                                     {data.totalDays} Days
                                 </span>
-                                <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-bold text-sm">
+                                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-white/20 backdrop-blur rounded-full font-bold text-xs md:text-sm whitespace-nowrap">
                                     {data.weeks.length} Weeks
                                 </span>
-                                <span className="px-4 py-2 bg-green-500 rounded-full font-bold text-sm flex items-center gap-1">
-                                    <CheckCircle2 size={16} />
+                                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-green-500 rounded-full font-bold text-xs md:text-sm flex items-center gap-1 whitespace-nowrap">
+                                    <CheckCircle2 size={14} />
                                     3 Days Free
                                 </span>
                             </div>
                         </div>
                     </div>
-                    <div className="text-white">
-                        {isExpanded ? <ChevronDown size={48} /> : <ChevronRight size={48} />}
+                    <div className="text-white mt-4 md:mt-0">
+                        {isExpanded ? <ChevronDown size={32} className="md:w-12 md:h-12" /> : <ChevronRight size={32} className="md:w-12 md:h-12" />}
                     </div>
                 </div>
             </button>

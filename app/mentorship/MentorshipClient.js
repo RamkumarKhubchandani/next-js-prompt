@@ -130,7 +130,7 @@ export default function MentorshipClient({ prefill, isInModal }) {
     const Wrapper = isInModal ? 'div' : 'div';
     const wrapperClass = isInModal
         ? "w-full h-full text-dark-900 dark:text-light-100 font-sans"
-        : "min-h-screen bg-light-50 dark:bg-dark-900 text-dark-900 dark:text-light-100 font-sans selection:bg-brand-primary/30";
+        : "min-h-screen bg-light-50 dark:bg-dark-900 text-dark-900 dark:text-light-100 font-sans selection:bg-brand-primary/30 overflow-x-hidden";
 
     return (
         <Wrapper className={wrapperClass}>
@@ -161,8 +161,8 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                     </span>
                                     Mentors from Google, Meta & Amazon Online
                                 </motion.div>
-                                <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-                                    Expert Help for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-600">Everyone.</span>
+                                <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+                                    Expert Help <span className="block md:inline">for</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-600">Everyone.</span>
                                 </h1>
                                 <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                                     From <strong>kids learning Scratch</strong> to <strong>seniors architecting systems</strong>.
@@ -172,7 +172,7 @@ export default function MentorshipClient({ prefill, isInModal }) {
                         )}
 
                         {/* Wizard Container */}
-                        <div className="bg-white dark:bg-dark-800 rounded-3xl shadow-xl border border-gray-100 dark:border-dark-700 p-8 md:p-12 relative overflow-hidden">
+                        <div className="bg-white dark:bg-dark-800 rounded-3xl shadow-xl border border-gray-100 dark:border-dark-700 p-6 md:p-12 relative overflow-hidden">
                             {/* Progress Bar */}
                             <div className="absolute top-0 left-0 h-1 bg-gray-100 dark:bg-dark-700 w-full">
                                 <motion.div
@@ -334,7 +334,7 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                         </div>
 
                                         <form onSubmit={handleSubmit} className="space-y-4">
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Name</label>
                                                     <input name="name" required type="text" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="Your Name" />
@@ -416,110 +416,112 @@ export default function MentorshipClient({ prefill, isInModal }) {
                 )}
             </main>
 
-            {!isInModal && (
-                <>
-                    {/* FANCY HOW IT WORKS - Show only on full page */}
-                    <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-dark-900 dark:to-dark-800 relative overflow-hidden">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-full bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.05),transparent_60%)] pointer-events-none" />
+            {
+                !isInModal && (
+                    <>
+                        {/* FANCY HOW IT WORKS - Show only on full page */}
+                        <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-dark-900 dark:to-dark-800 relative overflow-hidden">
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-full bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.05),transparent_60%)] pointer-events-none" />
 
-                        <div className="max-w-7xl mx-auto px-4 relative z-10">
-                            <div className="text-center mb-20">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    className="inline-block px-4 py-1.5 rounded-full border border-brand-primary/20 bg-brand-primary/5 text-brand-primary font-bold text-sm mb-4"
-                                >
-                                    THE PROCESS
-                                </motion.div>
-                                <h2 className="text-4xl md:text-5xl font-black mb-6">
-                                    Structured for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600">Pure Success</span>
-                                </h2>
-                                <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-                                    We've optimized the mentorship journey to be as frictionless as possible. Seamless, simple, and impactful.
-                                </p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                                {[
-                                    {
-                                        icon: MessageSquare,
-                                        title: "1. Tell Us",
-                                        desc: "Share your goals, tech stack, and budget. Our intake is AI-assisted.",
-                                        color: "from-blue-500 to-cyan-400"
-                                    },
-                                    {
-                                        icon: Sparkles,
-                                        title: "2. The Match",
-                                        desc: "Our algorithm finds the perfect expert who fits your exact needs.",
-                                        color: "from-purple-500 to-pink-500"
-                                    },
-                                    {
-                                        icon: Video,
-                                        title: "3. Connect",
-                                        desc: "Meet via our dedicated video platform with code-sharing tools.",
-                                        color: "from-orange-500 to-red-500"
-                                    },
-                                    {
-                                        icon: Trophy,
-                                        title: "4. Level Up",
-                                        desc: "Achieve your goal, whether it's fixing a bug or landing a job.",
-                                        color: "from-green-500 to-emerald-400"
-                                    }
-                                ].map((step, idx) => (
+                            <div className="max-w-7xl mx-auto px-4 relative z-10">
+                                <div className="text-center mb-20">
                                     <motion.div
-                                        key={idx}
-                                        initial={{ opacity: 0, y: 30 }}
+                                        initial={{ opacity: 0, y: 10 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.15 }}
-                                        viewport={{ once: true }}
-                                        className="relative group"
+                                        className="inline-block px-4 py-1.5 rounded-full border border-brand-primary/20 bg-brand-primary/5 text-brand-primary font-bold text-sm mb-4"
                                     >
-                                        <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl rounded-3xl -z-10"
-                                            style={{ backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))` }}
-                                        />
-
-                                        <div className="h-full bg-white dark:bg-dark-900 border border-gray-100 dark:border-dark-700 p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
-                                            {/* Top Gradient Line */}
-                                            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.color}`} />
-
-                                            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white mb-6 shadow-lg transform group-hover:rotate-6 transition-transform`}>
-                                                <step.icon size={28} />
-                                            </div>
-
-                                            <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
-                                            <p className="text-gray-500 leading-relaxed">
-                                                {step.desc}
-                                            </p>
-
-                                            {/* Hover visual */}
-                                            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gray-50 dark:bg-dark-800 rounded-full group-hover:scale-150 transition-transform duration-500 -z-10 opacity-50" />
-                                        </div>
+                                        THE PROCESS
                                     </motion.div>
-                                ))}
+                                    <h2 className="text-4xl md:text-5xl font-black mb-6">
+                                        Structured for <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600">Pure Success</span>
+                                    </h2>
+                                    <p className="text-xl text-gray-500 max-w-2xl mx-auto">
+                                        We've optimized the mentorship journey to be as frictionless as possible. Seamless, simple, and impactful.
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    {[
+                                        {
+                                            icon: MessageSquare,
+                                            title: "1. Tell Us",
+                                            desc: "Share your goals, tech stack, and budget. Our intake is AI-assisted.",
+                                            color: "from-blue-500 to-cyan-400"
+                                        },
+                                        {
+                                            icon: Sparkles,
+                                            title: "2. The Match",
+                                            desc: "Our algorithm finds the perfect expert who fits your exact needs.",
+                                            color: "from-purple-500 to-pink-500"
+                                        },
+                                        {
+                                            icon: Video,
+                                            title: "3. Connect",
+                                            desc: "Meet via our dedicated video platform with code-sharing tools.",
+                                            color: "from-orange-500 to-red-500"
+                                        },
+                                        {
+                                            icon: Trophy,
+                                            title: "4. Level Up",
+                                            desc: "Achieve your goal, whether it's fixing a bug or landing a job.",
+                                            color: "from-green-500 to-emerald-400"
+                                        }
+                                    ].map((step, idx) => (
+                                        <motion.div
+                                            key={idx}
+                                            initial={{ opacity: 0, y: 30 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: idx * 0.15 }}
+                                            viewport={{ once: true }}
+                                            className="relative group"
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl rounded-3xl -z-10"
+                                                style={{ backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))` }}
+                                            />
+
+                                            <div className="h-full bg-white dark:bg-dark-900 border border-gray-100 dark:border-dark-700 p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+                                                {/* Top Gradient Line */}
+                                                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${step.color}`} />
+
+                                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white mb-6 shadow-lg transform group-hover:rotate-6 transition-transform`}>
+                                                    <step.icon size={28} />
+                                                </div>
+
+                                                <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+                                                <p className="text-gray-500 leading-relaxed">
+                                                    {step.desc}
+                                                </p>
+
+                                                {/* Hover visual */}
+                                                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gray-50 dark:bg-dark-800 rounded-full group-hover:scale-150 transition-transform duration-500 -z-10 opacity-50" />
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
 
-                    <section className="py-24 bg-gray-50 dark:bg-dark-900 overflow-hidden">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl md:text-5xl font-black mb-4">Trusted by <span className="text-brand-primary">10,000+</span> Learners</h2>
-                            <div className="flex justify-center gap-1 text-yellow-500 mb-2">
-                                {[...Array(5)].map((_, i) => <Zap key={i} className="fill-yellow-500" size={24} />)}
+                        <section className="py-24 bg-gray-50 dark:bg-dark-900 overflow-hidden">
+                            <div className="text-center mb-16">
+                                <h2 className="text-4xl md:text-5xl font-black mb-4">Trusted by <span className="text-brand-primary">10,000+</span> Learners</h2>
+                                <div className="flex justify-center gap-1 text-yellow-500 mb-2">
+                                    {[...Array(5)].map((_, i) => <Zap key={i} className="fill-yellow-500" size={24} />)}
+                                </div>
+                                <p className="text-gray-500">Rated 4.9/5 by global community.</p>
                             </div>
-                            <p className="text-gray-500">Rated 4.9/5 by global community.</p>
-                        </div>
 
-                        <div className="relative flex flex-col gap-8 opacity-90">
-                            <MarqueeRow speed={40} direction="left" offset={0} />
-                            <MarqueeRow speed={50} direction="right" offset={25} />
-                            <MarqueeRow speed={45} direction="left" offset={50} />
-                        </div>
-                    </section>
+                            <div className="relative flex flex-col gap-8 opacity-90">
+                                <MarqueeRow speed={40} direction="left" offset={0} />
+                                <MarqueeRow speed={50} direction="right" offset={25} />
+                                <MarqueeRow speed={45} direction="left" offset={50} />
+                            </div>
+                        </section>
 
-                    <Footer />
-                </>
-            )}
-        </Wrapper>
+                        <Footer />
+                    </>
+                )
+            }
+        </Wrapper >
     );
 }
 
