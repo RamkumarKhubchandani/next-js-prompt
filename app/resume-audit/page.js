@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/app/components/Header';
-import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
 
@@ -17,6 +17,7 @@ export default function ResumeAuditPage() {
     const [progress, setProgress] = useState(0);
     const [progressMessage, setProgressMessage] = useState('');
     const [downloadFormat, setDownloadFormat] = useState('pdf');
+    const [selectedLayout, setSelectedLayout] = useState('classic');
     const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -176,134 +177,252 @@ export default function ResumeAuditPage() {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
         const margin = 20;
-        const contentWidth = pageWidth - (margin * 2);
-        let yPosition = 20;
+        const xContentWidth = pageWidth - (margin * 2);
+        let yPos = 20;
 
-        // NAME (Centered, Big, Bold)
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.text(optimizedResume.personalInfo.name.toUpperCase(), pageWidth / 2, yPosition, { align: 'center' });
-        yPosition += 8;
-
-        // CONTACT INFO (Centered, Single Line)
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        const contactInfo = [
-            optimizedResume.personalInfo.email,
-            optimizedResume.personalInfo.phone,
-            optimizedResume.personalInfo.linkedin,
-            optimizedResume.personalInfo.location
-        ].filter(Boolean).join(' | ');
-        doc.text(contactInfo, pageWidth / 2, yPosition, { align: 'center' });
-        yPosition += 15;
-
-        // Helper function for section headers
-        const addSectionHeader = (title) => {
-            if (yPosition > 270) { doc.addPage(); yPosition = 20; }
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text(title, margin, yPosition);
-            yPosition += 2;
-            doc.setLineWidth(0.5);
-            doc.line(margin, yPosition, pageWidth - margin, yPosition);
-            yPosition += 6;
+        // --- HELPER WRAPPERS ---
+        const checkPageBreak = (addedHeight = 10) => {
+            if (yPos + addedHeight > 280) {
+                doc.addPage();
+                yPos = 20;
+                return true;
+            }
+            return false;
         };
 
-        // PROFESSIONAL SUMMARY
-        addSectionHeader('PROFESSIONAL SUMMARY');
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        const summaryLines = doc.splitTextToSize(optimizedResume.sections.summary, contentWidth);
-        doc.text(summaryLines, margin, yPosition);
-        yPosition += summaryLines.length * 5 + 8;
-
-        // PROFESSIONAL EXPERIENCE
-        addSectionHeader('PROFESSIONAL EXPERIENCE');
-
-        optimizedResume.sections.experience.forEach((exp) => {
-            if (yPosition > 250) { doc.addPage(); yPosition = 20; }
-
-            // Title (Left) and Date (Right)
-            doc.setFontSize(11);
+        const renderClassic = () => {
+            // NAME (Centered, Big, Bold)
+            doc.setFontSize(22);
             doc.setFont('helvetica', 'bold');
-            doc.text(exp.title, margin, yPosition);
+            doc.text(optimizedResume.personalInfo.name.toUpperCase(), pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
 
-            // Company | Location (Left, below title)
-            yPosition += 5;
+            // CONTACT INFO (Centered, Single Line)
             doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold'); // Company Name Bold
-            doc.text(exp.company, margin, yPosition);
-
-            const companyWidth = doc.getTextWidth(exp.company);
-            doc.setFont('helvetica', 'italic');
-            doc.text(` | ${exp.duration}`, margin + companyWidth, yPosition);
-
-            yPosition += 6;
             doc.setFont('helvetica', 'normal');
+            const contactInfo = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin,
+                optimizedResume.personalInfo.location
+            ].filter(Boolean).join(' | ');
+            doc.text(contactInfo, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
 
-            // Bullets
-            exp.bullets.forEach(bullet => {
-                if (yPosition > 275) { doc.addPage(); yPosition = 20; }
-                doc.text('•', margin + 2, yPosition);
-                const bulletLines = doc.splitTextToSize(bullet, contentWidth - 8);
-                doc.text(bulletLines, margin + 6, yPosition);
-                yPosition += bulletLines.length * 5;
-            });
-            yPosition += 4;
-        });
-
-        // TECHNICAL SKILLS
-        if (yPosition > 230) { doc.addPage(); yPosition = 20; }
-        addSectionHeader('TECHNICAL SKILLS');
-
-        Object.entries(optimizedResume.sections.skills).forEach(([category, skills]) => {
-            if (yPosition > 275) { doc.addPage(); yPosition = 20; }
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            const categoryTitle = category.toUpperCase() + ': ';
-            doc.text(categoryTitle, margin, yPosition);
-
-            const categoryWidth = doc.getTextWidth(categoryTitle);
-            doc.setFont('helvetica', 'normal');
-            const skillsText = skills.join(', ');
-            const skillsLines = doc.splitTextToSize(skillsText, contentWidth - categoryWidth);
-
-            // If skills wrap, handle indent
-            if (skillsLines.length > 1) {
-                doc.text(skillsLines[0], margin + categoryWidth, yPosition);
-                for (let i = 1; i < skillsLines.length; i++) {
-                    yPosition += 5;
-                    doc.text(skillsLines[i], margin, yPosition); // Align left for subsequent lines
-                }
-            } else {
-                doc.text(skillsLines, margin + categoryWidth, yPosition);
-            }
-            yPosition += 6;
-        });
-        yPosition += 4;
-
-        // EDUCATION
-        if (optimizedResume.sections.education && optimizedResume.sections.education.length > 0) {
-            if (yPosition > 250) { doc.addPage(); yPosition = 20; }
-            addSectionHeader('EDUCATION');
-
-            optimizedResume.sections.education.forEach(edu => {
-                doc.setFontSize(10);
+            // SECTION HEADER HELPER
+            const addSectionHeader = (title) => {
+                checkPageBreak(20);
+                doc.setFontSize(12);
                 doc.setFont('helvetica', 'bold');
-                doc.text(edu.school, margin, yPosition);
+                doc.text(title, margin, yPos);
+                yPos += 2;
+                doc.setLineWidth(0.5);
+                doc.setDrawColor(0, 0, 0); // Black
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += 6;
+            };
 
-                const schoolWidth = doc.getTextWidth(edu.school);
-                doc.setFont('helvetica', 'italic');
-                doc.text(` | ${edu.year}`, margin + schoolWidth, yPosition);
+            // RENDER SECTIONS
+            renderCommonSections(addSectionHeader, 'helvetica');
+        };
 
-                yPosition += 5;
-                doc.setFont('helvetica', 'normal');
-                doc.text(edu.degree, margin, yPosition);
-                yPosition += 8;
+        const renderModern = () => {
+            // Accent Color: #6b21a8 (Purple-800)
+            const accentColor = [107, 33, 168];
+
+            // NAME (Left Aligned, Modern Sans)
+            doc.setFontSize(26);
+            doc.setTextColor(...accentColor);
+            doc.setFont('helvetica', 'bold');
+            doc.text(optimizedResume.personalInfo.name, margin, yPos);
+            yPos += 7;
+
+            // CONTACT INFO (Left Aligned, Stacked or Row)
+            doc.setFontSize(10);
+            doc.setTextColor(80, 80, 80); // Dark Gray
+            doc.setFont('helvetica', 'normal');
+            const contactInfo = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin,
+                optimizedResume.personalInfo.location
+            ].filter(Boolean).join('  •  ');
+            doc.text(contactInfo, margin, yPos);
+            yPos += 15;
+
+            // SECTION HEADER HELPER
+            const addSectionHeader = (title) => {
+                checkPageBreak(20);
+                doc.setFontSize(11);
+                doc.setTextColor(...accentColor);
+                doc.setFont('helvetica', 'bold');
+                doc.text(title.toUpperCase(), margin, yPos);
+                yPos += 2;
+                doc.setDrawColor(...accentColor);
+                doc.setLineWidth(1); // Thicker line
+                doc.line(margin, yPos, margin + 20, yPos); // Short accent line
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.1);
+                doc.line(margin + 20, yPos, pageWidth - margin, yPos); // Light continuation
+                yPos += 8;
+                doc.setTextColor(0, 0, 0); // Reset text color
+            };
+
+            renderCommonSections(addSectionHeader, 'helvetica');
+        };
+
+        const renderExecutive = () => {
+            // Font: Times (Standard Serif)
+            const fontName = 'times';
+
+            // NAME (Left) & CONTACT (Right)
+            doc.setFontSize(24);
+            doc.setFont(fontName, 'bold');
+            doc.text(optimizedResume.personalInfo.name.toUpperCase(), margin, yPos);
+
+            // Contact info right aligned block
+            doc.setFontSize(9);
+            doc.setFont(fontName, 'normal');
+            const contactLines = [
+                optimizedResume.personalInfo.email,
+                optimizedResume.personalInfo.phone,
+                optimizedResume.personalInfo.linkedin,
+                optimizedResume.personalInfo.location
+            ].filter(Boolean);
+
+            let contactY = yPos - 5;
+            contactLines.forEach(line => {
+                doc.text(line, pageWidth - margin, contactY, { align: 'right' });
+                contactY += 4;
             });
+            yPos += 15;
+
+            // SECTION HEADER HELPER
+            const addSectionHeader = (title) => {
+                checkPageBreak(20);
+                doc.setFontSize(11);
+                doc.setFont(fontName, 'bold');
+                doc.text(title.toUpperCase(), margin, yPos);
+                yPos += 2;
+                doc.setLineWidth(0.5);
+                doc.setDrawColor(0, 0, 0); // Black
+                doc.line(margin, yPos, pageWidth - margin, yPos);
+                yPos += 6;
+                doc.setLineWidth(0.1); // Double line effect
+                doc.line(margin, yPos - 7, pageWidth - margin, yPos - 7);
+            };
+
+            renderCommonSections(addSectionHeader, fontName);
+        };
+
+
+        // --- SHARED SECTION RENDERING LOGIC ---
+        const renderCommonSections = (addSectionHeader, fontName) => {
+            // PROFESSIONAL SUMMARY
+            addSectionHeader('PROFESSIONAL SUMMARY');
+            doc.setFontSize(10);
+            doc.setFont(fontName, 'normal');
+            const summaryLines = doc.splitTextToSize(optimizedResume.sections.summary, xContentWidth);
+            doc.text(summaryLines, margin, yPos);
+            yPos += summaryLines.length * 5 + 8;
+
+            // PROFESSIONAL EXPERIENCE
+            addSectionHeader('PROFESSIONAL EXPERIENCE');
+
+            optimizedResume.sections.experience.forEach((exp) => {
+                checkPageBreak(30);
+
+                // Title (Left)
+                doc.setFontSize(11);
+                doc.setFont(fontName, 'bold');
+                doc.text(exp.title, margin, yPos);
+
+                // Date (Right)
+                doc.setFontSize(10);
+                doc.setFont(fontName, 'italic'); // Date Italic
+                doc.text(exp.duration, pageWidth - margin, yPos, { align: 'right' });
+
+                // Company | Location (Left, below title)
+                yPos += 5;
+                doc.setFont(fontName, 'bold'); // Company Name Bold
+                doc.text(exp.company, margin, yPos);
+
+                yPos += 6;
+                doc.setFont(fontName, 'normal');
+
+                // Bullets
+                exp.bullets.forEach(bullet => {
+                    checkPageBreak(10);
+                    doc.text('•', margin + 2, yPos);
+                    const bulletLines = doc.splitTextToSize(bullet, xContentWidth - 8);
+                    doc.text(bulletLines, margin + 6, yPos);
+                    yPos += bulletLines.length * 5;
+                });
+                yPos += 4;
+            });
+
+            // TECHNICAL SKILLS
+            checkPageBreak(30);
+            addSectionHeader('TECHNICAL SKILLS');
+
+            Object.entries(optimizedResume.sections.skills).forEach(([category, skills]) => {
+                checkPageBreak(15);
+                doc.setFontSize(10);
+                doc.setFont(fontName, 'bold');
+                const categoryTitle = category.toUpperCase() + ': ';
+                doc.text(categoryTitle, margin, yPos);
+
+                const categoryWidth = doc.getTextWidth(categoryTitle);
+                doc.setFont(fontName, 'normal');
+                const skillsText = skills.join(', ');
+                const skillsLines = doc.splitTextToSize(skillsText, xContentWidth - categoryWidth);
+
+                // If skills wrap, handle indent
+                if (skillsLines.length > 1) {
+                    doc.text(skillsLines[0], margin + categoryWidth, yPos);
+                    for (let i = 1; i < skillsLines.length; i++) {
+                        yPos += 5;
+                        checkPageBreak(10);
+                        doc.text(skillsLines[i], margin, yPos);
+                    }
+                } else {
+                    doc.text(skillsLines, margin + categoryWidth, yPos);
+                }
+                yPos += 6;
+            });
+            yPos += 4;
+
+            // EDUCATION
+            if (optimizedResume.sections.education && optimizedResume.sections.education.length > 0) {
+                checkPageBreak(30);
+                addSectionHeader('EDUCATION');
+
+                optimizedResume.sections.education.forEach(edu => {
+                    doc.setFontSize(10);
+                    doc.setFont(fontName, 'bold');
+                    doc.text(edu.school, margin, yPos);
+
+                    doc.setFont(fontName, 'italic');
+                    doc.text(edu.year, pageWidth - margin, yPos, { align: 'right' });
+
+                    yPos += 5;
+                    doc.setFont(fontName, 'normal');
+                    doc.text(edu.degree, margin, yPos);
+                    yPos += 8;
+                });
+            }
+        };
+
+        // EXECUTE SELECTED LAYOUT
+        if (selectedLayout === 'modern') {
+            renderModern();
+        } else if (selectedLayout === 'executive') {
+            renderExecutive();
+        } else {
+            renderClassic();
         }
 
-        const fileName = `${optimizedResume.personalInfo.name.replace(/\s+/g, '_')}_Resume.pdf`;
+        const fileName = `${optimizedResume.personalInfo.name.replace(/\s+/g, '_')}_Resume_${selectedLayout}.pdf`;
         doc.save(fileName);
         confetti();
     };
@@ -820,8 +939,33 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     </div>
                                 </div>
 
+                                {/* Layout Choice */}
+                                <div className="mt-8 mb-6">
+                                    <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Choose Resume Layout:</h4>
+                                    <div className="flex gap-4 justify-center flex-wrap">
+                                        {[
+                                            { id: 'classic', label: 'Classic ATS', desc: 'Clean & Standard' },
+                                            { id: 'modern', label: 'Modern', desc: 'Stylish & Bold' },
+                                            { id: 'executive', label: 'Executive', desc: 'Professional Serif' }
+                                        ].map(layout => (
+                                            <button
+                                                key={layout.id}
+                                                onClick={() => setSelectedLayout(layout.id)}
+                                                className={`flex flex-col items-center px-4 py-3 rounded-xl border-2 transition-all ${selectedLayout === layout.id
+                                                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                                                    : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:border-purple-300'
+                                                    }`}
+                                            >
+                                                <LayoutTemplate size={20} className="mb-1" />
+                                                <span className="font-bold text-sm">{layout.label}</span>
+                                                <span className="text-xs opacity-80">{layout.desc}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {/* Download Format Choice */}
-                                <div className="mt-8 mb-4">
+                                <div className="mt-4 mb-4">
                                     <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Choose Download Format:</h4>
                                     <div className="flex gap-4 justify-center">
                                         <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-purple-500 transition-all">
