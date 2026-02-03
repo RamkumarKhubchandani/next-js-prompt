@@ -1,7 +1,7 @@
 import HomeClientPage from './HomeClientPage';
 
 export const metadata = {
-  title: "Free Coding Bootcamp | React, Angular, Node.js & System Design",
+  title: "OutlineDev - Free Coding Bootcamp | React, Angular, Node.js & System Design",
   description: "Join the #1 Free Coding Mentorship platform. Master React, Angular, and Node.js with 1-on-1 expert guidance, resume building, and mock interviews.",
   alternates: {
     canonical: 'https://outlinedev.com',
@@ -56,7 +56,7 @@ export default function Page() {
     "@id": "https://outlinedev.com/#homepage-org",
     "name": "OutlineDev",
     "url": "https://outlinedev.com",
-    "logo": "https://outlinedev.com/logo-outlinedev-transparent.png",
+    "logo": "https://outlinedev.com/logo-outlinedev-icon.png",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "5.0",

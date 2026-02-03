@@ -31,7 +31,9 @@ export const metadata = {
   creator: "OutlineDev",
   publisher: "OutlineDev",
   icons: {
-    icon: `/favicon.svg?v=${new Date().getTime()}`,
+    icon: '/logo-outlinedev-icon.png',
+    shortcut: '/logo-outlinedev-icon.png',
+    apple: '/logo-outlinedev-icon.png',
   },
   openGraph: {
     title: "OutlineDev | Master React, Node & System Design",
@@ -71,7 +73,7 @@ export default async function RootLayout({ children }) {
       {
         "@type": "WebSite",
         "name": "OutlineDev",
-        "alternateName": "OutlineDev - Career Roadmap Platform",
+        "alternateName": "OutlineDev",
         "url": "https://outlinedev.com",
         "potentialAction": {
           "@type": "SearchAction",
@@ -91,14 +93,14 @@ export default async function RootLayout({ children }) {
         "url": "https://outlinedev.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://outlinedev.com/logo-outlinedev-transparent.png",
+          "url": "https://outlinedev.com/logo-outlinedev-icon.png",
           "width": 512,
           "height": 512,
           "caption": "OutlineDev Logo"
         },
         "image": {
           "@type": "ImageObject",
-          "url": "https://outlinedev.com/logo-outlinedev.png",
+          "url": "https://outlinedev.com/brand/linkedin-banner-final.png",
           "width": 1200,
           "height": 630
         },
