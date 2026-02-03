@@ -207,7 +207,7 @@ export const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/javascript-tutorials">
+              <Link href="/login">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -217,7 +217,7 @@ export const Hero = () => {
                   Start Your Ascension
                 </motion.button>
               </Link>
-              <Link href="/pricing">
+              <Link href="/login">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
