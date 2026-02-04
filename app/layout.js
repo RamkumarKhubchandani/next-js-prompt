@@ -31,7 +31,7 @@ export const metadata = {
   creator: "OutlineDev",
   publisher: "OutlineDev",
   icons: {
-    icon: '/logo-outlinedev-icon.png',
+    icon: '/logo-outlinedev-icon.png', // ✅ Force use of the correct PNG logo
     shortcut: '/logo-outlinedev-icon.png',
     apple: '/logo-outlinedev-icon.png',
   },
