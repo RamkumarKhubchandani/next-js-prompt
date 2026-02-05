@@ -7,7 +7,7 @@ export async function POST(req) {
   if (req.method === 'OPTIONS') {
     return new NextResponse('ok', { status: 200 });
   }
-  
+
   try {
     const { email, phoneNumber, countryCode } = await req.json();
 
@@ -29,7 +29,7 @@ export async function POST(req) {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: 'ramkumarkhub@gmail.com',
+      to: 'hi@outlinedev.com',
       subject: 'New Contact Form Submission',
       html: `
         <h2>New Contact Form Submission</h2>
