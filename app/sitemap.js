@@ -34,35 +34,44 @@ export default function sitemap() {
   const baseUrl = "https://outlinedev.com"; // Production URL
   const currentDate = new Date().toISOString().split('T')[0];
 
-  // Base routes - Added /events
-  const routes = [
-    "",
-    "/mentorship",
-    "/mentors",
-    "/events",
+  // 1. Core Static Routes
+  const staticRoutes = [
+    { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage
+    { url: "/mentorship", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/mentors", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/events", changeFrequency: "daily", priority: 0.9 },
+    { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
+  ].map((route) => ({
+    url: `${baseUrl}${route.url}`,
+    lastModified: currentDate,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+
+  // 2. Low Value / Utility Routes (Indexable but low priority)
+  const utilityRoutes = [
     "/login",
     "/register",
-    "/challenges",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: currentDate,
-    changeFrequency: "daily",
-    priority: 1,
+    changeFrequency: "monthly",
+    priority: 0.5,
   }));
 
   const mentorRoutes = [];
 
   PHASE_1_SKILLS.forEach((skill) => {
     PHASE_1_LOCATIONS.forEach((location) => {
-      // 1. Standard: javascript-mentors-in-london (Volume)
+      // 3. Middle Tier: Standard Programmatic Pages (Volume) -> 0.7
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.8,
+        priority: 0.7,
       });
 
-      // 2. High Intent: one-to-one-javascript-teacher-in-london (Conversion)
+      // 4. High Tier: Conversion Pages (Commercial Intent) -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/one-to-one-${skill}-tutors-in-${location}`,
         lastModified: currentDate,
@@ -70,38 +79,36 @@ export default function sitemap() {
         priority: 0.9,
       });
 
-      // 3. Hiring: hire-react-developers-in-san-francisco (Commercial)
-      // Only for major tech
+      // 5. Hiring: Specific Commercial Pages -> 0.8
       if (["react", "nodejs", "typescript", "fullstack"].includes(skill)) {
         mentorRoutes.push({
           url: `${baseUrl}/mentors/hire-${skill}-developers-in-${location}`,
           lastModified: currentDate,
-          changeFrequency: "daily",
-          priority: 1.0,
+          changeFrequency: "weekly",
+          priority: 0.8,
         });
 
         mentorRoutes.push({
           url: `${baseUrl}/mentors/freelance-${skill}-experts-in-${location}`,
           lastModified: currentDate,
-          changeFrequency: "daily",
-          priority: 0.95,
+          changeFrequency: "weekly",
+          priority: 0.8,
         });
       }
 
-      // 4. Job Support: job-support-for-java-in-bangalore (High Demand)
+      // 6. Long Tail -> 0.6
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-job-support-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.9,
+        priority: 0.6,
       });
 
-      // 5. Interview Help: interview-help-for-javascript
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-interview-help-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.85,
+        priority: 0.6,
       });
     });
   });
@@ -109,7 +116,7 @@ export default function sitemap() {
   // ---------------------------------------------------------
   // OFFICIAL EVENT ROUTES (The 4 Live Events)
   // ---------------------------------------------------------
-  // We prioritize these real event pages
+  // These are core content, keep high
   const officialEventRoutes = events.map((event) => ({
     url: `${baseUrl}/events/${event.slug}`,
     lastModified: currentDate,
@@ -118,7 +125,7 @@ export default function sitemap() {
   }));
 
   // ---------------------------------------------------------
-  // DYNAMIC EVENT ROUTES (Lead Gen for Search Intent)
+  // DYNAMIC EVENT ROUTES (Lead Gen)
   // ---------------------------------------------------------
   const eventRoutes = [];
 
@@ -132,15 +139,15 @@ export default function sitemap() {
 
   PHASE_1_SKILLS.forEach((topic) => {
     EVENT_TYPES.forEach((type) => {
-      // e.g. /events/free-react-workshop
+      // Lead Gen -> 0.8
       eventRoutes.push({
         url: `${baseUrl}/events/free-${topic}-${type}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.9,
+        priority: 0.8,
       });
     });
   });
 
-  return [...routes, ...officialEventRoutes, ...mentorRoutes, ...eventRoutes];
+  return [...staticRoutes, ...utilityRoutes, ...officialEventRoutes, ...mentorRoutes, ...eventRoutes];
 }

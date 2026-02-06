@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+# Disallow pages with no search value
+Disallow: /login
+Disallow: /register
 
 # Sitemap pointing to your new, optimized file
 Sitemap: https://outlinedev.com/sitemap.xml
