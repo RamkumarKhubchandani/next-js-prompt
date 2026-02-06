@@ -1,4 +1,5 @@
-User-Agent: *
+User-agent: *
 Allow: /
 
+# Sitemap pointing to your new, optimized file
 Sitemap: https://outlinedev.com/sitemap.xml

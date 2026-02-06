@@ -1,128 +1,146 @@
-import { SKILLS, LOCATIONS } from "./lib/seo-data";
+import events from "./lib/events.json";
+
+const PHASE_1_SKILLS = [
+  "javascript",
+  "react",
+  "angular",
+  "nodejs",
+  "nextjs",
+  "mongodb",
+  "vue",
+  "playwright",
+  "typescript",
+  "react-native",
+  "svelte",
+  "html-css",
+  "tailwind",
+  "fullstack"
+];
+
+const PHASE_1_LOCATIONS = [
+  "pune",
+  "mumbai",
+  "bangalore",
+  "hyderabad",
+  "noida",
+  "london",
+  "san-francisco",
+  "new-york",
+  "berlin",
+  "online"
+];
 
 export default function sitemap() {
   const baseUrl = "https://outlinedev.com"; // Production URL
-  // Base routes
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  // Base routes - Added /events
   const routes = [
     "",
     "/mentorship",
     "/mentors",
+    "/events",
     "/login",
     "/register",
-    "/pricing",
     "/challenges",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
+    lastModified: currentDate,
     changeFrequency: "daily",
     priority: 1,
   }));
 
-  // Dynamic SEO routes
-  // We generate URLs for high-value combinations
-  // SKILLS (15+) * LOCATIONS (100+) = ~1500+ Combinations per category
-
   const mentorRoutes = [];
 
-  SKILLS.forEach((skill) => {
-    LOCATIONS.forEach((location) => {
+  PHASE_1_SKILLS.forEach((skill) => {
+    PHASE_1_LOCATIONS.forEach((location) => {
       // 1. Standard: javascript-mentors-in-london (Volume)
       mentorRoutes.push({
-        url: `${baseUrl}/mentors/${skill.id}-mentors-in-${location.id}`,
-        lastModified: new Date(),
+        url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
+        lastModified: currentDate,
         changeFrequency: "weekly",
         priority: 0.8,
       });
 
       // 2. High Intent: one-to-one-javascript-teacher-in-london (Conversion)
       mentorRoutes.push({
-        url: `${baseUrl}/mentors/one-to-one-${skill.id}-tutors-in-${location.id}`,
-        lastModified: new Date(),
+        url: `${baseUrl}/mentors/one-to-one-${skill}-tutors-in-${location}`,
+        lastModified: currentDate,
         changeFrequency: "weekly",
         priority: 0.9,
       });
 
-      // 3. Hiring & Freelancing: hire-react-developers-in-san-francisco (Commercial)
-      // Only strictly generate these for "hiring" type prefixes/suffixes to avoid spam
-      if (
-        ["react", "node", "python", "java", "devops", "aws"].includes(skill.id)
-      ) {
+      // 3. Hiring: hire-react-developers-in-san-francisco (Commercial)
+      // Only for major tech
+      if (["react", "nodejs", "typescript", "fullstack"].includes(skill)) {
         mentorRoutes.push({
-          url: `${baseUrl}/mentors/hire-${skill.id}-developers-in-${location.id}`,
-          lastModified: new Date(),
+          url: `${baseUrl}/mentors/hire-${skill}-developers-in-${location}`,
+          lastModified: currentDate,
           changeFrequency: "daily",
           priority: 1.0,
         });
 
         mentorRoutes.push({
-          url: `${baseUrl}/mentors/freelance-${skill.id}-experts-in-${location.id}`,
-          lastModified: new Date(),
+          url: `${baseUrl}/mentors/freelance-${skill}-experts-in-${location}`,
+          lastModified: currentDate,
           changeFrequency: "daily",
           priority: 0.95,
         });
       }
 
-      // 4. Problem Specific: react-debugging-help-in-london (Niche)
+      // 4. Job Support: job-support-for-java-in-bangalore (High Demand)
       mentorRoutes.push({
-        url: `${baseUrl}/mentors/${skill.id}-debugging-help-in-${location.id}`,
-        lastModified: new Date(),
+        url: `${baseUrl}/mentors/${skill}-job-support-in-${location}`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.9,
+      });
+
+      // 5. Interview Help: interview-help-for-javascript
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/${skill}-interview-help-in-${location}`,
+        lastModified: currentDate,
         changeFrequency: "weekly",
         priority: 0.85,
       });
-
-      // 5. Job Support: job-support-for-java-in-bangalore (Indian Market Specific)
-      if (location.country === "India" || location.id === "online") {
-        mentorRoutes.push({
-          url: `${baseUrl}/mentors/${skill.id}-job-support-in-${location.id}`,
-          lastModified: new Date(),
-          changeFrequency: "weekly",
-          priority: 0.9,
-        });
-      }
     });
   });
 
   // ---------------------------------------------------------
-  // EVENT ROUTES (High Volume Lead Gen)
+  // OFFICIAL EVENT ROUTES (The 4 Live Events)
+  // ---------------------------------------------------------
+  // We prioritize these real event pages
+  const officialEventRoutes = events.map((event) => ({
+    url: `${baseUrl}/events/${event.slug}`,
+    lastModified: currentDate,
+    changeFrequency: "daily",
+    priority: 1.0,
+  }));
+
+  // ---------------------------------------------------------
+  // DYNAMIC EVENT ROUTES (Lead Gen for Search Intent)
   // ---------------------------------------------------------
   const eventRoutes = [];
-
-  // Core workshop topics we actually support content for
-  // Core workshop topics (Now dynamically using ALL skills for maximum coverage)
-  // This generates URLs like /events/free-python-workshop, /events/learn-aws-bootcamp
-  const WORKSHOP_TOPICS = SKILLS.map((s) => s.id);
 
   // Suffixes that map to "Events"
   const EVENT_TYPES = [
     "workshop",
     "masterclass",
     "bootcamp",
-    "webinar",
-    "training",
-    "crash-course",
-    "demo-class",
-    "free-class",
+    "webinar"
   ];
 
-  WORKSHOP_TOPICS.forEach((topic) => {
+  PHASE_1_SKILLS.forEach((topic) => {
     EVENT_TYPES.forEach((type) => {
       // e.g. /events/free-react-workshop
       eventRoutes.push({
         url: `${baseUrl}/events/free-${topic}-${type}`,
-        lastModified: new Date(),
+        lastModified: currentDate,
         changeFrequency: "weekly",
         priority: 0.9,
-      });
-
-      // e.g. /events/learn-angular-bootcamp
-      eventRoutes.push({
-        url: `${baseUrl}/events/learn-${topic}-${type}`,
-        lastModified: new Date(),
-        changeFrequency: "weekly",
-        priority: 0.85,
       });
     });
   });
 
-  return [...routes, ...mentorRoutes, ...eventRoutes];
+  return [...routes, ...officialEventRoutes, ...mentorRoutes, ...eventRoutes];
 }

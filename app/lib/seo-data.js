@@ -1,14 +1,14 @@
 export const SKILLS = [
     // Frontend - Core
-    { id: 'javascript', name: 'JavaScript', keywords: ['js', 'es6', 'vanilla-js', 'ecmascript'] },
+    { id: 'javascript', name: 'JavaScript', keywords: ['js', 'es6', 'vanilla-js', 'ecmascript', 'frontend'] },
     { id: 'typescript', name: 'TypeScript', keywords: ['ts', 'type-script'] },
     { id: 'react', name: 'React', keywords: ['reactjs', 'react-js', 'react-native'] },
-    { id: 'nextjs', name: 'Next.js', keywords: ['next-js', 'next', 'server-components'] },
+    { id: 'nextjs', name: 'Next.js', keywords: ['next-js', 'next', 'server-components', 'app-router'] },
     { id: 'vue', name: 'Vue.js', keywords: ['vuejs', 'vue-js', 'nuxt'] },
     { id: 'angular', name: 'Angular', keywords: ['angularjs', 'ng', 'rxJS'] },
     { id: 'svelte', name: 'Svelte', keywords: ['sveltejs', 'svelte-kit'] },
     { id: 'html-css', name: 'HTML & CSS', keywords: ['html', 'css', 'web-design', 'styling', 'sass', 'less'] },
-    { id: 'tailwind', name: 'Tailwind CSS', keywords: ['tailwind', 'css-framework'] },
+    { id: 'tailwind', name: 'Tailwind CSS', keywords: ['tailwind', 'css-framework', 'utility-first'] },
 
     // Frontend - State & Libs
     { id: 'redux', name: 'Redux', keywords: ['state-management', 'redux-toolkit', 'rtk'] },
