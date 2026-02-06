@@ -49,23 +49,7 @@ export default function Page() {
     ]
   };
 
-  // Enhanced Rating Schema for Homepage (Conservative numbers)
-  const ratingSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://outlinedev.com/#homepage-org",
-    "name": "OutlineDev",
-    "url": "https://outlinedev.com",
-    "logo": "https://outlinedev.com/logo-outlinedev-icon.png",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "bestRating": "5",
-      "worstRating": "1",
-      "ratingCount": "3",
-      "reviewCount": "3"
-    }
-  };
+
 
   // Breadcrumb Schema for Homepage
   const breadcrumbSchema = {
@@ -87,10 +71,7 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ratingSchema) }}
-      />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
