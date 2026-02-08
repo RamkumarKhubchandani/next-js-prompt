@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import React, { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Input } from '../components/ui/Input';
@@ -9,11 +9,28 @@ import Link from 'next/link';
 import { Loader2, AlertTriangle, Brain, Code, Rocket, Users, Trophy, Zap, Sparkles, CheckCircle } from 'lucide-react';
 
 export default function LoginPage() {
+    const { data: session, status } = useSession(); // Get session status
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (status === 'authenticated') {
+            router.replace('/dashboard');
+        }
+    }, [status, router]);
+
+    // Don't render the form if checking session or already authenticated (avoids flicker)
+    if (status === 'loading' || status === 'authenticated') {
+        return (
+            <div className="min-h-screen bg-light-100 dark:bg-dark-900 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-primary" />
+            </div>
+        );
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();

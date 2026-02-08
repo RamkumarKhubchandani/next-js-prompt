@@ -1,24 +1,19 @@
 "use client";
 import React from "react";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Linkedin, Instagram } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "./Logo";
 
 const social = [
   {
-    name: "Twitter",
-    href: "#",
-    icon: (props) => <Twitter {...props} />,
-  },
-  {
-    name: "GitHub",
-    href: "#",
-    icon: (props) => <Github {...props} />,
-  },
-  {
     name: "LinkedIn",
-    href: "#",
+    href: "https://www.linkedin.com/company/outlinedev",
     icon: (props) => <Linkedin {...props} />,
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/outlinedev.io/",
+    icon: (props) => <Instagram {...props} />,
   },
 ];
 
@@ -50,9 +45,9 @@ export function Footer() {
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Services</h3>
             <ul className="space-y-4">
               <li><Link href="/mentorship" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">1-on-1 Mentorship</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Code Review</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Mock Interviews</Link></li>
-              <li><Link href="#" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Team Training</Link></li>
+              <li><Link href="/code-review" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Code Review</Link></li>
+              <li><Link href="/mock-interviews" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Mock Interviews</Link></li>
+              <li><Link href="/team-training" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Team Training</Link></li>
             </ul>
           </div>
 
@@ -61,8 +56,8 @@ export function Footer() {
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">About Us</Link></li>
-              <li><Link href="/careers" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ OutlineDev</Link></li>
-              <li><Link href="/blog" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
+              <li><Link href="/career" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ OutlineDev</Link></li>
+              <li><Link href="/blogs" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Contact Support</Link></li>
             </ul>
           </div>

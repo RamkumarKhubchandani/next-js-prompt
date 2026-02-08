@@ -108,11 +108,8 @@ export default async function RootLayout({ children }) {
         "slogan": "Outline Your Path to Senior Engineer",
         "foundingDate": "2024",
         "sameAs": [
-          "https://twitter.com/outlinedev",
           "https://www.linkedin.com/company/outlinedev",
-          "https://github.com/outlinedev",
-          "https://www.facebook.com/outlinedev",
-          "https://www.instagram.com/outlinedev"
+          "https://www.instagram.com/outlinedev.io/"
         ],
         "contactPoint": {
           "@type": "ContactPoint",
