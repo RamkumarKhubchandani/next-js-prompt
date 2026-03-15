@@ -28,3 +28,4 @@ Allow: /
 
 # Sitemap
 Sitemap: https://outlinedev.com/sitemap.xml
+Sitemap: https://www.outlinedev.com/sitemap.xml

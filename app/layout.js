@@ -32,10 +32,10 @@ export const metadata = {
   creator: "OutlineDev",
   publisher: "OutlineDev",
   alternates: {
-    canonical: 'https://outlinedev.com',
+    canonical: 'https://outlinedev.com/',
     languages: {
-      'en-US': 'https://outlinedev.com',
-      'en-IN': 'https://outlinedev.com',
+      'en-US': 'https://outlinedev.com/',
+      'en-IN': 'https://outlinedev.com/',
     },
   },
   icons: {
@@ -46,7 +46,7 @@ export const metadata = {
   openGraph: {
     title: "OutlineDev | Free Coding Bootcamp & Mentorship",
     description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
-    url: 'https://outlinedev.com',
+    url: 'https://outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
       {

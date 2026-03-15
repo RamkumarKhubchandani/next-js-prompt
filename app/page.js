@@ -4,7 +4,7 @@ export const metadata = {
   title: "OutlineDev | Free Coding Bootcamp & Mentorship",
   description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular, Node.js & Full Stack with 1-on-1 expert guidance, mock interviews & certification.",
   alternates: {
-    canonical: 'https://outlinedev.com',
+    canonical: 'https://outlinedev.com/',
   },
   keywords: [
     "free coding bootcamp",
@@ -22,7 +22,7 @@ export const metadata = {
   openGraph: {
     title: "OutlineDev | Free Coding Bootcamp & Mentorship",
     description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
-    url: 'https://outlinedev.com',
+    url: 'https://outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
       {

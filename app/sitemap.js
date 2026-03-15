@@ -36,7 +36,7 @@ export default function sitemap() {
 
   // 1. Core Static Routes
   const staticRoutes = [
-    { url: "", changeFrequency: "daily", priority: 1.0 }, // Homepage
+    { url: "/", changeFrequency: "daily", priority: 1.0 }, // Homepage
     { url: "/mentorship", changeFrequency: "weekly", priority: 0.9 },
     { url: "/mentors", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
