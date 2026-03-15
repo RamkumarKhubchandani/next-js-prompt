@@ -89,7 +89,7 @@ export const Hero = () => {
   const introMessage = "Do you want to learn JavaScript, React, Angular, Full stack, Node.js, or any programming skills? Let's learn together! I will make you a next-level coder.";
   const [currentMessage, setCurrentMessage] = useState(introMessage);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isMuted, setIsMuted] = useState(false); // Try to auto-start unmuted (Subject to browser policy)
+  const [isMuted, setIsMuted] = useState(true); // Try to auto-start unmuted (Subject to browser policy)
   const [hasSpokenIntro, setHasSpokenIntro] = useState(false);
 
   // TTS Logic - Only switch messages AFTER intro is done manually or naturally

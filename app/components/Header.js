@@ -18,8 +18,8 @@ const navigation = [
     { name: "Features", href: "/#features" },
     { name: "How It Works", href: "/#how-it-works" },
     { name: "Testimonials", href: "/#testimonials" },
-    { name: "Community", href: "/showcase" },
-    { name: "Jobs", href: "/jobs" },
+    // { name: "Community", href: "/showcase" },
+    // { name: "Jobs", href: "/jobs" },
     { name: "AI Assessment", href: "/ai-quiz" },
     { name: "Tutorials", href: "/blogs" },
 ];
@@ -156,7 +156,7 @@ export function Header({ showNav = true }) {
 
                     {/* Center Navigation - Only shown if showNav is true */}
                     {showNav && (
-                        <nav className="hidden lg:flex min-w-0 justify-center gap-x-5 xl:gap-x-7">
+                        <nav className="hidden 2xl:flex min-w-0 justify-center gap-x-3">
                             {navigation.map((item) => {
                                 if (item.authOnly && !session) return null;
 
@@ -173,7 +173,7 @@ export function Header({ showNav = true }) {
                                                 if (String(item.href).startsWith("/#")) return;
                                                 startNavigate(item.href);
                                             }}
-                                            className="relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2"
+                                            className={`relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2 ${item.isNew ? "mr-6" : ""}`}
                                         >
                                             {item.name}
                                             {item.isNew && (
@@ -313,7 +313,7 @@ export function Header({ showNav = true }) {
                         </div>
 
                         {/* Mobile Menu Trigger - Always shown */}
-                        <div className="lg:hidden ml-2">
+                        <div className="2xl:hidden ml-2">
                             <button
                                 type="button"
                                 onClick={() => setMobileMenuOpen(true)}
@@ -333,143 +333,152 @@ export function Header({ showNav = true }) {
                     <AnimatePresence>
                         {mobileMenuOpen && (
                             <motion.div
-                                initial={{ opacity: 0, x: "100%" }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: "100%" }}
-                                transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-                                className="fixed inset-0 z-[99999] bg-dark-900 lg:hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="fixed inset-0 z-[99999] 2xl:hidden bg-black/60 backdrop-blur-sm flex justify-end"
                             >
-                                <div className="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
-                                    <div className="flex h-20 items-center justify-between">
-                                        <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                                            <Logo />
-                                        </Link>
-                                        <button
-                                            type="button"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="inline-flex items-center justify-center rounded-md p-2.5 text-light-200 hover:bg-dark-800 transition-colors"
-                                        >
-                                            <X className="h-6 w-6" />
-                                        </button>
-                                    </div>
-                                    <div className="mt-6 flow-root">
-                                        <div className="-my-6 divide-y divide-dark-700">
-                                            <div className="space-y-2 py-6">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (pathname?.startsWith('/path/')) {
-                                                            try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch { }
-                                                            setMobileMenuOpen(false);
-                                                            return;
-                                                        }
-                                                        setMobileMenuOpen(false);
-                                                        setConnectConfig({
-                                                            headline: 'Book a 1:1 call',
-                                                            subhead: 'Get live debugging, project help, and a clear next-step roadmap.',
-                                                            defaultNotes: '',
-                                                            ctaLabel: 'Send request',
-                                                        });
-                                                        setConnectOpen(true);
-                                                    }}
-                                                    className="w-full text-left -mx-3 block rounded-lg px-3 py-3 text-base font-extrabold leading-7 text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/20 border border-brand-primary/30"
-                                                >
-                                                    1:1 Connect (Expert Help)
-                                                    <span className="block mt-1 text-xs font-semibold text-dark-900/80">
-                                                        Live debugging • Project help • Career guidance
-                                                    </span>
-                                                </button>
-                                                {showNav && navigation.map((item) => {
-                                                    if (item.authOnly && !session) return null;
-                                                    return (
-                                                        <Link
-                                                            key={item.name}
-                                                            href={item.href}
-                                                            onClick={() => {
-                                                                if (String(item.href).startsWith("/#")) {
-                                                                    setMobileMenuOpen(false);
-                                                                    return;
-                                                                }
-                                                                startNavigate(item.href);
-                                                            }}
-                                                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
-                                                        >
-                                                            {item.name}
-                                                            {item.isNew && (
-                                                                <span className="ml-2 inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
-                                                                    New
-                                                                </span>
-                                                            )}
-                                                        </Link>
-                                                    );
-                                                })}
-                                            </div>
-                                            <div className="py-6">
-                                                {session ? (
-                                                    <>
-                                                        <div className="flex items-center px-3 py-3 rounded-lg bg-dark-800 mb-4 border border-dark-700">
-                                                            <div className="flex-shrink-0">
-                                                                <span className="h-10 w-10 rounded-full bg-brand-primary flex items-center justify-center text-dark-900 font-bold text-lg">
-                                                                    {session.user.name?.charAt(0).toUpperCase()}
-                                                                </span>
-                                                            </div>
-                                                            <div className="ml-3">
-                                                                <div className="text-base font-medium leading-none text-white">{session.user.name}</div>
-                                                                <div className="text-sm font-medium leading-none text-light-400 mt-1">{session.user.email}</div>
-                                                            </div>
-                                                        </div>
-                                                        <Link
-                                                            href="/dashboard"
-                                                            onClick={() => startNavigate("/dashboard")}
-                                                            className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
-                                                        >
-                                                            <LayoutDashboard size={20} className="mr-3 text-brand-primary" />
-                                                            Dashboard
-                                                            {navLoading && navTarget === "/dashboard" && (
-                                                                <Loader2 size={18} className="ml-auto animate-spin text-light-300" />
-                                                            )}
-                                                        </Link>
-                                                        <Link
-                                                            href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
-                                                            onClick={() => setMobileMenuOpen(false)}
-                                                            className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
-                                                        >
-                                                            <User size={20} className="mr-3 text-blue-400" />
-                                                            Public Profile
-                                                        </Link>
-                                                        <button
-                                                            onClick={() => {
+                                <div className="absolute inset-0" onClick={() => setMobileMenuOpen(false)} />
+                                <motion.div
+                                    initial={{ x: "100%" }}
+                                    animate={{ x: 0 }}
+                                    exit={{ x: "100%" }}
+                                    transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+                                    className="relative w-[400px] max-w-[85vw] h-full bg-dark-900 shadow-2xl border-l border-dark-800 flex flex-col"
+                                >
+                                    <div className="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto pb-6">
+                                        <div className="flex h-20 items-center justify-between shrink-0">
+                                            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="dark">
+                                                <Logo />
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="inline-flex items-center justify-center rounded-md p-2.5 text-light-200 hover:bg-dark-800 transition-colors"
+                                            >
+                                                <X className="h-6 w-6" />
+                                            </button>
+                                        </div>
+                                        <div className="mt-6 flow-root">
+                                            <div className="-my-6 divide-y divide-dark-700">
+                                                <div className="space-y-2 py-6">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (pathname?.startsWith('/path/')) {
+                                                                try { window.dispatchEvent(new CustomEvent('open-connect-modal')); } catch { }
                                                                 setMobileMenuOpen(false);
-                                                                signOut({ callbackUrl: '/' });
-                                                            }}
-                                                            className="-mx-3 flex w-full items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
-                                                        >
-                                                            <LogOut size={20} className="mr-3 text-red-400" />
-                                                            Sign out
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Link
-                                                            href="/login"
-                                                            onClick={() => setMobileMenuOpen(false)}
-                                                            className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800"
-                                                        >
-                                                            Log in
-                                                        </Link>
-                                                        <Link
-                                                            href="/register"
-                                                            onClick={() => setMobileMenuOpen(false)}
-                                                            className="mt-2 -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-dark-900 bg-brand-primary hover:bg-brand-primary/90 text-center"
-                                                        >
-                                                            Sign up
-                                                        </Link>
-                                                    </>
-                                                )}
+                                                                return;
+                                                            }
+                                                            setMobileMenuOpen(false);
+                                                            setConnectConfig({
+                                                                headline: 'Book a 1:1 call',
+                                                                subhead: 'Get live debugging, project help, and a clear next-step roadmap.',
+                                                                defaultNotes: '',
+                                                                ctaLabel: 'Send request',
+                                                            });
+                                                            setConnectOpen(true);
+                                                        }}
+                                                        className="w-full text-left -mx-3 block rounded-lg px-3 py-3 text-base font-extrabold leading-7 text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/20 border border-brand-primary/30"
+                                                    >
+                                                        1:1 Connect (Expert Help)
+                                                        <span className="block mt-1 text-xs font-semibold text-dark-900/80">
+                                                            Live debugging • Project help • Career guidance
+                                                        </span>
+                                                    </button>
+                                                    {showNav && navigation.map((item) => {
+                                                        if (item.authOnly && !session) return null;
+                                                        return (
+                                                            <Link
+                                                                key={item.name}
+                                                                href={item.href}
+                                                                onClick={() => {
+                                                                    if (String(item.href).startsWith("/#")) {
+                                                                        setMobileMenuOpen(false);
+                                                                        return;
+                                                                    }
+                                                                    startNavigate(item.href);
+                                                                }}
+                                                                className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
+                                                            >
+                                                                {item.name}
+                                                                {item.isNew && (
+                                                                    <span className="ml-2 inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
+                                                                        New
+                                                                    </span>
+                                                                )}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                                <div className="py-6">
+                                                    {session ? (
+                                                        <>
+                                                            <div className="flex items-center px-3 py-3 rounded-lg bg-dark-800 mb-4 border border-dark-700">
+                                                                <div className="flex-shrink-0">
+                                                                    <span className="h-10 w-10 rounded-full bg-brand-primary flex items-center justify-center text-dark-900 font-bold text-lg">
+                                                                        {session.user.name?.charAt(0).toUpperCase()}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="ml-3">
+                                                                    <div className="text-base font-medium leading-none text-white">{session.user.name}</div>
+                                                                    <div className="text-sm font-medium leading-none text-light-400 mt-1">{session.user.email}</div>
+                                                                </div>
+                                                            </div>
+                                                            <Link
+                                                                href="/dashboard"
+                                                                onClick={() => startNavigate("/dashboard")}
+                                                                className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
+                                                            >
+                                                                <LayoutDashboard size={20} className="mr-3 text-brand-primary" />
+                                                                Dashboard
+                                                                {navLoading && navTarget === "/dashboard" && (
+                                                                    <Loader2 size={18} className="ml-auto animate-spin text-light-300" />
+                                                                )}
+                                                            </Link>
+                                                            <Link
+                                                                href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
+                                                                onClick={() => setMobileMenuOpen(false)}
+                                                                className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
+                                                            >
+                                                                <User size={20} className="mr-3 text-blue-400" />
+                                                                Public Profile
+                                                            </Link>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setMobileMenuOpen(false);
+                                                                    signOut({ callbackUrl: '/' });
+                                                                }}
+                                                                className="-mx-3 flex w-full items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-white"
+                                                            >
+                                                                <LogOut size={20} className="mr-3 text-red-400" />
+                                                                Sign out
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Link
+                                                                href="/login"
+                                                                onClick={() => setMobileMenuOpen(false)}
+                                                                className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800"
+                                                            >
+                                                                Log in
+                                                            </Link>
+                                                            <Link
+                                                                href="/register"
+                                                                onClick={() => setMobileMenuOpen(false)}
+                                                                className="mt-2 -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-dark-900 bg-brand-primary hover:bg-brand-primary/90 text-center"
+                                                            >
+                                                                Sign up
+                                                            </Link>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             </motion.div>
                         )}
                     </AnimatePresence>,
