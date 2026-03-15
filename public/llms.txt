@@ -1,0 +1,31 @@
+# OutlineDev
+
+> OutlineDev is a free coding mentorship and bootcamp platform that helps developers master JavaScript, React, Angular, Node.js, Full Stack development, and System Design through 1-on-1 expert guidance and AI-powered learning.
+
+OutlineDev provides structured learning paths, expert mentorship sessions, mock interviews, resume reviews, and global certifications. The platform is 100% free and serves developers across India and worldwide.
+
+## Key Offerings
+
+- [JavaScript Bootcamp](https://outlinedev.com/path/javascript): Comprehensive JavaScript curriculum from fundamentals to advanced patterns including async/await, closures, and ES2024+.
+- [React Masterclass](https://outlinedev.com/path/react): Complete React training covering hooks, performance optimisation, server components, and Next.js 15 App Router.
+- [Angular Complete Guide](https://outlinedev.com/path/angular): Full Angular curriculum including signals, SSR with Nitro, standalone components, and micro-frontends.
+- [Node.js Backend](https://outlinedev.com/path/nodejs): Node.js, Express, REST APIs, streaming, worker threads, and native SQLite.
+- [System Design](https://outlinedev.com/system-design): Scalable architecture, database design, caching, load balancing and FAANG-level interview preparation.
+- [AI Assessment](https://outlinedev.com/ai-quiz): AI-powered skill assessment quiz to benchmark your current coding level.
+- [1:1 Mentorship](https://outlinedev.com/mentorship): Book live 1-on-1 sessions with senior engineers for code reviews, debugging, and career guidance.
+- [Become a Mentor](https://outlinedev.com/become-mentor): Apply to become a mentor and share your expertise.
+- [Tech Blog & Tutorials](https://outlinedev.com/blogs): In-depth tutorials on React, Angular, Node.js, AI tools, Playwright, and modern web development.
+
+## About OutlineDev
+
+- **Founded**: 2024
+- **Mission**: Make high-quality engineering mentorship accessible to everyone, worldwide.
+- **Target Audience**: Students, junior developers, mid-level engineers seeking to level up to senior roles.
+- **Headquarters**: India (serves globally)
+- **Contact**: hi@outlinedev.com | +91-8237320942
+- **LinkedIn**: https://www.linkedin.com/company/outlinedev
+- **Instagram**: https://www.instagram.com/outlinedev.io/
+
+## Sitemap
+
+- https://outlinedev.com/sitemap.xml

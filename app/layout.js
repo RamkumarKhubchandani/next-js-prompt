@@ -9,44 +9,61 @@ import XPNotification from "./components/public/XPNotification";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL('https://outlinedev.com'), // Updated domain
+  metadataBase: new URL('https://outlinedev.com'),
   title: {
-    default: "OutlineDev | Master React, Node & System Design | Elite Mentorship",
-    template: "%s | OutlineDev - The Career Roadmap"
+    default: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    template: "%s | OutlineDev"
   },
-  description: "Outline your path to Senior Engineer. Join OutlineDev for 1-on-1 Mentorship, Code Reviews, and tailored Career Roadmaps. Learn React, Angular, Node.js, and System Design.",
+  description: "Master JavaScript, React, Angular, Node.js & Full Stack for free. 1-on-1 expert mentorship, mock interviews, system design prep & global certification.",
   keywords: [
-    "outline dev",
-    "coding mentorship",
-    "developer bootcamp",
-    "learn react",
-    "senior engineer roadmap",
-    "system design interview",
+    "free coding bootcamp",
+    "javascript course",
+    "react mentorship",
+    "angular course",
+    "nodejs tutorial",
     "full stack developer",
+    "system design interview",
     "1 on 1 coding mentor",
-    "career outline",
-    "resume review"
+    "coding certification india",
+    "learn javascript online",
+    "outline dev",
   ],
   authors: [{ name: "OutlineDev Mentors" }],
   creator: "OutlineDev",
   publisher: "OutlineDev",
+  alternates: {
+    canonical: 'https://outlinedev.com',
+    languages: {
+      'en-US': 'https://outlinedev.com',
+      'en-IN': 'https://outlinedev.com',
+    },
+  },
   icons: {
-    icon: '/logo-outlinedev-icon.png', // ✅ Force use of the correct PNG logo
+    icon: '/logo-outlinedev-icon.png',
     shortcut: '/logo-outlinedev-icon.png',
     apple: '/logo-outlinedev-icon.png',
   },
   openGraph: {
-    title: "OutlineDev | Master React, Node & System Design",
-    description: "Outline your path to Senior Engineer. 1-on-1 Mentorship & Career Roadmaps.",
+    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
     url: 'https://outlinedev.com',
     siteName: 'OutlineDev',
+    images: [
+      {
+        url: 'https://outlinedev.com/brand/linkedin-banner-final.png',
+        width: 1200,
+        height: 630,
+        alt: 'OutlineDev - Free Coding Bootcamp & Mentorship',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "OutlineDev | Master React, Node & System Design",
-    description: "Outline your path to Senior Engineer. 1-on-1 Mentorship & Career Roadmaps.",
+    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship — 100% free.",
+    images: ['https://outlinedev.com/brand/linkedin-banner-final.png'],
     creator: "@outlinedev",
   },
   robots: {
@@ -61,6 +78,7 @@ export const metadata = {
     },
   },
 };
+
 
 export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);

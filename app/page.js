@@ -1,11 +1,47 @@
 import HomeClientPage from './HomeClientPage';
 
 export const metadata = {
-  title: "OutlineDev - Free Coding Bootcamp | React, Angular, Node.js & System Design",
-  description: "Join the #1 Free Coding Mentorship platform. Master React, Angular, and Node.js with 1-on-1 expert guidance, resume building, and mock interviews.",
+  title: "OutlineDev | Free Coding Bootcamp & Mentorship",
+  description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular, Node.js & Full Stack with 1-on-1 expert guidance, mock interviews & certification.",
   alternates: {
     canonical: 'https://outlinedev.com',
-  }
+  },
+  keywords: [
+    "free coding bootcamp",
+    "javascript mentorship",
+    "react course",
+    "angular tutorial",
+    "nodejs training",
+    "full stack developer",
+    "system design interview",
+    "1 on 1 coding mentor",
+    "coding certification",
+    "learn javascript online",
+    "free programming course india",
+  ],
+  openGraph: {
+    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
+    url: 'https://outlinedev.com',
+    siteName: 'OutlineDev',
+    images: [
+      {
+        url: 'https://outlinedev.com/brand/linkedin-banner-final.png',
+        width: 1200,
+        height: 630,
+        alt: 'OutlineDev - Free Coding Bootcamp & Mentorship for JavaScript, React, Angular, Node.js',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship — 100% free.",
+    images: ['https://outlinedev.com/brand/linkedin-banner-final.png'],
+    creator: "@outlinedev",
+  },
 };
 
 export default function Page() {
