@@ -10,8 +10,6 @@ export default function LearningPaths({ paths, isPro, handleSelectPath, loading 
     const router = useRouter();
 
     const onPathClick = async (pathId) => {
-        if (!isPro) return;
-
         // 1. Update DB state
         if (handleSelectPath) {
             await handleSelectPath(pathId);
@@ -45,19 +43,8 @@ export default function LearningPaths({ paths, isPro, handleSelectPath, loading 
                             className="h-full"
                         >
                             <SpotlightCard className="h-full relative overflow-hidden p-6 hover:shadow-xl transition-all" spotlightColor="rgba(0, 245, 160, 0.15)">
-                                {/* Lock Overlay */}
-                                {!isPro && (
-                                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/50 dark:bg-dark-900/50 backdrop-blur-none transition-all">
-                                        <div className="w-10 h-10 rounded-full bg-dark-900/90 flex items-center justify-center mb-2 shadow-xl hover:scale-110 transition-transform">
-                                            <div className="text-brand-primary">
-                                                <Lock size={18} />
-                                            </div>
-                                        </div>
-                                        <span className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider drop-shadow-md">Pro Path</span>
-                                    </div>
-                                )}
 
-                                <div className={!isPro ? 'opacity-80 grayscale-[0.3] pointer-events-none select-none' : ''}>
+                                <div>
                                     {/* Gradient Accent */}
                                     <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${path.accent}`} />
                                     <div className={`absolute inset-0 bg-gradient-to-br ${path.accent} opacity-0 group-hover:opacity-5 transition-opacity`} />
@@ -84,19 +71,17 @@ export default function LearningPaths({ paths, isPro, handleSelectPath, loading 
                                         </div>
                                     </div>
                                 </div>
-                                {isPro && (
-                                    <div
-                                        onClick={() => onPathClick(path.id)}
-                                        className="absolute inset-0 z-30 cursor-pointer"
-                                        role="button"
-                                        tabIndex={0}
-                                    />
-                                )}
+                                <div
+                                    onClick={() => onPathClick(path.id)}
+                                    className="absolute inset-0 z-30 cursor-pointer"
+                                    role="button"
+                                    tabIndex={0}
+                                />
                             </SpotlightCard>
                         </motion.div>
                     );
                 })}
             </div>
-        </section>
+        </section >
     );
 }

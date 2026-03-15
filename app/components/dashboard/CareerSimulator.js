@@ -17,22 +17,8 @@ export default function CareerSimulator({ isPro }) {
                 className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 h-full relative"
             >
                 <SpotlightCard className="rounded-[15px] p-8 h-full flex flex-col justify-between" spotlightColor="rgba(37, 99, 235, 0.2)">
-                    {/* Lock Overlay */}
-                    {!isPro && (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/50 dark:bg-dark-900/50 rounded-[15px]">
-                            <div className="w-12 h-12 rounded-full bg-dark-900/90 flex items-center justify-center mb-3 shadow-xl">
-                                <Lock size={20} className="text-blue-400" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 drop-shadow-md">Career Mode Locked</h3>
-                            <Link href="/pricing" className="pointer-events-auto">
-                                <button className="mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-500 transition-colors shadow-lg">
-                                    Unlock Beta
-                                </button>
-                            </Link>
-                        </div>
-                    )}
 
-                    <div className={!isPro ? 'opacity-80 pointer-events-none select-none grayscale-[0.5]' : ''}>
+                    <div>
                         <div>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="px-2 py-1 bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase rounded tracking-wider border border-blue-500/20">Beta</span>
@@ -63,22 +49,8 @@ export default function CareerSimulator({ isPro }) {
                 className="p-[1px] rounded-2xl bg-gradient-to-r from-brand-primary to-green-500 h-full relative"
             >
                 <SpotlightCard className="rounded-[15px] p-8 h-full flex flex-col justify-between" spotlightColor="rgba(0, 245, 160, 0.2)">
-                    {/* Lock Overlay */}
-                    {!isPro && (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/10 dark:bg-dark-900/10 backdrop-blur-md rounded-[15px]">
-                            <div className="w-12 h-12 rounded-full bg-dark-900/80 flex items-center justify-center mb-3">
-                                <Lock size={20} className="text-green-400" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Multiplayer Locked</h3>
-                            <Link href="/pricing">
-                                <button className="mt-3 px-4 py-2 bg-green-500 text-dark-900 text-sm font-bold rounded-lg hover:bg-green-400 transition-colors">
-                                    Unlock Beta
-                                </button>
-                            </Link>
-                        </div>
-                    )}
 
-                    <div className={!isPro ? 'filter blur-[2px] opacity-40 pointer-events-none' : ''}>
+                    <div>
                         <div>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="px-2 py-1 bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-bold uppercase rounded tracking-wider border border-green-500/20">New</span>

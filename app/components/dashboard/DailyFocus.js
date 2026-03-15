@@ -35,24 +35,8 @@ export default function DailyFocus({
                 className="lg:col-span-1 h-full"
             >
                 <SpotlightCard className="h-full p-8 flex flex-col justify-between relative overflow-hidden" spotlightColor="rgba(239, 68, 68, 0.15)">
-                    {!isPro ? (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/10 dark:bg-dark-900/10 backdrop-blur-md">
-                            <div className="w-12 h-12 rounded-full bg-dark-900/5 dark:bg-dark-800 flex items-center justify-center mb-3">
-                                <Lock size={24} className="text-gray-400" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                                Daily Bug Challenge
-                            </h3>
-                            <p className="text-sm text-gray-500 mb-4">Pro Feature</p>
-                            <Link href="/pricing">
-                                <button className="px-4 py-2 bg-brand-primary text-dark-900 text-sm font-bold rounded-lg shadow-lg hover:brightness-110 transition-all flex items-center gap-2">
-                                    <Crown size={14} /> Unlock
-                                </button>
-                            </Link>
-                        </div>
-                    ) : null}
 
-                    <div className={!isPro ? 'opacity-20 blur-sm select-none pointer-events-none' : ''}>
+                    <div>
                         <div className="flex items-center justify-between mb-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider">
                                 <Bug size={12} /> Daily Bug
@@ -69,7 +53,7 @@ export default function DailyFocus({
                         </p>
                     </div>
 
-                    <div className={`mt-auto ${!isPro ? 'opacity-20 blur-sm select-none pointer-events-none' : ''}`}>
+                    <div className="mt-auto">
                         <Link href="/daily-bug">
                             <button className="w-full py-3 bg-white dark:bg-dark-700 text-gray-900 dark:text-white font-bold rounded-xl border border-gray-200 dark:border-dark-600 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
                                 <Zap className="text-yellow-500" size={16} fill="currentColor" />

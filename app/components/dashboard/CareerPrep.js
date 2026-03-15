@@ -14,24 +14,8 @@ export default function CareerPrep({ isPro }) {
             >
                 <div className="relative overflow-hidden rounded-3xl p-[1px] bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 shadow-2xl shadow-orange-500/10">
                     <SpotlightCard className="rounded-[23px] p-8 md:p-12 relative overflow-hidden h-full" spotlightColor="rgba(245, 158, 11, 0.15)">
-                        {!isPro && (
-                            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/50 dark:bg-dark-900/50 rounded-[23px]">
-                                <div className="p-4 rounded-full bg-dark-900/90 mb-4 shadow-2xl border border-white/10 transform hover:scale-110 transition-transform">
-                                    <Lock size={32} className="text-amber-500" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 drop-shadow-md">Interview Prep Locked</h3>
-                                <p className="text-gray-900 dark:text-white mb-6 font-bold max-w-md text-center drop-shadow-md">
-                                    Upgrade to Pro to access 500+ premium interview questions.
-                                </p>
-                                <Link href="/pricing" className="pointer-events-auto">
-                                    <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center gap-2">
-                                        <Crown size={18} /> Unlock Feature
-                                    </button>
-                                </Link>
-                            </div>
-                        )}
 
-                        <div className={!isPro ? 'opacity-60 pointer-events-none select-none grayscale-[0.3]' : ''}>
+                        <div>
                             {/* Ambient Background */}
                             <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-amber-500/20 blur-[100px] rounded-full pointer-events-none" />
                             <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-red-500/10 blur-[100px] rounded-full pointer-events-none" />

@@ -6,6 +6,13 @@ import { motion } from 'framer-motion';
 export default function AdminDashboard() {
     const cards = [
         {
+            title: "Upgrade Requests",
+            desc: "Review and approve Free -> Pro upgrade requests.",
+            icon: <Shield size={32} />,
+            href: "/admin/upgrades",
+            color: "bg-red-500"
+        },
+        {
             title: "Manage Users",
             desc: "View users, grant pro status, and manage roles.",
             icon: <Users size={32} />,

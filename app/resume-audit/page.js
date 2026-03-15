@@ -2,10 +2,12 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/app/components/Header';
-import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate, PenTool } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate, PenTool, Lock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
 import ManualResumeForm from './ManualResumeForm';
+import { useSession } from 'next-auth/react';
+import UpgradeToProModal from '../components/UpgradeToProModal';
 
 export default function ResumeAuditPage() {
     const [auditState, setAuditState] = useState('idle');
@@ -21,6 +23,10 @@ export default function ResumeAuditPage() {
     const [selectedLayout, setSelectedLayout] = useState('classic');
     const [file, setFile] = useState(null);
     const fileInputRef = useRef(null);
+    const { data: session } = useSession();
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+    const isPro = session?.user?.plan?.includes('pro') || session?.user?.role === 'admin' || session?.user?.role === 'pro';
 
     const handleFileUpload = (e) => {
         const selectedFile = e.target.files[0];
@@ -777,51 +783,74 @@ export default function ResumeAuditPage() {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6"
                             >
-                                {/* Upload Card */}
-                                <div
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
-                                >
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        onChange={handleFileUpload}
-                                        accept=".pdf,.docx,.doc"
-                                        className="hidden"
-                                    />
+                                <UpgradeToProModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+                                {!isPro ? (
+                                    <div className="col-span-1 md:col-span-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center shadow-xl border border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center">
+                                        <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                                            <Lock size={40} className="text-gray-400 dark:text-gray-500" />
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                                            Pro Feature Locked
+                                        </h2>
+                                        <p className="text-gray-600 dark:text-gray-400 max-w-md mb-8">
+                                            The AI Resume Audit is a premium feature. Upgrade to Pro to get instant, detailed feedback on your resume.
+                                        </p>
+                                        <button
+                                            onClick={() => setShowUpgradeModal(true)}
+                                            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:scale-105 transition-transform shadow-lg"
+                                        >
+                                            Upgrade to Pro
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* Upload Card */}
+                                        <div
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
+                                        >
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileUpload}
+                                                accept=".pdf,.docx,.doc"
+                                                className="hidden"
+                                            />
 
-                                    <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                        <Upload size={32} className="text-purple-600 dark:text-purple-400" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                        Upload Existing Resume
-                                    </h3>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                        PDF or DOCX
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                                        <span className="flex items-center gap-1"><FileText size={12} /> Auto-Parsing</span>
-                                    </div>
-                                </div>
+                                            <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                                <Upload size={32} className="text-purple-600 dark:text-purple-400" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                                Upload Existing Resume
+                                            </h3>
+                                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                                PDF or DOCX
+                                            </p>
+                                            <div className="flex items-center gap-2 text-xs text-gray-400">
+                                                <span className="flex items-center gap-1"><FileText size={12} /> Auto-Parsing</span>
+                                            </div>
+                                        </div>
 
-                                {/* Manual Input Card */}
-                                <div
-                                    onClick={() => setAuditState('manual-input')}
-                                    className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
-                                >
-                                    <div className="w-20 h-20 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                                        <PenTool size={32} className="text-pink-600 dark:text-pink-400" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                        Create from Scratch
-                                    </h3>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-                                        Enter details manually
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                                        <span className="flex items-center gap-1"><Wand2 size={12} /> AI Generator</span>
-                                    </div>
-                                </div>
+                                        {/* Manual Input Card */}
+                                        <div
+                                            onClick={() => setAuditState('manual-input')}
+                                            className="group relative border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-pink-500 dark:hover:border-pink-500 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 text-center cursor-pointer transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center min-h-[300px]"
+                                        >
+                                            <div className="w-20 h-20 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                                <PenTool size={32} className="text-pink-600 dark:text-pink-400" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                                                Create from Scratch
+                                            </h3>
+                                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                                Enter details manually
+                                            </p>
+                                            <div className="flex items-center gap-2 text-xs text-gray-400">
+                                                <span className="flex items-center gap-1"><Wand2 size={12} /> AI Generator</span>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </motion.div>
                         )}
 

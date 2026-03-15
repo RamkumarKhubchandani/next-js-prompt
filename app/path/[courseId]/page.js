@@ -28,6 +28,7 @@ import {
   MonitorPlay,
   Sparkles,
 } from "lucide-react";
+import UpgradeToProModal from "../../components/UpgradeToProModal";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Logo } from "../../components/Logo";
@@ -1015,8 +1016,13 @@ export default function LearningPathPage() {
   const [connectOpen, setConnectOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const lessonTopRef = useRef(null);
   const didScrollOnMountRef = useRef(false);
+
+  const isPro = session?.user?.plan?.includes('pro') || session?.user?.role === 'admin' || session?.user?.role === 'pro';
+  // First 3 days (1, 2, 3) are free. Day 4+ is locked.
+  const isLocked = !isPro && activeDay > 3;
 
   // If user navigates between courses, reset to the first available day for that course.
   useEffect(() => {
@@ -1404,7 +1410,9 @@ export default function LearningPathPage() {
                             : "bg-gray-200 dark:bg-dark-700 text-dark-400"
                           }`}
                       >
-                        {isCompleted && !isActive ? (
+                        {!isPro && day.day > 3 ? (
+                          <Lock size={12} className="text-gray-400" />
+                        ) : isCompleted && !isActive ? (
                           <Check size={12} strokeWidth={3} />
                         ) : (
                           day.day
@@ -1457,410 +1465,434 @@ export default function LearningPathPage() {
       {/* Main Content Area - Cinematic Single Column */}
       <div className="relative z-10 flex-1 w-full min-h-screen pt-24 pb-32">
         <div ref={lessonTopRef} className="scroll-mt-32" />
+        <UpgradeToProModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
 
-        <div className="w-full px-4 md:px-10 lg:px-16 xl:px-24">
-          {/* Hero Header */}
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 dark:border-white/10 bg-white/5 backdrop-blur-sm mb-6"
-            >
-              <span className="text-brand-primary font-bold text-xs uppercase tracking-widest">
-                Day {activeDay}
-              </span>
-              <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-light-600" />
-              <span className="text-gray-500 dark:text-light-400 text-xs font-bold uppercase tracking-widest">
-                {activeContent.duration || "20 min"}
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-dark-900 dark:text-white tracking-tight leading-[1.1] mb-8"
-            >
-              {activeContent.title}
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl md:text-2xl text-gray-600 dark:text-light-300 leading-relaxed max-w-3xl mx-auto font-medium"
-              dangerouslySetInnerHTML={{ __html: activeContent.intro }}
-            />
-          </div>
-
-          {/* AI Tutor Session */}
-          {activeContent.aiSession && activeContent.aiSession.enabled && (
-            <div className="mb-20">
-              <AISessionPlayer
-                key={activeDay}
-                session={activeContent.aiSession}
-                onComplete={() => {
-                  updateProgress(activeDay, (p) => ({
-                    ...p,
-                    aiSessionCompleted: true,
-                  }));
-                }}
-              />
+        {isLocked ? (
+          <div className="w-full h-[60vh] flex flex-col items-center justify-center text-center px-6">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-8 animate-pulse">
+              <Lock size={48} className="text-gray-400 dark:text-gray-500" />
             </div>
-          )}
-
-          {/* Progress Stats Bar */}
-          {(activeCheckpoints.length > 0 || activeLabSteps.length > 0) && (
-            <div className="flex justify-center flex-wrap gap-4 md:gap-8 mb-12 opacity-80">
-              {activeCheckpoints.length > 0 && (
-                <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
-                  <HelpCircle size={16} className="text-yellow-400" />
-                  <span>
-                    {activeCheckpointsCorrectCount}/{activeCheckpoints.length}{" "}
-                    Checkpoints
-                  </span>
-                </div>
-              )}
-              {activeLabSteps.length > 0 && (
-                <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
-                  <Code size={16} className="text-blue-400" />
-                  <span>
-                    {activeLabCompletedCount}/{activeLabSteps.length} Steps
-                  </span>
-                </div>
-              )}
-              {activeMasteryItems.length > 0 && (
-                <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
-                  <CheckCircle size={16} className="text-green-400" />
-                  <span>
-                    {activeMasteryDoneCount}/{activeMasteryItems.length}{" "}
-                    Mastered
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Cinematic Video Player */}
-          {activeContent.video && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="mb-20 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-black border border-gray-800 relative group"
+            <h2 className="text-3xl md:text-5xl font-black text-dark-900 dark:text-white mb-6">
+              Pro Content Locked
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-light-300 max-w-2xl mb-10 leading-relaxed">
+              This advanced lesson (Day {activeDay}) is available exclusively to Pro members.
+              Upgrade to unlock the full curriculum, AI interviews, and more.
+            </p>
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg rounded-full shadow-xl shadow-purple-500/20 transition-all hover:scale-105 active:scale-95"
             >
-              <div className="aspect-video relative">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${activeContent.video}`}
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </motion.div>
-          )}
-
-
-          {/* Main Text Content */}
-          <div className="prose prose-lg dark:prose-invert max-w-none mb-20 text-dark-900/80 dark:text-light-200 prose-headings:font-bold prose-p:leading-relaxed prose-pre:rounded-2xl prose-pre:shadow-xl prose-img:rounded-2xl prose-pre:bg-transparent prose-pre:min-w-0 prose-pre:text-gray-900 dark:prose-pre:text-gray-200">
-            <ProseCopyEnhancer htmlContent={activeContent.content} />
+              Unlock Pro Access
+            </button>
           </div>
-
-          {/* CSS Interactive Sandbox */}
-          {activeContent.sandbox && (
-            <CssSandbox
-              sandbox={activeContent.sandbox}
-              title={`${activeContent.title} - Live Example`}
-            />
-          )}
-
-          {/* Property-by-Property Examples */}
-          {activeContent.propertyExamples && activeContent.propertyExamples.length > 0 && (
-            <div className="mb-20">
+        ) : (
+          <>
+            <div className="w-full px-4 md:px-10 lg:px-16 xl:px-24">
+              {/* Hero Header */}
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-dark-900 dark:text-white mb-4">
-                  Property Reference & Examples
-                </h2>
-                <p className="text-lg text-gray-600 dark:text-light-300">
-                  Visual examples for every property - see them in action!
-                </p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 dark:border-white/10 bg-white/5 backdrop-blur-sm mb-6"
+                >
+                  <span className="text-brand-primary font-bold text-xs uppercase tracking-widest">
+                    Day {activeDay}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-light-600" />
+                  <span className="text-gray-500 dark:text-light-400 text-xs font-bold uppercase tracking-widest">
+                    {activeContent.duration || "20 min"}
+                  </span>
+                </motion.div>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-dark-900 dark:text-white tracking-tight leading-[1.1] mb-8"
+                >
+                  {activeContent.title}
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xl md:text-2xl text-gray-600 dark:text-light-300 leading-relaxed max-w-3xl mx-auto font-medium"
+                  dangerouslySetInnerHTML={{ __html: activeContent.intro }}
+                />
               </div>
 
-              <div className="space-y-16">
-                {activeContent.propertyExamples.map((example, index) => (
-                  <div key={index} className="bg-white dark:bg-dark-800 rounded-3xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-lg">
-                    {/* Property Header */}
-                    <div className="bg-gradient-to-r from-brand-primary/10 to-purple-500/10 px-8 py-6 border-b border-gray-200 dark:border-dark-700">
-                      <h3 className="text-2xl font-bold text-dark-900 dark:text-white mb-2">
-                        <code className="bg-dark-900/10 dark:bg-white/10 px-3 py-1 rounded-lg text-brand-primary">
-                          {example.property}
-                        </code>
-                      </h3>
-                      <p className="text-gray-600 dark:text-light-300 leading-relaxed">
-                        {example.description}
-                      </p>
-                    </div>
-
-                    {/* Property Example */}
-                    <div className="p-8">
-                      <CssSandbox
-                        sandbox={{ html: example.html, css: example.css }}
-                        title={example.property}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Interactive Modules Container */}
-          <div className="space-y-20">
-            {/* Comparison */}
-            {activeContent.comparison && (
-              <section>
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
-                    <Scale size={28} />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-dark-900 dark:text-white">
-                      Zero to Architect: The Diff
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      See the evolution from junior to senior code.
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-                  <CodeComparison
-                    juniorCode={activeContent.comparison.junior}
-                    seniorCode={activeContent.comparison.senior}
-                  />
-                </div>
-              </section>
-            )}
-
-            {/* Checkpoints */}
-            {activeContent.checkpoints && (
-              <LearningCheckpoints
-                courseId={courseId}
-                day={activeDay}
-                checkpoints={activeContent.checkpoints}
-                progress={activeProgress}
-                onProgress={(evt) => {
-                  if (evt?.type === "checkpoint_correct") {
-                    updateProgress(activeDay, (p) => ({
-                      ...p,
-                      checkpointsCorrect: {
-                        ...(p.checkpointsCorrect || {}),
-                        [evt.checkpointIndex]: true,
-                      },
-                    }));
-                  }
-                }}
-              />
-            )}
-
-            {/* Labs */}
-            {activeContent.labSteps && (
-              <section className="bg-dark-900/5 dark:bg-white/5 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-white/5">
-                <GuidedLab
-                  steps={activeContent.labSteps}
-                  onLoad={({ stepId, kind, code, focus, label }) => {
-                    if (stepId && (kind === "bug" || kind === "fix")) {
+              {/* AI Tutor Session */}
+              {activeContent.aiSession && activeContent.aiSession.enabled && (
+                <div className="mb-20">
+                  <AISessionPlayer
+                    key={activeDay}
+                    session={activeContent.aiSession}
+                    onComplete={() => {
                       updateProgress(activeDay, (p) => ({
                         ...p,
-                        lab: {
-                          ...(p.lab || {}),
-                          [stepId]: {
-                            ...(p.lab?.[stepId] || {}),
-                            [kind]: true,
-                          },
-                        },
+                        aiSessionCompleted: true,
                       }));
-                    }
-                    guidedLabEditorRef.current?.loadStep({
-                      code,
-                      focus,
-                      label,
-                      animate: true,
-                    });
-                  }}
-                />
-                <div className="mt-8">
-                  <LiveCodeEditor
-                    ref={guidedLabEditorRef}
-                    initialCode={`// Guided Lab Sandbox\n// Use "Load Bug" / "Load Fix" above to load code here.\nconsole.clear();\n`}
-                    predictions={[]}
-                    title="Guided Lab Sandbox"
+                    }}
                   />
                 </div>
-              </section>
-            )}
+              )}
 
-            {/* Live Editor */}
-            {activeContent?.sandbox?.html || activeContent?.sandbox?.css ? (
-              <HtmlCssPlayground
-                initialHtml={activeContent?.sandbox?.html || ""}
-                initialCss={activeContent?.sandbox?.css || ""}
-                title="HTML/CSS Lab"
-              />
-            ) : (
-              activeContent.code &&
-              (courseId === "react" ? (
-                <ReactLiveEditor initialCode={activeContent.code} />
-              ) : courseId === "angular" ? (
-                <AngularSandpack
-                  initialCode={activeContent.code}
-                  title="Live Lab: Try It Yourself"
-                />
-              ) : (
-                <LiveCodeEditor
-                  ref={liveLabEditorRef}
-                  initialCode={activeContent.code}
-                  predictions={activeContent.predictions}
-                  title="Live Lab: Try It Yourself"
-                  subtitle="Experiment with the concepts you just learned."
-                />
-              ))
-            )}
+              {/* Progress Stats Bar */}
+              {(activeCheckpoints.length > 0 || activeLabSteps.length > 0) && (
+                <div className="flex justify-center flex-wrap gap-4 md:gap-8 mb-12 opacity-80">
+                  {activeCheckpoints.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
+                      <HelpCircle size={16} className="text-yellow-400" />
+                      <span>
+                        {activeCheckpointsCorrectCount}/{activeCheckpoints.length}{" "}
+                        Checkpoints
+                      </span>
+                    </div>
+                  )}
+                  {activeLabSteps.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
+                      <Code size={16} className="text-blue-400" />
+                      <span>
+                        {activeLabCompletedCount}/{activeLabSteps.length} Steps
+                      </span>
+                    </div>
+                  )}
+                  {activeMasteryItems.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm font-bold text-dark-600 dark:text-light-300 bg-white dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 shadow-sm">
+                      <CheckCircle size={16} className="text-green-400" />
+                      <span>
+                        {activeMasteryDoneCount}/{activeMasteryItems.length}{" "}
+                        Mastered
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Interview Prep */}
-            {activeContent.interview && (
-              <div className="bg-gradient-to-br from-gray-900 to-black text-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-800 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-purple-500/10 blur-[100px] rounded-full" />
-                <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-8 flex items-center gap-4">
-                    <Brain className="text-purple-400" size={32} />
-                    Interview Prep
-                  </h3>
-                  <div className="space-y-4">
-                    {activeContent.interview.questions.map((q, i) => (
-                      <div
-                        key={i}
-                        className="border border-white/10 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-sm"
-                      >
-                        <details className="group">
-                          <summary className="flex justify-between items-center p-5 cursor-pointer hover:bg-white/5 transition">
-                            <span className="font-bold text-lg pr-4">
-                              Q{i + 1}: {q.q}
-                            </span>
-                            <ChevronRight className="group-open:rotate-90 transition-transform text-purple-400" />
-                          </summary>
-                          <div className="p-8 bg-black/40 border-t border-white/10 text-gray-300 leading-relaxed text-lg">
-                            <div className="text-xs font-bold uppercase tracking-widest text-purple-400 mb-3">
-                              Target Answer
-                            </div>
-                            {q.a}
-                          </div>
-                        </details>
+              {/* Cinematic Video Player */}
+              {activeContent.video && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-20 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl bg-black border border-gray-800 relative group"
+                >
+                  <div className="aspect-video relative">
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${activeContent.video}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </motion.div>
+              )}
+
+
+              {/* Main Text Content */}
+              <div className="prose prose-lg dark:prose-invert max-w-none mb-20 text-dark-900/80 dark:text-light-200 prose-headings:font-bold prose-p:leading-relaxed prose-pre:rounded-2xl prose-pre:shadow-xl prose-img:rounded-2xl prose-pre:bg-transparent prose-pre:min-w-0 prose-pre:text-gray-900 dark:prose-pre:text-gray-200">
+                <ProseCopyEnhancer htmlContent={activeContent.content} />
+              </div>
+
+              {/* CSS Interactive Sandbox */}
+              {activeContent.sandbox && (
+                <CssSandbox
+                  sandbox={activeContent.sandbox}
+                  title={`${activeContent.title} - Live Example`}
+                />
+              )}
+
+              {/* Property-by-Property Examples */}
+              {activeContent.propertyExamples && activeContent.propertyExamples.length > 0 && (
+                <div className="mb-20">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold text-dark-900 dark:text-white mb-4">
+                      Property Reference & Examples
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-light-300">
+                      Visual examples for every property - see them in action!
+                    </p>
+                  </div>
+
+                  <div className="space-y-16">
+                    {activeContent.propertyExamples.map((example, index) => (
+                      <div key={index} className="bg-white dark:bg-dark-800 rounded-3xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-lg">
+                        {/* Property Header */}
+                        <div className="bg-gradient-to-r from-brand-primary/10 to-purple-500/10 px-8 py-6 border-b border-gray-200 dark:border-dark-700">
+                          <h3 className="text-2xl font-bold text-dark-900 dark:text-white mb-2">
+                            <code className="bg-dark-900/10 dark:bg-white/10 px-3 py-1 rounded-lg text-brand-primary">
+                              {example.property}
+                            </code>
+                          </h3>
+                          <p className="text-gray-600 dark:text-light-300 leading-relaxed">
+                            {example.description}
+                          </p>
+                        </div>
+
+                        {/* Property Example */}
+                        <div className="p-8">
+                          <CssSandbox
+                            sandbox={{ html: example.html, css: example.css }}
+                            title={example.property}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Recap */}
-            {activeContent.recap && <LessonRecap recap={activeContent.recap} />}
+              {/* Interactive Modules Container */}
+              <div className="space-y-20">
+                {/* Comparison */}
+                {activeContent.comparison && (
+                  <section>
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+                        <Scale size={28} />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-dark-900 dark:text-white">
+                          Zero to Architect: The Diff
+                        </h3>
+                        <p className="text-gray-500 text-sm">
+                          See the evolution from junior to senior code.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+                      <CodeComparison
+                        juniorCode={activeContent.comparison.junior}
+                        seniorCode={activeContent.comparison.senior}
+                      />
+                    </div>
+                  </section>
+                )}
 
-            {/* Mastery */}
-            <MasteryChecklist
-              items={activeMasteryItems}
-              progress={activeProgress}
-              onProgress={(evt) => {
-                if (evt?.type !== "mastery_toggle") return;
-                updateProgress(activeDay, (p) => ({
-                  ...p,
-                  masteryChecklist: {
-                    ...(p.masteryChecklist || {}),
-                    [evt.itemId]: !!evt.value,
-                  },
-                }));
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Floating 'Dynamic Island' Tools */}
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-[#1A1A1E]/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-2xl rounded-full px-2 py-2 flex items-center gap-2">
-          <button
-            onClick={() => setConnectOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-dark-900 font-bold text-sm hover:scale-105 transition-transform"
-          >
-            <MonitorPlay size={16} /> 1:1 Help
-          </button>
-          <div className="w-px h-6 bg-gray-300 dark:bg-white/10 mx-1" />
-
-          <button
-            onClick={() => setAiChatOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-dark-900 dark:text-light-200 font-bold text-sm transition-colors"
-          >
-            <Sparkles size={16} className="text-brand-primary" />
-            AI Tutor
-          </button>
-        </div>
-
-        {/* AI Tutor Modal */}
-        <AnimatePresence>
-          {aiChatOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setAiChatOpen(false)}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              />
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  scale: 0.2,
-                  y: 300,
-                  borderRadius: "100%",
-                }}
-                animate={{ opacity: 1, scale: 1, y: 0, borderRadius: "24px" }}
-                exit={{ opacity: 0, scale: 0.2, y: 300, borderRadius: "100%" }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                style={{ transformOrigin: "bottom center" }}
-                className="relative w-full max-w-4xl max-h-[85vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0A0A0C] shadow-2xl z-10 ring-1 ring-black/5 dark:ring-white/10"
-              >
-                {/* Decorative faint glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-brand-primary/10 blur-[80px] pointer-events-none z-0" />
-
-                {/* Scrollable Content Container */}
-                <div className="relative z-10 h-full overflow-y-auto custom-scrollbar">
-                  <button
-                    onClick={() => setAiChatOpen(false)}
-                    className="absolute top-6 right-6 z-20 p-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white rounded-full backdrop-blur-md transition-colors border border-black/5 dark:border-white/10"
-                  >
-                    <X size={20} />
-                  </button>
-                  {/* Negative margin to counteract the component's built-in margin if necessary, or just a wrapper */}
-                  <AICodingTutorChat
-                    contextTitle={aiContextTitle}
-                    contextText={aiContextText}
+                {/* Checkpoints */}
+                {activeContent.checkpoints && (
+                  <LearningCheckpoints
+                    courseId={courseId}
+                    day={activeDay}
+                    checkpoints={activeContent.checkpoints}
+                    progress={activeProgress}
+                    onProgress={(evt) => {
+                      if (evt?.type === "checkpoint_correct") {
+                        updateProgress(activeDay, (p) => ({
+                          ...p,
+                          checkpointsCorrect: {
+                            ...(p.checkpointsCorrect || {}),
+                            [evt.checkpointIndex]: true,
+                          },
+                        }));
+                      }
+                    }}
                   />
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+                )}
 
-        {/* Connect Modal */}
-        <ConnectOneToOneModal
-          open={connectOpen}
-          onClose={() => setConnectOpen(false)}
-          sessionUser={session?.user}
-          courseId={courseId}
-          courseTitle={course?.title}
-          day={activeDay}
-          lessonTitle={activeContent?.title}
-        />
+                {/* Labs */}
+                {activeContent.labSteps && (
+                  <section className="bg-dark-900/5 dark:bg-white/5 rounded-3xl p-8 md:p-12 border border-gray-200 dark:border-white/5">
+                    <GuidedLab
+                      steps={activeContent.labSteps}
+                      onLoad={({ stepId, kind, code, focus, label }) => {
+                        if (stepId && (kind === "bug" || kind === "fix")) {
+                          updateProgress(activeDay, (p) => ({
+                            ...p,
+                            lab: {
+                              ...(p.lab || {}),
+                              [stepId]: {
+                                ...(p.lab?.[stepId] || {}),
+                                [kind]: true,
+                              },
+                            },
+                          }));
+                        }
+                        guidedLabEditorRef.current?.loadStep({
+                          code,
+                          focus,
+                          label,
+                          animate: true,
+                        });
+                      }}
+                    />
+                    <div className="mt-8">
+                      <LiveCodeEditor
+                        ref={guidedLabEditorRef}
+                        initialCode={`// Guided Lab Sandbox\n// Use "Load Bug" / "Load Fix" above to load code here.\nconsole.clear();\n`}
+                        predictions={[]}
+                        title="Guided Lab Sandbox"
+                      />
+                    </div>
+                  </section>
+                )}
+
+                {/* Live Editor */}
+                {activeContent?.sandbox?.html || activeContent?.sandbox?.css ? (
+                  <HtmlCssPlayground
+                    initialHtml={activeContent?.sandbox?.html || ""}
+                    initialCss={activeContent?.sandbox?.css || ""}
+                    title="HTML/CSS Lab"
+                  />
+                ) : (
+                  activeContent.code &&
+                  (courseId === "react" ? (
+                    <ReactLiveEditor initialCode={activeContent.code} />
+                  ) : courseId === "angular" ? (
+                    <AngularSandpack
+                      initialCode={activeContent.code}
+                      title="Live Lab: Try It Yourself"
+                    />
+                  ) : (
+                    <LiveCodeEditor
+                      ref={liveLabEditorRef}
+                      initialCode={activeContent.code}
+                      predictions={activeContent.predictions}
+                      title="Live Lab: Try It Yourself"
+                      subtitle="Experiment with the concepts you just learned."
+                    />
+                  ))
+                )}
+
+                {/* Interview Prep */}
+                {activeContent.interview && (
+                  <div className="bg-gradient-to-br from-gray-900 to-black text-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-800 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-purple-500/10 blur-[100px] rounded-full" />
+                    <div className="relative z-10">
+                      <h3 className="text-3xl font-bold mb-8 flex items-center gap-4">
+                        <Brain className="text-purple-400" size={32} />
+                        Interview Prep
+                      </h3>
+                      <div className="space-y-4">
+                        {activeContent.interview.questions.map((q, i) => (
+                          <div
+                            key={i}
+                            className="border border-white/10 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-sm"
+                          >
+                            <details className="group">
+                              <summary className="flex justify-between items-center p-5 cursor-pointer hover:bg-white/5 transition">
+                                <span className="font-bold text-lg pr-4">
+                                  Q{i + 1}: {q.q}
+                                </span>
+                                <ChevronRight className="group-open:rotate-90 transition-transform text-purple-400" />
+                              </summary>
+                              <div className="p-8 bg-black/40 border-t border-white/10 text-gray-300 leading-relaxed text-lg">
+                                <div className="text-xs font-bold uppercase tracking-widest text-purple-400 mb-3">
+                                  Target Answer
+                                </div>
+                                {q.a}
+                              </div>
+                            </details>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Recap */}
+                {activeContent.recap && <LessonRecap recap={activeContent.recap} />}
+
+                {/* Mastery */}
+                <MasteryChecklist
+                  items={activeMasteryItems}
+                  progress={activeProgress}
+                  onProgress={(evt) => {
+                    if (evt?.type !== "mastery_toggle") return;
+                    updateProgress(activeDay, (p) => ({
+                      ...p,
+                      masteryChecklist: {
+                        ...(p.masteryChecklist || {}),
+                        [evt.itemId]: !!evt.value,
+                      },
+                    }));
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Floating 'Dynamic Island' Tools */}
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-white/90 dark:bg-[#1A1A1E]/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-2xl rounded-full px-2 py-2 flex items-center gap-2">
+              <button
+                onClick={() => setConnectOpen(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-dark-900 font-bold text-sm hover:scale-105 transition-transform"
+              >
+                <MonitorPlay size={16} /> 1:1 Help
+              </button>
+              <div className="w-px h-6 bg-gray-300 dark:bg-white/10 mx-1" />
+
+              <button
+                onClick={() => setAiChatOpen(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-dark-900 dark:text-light-200 font-bold text-sm transition-colors"
+              >
+                <Sparkles size={16} className="text-brand-primary" />
+                AI Tutor
+              </button>
+            </div>
+
+            {/* AI Tutor Modal */}
+            <AnimatePresence>
+              {aiChatOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setAiChatOpen(false)}
+                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                  />
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      scale: 0.2,
+                      y: 300,
+                      borderRadius: "100%",
+                    }}
+                    animate={{ opacity: 1, scale: 1, y: 0, borderRadius: "24px" }}
+                    exit={{ opacity: 0, scale: 0.2, y: 300, borderRadius: "100%" }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    style={{ transformOrigin: "bottom center" }}
+                    className="relative w-full max-w-4xl max-h-[85vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0A0A0C] shadow-2xl z-10 ring-1 ring-black/5 dark:ring-white/10"
+                  >
+                    {/* Decorative faint glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-brand-primary/10 blur-[80px] pointer-events-none z-0" />
+
+                    {/* Scrollable Content Container */}
+                    <div className="relative z-10 h-full overflow-y-auto custom-scrollbar">
+                      <button
+                        onClick={() => setAiChatOpen(false)}
+                        className="absolute top-6 right-6 z-20 p-2 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 text-gray-900 dark:text-white rounded-full backdrop-blur-md transition-colors border border-black/5 dark:border-white/10"
+                      >
+                        <X size={20} />
+                      </button>
+                      {/* Negative margin to counteract the component's built-in margin if necessary, or just a wrapper */}
+                      <AICodingTutorChat
+                        contextTitle={aiContextTitle}
+                        contextText={aiContextText}
+                      />
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
+
+            {/* Connect Modal */}
+            <ConnectOneToOneModal
+              open={connectOpen}
+              onClose={() => setConnectOpen(false)}
+              sessionUser={session?.user}
+              courseId={courseId}
+              courseTitle={course?.title}
+              day={activeDay}
+              lessonTitle={activeContent?.title}
+            />
+          </>
+        )}
       </div>
     </div>
   );

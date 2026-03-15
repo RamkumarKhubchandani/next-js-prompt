@@ -229,6 +229,16 @@ export function Header({ showNav = true }) {
                                             {session.user.name?.charAt(0).toUpperCase()}
                                         </span>
                                         <span className="hidden lg:inline">{session.user.name}</span>
+                                        {/* Status Badge */}
+                                        {session.user.plan?.includes('pro') || session.user.role === 'admin' || session.user.role === 'pro' ? (
+                                            <span className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-black uppercase tracking-wider shadow-sm">
+                                                PRO
+                                            </span>
+                                        ) : (
+                                            <span className="hidden lg:inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-gray-200 dark:bg-dark-700 text-gray-500 dark:text-gray-400 text-[10px] font-black uppercase tracking-wider">
+                                                FREE
+                                            </span>
+                                        )}
                                         <ChevronDown size={16} className={cn("transition-transform duration-200", userMenuOpen && "rotate-180")} />
                                     </button>
 

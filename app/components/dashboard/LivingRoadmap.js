@@ -11,7 +11,7 @@ export default function LivingRoadmap({ isPro }) {
     // ...
 
     return (
-        <LockedFeature isLocked={!isPro} title="Living Roadmap">
+        <LockedFeature isLocked={false} title="Living Roadmap">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
