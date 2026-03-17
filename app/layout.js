@@ -5,6 +5,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/auth";
 import XPNotification from "./components/public/XPNotification";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -251,6 +252,7 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
+        <GoogleAnalytics />
         <AuthProvider session={session}>
           <ThemeProvider>
             {children}

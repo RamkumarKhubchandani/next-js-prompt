@@ -142,6 +142,10 @@ const userSchema = new mongoose.Schema({
         score: { type: Number, required: true }, // Percentage (0-100)
         earnedAt: { type: Date, default: Date.now }
     }],
+
+    // Tracking
+    lastLoginAt: { type: Date, default: null },
+
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

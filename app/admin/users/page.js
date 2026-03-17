@@ -138,6 +138,7 @@ export default function AdminUsersPage() {
                                 <th className="p-4">Phone</th>
                                 <th className="p-4">Plan</th>
                                 <th className="p-4">Pro Ends</th>
+                                <th className="p-4">Last Login</th>
                                 <th className="p-4">Joined</th>
                                 <th className="p-4 text-right">Actions</th>
                             </tr>
@@ -184,6 +185,13 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td className="p-4 text-sm text-light-400">
                                         {isActivePro(user) ? formatDate(user.subscriptionEndDate) : (user.subscriptionEndDate ? `Expired ${formatDate(user.subscriptionEndDate)}` : '—')}
+                                    </td>
+                                    <td className="p-4 text-sm text-light-400">
+                                        {user.lastLoginAt ? (
+                                            <span title={new Date(user.lastLoginAt).toLocaleString()}>
+                                                {formatDate(user.lastLoginAt)}
+                                            </span>
+                                        ) : '—'}
                                     </td>
                                     <td className="p-4 text-sm text-light-400">
                                         {new Date(user.createdAt).toLocaleDateString()}

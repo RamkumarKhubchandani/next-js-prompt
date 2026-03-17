@@ -99,7 +99,11 @@ export const authOptions = {
                     if (!email) return false;
 
                     const existing = await User.findOne({ email }).select('_id').lean();
-                    if (existing) return true;
+                    if (existing) {
+                        // Update last login timestamp
+                        await User.updateOne({ _id: existing._id }, { $set: { lastLoginAt: new Date() } });
+                        return true;
+                    }
 
                     const base = String(email).split('@')[0] || 'user';
                     const safeBase = base.toLowerCase().replace(/[^a-z0-9_]+/g, '').slice(0, 16) || 'user';
@@ -121,6 +125,7 @@ export const authOptions = {
                         role: 'user',
                         learningPath: 'none',
                         password: undefined,
+                        lastLoginAt: new Date(),
                     });
                     return true;
                 } catch (e) {
@@ -128,6 +133,18 @@ export const authOptions = {
                     return false;
                 }
             }
+
+            // Credentials login — stamp lastLoginAt
+            try {
+                await connectDB();
+                const email = user?.email;
+                if (email) {
+                    await User.updateOne({ email }, { $set: { lastLoginAt: new Date() } });
+                }
+            } catch (e) {
+                console.log('lastLoginAt update failed:', e);
+            }
+
             return true;
         },
         async session({ session, token }) {
