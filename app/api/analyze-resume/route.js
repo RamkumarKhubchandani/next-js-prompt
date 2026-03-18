@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import PDFParser from 'pdf2json';
 
 // Extend Vercel serverless function timeout (Hobby: 60s, Pro: 300s)
 export const maxDuration = 60;
 import mammoth from 'mammoth';
 
-// Initialize Gemini AI
-const apiKey = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || '');
+// Initialize Groq AI
+const apiKey = process.env.GROQ_API_KEY;
+const groq = new Groq({ apiKey: apiKey || '' });
 
 export async function POST(request) {
   try {
@@ -47,13 +47,10 @@ export async function POST(request) {
 
     console.log('Processed Text Length:', resumeText.length);
 
-    // Use Gemini AI to analyze resume
+    // Use Groq API to analyze resume
     if (!apiKey) {
-      return NextResponse.json({ error: 'Gemini API key is not configured in environment variables' }, { status: 500 });
+      return NextResponse.json({ error: 'Groq API key is not configured in environment variables' }, { status: 500 });
     }
-
-    // Use gemini-2.5-flash (model configured for your API key)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const analysisPrompt = `You are an expert ATS (Applicant Tracking System) and resume analyst. Analyze this resume and job description.
 
@@ -111,11 +108,21 @@ Return ONLY valid JSON in this exact format:
   }
 }`;
 
-    const result = await model.generateContent(analysisPrompt);
-    const response = await result.response;
-    let analysisText = response.text();
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: analysisPrompt,
+        }
+      ],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.1,
+      response_format: { type: 'json_object' }
+    });
 
-    // Clean up response to get only JSON
+    let analysisText = chatCompletion.choices[0]?.message?.content || '{}';
+
+    // Clean up response to safely parse JSON
     analysisText = analysisText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
     const analysis = JSON.parse(analysisText);

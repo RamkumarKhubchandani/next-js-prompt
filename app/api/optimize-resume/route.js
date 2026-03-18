@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
 // Extend Vercel serverless function timeout (Hobby: 60s, Pro: 300s)
 export const maxDuration = 60;
 
-// Initialize Gemini AI
-const apiKey = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || '');
+// Initialize Groq AI
+const apiKey = process.env.GROQ_API_KEY;
+const groq = new Groq({ apiKey: apiKey || '' });
 
 export async function POST(request) {
   try {
@@ -16,12 +16,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
     }
 
+    // Use Groq API to optimize resume
     if (!apiKey) {
-      return NextResponse.json({ error: 'Gemini API key is not configured in environment variables' }, { status: 500 });
+      return NextResponse.json({ error: 'Groq API key is not configured in environment variables' }, { status: 500 });
     }
-
-    // Use gemini-2.5-flash (model configured for your API key)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const optimizationPrompt = `You are an expert resume writer and career coach. Optimize this resume to match the job description while keeping ALL the candidate's real information accurate.
 
@@ -84,9 +82,19 @@ Return ONLY valid JSON in this exact format:
   ]
 }`;
 
-    const result = await model.generateContent(optimizationPrompt);
-    const response = await result.response;
-    let optimizedText = response.text();
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: optimizationPrompt,
+        }
+      ],
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.2, // Slightly more creative for rewriting bullets
+      response_format: { type: 'json_object' }
+    });
+
+    let optimizedText = chatCompletion.choices[0]?.message?.content || '{}';
 
     // Clean up response
     optimizedText = optimizedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
