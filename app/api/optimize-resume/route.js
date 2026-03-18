@@ -4,7 +4,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 // Extend Vercel serverless function timeout (Hobby: 60s, Pro: 300s)
 export const maxDuration = 60;
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'YOUR_API_KEY_HERE');
+// Initialize Gemini AI
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
 export async function POST(request) {
   try {
@@ -14,9 +16,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
     }
 
-    // Use Gemini AI to optimize resume
-    // Use gemini-1.5-flash: faster and more reliable than 2.5-flash for API calls
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Gemini API key is not configured in environment variables' }, { status: 500 });
+    }
+
+    // Use gemini-2.5-flash (model configured for your API key)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const optimizationPrompt = `You are an expert resume writer and career coach. Optimize this resume to match the job description while keeping ALL the candidate's real information accurate.
 

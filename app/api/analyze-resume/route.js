@@ -6,8 +6,9 @@ import PDFParser from 'pdf2json';
 export const maxDuration = 60;
 import mammoth from 'mammoth';
 
-// Initialize Gemini AI with v1 API (FREE)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'YOUR_API_KEY_HERE');
+// Initialize Gemini AI
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
 export async function POST(request) {
   try {
@@ -47,8 +48,12 @@ export async function POST(request) {
     console.log('Processed Text Length:', resumeText.length);
 
     // Use Gemini AI to analyze resume
-    // Use gemini-1.5-flash: faster and more reliable than 2.5-flash for API calls
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Gemini API key is not configured in environment variables' }, { status: 500 });
+    }
+
+    // Use gemini-2.5-flash (model configured for your API key)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const analysisPrompt = `You are an expert ATS (Applicant Tracking System) and resume analyst. Analyze this resume and job description.
 
