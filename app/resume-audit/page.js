@@ -77,7 +77,8 @@ export default function ResumeAuditPage() {
             setProgressMessage('AI is analyzing your resume...');
 
             if (!response.ok) {
-                throw new Error('Analysis failed');
+                const errBody = await response.json().catch(() => ({}));
+                throw new Error(errBody.details || errBody.error || `API error ${response.status}`);
             }
 
             const result = await response.json();
@@ -121,7 +122,7 @@ export default function ResumeAuditPage() {
 
         } catch (error) {
             console.error('Analysis error:', error);
-            alert('Failed to analyze resume. Please check your Gemini API key in .env.local');
+            alert('⚠️ OutlineDev AI Agent is busy right now. Please try again in a moment.');
             setAuditState('job-input');
         }
     };
@@ -174,7 +175,7 @@ export default function ResumeAuditPage() {
 
         } catch (error) {
             console.error('Optimization error:', error);
-            alert('Failed to optimize resume. Please check your Gemini API key.');
+            alert('⚠️ OutlineDev AI Agent is busy right now. Please try again in a moment.');
             setAuditState('results');
         }
     };

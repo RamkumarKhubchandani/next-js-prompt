@@ -1,0 +1,10 @@
+{
+    "functions": {
+        "app/api/analyze-resume/route.js": {
+            "maxDuration": 60
+        },
+        "app/api/optimize-resume/route.js": {
+            "maxDuration": 60
+        }
+    }
+}

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import PDFParser from 'pdf2json';
+
+// Extend Vercel serverless function timeout (Hobby: 60s, Pro: 300s)
+export const maxDuration = 60;
 import mammoth from 'mammoth';
 
 // Initialize Gemini AI with v1 API (FREE)
@@ -44,7 +47,8 @@ export async function POST(request) {
     console.log('Processed Text Length:', resumeText.length);
 
     // Use Gemini AI to analyze resume
-    const model = genAI.getGenerativeModel({ model: 'models/gemini-2.5-flash' });
+    // Use gemini-1.5-flash: faster and more reliable than 2.5-flash for API calls
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const analysisPrompt = `You are an expert ATS (Applicant Tracking System) and resume analyst. Analyze this resume and job description.
 
