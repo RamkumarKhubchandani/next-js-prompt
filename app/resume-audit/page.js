@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Header } from '@/app/components/Header';
-import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate, PenTool, Lock } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, ArrowRight, Loader2, Sparkles, AlertCircle, X, ShieldCheck, Download, Wand2, Copy, Check, ChevronLeft, LayoutTemplate, PenTool, Lock, Trophy, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
 import ManualResumeForm from './ManualResumeForm';
@@ -15,6 +15,7 @@ export default function ResumeAuditPage() {
     const [jobDescription, setJobDescription] = useState('');
     const [analysis, setAnalysis] = useState(null);
     const [optimizedResume, setOptimizedResume] = useState(null);
+    const [coverLetter, setCoverLetter] = useState(null);
     const [originalResumeData, setOriginalResumeData] = useState(null);
     const [copied, setCopied] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -22,6 +23,7 @@ export default function ResumeAuditPage() {
     const [downloadFormat, setDownloadFormat] = useState('pdf');
     const [selectedLayout, setSelectedLayout] = useState('classic');
     const [file, setFile] = useState(null);
+    const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
     const fileInputRef = useRef(null);
     const { data: session } = useSession();
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -48,9 +50,21 @@ export default function ResumeAuditPage() {
         setProgress(0);
         setProgressMessage('Reading your resume...');
 
+        // Smooth progress simulation
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev < 95) return prev + 1;
+                return prev;
+            });
+        }, 300);
+
         try {
-            setProgress(20);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            setProgress(10);
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            setProgress(25);
+            setProgressMessage('Extracting keywords and skills...');
+            await new Promise(resolve => setTimeout(resolve, 600));
 
             const formData = new FormData();
             if (file) {
@@ -58,6 +72,7 @@ export default function ResumeAuditPage() {
             } else if (resumeText) {
                 formData.append('resumeText', resumeText);
             } else {
+                clearInterval(progressInterval);
                 alert("No resume provided");
                 setAuditState('idle');
                 return;
@@ -65,16 +80,16 @@ export default function ResumeAuditPage() {
 
             formData.append('jobDescription', jobDescription);
 
-            setProgress(40);
-            setProgressMessage('Sending to AI for analysis...');
+            setProgress(45);
+            setProgressMessage('Consulting AI Career Expert...');
 
             const response = await fetch('/api/analyze-resume', {
                 method: 'POST',
                 body: formData
             });
 
-            setProgress(70);
-            setProgressMessage('AI is analyzing your resume...');
+            setProgress(75);
+            setProgressMessage('Generating learning paths...');
 
             if (!response.ok) {
                 const errBody = await response.json().catch(() => ({}));
@@ -87,8 +102,9 @@ export default function ResumeAuditPage() {
                 throw new Error(result.error || 'Analysis failed');
             }
 
-            setProgress(90);
-            setProgressMessage('Preparing results...');
+            clearInterval(progressInterval);
+            setProgress(95);
+            setProgressMessage('Finalizing report...');
 
             const data = result.data;
 
@@ -109,8 +125,10 @@ export default function ResumeAuditPage() {
                 ats_compatibility: data.analysis.score > 80 ? 'High' : data.analysis.score > 60 ? 'Medium' : 'Low',
                 keywords_found: data.analysis.keywordsFound,
                 keywords_missing: data.analysis.keywordsMissing,
+                missing_skills_path: data.analysis.missingSkillsLearningPath || [],
                 formatting_issues: data.analysis.formattingIssues,
-                improvements: data.analysis.improvements
+                improvements: data.analysis.improvements,
+                key_achievements: data.analysis.keyAchievementsToHighlight || []
             });
 
             setProgress(100);
@@ -121,8 +139,9 @@ export default function ResumeAuditPage() {
             if (data.analysis.score > 80) confetti();
 
         } catch (error) {
+            clearInterval(progressInterval);
             console.error('Analysis error:', error);
-            alert('⚠️ OutlineDev AI Agent is busy right now. Please try again in a moment.');
+            alert('🚀 OutlineDev Agent is reaching high demand right now! You have been added to our priority queue. Please try again in 30 minutes for a faster experience.');
             setAuditState('job-input');
         }
     };
@@ -130,14 +149,22 @@ export default function ResumeAuditPage() {
     const optimizeResume = async () => {
         setAuditState('optimizing');
         setProgress(0);
-        setProgressMessage('Preparing optimization...');
+        setProgressMessage('Initiating optimization engine...');
+
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev < 98) return prev + 1;
+                return prev;
+            });
+        }, 250);
 
         try {
-            setProgress(20);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            setProgress(15);
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            setProgressMessage('Sending to AI...');
-            setProgress(40);
+            setProgressMessage('Matching achievements to job goals...');
+            setProgress(35);
+            await new Promise(resolve => setTimeout(resolve, 800));
 
             const response = await fetch('/api/optimize-resume', {
                 method: 'POST',
@@ -148,8 +175,8 @@ export default function ResumeAuditPage() {
                 })
             });
 
-            setProgress(60);
-            setProgressMessage('AI is rewriting your resume...');
+            setProgress(70);
+            setProgressMessage('Applying high-impact action verbs...');
 
             if (!response.ok) {
                 throw new Error('Optimization failed');
@@ -161,22 +188,52 @@ export default function ResumeAuditPage() {
                 throw new Error(result.error || 'Optimization failed');
             }
 
-            setProgress(90);
-            setProgressMessage('Finalizing...');
+            clearInterval(progressInterval);
+            setProgress(98);
+            setProgressMessage('Polishing final document...');
 
             setOptimizedResume(result.data);
 
             setProgress(100);
-            setProgressMessage('Complete!');
-            await new Promise(resolve => setTimeout(resolve, 300));
+            setProgressMessage('Optimization Complete!');
+            await new Promise(resolve => setTimeout(resolve, 500));
 
             setAuditState('optimized');
             confetti();
 
         } catch (error) {
+            clearInterval(progressInterval);
             console.error('Optimization error:', error);
-            alert('⚠️ OutlineDev AI Agent is busy right now. Please try again in a moment.');
+            alert('🚀 OutlineDev Agent is reaching high demand right now! You have been added to our priority queue. Please try again in 30 minutes for a faster experience.');
             setAuditState('results');
+        }
+    };
+
+    const generateCoverLetter = async () => {
+        setIsGeneratingCoverLetter(true);
+        try {
+            const response = await fetch('/api/generate-cover-letter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    originalData: originalResumeData,
+                    jobDescription: jobDescription
+                })
+            });
+
+            if (!response.ok) throw new Error('Cover letter failed');
+            const result = await response.json();
+            if (result.success) setCoverLetter(result.data);
+
+            // Scroll to cover letter section
+            const el = document.getElementById('cover-letter-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error('Cover letter error:', error);
+            alert('🚀 OutlineDev Agent is reaching high demand right now! You have been added to our priority queue. Please try again in 30 minutes for a faster experience.');
+        } finally {
+            setIsGeneratingCoverLetter(false);
         }
     };
 
@@ -754,7 +811,7 @@ export default function ResumeAuditPage() {
                             animate={{ opacity: 1, y: 0 }}
                             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 border border-purple-300 dark:border-purple-500/30 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider mb-4"
                         >
-                            <Sparkles size={12} /> AI-Powered Resume Optimizer
+                            <Sparkles size={12} /> OutlineDev | AI-Powered Resume Optimizer
                         </motion.div>
                         <motion.h1
                             initial={{ opacity: 0, y: 10 }}
@@ -913,7 +970,7 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                             disabled={!jobDescription.trim()}
                                             className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                                         >
-                                            Analyze Resume with AI →
+                                            Analyze with OutlineDev AI Agent →
                                         </button>
                                     </div>
                                 </div>
@@ -974,13 +1031,16 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     <div className="md:col-span-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-xl">
                                         <h3 className="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-xs mb-4">Current Score</h3>
                                         <div className="relative w-40 h-40 flex items-center justify-center mb-4">
-                                            <svg className="w-full h-full transform -rotate-90">
+                                            <svg className="w-full h-full transform rotate-[-90deg]">
                                                 <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-gray-100 dark:text-slate-800" />
-                                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * analysis.score) / 100} className="text-orange-500 transition-all duration-1000" />
+                                                <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray={440} strokeDashoffset={440 - (440 * analysis.score) / 100} className={`${analysis.score > 80 ? 'text-green-500' : analysis.score > 60 ? 'text-orange-500' : 'text-red-500'} transition-all duration-1000`} />
                                             </svg>
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className="text-5xl font-black text-gray-900 dark:text-white">{analysis.score}</span>
-                                                <span className="text-sm font-bold text-gray-400">/ 100</span>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                                <span className="text-5xl font-black text-gray-900 dark:text-white leading-none">{analysis.score}</span>
+                                                <span className="text-sm font-bold text-gray-400 mt-1">/ 100</span>
+                                                <div className="mt-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">
+                                                    {analysis.ats_compatibility} Match
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -989,7 +1049,7 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Analysis Summary</h3>
                                         <p className="text-gray-600 dark:text-gray-300 mb-6">{analysis.summary}</p>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl border border-green-100 dark:border-green-900/30">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <CheckCircle size={16} className="text-green-500" />
@@ -1016,46 +1076,147 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     </div>
                                 </div>
 
-                                {/* CTA */}
-                                <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 text-center text-white shadow-2xl mb-8">
-                                    <Wand2 size={48} className="mx-auto mb-4" />
-                                    <h3 className="text-3xl font-black mb-3">Want to Fix All These Issues?</h3>
-                                    <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
-                                        Our FREE AI will rewrite your resume with YOUR real data + job keywords
-                                    </p>
-                                    <button
-                                        onClick={optimizeResume}
-                                        className="bg-white text-purple-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-all shadow-xl inline-flex items-center gap-2"
-                                    >
-                                        <Sparkles size={20} /> Optimize My Resume with AI
-                                    </button>
-                                </div>
+                                {/* CTA - Become the Candidate */}
+                                <div className="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 rounded-3xl p-10 text-center text-white shadow-2xl mb-12 relative overflow-hidden group">
+                                    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[120%] bg-white/5 rounded-full blur-3xl group-hover:translate-x-[20%] transition-transform duration-1000 ease-in-out"></div>
+                                    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[120%] bg-pink-500/10 rounded-full blur-3xl"></div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <AlertCircle className="text-red-500" /> Issues Found
-                                        </h3>
-                                        {analysis.formatting_issues.map((issue, i) => (
-                                            <div key={i} className="flex gap-4 p-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl">
-                                                <X className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
-                                                <p className="text-gray-800 dark:text-gray-200 font-medium text-sm">{issue}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <Sparkles className="text-purple-500" /> Improvements
-                                        </h3>
-                                        {analysis.improvements.map((imp, i) => (
-                                            <div key={i} className="p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm">
-                                                <div className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase mb-1">{imp.section}</div>
-                                                <p className="text-gray-700 dark:text-gray-300 text-sm">{imp.tip}</p>
-                                            </div>
-                                        ))}
+                                    <div className="max-w-3xl mx-auto flex flex-col items-center">
+                                        <div className="w-20 h-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
+                                            <Wand2 size={42} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                                        </div>
+                                        <h3 className="text-4xl font-black mb-4 leading-tight tracking-tight">Become the Candidate <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-white to-pink-300">Recruiters Fight Over</span></h3>
+                                        <p className="text-purple-100 mb-8 text-lg max-w-2xl font-medium">
+                                            Stop guessing. Our AI uses high-impact action verbs and quantified achievements used by Google & McKinsey talent to fix your gaps in seconds.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            <button
+                                                onClick={optimizeResume}
+                                                className="bg-white text-purple-700 px-10 py-5 rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] inline-flex items-center gap-3"
+                                            >
+                                                <Sparkles size={24} className="text-purple-600" /> Optimize with OutlineDev AI Now
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const el = document.getElementById('mentorship-path');
+                                                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                                }}
+                                                className="bg-purple-900/40 backdrop-blur-md text-white border border-white/20 px-8 py-5 rounded-2xl font-bold hover:bg-purple-900/60 transition-all flex items-center gap-2"
+                                            >
+                                                View Learning Path
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Detailed Analysis Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center">
+                                                <AlertCircle className="text-red-600" size={20} />
+                                            </div>
+                                            Issues Found
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {analysis.formatting_issues.map((issue, i) => (
+                                                <div key={i} className="flex gap-4 p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-red-100 dark:border-red-900/30 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                                    <X className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+                                                    <p className="text-gray-700 dark:text-gray-200 font-medium text-sm leading-relaxed">{issue}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
+                                                <Sparkles className="text-green-600" size={20} />
+                                            </div>
+                                            Strategic Improvements
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {analysis.improvements.map((imp, i) => (
+                                                <div key={i} className="p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm hover:border-purple-300 transition-all">
+                                                    <div className="text-[10px] font-black text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-2 px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 rounded-full w-fit">{imp.section}</div>
+                                                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed font-medium">{imp.tip}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Key Achievements Section */}
+                                {analysis.key_achievements && analysis.key_achievements.length > 0 && (
+                                    <div className="mb-12">
+                                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
+                                                <Trophy className="text-blue-600" size={20} />
+                                            </div>
+                                            3 Key Achievements to Highlight
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {analysis.key_achievements.map((achievement, i) => (
+                                                <div key={i} className="p-6 bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/10 dark:to-slate-900 border border-blue-100 dark:border-blue-900/30 rounded-2xl shadow-sm hover:scale-[1.02] transition-transform">
+                                                    <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm mb-4 shadow-lg">{i + 1}</div>
+                                                    <p className="text-gray-700 dark:text-gray-200 text-sm font-bold leading-relaxed">{achievement}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Bottom - Missing Skills Learning Path Section */}
+                                {analysis.missing_skills_path && analysis.missing_skills_path.length > 0 && (
+                                    <div id="mentorship-path" className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] p-10 border border-gray-200 dark:border-slate-700 shadow-xl mb-12 overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 p-8 opacity-10">
+                                            <Wand2 size={120} className="text-purple-600" />
+                                        </div>
+                                        <div className="relative z-10">
+                                            <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center gap-4">
+                                                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 rounded-2xl flex items-center justify-center shadow-inner">
+                                                    <Sparkles className="text-purple-600" size={24} />
+                                                </div>
+                                                Guided Learning Path to Mastery
+                                            </h3>
+                                            <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-2xl font-medium">We identified these critical gaps. Here is your personalized roadmap to bridge them and dominate your next interview.</p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                {analysis.missing_skills_path.map((skill, index) => (
+                                                    <motion.div
+                                                        key={index}
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: index * 0.1 }}
+                                                        className="p-6 bg-white dark:bg-slate-800/40 border border-purple-100 dark:border-purple-800/30 rounded-[2rem] relative group hover:border-purple-400 dark:hover:border-purple-600 transition-all shadow-sm hover:shadow-xl"
+                                                    >
+                                                        <div className="text-xl font-black text-purple-700 dark:text-purple-400 mb-3 group-hover:text-purple-600 transition-colors uppercase tracking-tight">{skill.skill}</div>
+                                                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed font-medium">{skill.action}</p>
+                                                        <div className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-white bg-indigo-600 dark:bg-indigo-500 px-4 py-2 rounded-xl group-hover:scale-105 transition-transform shadow-md w-fit">
+                                                            <BookOpen size={14} /> {skill.resource}
+                                                        </div>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+
+                                            <div className="mt-12 p-8 bg-slate-900 dark:bg-black rounded-[2rem] border border-white/10 flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-transparent opacity-50"></div>
+                                                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0 relative z-10 shadow-xl border border-white/20">
+                                                    <AlertCircle className="text-yellow-400" size={32} />
+                                                </div>
+                                                <div className="relative z-10">
+                                                    <div className="text-2xl font-black text-white mb-2">Still feeling stuck?</div>
+                                                    <p className="text-gray-400 max-w-lg font-medium">Join our 1-on-1 mentorship program. Get guided coaching from tech leaders to master these skills in weeks, not years.</p>
+                                                </div>
+                                                <Link href="/mentors" className="relative z-10 ml-auto px-10 py-5 bg-white text-slate-900 text-xl font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-white/20 shadow-xl whitespace-nowrap">
+                                                    Find a Mentor
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+
                             </motion.div>
                         )}
 
@@ -1120,95 +1281,158 @@ We're looking for a Senior Software Engineer with 5+ years of experience in Reac
                                     <p className="text-green-100">Resume optimized with YOUR real data</p>
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-6 mb-8">
-                                    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-xl">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">✨ Professional Summary</h3>
-                                            <button
-                                                onClick={() => copyToClipboard(optimizedResume.sections.summary)}
-                                                className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 transition-all flex items-center gap-2"
-                                            >
-                                                {copied ? <Check size={14} /> : <Copy size={14} />}
-                                                {copied ? 'Copied!' : 'Copy'}
-                                            </button>
-                                        </div>
-                                        <p className="text-gray-700 dark:text-gray-300">{optimizedResume.sections.summary}</p>
+                                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 border border-gray-200 dark:border-slate-700 shadow-xl">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">✨ Professional Summary</h3>
+                                        <button
+                                            onClick={() => copyToClipboard(optimizedResume.sections.summary)}
+                                            className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-bold hover:bg-purple-200 transition-all flex items-center gap-2"
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                            {copied ? 'Copied!' : 'Copy'}
+                                        </button>
                                     </div>
+                                    <p className="text-gray-700 dark:text-gray-300">{optimizedResume.sections.summary}</p>
                                 </div>
 
                                 {/* Layout Choice */}
-                                <div className="mt-8 mb-6">
-                                    <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Choose Resume Layout:</h4>
-                                    <div className="flex gap-4 justify-center flex-wrap">
+                                <div className="mt-8 mb-8">
+                                    <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-6 px-2">Choose Your Premium Resume Design:</h4>
+                                    <div className="flex gap-4 justify-center overflow-x-auto pb-8 pt-4 px-4 no-scrollbar">
                                         {[
-                                            { id: 'classic', label: 'Classic ATS', desc: 'Clean & Standard' },
-                                            { id: 'modern', label: 'Modern', desc: 'Stylish & Bold' },
-                                            { id: 'executive', label: 'Executive', desc: 'Professional Serif' },
-                                            { id: 'tech', label: 'Tech / Dev', desc: 'Monospace Code Style' },
-                                            { id: 'glacial', label: 'Glacial', desc: 'Cool Blue & Clean' },
-                                            { id: 'minimal', label: 'Minimal', desc: 'Less is More' }
+                                            { id: 'classic', label: 'Classic ATS', desc: 'Standard' },
+                                            { id: 'modern', label: 'Modern', desc: 'Bold' },
+                                            { id: 'executive', label: 'Executive', desc: 'Professional' },
+                                            { id: 'tech', label: 'Tech / Dev', desc: 'Monospace' },
+                                            { id: 'glacial', label: 'Glacial', desc: 'Blue' },
+                                            { id: 'minimal', label: 'Minimal', desc: 'Clean' }
                                         ].map(layout => (
                                             <button
                                                 key={layout.id}
                                                 onClick={() => setSelectedLayout(layout.id)}
-                                                className={`flex flex-col items-center px-4 py-3 rounded-xl border-2 transition-all ${selectedLayout === layout.id
-                                                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
-                                                    : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:border-purple-300'
+                                                className={`flex flex-col items-center px-6 py-4 rounded-2xl border-2 transition-all min-w-[140px] flex-shrink-0 ${selectedLayout === layout.id
+                                                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 scale-105 shadow-lg'
+                                                    : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:border-purple-300 shadow-sm'
                                                     }`}
                                             >
-                                                <LayoutTemplate size={20} className="mb-1" />
-                                                <span className="font-bold text-sm">{layout.label}</span>
-                                                <span className="text-xs opacity-80">{layout.desc}</span>
+                                                <LayoutTemplate size={24} className="mb-2" />
+                                                <span className="font-bold text-sm mb-1">{layout.label}</span>
+                                                <span className="text-[10px] opacity-70 uppercase tracking-tighter">{layout.desc}</span>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Download Format Choice */}
-                                <div className="mt-4 mb-4">
-                                    <h4 className="text-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Choose Download Format:</h4>
-                                    <div className="flex gap-4 justify-center">
-                                        <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-purple-500 transition-all">
-                                            <input
-                                                type="radio"
-                                                name="format"
-                                                value="pdf"
-                                                checked={downloadFormat === 'pdf'}
-                                                onChange={(e) => setDownloadFormat(e.target.value)}
-                                                className="w-4 h-4 text-purple-600"
-                                            />
-                                            <FileText size={18} className="text-red-500" />
-                                            <span className="font-bold text-gray-900 dark:text-white">PDF</span>
-                                        </label>
-                                        <label className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 rounded-xl cursor-pointer hover:border-purple-500 transition-all">
-                                            <input
-                                                type="radio"
-                                                name="format"
-                                                value="docx"
-                                                checked={downloadFormat === 'docx'}
-                                                onChange={(e) => setDownloadFormat(e.target.value)}
-                                                className="w-4 h-4 text-purple-600"
-                                            />
-                                            <FileText size={18} className="text-blue-500" />
-                                            <span className="font-bold text-gray-900 dark:text-white">DOCX</span>
-                                        </label>
+                                {/* Ready to Apply / Download Section */}
+                                <div className="max-w-xl mx-auto text-center pb-12">
+                                    <h4 className="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-[0.2em]">Ready to Apply?</h4>
+                                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-center bg-white/50 dark:bg-slate-800/50 p-6 rounded-[2rem] border border-gray-100 dark:border-slate-700 shadow-sm mb-8">
+                                        <div className="flex h-12 bg-gray-100 dark:bg-slate-900 rounded-xl p-1 w-full sm:w-auto">
+                                            <button
+                                                onClick={() => setDownloadFormat('pdf')}
+                                                className={`flex-1 sm:px-6 flex items-center justify-center gap-2 rounded-lg font-bold transition-all ${downloadFormat === 'pdf' ? 'bg-white dark:bg-slate-700 text-purple-600 shadow-sm' : 'text-gray-500'}`}
+                                            >
+                                                PDF
+                                            </button>
+                                            <button
+                                                onClick={() => setDownloadFormat('docx')}
+                                                className={`flex-1 sm:px-6 flex items-center justify-center gap-2 rounded-lg font-bold transition-all ${downloadFormat === 'docx' ? 'bg-white dark:bg-slate-700 text-purple-600 shadow-sm' : 'text-gray-500'}`}
+                                            >
+                                                DOCX
+                                            </button>
+                                        </div>
+                                        <button
+                                            onClick={downloadOptimizedResume}
+                                            className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-2xl font-black text-lg transition-all shadow-[0_10px_30px_rgba(236,72,153,0.3)] flex items-center justify-center gap-3 hover:scale-105"
+                                        >
+                                            <Download size={22} /> Download Optimized Resume
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => setAuditState('idle')}
+                                        className="text-gray-500 hover:text-purple-600 font-bold transition-colors flex items-center gap-2 mx-auto"
+                                    >
+                                        <ArrowRight className="rotate-180" size={16} /> Start New Scan
+                                    </button>
+                                </div>
+
+                                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-200 dark:border-slate-700 shadow-xl mb-12 text-left">
+                                    <div className="flex flex-col md:flex-row items-center gap-8">
+                                        <div className="flex-1">
+                                            <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4">Draft Your Cover Letter</h3>
+                                            <p className="text-gray-600 dark:text-gray-400 mb-6 text-lg">
+                                                A custom-tailored cover letter creates an immediate connection. Let our AI draft one that highlights your best achievements.
+                                            </p>
+
+                                            {coverLetter ? (
+                                                <div id="cover-letter-section" className="p-8 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-200 dark:border-slate-700 mb-6 relative group">
+                                                    <div className="absolute top-4 right-4 animate-in fade-in zoom-in duration-300">
+                                                        <button
+                                                            onClick={() => copyToClipboard(coverLetter.coverLetter)}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-xl hover:text-purple-600 transition-all shadow-sm border border-gray-100 dark:border-slate-600 font-bold text-sm"
+                                                        >
+                                                            {copied ? <><Check size={16} /> Copied</> : <><Copy size={16} /> Copy Letter</>}
+                                                        </button>
+                                                    </div>
+                                                    <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap text-gray-800 dark:text-gray-200 font-serif leading-relaxed text-lg pr-12 pb-4">
+                                                        {coverLetter.coverLetter}
+                                                    </div>
+                                                    <div className="mt-8 pt-8 border-t border-gray-200 dark:border-slate-700">
+                                                        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Personalized Strategic Focus:</h4>
+                                                        <div className="flex flex-wrap gap-3">
+                                                            {coverLetter.keyTailoredPoints.map((point, i) => (
+                                                                <span key={i} className="px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 text-xs font-bold rounded-lg border border-indigo-100 dark:border-indigo-800/30 flex items-center gap-2">
+                                                                    <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> {point}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={generateCoverLetter}
+                                                    disabled={isGeneratingCoverLetter}
+                                                    className="px-10 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xl rounded-2xl transition-all shadow-xl flex items-center gap-3 hover:scale-105 active:scale-95 disabled:opacity-50"
+                                                >
+                                                    {isGeneratingCoverLetter ? (
+                                                        <><Loader2 className="animate-spin" /> Crafting Your Story...</>
+                                                    ) : (
+                                                        <><PenTool size={24} /> Get My AI Cover Letter</>
+                                                    )}
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4 justify-center">
-                                    <button
-                                        onClick={() => setAuditState('idle')}
-                                        className="px-6 py-3 bg-gray-200 dark:bg-slate-800 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-300 transition-all"
-                                    >
-                                        Optimize Another
-                                    </button>
-                                    <button
-                                        onClick={downloadOptimizedResume}
-                                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-bold transition-all shadow-lg flex items-center gap-2"
-                                    >
-                                        <Download size={20} /> Download {downloadFormat.toUpperCase()}
-                                    </button>
+                                {/* Mentor CTA */}
+                                <div id="mentorship-path" className="bg-slate-900 rounded-[3rem] p-12 text-center text-white shadow-2xl relative overflow-hidden mb-12">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-pink-900/20 opacity-50"></div>
+                                    <div className="relative z-10">
+                                        <h3 className="text-5xl font-black mb-6">Go Pro with 1-on-1 Mentorship</h3>
+                                        <p className="text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+                                            The resume gets you in the door. <span className="text-white font-bold underline decoration-purple-500 underline-offset-4">The interview gets you the job.</span> Book a session with senior developers from top tech companies.
+                                        </p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto mb-14">
+                                            {[
+                                                { label: 'Mock Interview', price: 'FREE', icon: <ShieldCheck size={32} className="text-blue-400" /> },
+                                                { label: 'Portfolio Review', price: 'FREE', icon: <PenTool size={32} className="text-pink-400" /> },
+                                                { label: 'Career Strategy', price: 'FREE', icon: <Sparkles size={32} className="text-yellow-400" /> }
+                                            ].map((svc, i) => (
+                                                <div key={i} className="p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2.5rem] flex flex-col items-center hover:bg-white/10 transition-colors group">
+                                                    <div className="mb-6 group-hover:scale-110 transition-transform">{svc.icon}</div>
+                                                    <div className="font-bold text-xl mb-2 text-gray-300">{svc.label}</div>
+                                                    <div className="text-4xl font-black text-white">{svc.price}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <Link href="/mentors" className="inline-flex items-center gap-4 px-12 py-6 bg-white text-slate-900 rounded-3xl font-black text-2xl hover:scale-105 active:scale-95 transition-all shadow-[0_20px_60px_rgba(0,0,0,0.6)] group">
+                                            Scale My Career <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                                        </Link>
+                                    </div>
                                 </div>
+
+
                             </motion.div>
                         )}
                     </AnimatePresence>

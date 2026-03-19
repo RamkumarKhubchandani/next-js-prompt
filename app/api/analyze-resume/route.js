@@ -65,12 +65,14 @@ Provide a detailed JSON analysis with:
 2. Extract all experience entries (title, company, duration, responsibilities)
 3. Extract all skills
 4. Extract education
-5. Compare resume with job description and identify:
+56. Compare resume with job description and identify:
    - Keywords found in resume that match job description
    - Missing keywords from job description
+   - For EACH missing critical skill, provide a "Learning Path" (briefly: what to learn, where to learn it like 'FreeCodeCamp', 'YouTube', or 'OutlineDev Tutorials')
    - ATS compatibility score (0-100)
    - Specific formatting issues
    - Detailed improvement suggestions
+7. Identify 3 "Key Achievements to Highlight" based on the experience that would most impress this specific recruiter.
 
 Return ONLY valid JSON in this exact format:
 {
@@ -101,10 +103,14 @@ Return ONLY valid JSON in this exact format:
     "score": 75,
     "keywordsFound": ["keyword1", "keyword2"],
     "keywordsMissing": ["missing1", "missing2"],
+    "missingSkillsLearningPath": [
+      { "skill": "Skill Name", "action": "What to learn", "resource": "Suggested resource" }
+    ],
     "formattingIssues": ["issue1", "issue2"],
     "improvements": [
       {"section": "Experience", "tip": "specific tip"}
-    ]
+    ],
+    "keyAchievementsToHighlight": ["achievement1", "achievement2", "achievement3"]
   }
 }`;
 
