@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/auth";
 import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
+import ActivityTracker from "./components/ActivityTracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -257,6 +258,7 @@ export default async function RootLayout({ children }) {
           <ThemeProvider>
             {children}
             <XPNotification />
+            <ActivityTracker />
           </ThemeProvider>
         </AuthProvider>
       </body>

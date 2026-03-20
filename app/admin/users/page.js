@@ -138,6 +138,7 @@ export default function AdminUsersPage() {
                                 <th className="p-4">Phone</th>
                                 <th className="p-4">Plan</th>
                                 <th className="p-4">Pro Ends</th>
+                                <th className="p-4">Last Visit</th>
                                 <th className="p-4">Last Login</th>
                                 <th className="p-4">Joined</th>
                                 <th className="p-4 text-right">Actions</th>
@@ -185,6 +186,18 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td className="p-4 text-sm text-light-400">
                                         {isActivePro(user) ? formatDate(user.subscriptionEndDate) : (user.subscriptionEndDate ? `Expired ${formatDate(user.subscriptionEndDate)}` : '—')}
+                                    </td>
+                                    <td className="p-4 text-sm text-light-400 font-bold text-brand-primary">
+                                        {user.lastVisitAt ? (
+                                            <span title={new Date(user.lastVisitAt).toLocaleString() + " (Indian Standard Time)"}>
+                                                {new Date(user.lastVisitAt).toLocaleString('en-IN', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </span>
+                                        ) : '—'}
                                     </td>
                                     <td className="p-4 text-sm text-light-400">
                                         {user.lastLoginAt ? (
@@ -261,6 +274,14 @@ export default function AdminUsersPage() {
                                                         </AnimatePresence>
                                                     </div>
                                                 )}
+
+                                                <Link
+                                                    href={`/admin/users/${user._id}/activity`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+                                                >
+                                                    View Activity
+                                                </Link>
 
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); handleDeleteUser(user._id, user.email); }}

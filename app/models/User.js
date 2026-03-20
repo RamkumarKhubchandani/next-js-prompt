@@ -145,6 +145,7 @@ const userSchema = new mongoose.Schema({
 
     // Tracking
     lastLoginAt: { type: Date, default: null },
+    lastVisitAt: { type: Date, default: null },
 
 }, { timestamps: true });
 
