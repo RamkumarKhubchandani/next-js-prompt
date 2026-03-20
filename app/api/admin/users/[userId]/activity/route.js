@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../../../../lib/mongodb';
-import ActivityLog from '../../../../models/ActivityLog';
-import User from '../../../../models/User';
+import ActivityLog from '../../../../../models/ActivityLog';
+import User from '../../../../../models/User';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../../lib/auth";
 
