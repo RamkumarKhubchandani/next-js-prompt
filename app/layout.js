@@ -13,10 +13,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
   metadataBase: new URL('https://outlinedev.com'),
   title: {
-    default: "OutlineDev | Free Coding Bootcamp & Mentorship",
+    default: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
     template: "%s | OutlineDev"
   },
-  description: "Master JavaScript, React, Angular, Node.js & Full Stack for free. 1-on-1 expert mentorship, mock interviews, system design prep & global certification.",
+  description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification.",
   keywords: [
     "free coding bootcamp",
     "javascript course",
@@ -46,8 +46,8 @@ export const metadata = {
     apple: '/logo-outlinedev-icon.png',
   },
   openGraph: {
-    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
-    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
+    title: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
+    description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification.",
     url: 'https://outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
@@ -63,8 +63,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
-    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship — 100% free.",
+    title: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
+    description: "Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification — 100% free.",
     images: ['https://outlinedev.com/brand/linkedin-banner-final.png'],
     creator: "@outlinedev",
   },

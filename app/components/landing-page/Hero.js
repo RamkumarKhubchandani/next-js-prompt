@@ -12,9 +12,10 @@ const NeuralCodeWeaver = () => {
   const { viewport, mouse } = useThree();
 
   const [points] = useMemo(() => {
-    const positions = new Float32Array(6000 * 3);
-    const colors = new Float32Array(6000 * 3);
-    for (let i = 0; i < 6000; i++) {
+    const count = 3000; // Reduced from 6000 for better performance & lower TBT
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
       positions.set([
         (Math.random() - 0.5) * 12,
         (Math.random() - 0.5) * 12,
@@ -29,11 +30,12 @@ const NeuralCodeWeaver = () => {
   }, []);
 
   useFrame((state, delta) => {
-    ref.current.rotation.x += delta / 20;
-    ref.current.rotation.y += delta / 25;
+    if (!ref.current) return;
+    ref.current.rotation.x += delta / 25;
+    ref.current.rotation.y += delta / 30;
     // Subtle mouse interaction
-    const targetX = (mouse.x * viewport.width) / 4;
-    const targetY = (mouse.y * viewport.height) / 4;
+    const targetX = (mouse.x * viewport.width) / 5;
+    const targetY = (mouse.y * viewport.height) / 5;
     ref.current.position.x += (targetX - ref.current.position.x) * 0.05;
     ref.current.position.y += (targetY - ref.current.position.y) * 0.05;
   });
@@ -91,6 +93,22 @@ export const Hero = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(true); // Try to auto-start unmuted (Subject to browser policy)
   const [hasSpokenIntro, setHasSpokenIntro] = useState(false);
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // On desktop, delay canvas for performance. On mobile keep it off.
+      if (!mobile) {
+        setTimeout(() => setIsCanvasReady(true), 1500);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // TTS Logic - Only switch messages AFTER intro is done manually or naturally
   useEffect(() => {
@@ -146,19 +164,26 @@ export const Hero = () => {
     }
   }, [isMuted]); // Remove dependencies to prevent loop, triggered by load or mute toggle
 
+
+
   return (
     <div className="relative min-h-[110vh] flex items-center justify-center overflow-hidden bg-white dark:bg-[#050505]">
-      {/* Background Canvas */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 6] }}>
-          <NeuralCodeWeaver />
-        </Canvas>
-      </div>
+      {/* Background Canvas - Disabled on Mobile and delayed on Desktop for performance */}
+      {!isMobile && isCanvasReady && (
+        <div className="absolute inset-0 z-0">
+          <Canvas camera={{ position: [0, 0, 6] }}>
+            <NeuralCodeWeaver />
+          </Canvas>
+        </div>
+      )}
 
-      {/* Ambient Glows */}
+      {/* Ambient Glows - Enhanced on Mobile as fallback */}
       <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-primary/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow" />
+        <div className={`absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow ${isMobile ? 'opacity-100' : 'opacity-70'}`} />
+        <div className={`absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-brand-primary/20 blur-[120px] rounded-full mix-blend-screen animate-pulse-slow ${isMobile ? 'opacity-100' : 'opacity-70'}`} />
+        {isMobile && (
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-brand-primary/5" />
+        )}
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 pt-20 pb-16">
