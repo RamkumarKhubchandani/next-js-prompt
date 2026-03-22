@@ -97,17 +97,21 @@ export const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    let timer;
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       // On desktop, delay canvas for performance. On mobile keep it off.
       if (!mobile) {
-        setTimeout(() => setIsCanvasReady(true), 1500);
+        timer = setTimeout(() => setIsCanvasReady(true), 1500);
       }
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   // TTS Logic - Only switch messages AFTER intro is done manually or naturally
@@ -171,7 +175,11 @@ export const Hero = () => {
       {/* Background Canvas - Disabled on Mobile and delayed on Desktop for performance */}
       {!isMobile && isCanvasReady && (
         <div className="absolute inset-0 z-0">
-          <Canvas camera={{ position: [0, 0, 6] }}>
+          <Canvas
+            camera={{ position: [0, 0, 6] }}
+            gl={{ powerPreference: "high-performance", antialias: false }}
+            dpr={[1, 2]}
+          >
             <NeuralCodeWeaver />
           </Canvas>
         </div>
