@@ -7,28 +7,32 @@ import { authOptions } from "./lib/auth";
 import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ActivityTracker from "./components/ActivityTracker";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   metadataBase: new URL('https://outlinedev.com'),
   title: {
-    default: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
+    default: "OutlineDev | Free Agentic Coding Bootcamp & Mentorship",
     template: "%s | OutlineDev"
   },
-  description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification.",
+  description: "Join the #1 Free Agentic Coding Bootcamp. Master React, Node.js, and Full Stack with 1-on-1 expert mentorship and certification. 100% free.",
   keywords: [
-    "free coding bootcamp",
+    "free agentic coding bootcamp",
     "javascript course",
     "react mentorship",
     "angular course",
     "nodejs tutorial",
+    "node.js training",
+    "ai automation tutorial",
     "full stack developer",
     "system design interview",
     "1 on 1 coding mentor",
     "coding certification india",
     "learn javascript online",
     "outline dev",
+    "agentic coding",
   ],
   authors: [{ name: "OutlineDev Mentors" }],
   creator: "OutlineDev",
@@ -258,7 +262,9 @@ export default async function RootLayout({ children }) {
           <ThemeProvider>
             {children}
             <XPNotification />
-            <ActivityTracker />
+            <Suspense fallback={null}>
+              <ActivityTracker />
+            </Suspense>
           </ThemeProvider>
         </AuthProvider>
       </body>

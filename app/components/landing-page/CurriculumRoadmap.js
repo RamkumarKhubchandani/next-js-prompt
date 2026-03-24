@@ -1355,7 +1355,7 @@ export function CompleteCurriculumRoadmap() {
                         </span>
                     </div>
                     <h2 className="text-6xl md:text-7xl font-black text-dark-900 dark:text-white mb-6">
-                        Your <span className="bg-gradient-to-r from-brand-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">Learning Journey</span>
+                        Complete <span className="bg-gradient-to-r from-brand-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">JavaScript & React Roadmap</span>
                     </h2>
                     <p className="text-2xl text-gray-600 dark:text-light-300 max-w-4xl mx-auto leading-relaxed">
                         Explore our complete day-by-day roadmaps. <strong>Book 1-on-1 sessions</strong> for any day to get personalized mentorship.

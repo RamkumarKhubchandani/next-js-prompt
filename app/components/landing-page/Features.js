@@ -94,17 +94,17 @@ export const Features = () => {
           className="mb-16 md:text-center max-w-3xl mx-auto"
         >
           <h2 className="text-base font-bold uppercase tracking-wider text-brand-primary mb-3">
-            Premium Engineering Suite
+            Your Full Stack & System Design Mentorship Suite
           </h2>
           <p className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
-            Stop Learning Syntax. <br />
+            Comprehensive Coding Courses. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-brand-primary dark:from-purple-400">
-              Start Building Intelligence.
+              Personalized Engineering Training.
             </span>
           </p>
           <p className="text-lg text-gray-800 dark:text-gray-400 font-medium">
             We’ve bundled the world’s most advanced 1:1 Mentorship network with next-gen AI tooling.
-            Covering <span className="text-black dark:text-gray-200 font-bold">TypeScript, Microservices, and Large Language Models</span>.
+            The only place to master <span className="text-black dark:text-gray-200 font-bold">JavaScript, React, Node.js, and Full Stack System Design</span>.
           </p>
         </motion.div>
 

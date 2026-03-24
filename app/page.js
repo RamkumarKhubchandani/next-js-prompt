@@ -1,8 +1,8 @@
 import HomeClientPage from './HomeClientPage';
 
 export const metadata = {
-  title: "OutlineDev | Free Coding Bootcamp & Mentorship",
-  description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular, Node.js & Full Stack with 1-on-1 expert guidance, mock interviews & certification.",
+  title: "OutlineDev | Free Agentic Coding Bootcamp & Mentorship",
+  description: "Join the #1 Free Agentic Coding Bootcamp. Master React, Node.js, and Full Stack with 1-on-1 expert mentorship and certification. 100% free.",
   alternates: {
     canonical: 'https://outlinedev.com/',
   },

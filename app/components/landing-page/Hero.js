@@ -216,9 +216,9 @@ export const Hero = () => {
               </motion.div>
 
               <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-                Become Agentic. <br />
+                Free Agentic-Coding Hub. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600 dark:from-brand-primary dark:to-purple-400">
-                  Command the Code.
+                  Architect React & Node.js.
                 </span>
               </h1>
             </div>
