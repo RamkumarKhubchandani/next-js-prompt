@@ -240,25 +240,25 @@ export const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/login">
-                <motion.button
+              <Link href="/login" aria-label="Start Your Ascension" className="block focus:outline-none">
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-brand-primary to-emerald-400 px-8 py-4 text-dark-900 text-lg font-bold shadow-[0_0_20px_rgba(0,245,160,0.3)] hover:shadow-[0_0_35px_rgba(0,245,160,0.5)] transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-brand-primary to-emerald-400 px-8 py-4 text-dark-900 text-lg font-bold shadow-[0_0_20px_rgba(0,245,160,0.3)] hover:shadow-[0_0_35px_rgba(0,245,160,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Sparkles size={20} fill="currentColor" className="text-dark-900" />
                   Start Your Ascension
-                </motion.button>
+                </motion.div>
               </Link>
-              <Link href="/login">
-                <motion.button
+              <Link href="/login" aria-label="Join the Elite Loop" className="block focus:outline-none">
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-8 py-4 text-gray-900 dark:text-white text-lg font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-8 py-4 text-gray-900 dark:text-white text-lg font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Users size={20} />
                   Join the Elite Loop
-                </motion.button>
+                </motion.div>
               </Link>
             </div>
 
@@ -285,6 +285,10 @@ export const Hero = () => {
                   exit={{ opacity: 0, y: -10, scale: 0.8 }}
                   className="relative bg-white dark:bg-[#0A0A0C] border border-gray-200 dark:border-white/10 px-5 py-3 rounded-2xl rounded-tr-none shadow-xl max-w-[220px] cursor-pointer group"
                   onClick={() => setIsMuted(!isMuted)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Toggle AI Voice"
+                  onKeyDown={(e) => { if (e.key === 'Enter') setIsMuted(!isMuted); }}
                 >
                   <div className="flex items-start gap-2">
                     <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
