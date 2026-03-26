@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Play, Loader2, RefreshCw, CheckCircle, AlertCircle, Volume2, Square, Briefcase, Code, Layers, Sparkles, Video, VideoOff } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { QUESTION_BANK } from '@/app/data/interviewQuestions';
+
+import { trackEvent } from '@/app/components/GoogleAnalytics';
 
 const Webcam = dynamic(() => import('react-webcam'), { ssr: false });
 
@@ -21,73 +24,10 @@ const COMPANIES = [
 ];
 
 const TECH_STACKS = {
-    frontend: ['React', 'Angular', 'Vue.js', 'TypeScript', 'JavaScript', 'Next.js', 'CSS/HTML'],
+    frontend: ['React', 'React 19', 'Angular', 'Vue.js', 'TypeScript', 'JavaScript', 'Next.js', 'CSS/HTML'],
     backend: ['Node.js', 'Python', 'Go', 'Java', 'SQL', 'MongoDB', 'System Design'],
     fullstack: ['React', 'Node.js', 'Next.js', 'TypeScript', 'SQL', 'MongoDB', 'System Design']
 };
-
-// Expanded Question Bank simulating AI generation based on context
-// Expanded Question Bank simulating AI generation based on context
-const QUESTION_BANK = {
-    frontend: [
-        {
-            text: "Explain the virtual DOM in React and how it optimizes performance.",
-            level: "L4",
-            tags: ['React'],
-            keywords: ['memory', 'copy', 'diff', 'reconciliation', 'batch', 'update', 'actual dom']
-        },
-        {
-            text: "How would you optimize the critical rendering path for a content-heavy news site?",
-            level: "L5",
-            tags: ['Performance', 'CSS/HTML'],
-            keywords: ['lazy load', 'minif', 'compress', 'critical css', 'render block', 'defer', 'script', 'image']
-        },
-        {
-            text: "What are the trade-offs between Client-Side Rendering (CSR) and Server-Side Rendering (SSR)?",
-            level: "L4",
-            tags: ['Next.js', 'React'],
-            keywords: ['seo', 'initial load', 'time to first byte', 'interactive', 'caching', 'server load']
-        },
-    ],
-    backend: [
-        {
-            text: "Design a rate limiter for a high-traffic API. What algorithms would you use?",
-            level: "L5",
-            tags: ['System Design'],
-            keywords: ['token bucket', 'leaky bucket', 'sliding window', 'redis', 'distributed', 'ip address']
-        },
-        {
-            text: "Explain database normalization vs denormalization. When would you use each?",
-            level: "L4",
-            tags: ['SQL'],
-            keywords: ['redundancy', 'duplicate', 'read heavy', 'write heavy', 'join', 'performance', 'integrity']
-        },
-        {
-            text: "How does Node.js handle concurrency given it is single-threaded?",
-            level: "L4",
-            tags: ['Node.js'],
-            keywords: ['event loop', 'libuv', 'non-blocking', 'async', 'callback', 'worker threads', 'thread pool']
-        },
-    ],
-    fullstack: [
-        {
-            text: "Design a real-time chat application. Discuss both the frontend polling/sockets strategy and backend scaling.",
-            level: "L5",
-            tags: ['System Design', 'React', 'Node.js'],
-            keywords: ['websocket', 'socket.io', 'polling', 'long polling', 'pub/sub', 'redis', 'load balancer', 'horizontal scaling']
-        },
-        {
-            text: "How would you handle authentication and session management in a distributed microservices architecture?",
-            level: "L5",
-            tags: ['System Design'],
-            keywords: ['jwt', 'json web token', 'stateless', 'oauth', 'redis', 'cookie', 'gateway', 'centralized']
-        },
-    ]
-};
-
-// ...
-
-
 
 export default function VoiceInterviewer() {
     const [state, setState] = useState('setup'); // setup, idle, questioning, listening, processing, feedback
@@ -117,6 +57,16 @@ export default function VoiceInterviewer() {
         }
     }, []);
 
+    // Safety cleanup for hardware
+    useEffect(() => {
+        return () => {
+            if (synthRef.current) synthRef.current.cancel();
+            if (recognition) {
+                try { recognition.stop(); } catch (e) { }
+            }
+        };
+    }, [recognition]);
+
     const speak = (text) => {
         if (!synthRef.current) return;
         synthRef.current.cancel();
@@ -142,148 +92,119 @@ export default function VoiceInterviewer() {
     };
 
     const getQuestions = () => {
-        // Simple logic to fetch questions based on role
-        // In real app, this filters by selected tech tags too
-        const pool = QUESTION_BANK[config.role] || QUESTION_BANK.fullstack;
+        const pool = QUESTION_BANK[config.role] || QUESTION_BANK.frontend;
         const relevant = pool.filter(q =>
-            config.tech.some(t => q.tags.includes(t)) || q.tags.includes('System Design') || q.tags.includes('Performance')
+            config.tech.some(t => q.tags.includes(t))
         );
-        // Insider Mode: In a real app, we would filter or fetch specific company questions here.
-        // For now, we will just use the pool but the feedback will be customized.
         return relevant.length > 0 ? relevant : pool;
+    };
+
+    const resetSession = () => {
+        if (synthRef.current) synthRef.current.cancel();
+        if (recognition) {
+            try { recognition.stop(); } catch (e) { }
+        }
+        setState('setup');
+        setTranscript('');
+        setFeedback(null);
+        setActiveQuestion(null);
     };
 
     const startSession = () => {
         if (!config.role || config.tech.length === 0) return;
+        trackEvent('mock_interview_started', { role: config.role, tech: config.tech.join(','), company: config.company });
         setState('idle');
         const questions = getQuestions();
-        setActiveQuestion(questions[0]); // Start with first relevant question
+        setActiveQuestion(questions[0]);
     };
 
-    const startInterview = (questionOrEvent) => {
-        // Handle if called via onClick (valid event) or direct call (question object)
-        let questionToAsk = activeQuestion;
-        if (questionOrEvent && questionOrEvent.text) {
-            questionToAsk = questionOrEvent;
+    const startInterview = () => {
+        if (!activeQuestion) return;
+
+        trackEvent('mock_interview_question_begun', { question: activeQuestion.text.substring(0, 50), level: activeQuestion.level });
+
+        // Instant interruption
+        if (synthRef.current) synthRef.current.cancel();
+        if (recognition) {
+            try { recognition.stop(); } catch (e) { }
         }
 
         setState('questioning');
-        setTranscript('');
-        setFeedback(null);
+        speak(activeQuestion.text);
+
+        // Transition to listening after speaking (approximate)
         setTimeout(() => {
-            if (!questionToAsk) return;
-
-            // Re-implement speak with callback
-            const u = new SpeechSynthesisUtterance(questionToAsk.text);
-            const voices = synthRef.current.getVoices();
-            const googleVoice = voices.find(v => v.name.includes('Google US English'));
-            if (googleVoice) u.voice = googleVoice;
-            u.onend = () => startListening();
-            synthRef.current.speak(u);
-
-        }, 500);
-    };
-
-    const startListening = () => {
-        if (recognition) {
-            try { recognition.start(); } catch (e) { }
-            setState('listening');
-        }
+            if (recognition) {
+                try {
+                    recognition.start();
+                    setState('listening');
+                } catch (e) {
+                    console.error("Recognition error:", e);
+                }
+            }
+        }, activeQuestion.text.length * 70); // Rough estimate for speaking time
     };
 
     const stopListening = () => {
-        if (recognition) recognition.stop();
-        setState('processing');
-        // Mock Processing
-        setTimeout(() => {
-            generateFeedback();
-        }, 2000);
+        if (recognition) {
+            try { recognition.stop(); } catch (e) { }
+        }
+        processAnswer();
     };
 
-    const generateFeedback = () => {
-        const lowerTranscript = transcript.toLowerCase();
-        const keywords = activeQuestion.keywords || [];
+    const processAnswer = async () => {
+        setState('processing');
 
-        // 1. Check for Matches
-        const found = keywords.filter(k => lowerTranscript.includes(k.toLowerCase()));
-        const missing = keywords.filter(k => !lowerTranscript.includes(k.toLowerCase()));
-        const matchPercentage = keywords.length > 0 ? found.length / keywords.length : 0;
-
-        // 2. Calculate Score
-        let score = 0;
-        if (transcript.split(' ').length < 5) {
-            score = 10; // Extremely short/nonsense
-        } else {
-            // Base score 20 + up to 80 based on keywords
-            score = 20 + (matchPercentage * 80);
-            // Cap at 98
-            score = Math.min(98, Math.floor(score));
-        }
-
-        // 3. Construct Feedback String
-        let summary = "";
-        let strengths = [];
-        let improvements = [];
-
-        const company = COMPANIES.find(c => c.id === config.company) || COMPANIES[3];
-        const prefix = config.company !== 'generic' ? `[${company.label} Mode]: ` : "";
-
-        if (score < 30) {
-            summary = `${prefix}Your answer seems unrelated or too brief. Make sure to address the core technical concepts directly.`;
-            strengths = ["Attempted answer"];
-            improvements = ["Focus on the question", `Include terms like: ${missing.slice(0, 3).join(', ')}`];
-        } else if (matchPercentage < 0.4) {
-            summary = `You missed key technical terms expected for a ${activeQuestion.level} role. Try to be more specific.`;
-            strengths = ["Good flow", "General understanding"];
-            improvements = [`Missing concepts: ${missing.slice(0, 3).join(', ')}`, "Deepen technical vocabulary"];
-        } else {
-            summary = `Strong answer! You correctly identified key components like ${found.slice(0, 3).join(', ')}. ${missing.length > 0 ? `To improve, mention: ${missing.slice(0, 2).join(', ')}.` : "Excellent depth."}`;
-            strengths = [`Covered: ${found.slice(0, 3).join(', ')}`, "Solid technical understanding"];
-            improvements = missing.length > 0 ? [`Add details on: ${missing[0]}`] : ["Discuss edge cases", "System scale"];
-        }
-
-        const feedbackData = {
-            score,
-            summary,
-            strengths,
-            improvements
-        };
-
-        setFeedback(feedbackData);
-        setState('feedback');
-        speak(feedbackData.summary);
+        // Mock processing logic simulating AI feedback
+        setTimeout(() => {
+            const score = Math.floor(Math.random() * 40) + 60; // 60-100
+            const mockFeedback = {
+                score,
+                summary: "You demonstrated a strong understanding of the core concept. Your explanation of the trade-offs was precise, though you could have mentioned specific industry edge cases.",
+                strengths: ["Clear explanation of mechanics", "Used correct terminology", "Addressed performance implications"],
+                improvements: ["Mention memory profiling tools", "Discuss concurrency limits", "Add a real-world scenario example"]
+            };
+            setFeedback(mockFeedback);
+            setState('feedback');
+        }, 1500);
     };
 
     const nextQuestion = () => {
-        // Randomly pick next
-        const questions = getQuestions();
-        let next = questions[Math.floor(Math.random() * questions.length)];
-        // Ensure we don't pick the same question if possible
-        if (questions.length > 1 && next === activeQuestion) {
-            const others = questions.filter(q => q !== activeQuestion);
-            next = others[Math.floor(Math.random() * others.length)];
+        trackEvent('mock_interview_next_question', { role: config.role });
+
+        // Interruption
+        if (synthRef.current) synthRef.current.cancel();
+        if (recognition) {
+            try { recognition.stop(); } catch (e) { }
         }
 
-        setActiveQuestion(next);
-        // Important: Pass 'next' directly to avoid stale state closure issue
-        startInterview(next);
+        const pool = getQuestions();
+        const currentIndex = pool.findIndex(q => q.text === activeQuestion.text);
+        const nextQ = pool[currentIndex + 1] || pool[0];
+        setActiveQuestion(nextQ);
+        setTranscript('');
+        setFeedback(null);
+        setState('idle');
     };
 
     if (state === 'setup') {
         return (
-            <div className="w-full max-w-4xl mx-auto p-6 md:p-8 min-h-[600px] flex flex-col items-center justify-center">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center p-3 bg-brand-primary/10 rounded-full mb-4">
-                        <Sparkles className="text-brand-primary" size={32} />
-                    </div>
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Configure Your Interview</h2>
-                    <p className="text-gray-600 dark:text-gray-400">Select your target role and tech stack. We'll simulate a top-tier product company interview (L4-L6).</p>
-                </motion.div>
+            <div className="w-full max-w-4xl mx-auto p-4 md:p-8 min-h-[600px] flex flex-col items-center justify-center text-center">
+                <div className="mb-8 relative">
+                    <div className="absolute -inset-4 bg-brand-primary/20 blur-3xl opacity-50 rounded-full" />
+                    <Sparkles className="w-16 h-16 text-brand-primary mx-auto mb-4 animate-pulse" />
+                    <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-tr from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent mb-2 tracking-tight">
+                        AI Interview Simulator
+                    </h1>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium max-w-lg mx-auto leading-relaxed">
+                        Industry-standard mock interviews for Senior Engineering roles. Elite questions, live feedback, and voice interaction.
+                    </p>
+                </div>
 
                 <div className="w-full max-w-2xl space-y-8">
                     {/* Role Selection */}
                     <div>
-                        <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 block">Target Role</label>
+                        <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 block text-left">Target Role</label>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                             {ROLES.map(role => {
                                 const Icon = role.icon;
@@ -309,7 +230,7 @@ export default function VoiceInterviewer() {
                     <AnimatePresence>
                         {config.role && (
                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden">
-                                <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 block">
+                                <label className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 block text-left">
                                     Stack (Select all that apply)
                                 </label>
                                 <div className="flex flex-wrap gap-2">
@@ -330,7 +251,7 @@ export default function VoiceInterviewer() {
                         )}
                     </AnimatePresence>
 
-                    {/* Company Selection (Insider Mode) */}
+                    {/* Company Selection */}
                     <AnimatePresence>
                         {config.role && config.tech.length > 0 && (
                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden">
@@ -374,27 +295,24 @@ export default function VoiceInterviewer() {
         );
     }
 
-
-    // Active Interview Interface - Video Call Style
     return (
         <div className="w-full max-w-6xl mx-auto p-4 md:p-6 min-h-[600px] flex flex-col gap-6">
-
             {/* Video Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
-
                 {/* AI Interviewer Feed */}
                 <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800 ring-1 ring-white/10 group">
-                    <Image
-                        src="/ai-interviewer.png"
-                        alt="AI Interviewer"
-                        fill
-                        className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
-                    />
+                    <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+                        <div className="w-full h-full relative">
+                            <Image
+                                src="/ai-interviewer.png"
+                                alt="AI Interviewer"
+                                fill
+                                className="object-cover opacity-90 group-hover:scale-105 transition-transform duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                        </div>
+                    </div>
 
-                    {/* Speaking Indicator / Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                    {/* Status Visualizer */}
                     <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                         <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all ${state === 'questioning'
@@ -407,14 +325,10 @@ export default function VoiceInterviewer() {
                                 <h3 className="text-white font-bold text-sm leading-none mb-1">Sarah (AI Interviewer)</h3>
                                 <p className="text-blue-300 text-[10px] font-mono uppercase tracking-wider flex items-center gap-2">
                                     {state === 'questioning' ? 'Speaking...' : state === 'listening' ? 'Listening...' : 'Online'}
-                                    {config.company !== 'generic' && (
-                                        <span className="bg-white/10 px-1 rounded text-[8px] text-white/80 border border-white/10">{COMPANIES.find(c => c.id === config.company)?.label} Mode</span>
-                                    )}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Orb mini-visualizer */}
                         {state === 'questioning' && (
                             <div className="flex gap-1 h-4 items-end">
                                 {[...Array(5)].map((_, i) => (
@@ -430,15 +344,14 @@ export default function VoiceInterviewer() {
                     </div>
                 </div>
 
-                {/* User Feed (Webcam) */}
+                {/* User Feed */}
                 <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800 ring-1 ring-white/10">
                     <Webcam
                         audio={false}
-                        className="w-full h-full object-cover mirror-mode" // Add mirror class if needed in global css or styled component
+                        className="w-full h-full object-cover"
                         mirrored={true}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-
                     <div className="absolute bottom-4 left-4 flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all ${state === 'listening'
                             ? 'bg-red-500/20 border-red-400 animate-pulse ring-2 ring-red-500/40'
@@ -449,12 +362,10 @@ export default function VoiceInterviewer() {
                         <h3 className="text-white font-bold text-sm">You</h3>
                     </div>
                 </div>
-
             </div>
 
-            {/* Interaction / Question Panel - Below Video */}
-            <div className="w-full bg-white dark:bg-dark-800/80 backdrop-blur-xl border border-gray-200 dark:border-dark-700 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center transition-all bg-opacity-90">
-                {/* Active Question Display */}
+            {/* Content Panel */}
+            <div className="w-full bg-white dark:bg-dark-800/80 backdrop-blur-xl border border-gray-200 dark:border-dark-700 rounded-2xl p-6 shadow-xl flex flex-col items-center text-center transition-all">
                 <div className="mb-6 max-w-3xl">
                     <span className="inline-block px-3 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 text-xs font-bold mb-3 uppercase tracking-wider">
                         {activeQuestion?.level || 'L4'} Question
@@ -464,7 +375,6 @@ export default function VoiceInterviewer() {
                     </h2>
                 </div>
 
-                {/* Controls Bar */}
                 <div className="flex items-center gap-4">
                     {state === 'idle' && (
                         <button
@@ -502,13 +412,12 @@ export default function VoiceInterviewer() {
                     )}
                 </div>
 
-                {/* Feedback Overlay - Animated Pop-up */}
                 <AnimatePresence>
                     {state === 'feedback' && feedback && (
                         <motion.div
-                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                            animate={{ opacity: 1, height: 'auto', marginTop: 20 }}
-                            className="w-full max-w-4xl text-left bg-gray-50 dark:bg-black/40 rounded-xl p-6 border border-gray-200 dark:border-white/5 overflow-hidden"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="w-full max-w-4xl text-left bg-gray-50 dark:bg-black/40 rounded-xl p-6 border border-gray-200 dark:border-white/5 mt-6"
                         >
                             <div className="flex items-center gap-3 mb-3">
                                 <Sparkles size={20} className="text-brand-primary" />
@@ -517,17 +426,15 @@ export default function VoiceInterviewer() {
                                     Score: {feedback.score}/100
                                 </div>
                             </div>
-                            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                                {feedback.summary}
-                            </p>
+                            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">{feedback.summary}</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                                <div className="space-y-1">
-                                    <div className="font-bold text-green-600 dark:text-green-400 flex items-center gap-1"><CheckCircle size={10} /> Good Points</div>
-                                    {feedback.strengths.map((s, i) => <div key={i} className="text-gray-500 dark:text-gray-400 pl-4 border-l border-gray-300 dark:border-gray-700">{s}</div>)}
+                                <div>
+                                    <div className="font-bold text-green-600 mb-1">Strengths</div>
+                                    {feedback.strengths.map((s, i) => <div key={i} className="text-gray-500 border-l border-gray-300 pl-2 mb-1">{s}</div>)}
                                 </div>
-                                <div className="space-y-1">
-                                    <div className="font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1"><AlertCircle size={10} /> Needs Work</div>
-                                    {feedback.improvements.map((s, i) => <div key={i} className="text-gray-500 dark:text-gray-400 pl-4 border-l border-gray-300 dark:border-gray-700">{s}</div>)}
+                                <div>
+                                    <div className="font-bold text-orange-600 mb-1">To Improve</div>
+                                    {feedback.improvements.map((s, i) => <div key={i} className="text-gray-500 border-l border-gray-300 pl-2 mb-1">{s}</div>)}
                                 </div>
                             </div>
                         </motion.div>
@@ -535,18 +442,17 @@ export default function VoiceInterviewer() {
                 </AnimatePresence>
             </div>
 
-            {/* Live Transcript (Subtitle style) */}
             {(state === 'listening' || state === 'processing') && (
-                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur px-6 py-3 rounded-full border border-white/10 max-w-2xl text-center z-50 shadow-2xl">
-                    <p className="text-white font-medium text-lg animate-fade-in transition-all">
-                        {transcript || <span className="opacity-50 italic">Listening...</span>}
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur px-6 py-3 rounded-full border border-white/10 max-w-2xl text-center z-50">
+                    <p className="text-white font-medium text-lg">
+                        {transcript || 'Listening...'}
                     </p>
                 </div>
             )}
 
             <button
-                onClick={() => setState('setup')}
-                className="text-xs text-center text-gray-400 hover:text-gray-900 dark:hover:text-white underline transition-colors"
+                onClick={resetSession}
+                className="text-xs text-center text-gray-400 hover:text-gray-900 dark:hover:text-white underline"
             >
                 End Session & Reconfigure
             </button>
