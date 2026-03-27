@@ -12,7 +12,7 @@ const NeuralCodeWeaver = () => {
   const { viewport, mouse } = useThree();
 
   const [points] = useMemo(() => {
-    const count = 3000; // Reduced from 6000 for better performance & lower TBT
+    const count = 3000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -22,7 +22,6 @@ const NeuralCodeWeaver = () => {
         (Math.random() - 0.5) * 12
       ], i * 3);
 
-      // Mix of cyan and purple for a premium tech feel
       const color = Math.random() > 0.5 ? [0, 0.96, 0.63] : [0.5, 0.2, 1];
       colors.set(color, i * 3);
     }
@@ -33,7 +32,6 @@ const NeuralCodeWeaver = () => {
     if (!ref.current) return;
     ref.current.rotation.x += delta / 25;
     ref.current.rotation.y += delta / 30;
-    // Subtle mouse interaction
     const targetX = (mouse.x * viewport.width) / 5;
     const targetY = (mouse.y * viewport.height) / 5;
     ref.current.position.x += (targetX - ref.current.position.x) * 0.05;
@@ -53,6 +51,8 @@ const NeuralCodeWeaver = () => {
     </Points>
   );
 };
+
+
 
 // Floating Badge Component
 const FloatingBadge = ({ icon: Icon, text, color, delay, x, y }) => (
@@ -216,17 +216,17 @@ export const Hero = () => {
               </motion.div>
 
               <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-                Free Agentic-Coding Hub. <br />
+                The #1 Agentic & Full Stack Hub. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600 dark:from-brand-primary dark:to-purple-400">
-                  Architect React & Node.js.
+                  Architect AI, Node.js, React, Angular & Playwright.
                 </span>
               </h1>
             </div>
 
             <p className="text-lg lg:text-xl text-gray-800 dark:text-gray-300 leading-relaxed max-w-2xl font-medium">
-              Transformation from developer to <span className="text-black dark:text-white font-bold">AI-Augmented Architect</span> starts here.
-              Master JavaScript, React, System Design, and Agentic AI workflows with
-              <span className="text-brand-primary font-bold"> 1:1 Expert Guidance</span> and our <span className="text-purple-700 dark:text-purple-400 font-bold">Proprietary AI Tutor</span>.
+              Your transformation from a standard developer to an <span className="text-black dark:text-white font-bold">Elite AI-Augmented Architect</span> begins here.
+              Master System Design, React, Node.js, Angular, Playwright, and autonomous Agentic AI workflows alongside 
+              <span className="text-brand-primary font-bold"> 1:1 Silicon Valley Mentors</span> and our <span className="text-purple-700 dark:text-purple-400 font-bold">Proprietary AI Tutor</span>.
             </p>
 
             {/* Feature Chips */}

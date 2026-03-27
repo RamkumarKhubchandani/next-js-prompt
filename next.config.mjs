@@ -1,5 +1,11 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Advanced Load Speed Optimizations
+  experimental: {
+    optimizePackageImports: ['@react-three/fiber', '@react-three/drei', 'lucide-react', 'framer-motion'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
   // Renamed tutorials to blogs to avoid slug conflict - build 8
   async headers() {
     return [
