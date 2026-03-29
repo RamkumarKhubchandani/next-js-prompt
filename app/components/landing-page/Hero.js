@@ -204,68 +204,110 @@ export const Hero = () => {
             transition={{ duration: 0.8 }}
             className="text-left space-y-8"
           >
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-teal-700 dark:text-brand-primary text-xs font-bold uppercase tracking-widest mb-6"
-              >
-                <Zap size={14} className="text-teal-700 dark:text-brand-primary" fill="currentColor" />
-                The Future of Coding is Here
-              </motion.div>
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-teal-700 dark:text-brand-primary text-xs font-bold uppercase tracking-widest"
+            >
+              <Zap size={14} className="text-teal-700 dark:text-brand-primary" fill="currentColor" />
+              4 free tools · no credit card needed
+            </motion.div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-                The #1 Agentic & Full Stack Hub. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600 dark:from-brand-primary dark:to-purple-400">
-                  Architect AI, Node.js, React, Angular & Playwright.
-                </span>
-              </h1>
-            </div>
+            {/* Headline */}
+            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.1]">
+              Learn to code. Get{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-emerald-500">
+                job support.
+              </span>
+              <br />
+              Build your career — free tools included.
+            </h1>
 
-            <p className="text-lg lg:text-xl text-gray-800 dark:text-gray-300 leading-relaxed max-w-2xl font-medium">
-              Your transformation from a standard developer to an <span className="text-black dark:text-white font-bold">Elite AI-Augmented Architect</span> begins here.
-              Master System Design, React, Node.js, Angular, Playwright, and autonomous Agentic AI workflows alongside 
-              <span className="text-brand-primary font-bold"> 1:1 Silicon Valley Mentors</span> and our <span className="text-purple-700 dark:text-purple-400 font-bold">Proprietary AI Tutor</span>.
+            {/* Subtitle */}
+            <p className="text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+              1:1 mentorship for{' '}
+              <strong className="text-gray-900 dark:text-white">
+                React, Angular, Vue, Node.js, TypeScript, JavaScript, Full Stack &amp; Playwright
+              </strong>. Plus free resume builder, interview prep, daily learning dashboard, and live events.
             </p>
 
-            {/* Feature Chips */}
+            {/* 3 CTAs */}
             <div className="flex flex-wrap gap-3">
-              {['Fullstack Mastery', 'WebLLM Intelligence', '1:1 Mentorship', 'Global Certification'].map((tag, i) => (
-                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-xs font-bold text-gray-900 dark:text-gray-300">
+              <Link href="/login" aria-label="Book free session" className="focus:outline-none">
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="rounded-full bg-brand-primary px-6 py-3.5 text-dark-900 text-sm font-extrabold shadow-[0_0_20px_rgba(0,245,160,0.3)] hover:shadow-[0_0_35px_rgba(0,245,160,0.5)] transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Sparkles size={16} fill="currentColor" />
+                  Book free session
+                </motion.div>
+              </Link>
+
+              <a
+                href="https://wa.me/918237320942?text=Hi%2C%20I%20need%20job%20support%20and%20mentorship."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus:outline-none"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="rounded-full bg-[#1a9e52] px-6 py-3.5 text-white text-sm font-extrabold shadow-lg shadow-green-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  Job support — WhatsApp now
+                </motion.div>
+              </a>
+
+              <Link href="/dashboard" aria-label="Browse free tools" className="focus:outline-none">
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="rounded-full border-2 border-brand-primary/50 px-6 py-3.5 text-teal-700 dark:text-brand-primary text-sm font-extrabold hover:bg-brand-primary/10 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Globe size={16} />
+                  Browse free tools
+                </motion.div>
+              </Link>
+            </div>
+
+            {/* Micro trust bullets */}
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              {['Free resume builder', 'Free interview prep', 'Free daily learning', 'Reply in 30 mins'].map((text) => (
+                <span key={text} className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 dark:text-gray-400">
                   <CheckCircle2 size={12} className="text-brand-primary" />
-                  {tag}
-                </div>
+                  {text}
+                </span>
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/login" aria-label="Start Your Ascension" className="block focus:outline-none">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-brand-primary to-emerald-400 px-8 py-4 text-dark-900 text-lg font-bold shadow-[0_0_20px_rgba(0,245,160,0.3)] hover:shadow-[0_0_35px_rgba(0,245,160,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Sparkles size={20} fill="currentColor" className="text-dark-900" />
-                  Start Your Ascension
-                </motion.div>
-              </Link>
-              <Link href="/login" aria-label="Join the Elite Loop" className="block focus:outline-none">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-8 py-4 text-gray-900 dark:text-white text-lg font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Users size={20} />
-                  Join the Elite Loop
-                </motion.div>
-              </Link>
+            {/* What's Free Card */}
+            <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
+                What&apos;s Free — No Signup Required
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'Resume builder', 'Interview Q&A', 'Events', 'Daily learning',
+                  '+ 1:1 mentorship', 'Job support',
+                  'React', 'Angular', 'Vue', 'TypeScript', 'Node.js', 'Full Stack', 'Playwright'
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold border cursor-default ${
+                      ['React', 'Angular', 'Vue', 'TypeScript', 'Node.js', 'Full Stack', 'Playwright'].includes(tag)
+                        ? 'bg-white dark:bg-dark-800 border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300'
+                        : 'bg-brand-primary/10 border-brand-primary/25 text-teal-700 dark:text-brand-primary'
+                    }`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-
-            {/* SEO Keyword Salad / Trust Micro-copy */}
-            <p className="text-xs text-gray-700 dark:text-gray-500 max-w-lg mt-4 font-medium">
-              Trusted by engineers worldwide. Expert-verified curriculum for <span className="text-gray-900 dark:text-gray-400 font-bold">React, Angular, Node.js, Next.js 15, Rust, and Playwright</span>.
-            </p>
           </motion.div>
 
           {/* Right Column: Character & Visuals */}
