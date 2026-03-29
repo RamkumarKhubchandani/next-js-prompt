@@ -15,12 +15,6 @@ const navigation = [
     { name: "Events", href: "/events", isNew: true },
     { name: "Find Mentor", href: "/mentorship", isNew: true },
     { name: "Become Mentor", href: "/become-mentor" },
-    { name: "Features", href: "/#features" },
-    { name: "How It Works", href: "/#how-it-works" },
-    { name: "Testimonials", href: "/#testimonials" },
-    // { name: "Community", href: "/showcase" },
-    // { name: "Jobs", href: "/jobs" },
-    { name: "AI Assessment", href: "/ai-quiz" },
     { name: "Tutorials", href: "/blogs" },
 ];
 
@@ -209,7 +203,7 @@ export function Header({ showNav = true }) {
                             }}
                             className="hidden md:inline-flex items-center justify-center px-4 py-2 rounded-full font-extrabold text-xs tracking-wider text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/25 border border-brand-primary/30 hover:shadow-brand-primary/40 hover:opacity-95 transition-all active:scale-[0.98]"
                         >
-                            1:1 CONNECT
+                            Book Free Session
                         </button>
                         <ThemeSwitcher />
                         {navLoading && (
@@ -382,7 +376,7 @@ export function Header({ showNav = true }) {
                                                         }}
                                                         className="w-full text-left -mx-3 block rounded-lg px-3 py-3 text-base font-extrabold leading-7 text-dark-900 bg-gradient-to-r from-brand-primary via-emerald-300 to-brand-primary shadow-lg shadow-brand-primary/20 border border-brand-primary/30"
                                                     >
-                                                        1:1 Connect (Expert Help)
+                                                        Book Free Session (Expert Help)
                                                         <span className="block mt-1 text-xs font-semibold text-dark-900/80">
                                                             Live debugging • Project help • Career guidance
                                                         </span>
