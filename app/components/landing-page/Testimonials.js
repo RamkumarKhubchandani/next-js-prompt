@@ -4,44 +4,18 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue } from "fram
 import { MessageSquareQuote, MapPin, Star, Terminal, ShieldCheck, Code2, Globe2 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-// --- Data (Keeping the rich dataset) ---
+// --- Data (Keeping the user requested dataset) ---
 const testimonials = [
-    // React & Next.js
-    { name: "Priya Sharma", role: "Frontend Lead", company: "Razorpay", location: "Bangalore, India", stack: "React & Next.js", quote: "The Next.js 15 advanced patterns modules are world-class. Finally understood Server Actions.", gradient: "from-blue-500 to-cyan-500", initials: "PS" },
-    { name: "James Wilson", role: "Senior Dev", company: "Vercel", location: "San Francisco, USA", stack: "React", quote: "I've been using React for years, but the architectural deep dives here are unmatched.", gradient: "from-gray-700 to-gray-900", initials: "JW" },
-    { name: "Arjun Mehta", role: "SDE II", company: "Swiggy", location: "Hyderabad, India", stack: "React Native", quote: "Moved from Web to Mobile smoothly thanks to the cross-platform tracks.", gradient: "from-orange-500 to-red-500", initials: "AM" },
-    { name: "Sarah Jenkins", role: "UI Engineer", company: "Netflix", location: "Los Gatos, USA", stack: "React Performance", quote: "Optimized our render cycles by 40% after the 'React Internals' workshop.", gradient: "from-red-600 to-red-900", initials: "SJ" },
-
-    // Angular
-    { name: "Karthik R.", role: "Architect", company: "Infosys", location: "Pune, India", stack: "Angular", quote: "The only course that covers Angular Signals and RxJS properly.", gradient: "from-red-500 to-pink-600", initials: "KR" },
-    { name: "Elena Popov", role: "Lead Dev", company: "Banking Corp", location: "London, UK", stack: "Angular Enterprise", quote: "Migrated our legacy app to Angular 17 smoothly.", gradient: "from-blue-600 to-blue-800", initials: "EP" },
-    { name: "Amit Patel", role: "Tech Lead", company: "TCS", location: "Mumbai, India", stack: "Microfrontends", quote: "Mastered module federation. My team is flying now.", gradient: "from-indigo-500 to-purple-500", initials: "AP" },
-
-    // Vue
-    { name: "Zhang Wei", role: "Frontend Dev", company: "Tencent", location: "Shenzhen, China", stack: "Vue 3", quote: "Composition API explained perfectly. Vue has never felt this powerful.", gradient: "from-green-500 to-emerald-600", initials: "ZW" },
-    { name: "Lucas Dubois", role: "Web Dev", company: "Ubisoft", location: "Paris, France", stack: "Vue & Nuxt", quote: "Built a massive e-com platform using Nuxt concepts.", gradient: "from-emerald-400 to-teal-500", initials: "LD" },
-
-    // Node & Backend
-    { name: "Rahul Verma", role: "Backend Lead", company: "Paytm", location: "Noida, India", stack: "Node.js & MongoDB", quote: "Scaling MongoDB sharding and indexing strategies were explained brilliantly.", gradient: "from-blue-700 to-indigo-900", initials: "RV" },
-    { name: "Michael Chang", role: "Staff Eng", company: "LinkedIn", location: "Sunnyvale, USA", stack: "Node.js Streams", quote: "The Node.js internals section is a must for any senior engineer.", gradient: "from-blue-500 to-cyan-600", initials: "MC" },
-    { name: "Ananya Das", role: "SDE III", company: "Flipkart", location: "Bangalore, India", stack: "Microservices", quote: "Event-driven architecture with Kafka and Node.js. Pure gold.", gradient: "from-yellow-500 to-orange-500", initials: "AD" },
-
-    // Python & AI
-    { name: "Kenji Tanaka", role: "AI Engineer", company: "Sony", location: "Tokyo, Japan", stack: "Python AI", quote: "Integrated LLMs into our pipeline using the Python + LangChain modules.", gradient: "from-rose-500 to-red-600", initials: "KT" },
-    { name: "Jessica Lee", role: "SDET", company: "Microsoft", location: "Seattle, USA", stack: "Playwright", quote: "Automated our entire E2E suite with Python.", gradient: "from-blue-400 to-blue-600", initials: "JL" },
-
-    // More Global
-    { name: "Neha Roy", role: "DevOps", company: "Zoho", location: "Chennai, India", stack: "CI/CD", quote: "Best explanation of AWS ECS and K8s for developers.", gradient: "from-yellow-600 to-yellow-800", initials: "NR" },
-    { name: "Carlos Gomez", role: "Full Stack", company: "Glovo", location: "Madrid, Spain", stack: "MERN Stack", quote: "The MERN advanced project saved me months of trial and error.", gradient: "from-yellow-400 to-orange-500", initials: "CG" },
-    { name: "Siddharth Rao", role: "Founder", company: "TechStart", location: "Hyderabad, India", stack: "Full Stack", quote: "Launched my MVP in 4 weeks using the boilerplate provided.", gradient: "from-purple-600 to-indigo-600", initials: "SR" },
-    { name: "Lars Jensen", role: "Backend", company: "Spotify", location: "Stockholm, SE", stack: "Rust/Node", quote: "The Rust for JS developers track is genius.", gradient: "from-green-500 to-emerald-700", initials: "LJ" },
-    { name: "Divya Nair", role: "SDE", company: "Oracle", location: "Bangalore, India", stack: "Java/JS", quote: "Bridged my knowledge gap between enterprise Java and modern JS.", gradient: "from-red-600 to-red-800", initials: "DN" },
-    { name: "Aditya Kumar", role: "Student", company: "IIT Bombay", location: "Mumbai, India", stack: "DSA", quote: "Placed at Google. The DSA in JS section was critical.", gradient: "from-blue-600 to-blue-900", initials: "AK" },
-    { name: "Sophie Martin", role: "UX Eng", company: "Airbnb", location: "San Francisco, USA", stack: "Design Systems", quote: "The way you teach Design Systems with React is spot on.", gradient: "from-rose-500 to-red-500", initials: "SM" },
-    { name: "Fatima Al-Sayed", role: "Backend", company: "Aramco", location: "Dhahran, SA", stack: "Python/Django", quote: "Enterprise Python patterns explained well.", gradient: "from-emerald-600 to-emerald-800", initials: "FA" },
-    { name: "Varun Dhawan", role: "UI Dev", company: "Media.net", location: "Mumbai, India", stack: "CSS/JS", quote: "Animations module is fantastic.", gradient: "from-pink-500 to-purple-500", initials: "VD" },
-    { name: "Bhavya Singh", role: "Full Stack", company: "PhonePe", location: "Bangalore, India", stack: "React/Node", quote: "Best resource for MERN stack scaling.", gradient: "from-purple-600 to-purple-800", initials: "BS" },
-    { name: "Chitra Ramaswamy", role: "Lead", company: "HCL", location: "Chennai, India", stack: "Angular", quote: "Trained my whole team using this platform.", gradient: "from-blue-700 to-blue-900", initials: "CR" },
+    { name: "Anjali Khubchandani", role: "Frontend Lead", company: "TechNova", location: "Bangalore, India", stack: "React", quote: "The advanced React patterns and architecture deep-dives drastically improved how I build enterprise applications. A total game-changer.", gradient: "from-blue-500 to-cyan-500", initials: "AK" },
+    { name: "Lamia Khan", role: "Senior Developer", company: "InnovateCo", location: "London, UK", stack: "JavaScript", quote: "Mastering under-the-hood JavaScript mechanics gave me the confidence to ace top-tier engineering interviews.", gradient: "from-yellow-400 to-orange-500", initials: "LK" },
+    { name: "Amandeep Kaur", role: "Software Engineer", company: "GlobalTech", location: "Toronto, Canada", stack: "Angular", quote: "Finally, a curriculum that explains Angular Signals and complex RxJS streams in a way that actually makes sense.", gradient: "from-red-500 to-pink-600", initials: "AK" },
+    { name: "Komal Baskar", role: "QA Automation Lead", company: "QualityFirst", location: "Sydney, Australia", stack: "Playwright", quote: "Automating our entire end-to-end testing suite was seamless after understanding the Playwright architecture taught here. Highly recommended!", gradient: "from-emerald-400 to-teal-500", initials: "KB" },
+    { name: "Nitish More", role: "Backend Architect", company: "ScaleUp", location: "Pune, India", stack: "Node.js", quote: "Learning to optimize Node.js event loops helped me architect high-performance APIs capable of handling millions of users.", gradient: "from-green-600 to-emerald-800", initials: "NM" },
+    { name: "Manisha D", role: "UI Engineer", company: "DesignSystem", location: "Mumbai, India", stack: "Vue", quote: "The Composition API explanations were incredibly clear. Transitioning our legacy codebase to Vue 3 became instantly manageable.", gradient: "from-emerald-300 to-emerald-600", initials: "MD" },
+    { name: "Nisha Sachdev", role: "Full Stack Developer", company: "StartupX", location: "New York, USA", stack: "Full Stack", quote: "The perfect bridge between frontend design and backend scalable architecture. I launched my full-stack MERN application in weeks.", gradient: "from-purple-600 to-indigo-600", initials: "NS" },
+    { name: "Melinda Lindgren", role: "Tech Lead", company: "NordicSolutions", location: "Stockholm, Sweden", stack: "TypeScript", quote: "Strict typing, advanced generics, and enterprise TS implementations saved our repository from countless production bugs.", gradient: "from-blue-600 to-indigo-800", initials: "ML" },
+    { name: "Thais Ribeiro", role: "Frontend Developer", company: "WebStudio", location: "São Paulo, Brazil", stack: "React & Next.js", quote: "The Next.js App Router and Server Components modules completely changed my approach to building fast, SEO-optimized web apps.", gradient: "from-gray-700 to-gray-900", initials: "TR" },
+    { name: "Vishal Chavan", role: "UI Architect", company: "FinTech Corp", location: "Hyderabad, India", stack: "Angular & RxJS", quote: "The mentor-led approach to solving complex state management in Angular is what sets this training apart from standard online courses.", gradient: "from-red-600 to-red-800", initials: "VC" }
 ];
 
 const TechIcon = ({ label }) => (
@@ -50,8 +24,11 @@ const TechIcon = ({ label }) => (
                 label.includes("Angular") ? "bg-red-500" :
                     label.includes("Vue") ? "bg-green-500" :
                         label.includes("Node") ? "bg-green-600" :
-                            label.includes("Python") ? "bg-yellow-500" :
-                                "bg-brand-primary"
+                            label.includes("JavaScript") ? "bg-yellow-400" :
+                                label.includes("TypeScript") ? "bg-blue-600" :
+                                    label.includes("Playwright") ? "bg-emerald-500" :
+                                        label.includes("Full Stack") ? "bg-purple-500" :
+                                            "bg-brand-primary"
             }`} />
         <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">{label}</span>
     </div>
@@ -126,10 +103,10 @@ const MarqueeColumn = ({ items, speed = 50, reverse = false }) => {
 };
 
 export const Testimonials = () => {
-    // Distribute testimonials into 3 columns
-    const col1 = testimonials.slice(0, 8);
-    const col2 = testimonials.slice(8, 16);
-    const col3 = testimonials.slice(16, 24);
+    // Distribute testimonials into 3 columns for Marquee
+    const col1 = testimonials.slice(0, 4);
+    const col2 = testimonials.slice(4, 7);
+    const col3 = testimonials.slice(7, 10);
 
     return (
         <section id="testimonials" className="py-32 bg-white dark:bg-[#050505] relative overflow-hidden">
