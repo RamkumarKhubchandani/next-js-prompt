@@ -235,7 +235,20 @@ export const Hero = () => {
 
             {/* 3 CTAs */}
             <div className="flex flex-wrap gap-3">
-              <Link href="/login" aria-label="Book free session" className="focus:outline-none">
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-connect-modal-global', {
+                    detail: {
+                      headline: 'Book a Free Session',
+                      subhead: 'Get live mentorship, project help, and a clear career roadmap — completely free.',
+                      defaultNotes: '',
+                      ctaLabel: 'Book My Free Session',
+                    }
+                  }));
+                }}
+                className="focus:outline-none"
+              >
                 <motion.div
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
@@ -244,7 +257,7 @@ export const Hero = () => {
                   <Sparkles size={16} fill="currentColor" />
                   Book free session
                 </motion.div>
-              </Link>
+              </button>
 
               <a
                 href="https://wa.me/918237320942?text=Hi%2C%20I%20need%20job%20support%20and%20mentorship."
