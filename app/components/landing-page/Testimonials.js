@@ -6,16 +6,18 @@ import { cn } from "../../lib/utils";
 
 // --- Data (Keeping the user requested dataset) ---
 const testimonials = [
-    { name: "Anjali Khubchandani", role: "Frontend Lead", company: "TechNova", location: "Bangalore, India", stack: "React", quote: "The advanced React patterns and architecture deep-dives drastically improved how I build enterprise applications. A total game-changer.", gradient: "from-blue-500 to-cyan-500", initials: "AK" },
-    { name: "Lamia Khan", role: "Senior Developer", company: "InnovateCo", location: "London, UK", stack: "JavaScript", quote: "Mastering under-the-hood JavaScript mechanics gave me the confidence to ace top-tier engineering interviews.", gradient: "from-yellow-400 to-orange-500", initials: "LK" },
-    { name: "Amandeep Kaur", role: "Software Engineer", company: "GlobalTech", location: "Toronto, Canada", stack: "Angular", quote: "Finally, a curriculum that explains Angular Signals and complex RxJS streams in a way that actually makes sense.", gradient: "from-red-500 to-pink-600", initials: "AK" },
-    { name: "Komal Baskar", role: "QA Automation Lead", company: "QualityFirst", location: "Sydney, Australia", stack: "Playwright", quote: "Automating our entire end-to-end testing suite was seamless after understanding the Playwright architecture taught here. Highly recommended!", gradient: "from-emerald-400 to-teal-500", initials: "KB" },
-    { name: "Nitish More", role: "Backend Architect", company: "ScaleUp", location: "Pune, India", stack: "Node.js", quote: "Learning to optimize Node.js event loops helped me architect high-performance APIs capable of handling millions of users.", gradient: "from-green-600 to-emerald-800", initials: "NM" },
-    { name: "Manisha D", role: "UI Engineer", company: "DesignSystem", location: "Mumbai, India", stack: "Vue", quote: "The Composition API explanations were incredibly clear. Transitioning our legacy codebase to Vue 3 became instantly manageable.", gradient: "from-emerald-300 to-emerald-600", initials: "MD" },
-    { name: "Nisha Sachdev", role: "Full Stack Developer", company: "StartupX", location: "New York, USA", stack: "Full Stack", quote: "The perfect bridge between frontend design and backend scalable architecture. I launched my full-stack MERN application in weeks.", gradient: "from-purple-600 to-indigo-600", initials: "NS" },
-    { name: "Melinda Lindgren", role: "Tech Lead", company: "NordicSolutions", location: "Stockholm, Sweden", stack: "TypeScript", quote: "Strict typing, advanced generics, and enterprise TS implementations saved our repository from countless production bugs.", gradient: "from-blue-600 to-indigo-800", initials: "ML" },
-    { name: "Thais Ribeiro", role: "Frontend Developer", company: "WebStudio", location: "São Paulo, Brazil", stack: "React & Next.js", quote: "The Next.js App Router and Server Components modules completely changed my approach to building fast, SEO-optimized web apps.", gradient: "from-gray-700 to-gray-900", initials: "TR" },
-    { name: "Vishal Chavan", role: "UI Architect", company: "FinTech Corp", location: "Hyderabad, India", stack: "Angular & RxJS", quote: "The mentor-led approach to solving complex state management in Angular is what sets this training apart from standard online courses.", gradient: "from-red-600 to-red-800", initials: "VC" }
+    { name: "Anjali Khubchandani", email: "anjali0311@gmail.com", location: "Bangalore, India", stack: "React", quote: "The advanced React patterns and architecture deep-dives drastically improved how I build enterprise applications. A total game-changer.", gradient: "from-blue-500 to-cyan-500", initials: "AK" },
+    { name: "Lamia Khan", email: "lamiakhan89@gmail.com", location: "London, UK", stack: "JavaScript", quote: "Mastering under-the-hood JavaScript mechanics gave me the confidence to ace top-tier engineering interviews.", gradient: "from-yellow-400 to-orange-500", initials: "LK" },
+    { name: "Amandeep Kaur", email: "aman.kaur21@gmail.com", location: "Toronto, Canada", stack: "Angular", quote: "Finally, a curriculum that explains Angular Signals and complex RxJS streams in a way that actually makes sense.", gradient: "from-red-500 to-pink-600", initials: "AK" },
+    { name: "Komal Baskar", email: "komal.bharathgadde@gmail.com", location: "Sydney, Australia", stack: "Playwright", quote: "Automating our entire end-to-end testing suite was seamless after understanding the Playwright architecture taught here. Highly recommended!", gradient: "from-emerald-400 to-teal-500", initials: "KB" },
+    { name: "Nitish More", email: "nitesh89more@gmail.com", location: "Pune, India", stack: "Node.js", quote: "Learning to optimize Node.js event loops helped me architect high-performance APIs capable of handling millions of users.", gradient: "from-green-600 to-emerald-800", initials: "NM" },
+    { name: "Manisha D", email: "manisha05dhole@gmail.com", location: "Mumbai, India", stack: "Vue", quote: "The Composition API explanations were incredibly clear. Transitioning our legacy codebase to Vue 3 became instantly manageable.", gradient: "from-emerald-300 to-emerald-600", initials: "MD" },
+    { name: "Nisha Sachdev", email: "nishassach@gmail.com", location: "New York, USA", stack: "Full Stack", quote: "The perfect bridge between frontend design and backend scalable architecture. I launched my full-stack MERN application in weeks.", gradient: "from-purple-600 to-indigo-600", initials: "NS" },
+    { name: "Melinda Lindgren", email: "melinda_lindgren@hotmail.com", location: "Stockholm, Sweden", stack: "TypeScript", quote: "Strict typing, advanced generics, and enterprise TS implementations saved our repository from countless production bugs.", gradient: "from-blue-600 to-indigo-800", initials: "ML" },
+    { name: "Thais Ribeiro", email: "thaisr44@gmail.com", location: "São Paulo, Brazil", stack: "React & Next.js", quote: "The Next.js App Router and Server Components modules completely changed my approach to building fast, SEO-optimized web apps.", gradient: "from-gray-700 to-gray-900", initials: "TR" },
+    { name: "Vishal Chavan", email: "vishalcha22@gmail.com", location: "Hyderabad, India", stack: "Angular & RxJS", quote: "The mentor-led approach to solving complex state management in Angular is what sets this training apart from standard online courses.", gradient: "from-red-600 to-red-800", initials: "VC" },
+    { name: "Riya Shelar", email: "riyashelar137@gmail.com", location: "Pune, India", stack: "Full Stack - React", quote: "The MERN stack deep dives covered every aspect of building real-world enterprise architectures.", gradient: "from-blue-600 to-indigo-800", initials: "RS" },
+    { name: "Evgeniya Blekher", email: "Evgeniya.Blekher@gmail.com", location: "Berlin, Germany", stack: "Playwright", quote: "Setting up CI/CD pipelines with Playwright has never been easier. Exceptional mentoring.", gradient: "from-emerald-500 to-teal-700", initials: "EB" }
 ];
 
 const TechIcon = ({ label }) => (
@@ -54,7 +56,7 @@ const TestimonialCard = ({ data, index }) => (
                     {data.name}
                     <ShieldCheck className="inline-block ml-1.5 w-4 h-4 text-brand-primary align-text-bottom" fill="currentColor" stroke="black" />
                 </h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">{data.role} @ {data.company}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">{data.email}</p>
                 <div className="flex items-center gap-1 mt-1.5 text-[10px] text-gray-400 uppercase tracking-wider font-bold">
                     <MapPin size={10} />
                     {data.location}
@@ -105,8 +107,8 @@ const MarqueeColumn = ({ items, speed = 50, reverse = false }) => {
 export const Testimonials = () => {
     // Distribute testimonials into 3 columns for Marquee
     const col1 = testimonials.slice(0, 4);
-    const col2 = testimonials.slice(4, 7);
-    const col3 = testimonials.slice(7, 10);
+    const col2 = testimonials.slice(4, 8);
+    const col3 = testimonials.slice(8, 12);
 
     return (
         <section id="testimonials" className="py-32 bg-white dark:bg-[#050505] relative overflow-hidden">
