@@ -15,7 +15,7 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     const body = await req.json().catch(() => ({}));
 
-    const ownerEmail = 'hi@outlinedev.com';
+    const ownerEmail = 'infojsprompt@gmail.com';
 
     const requesterEmail = (session?.user?.email || body.email || '').trim();
     const requesterName = (session?.user?.name || body.name || '').trim();
