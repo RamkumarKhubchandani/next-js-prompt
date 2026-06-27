@@ -23,10 +23,19 @@ const PHASE_1_LOCATIONS = [
   "bangalore",
   "hyderabad",
   "noida",
+  "delhi",
+  "gurgaon",
+  "chennai",
   "london",
   "san-francisco",
   "new-york",
   "berlin",
+  "toronto",
+  "vancouver",
+  "sydney",
+  "singapore",
+  "dubai",
+  "remote",
   "online"
 ];
 
