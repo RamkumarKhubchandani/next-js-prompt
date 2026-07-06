@@ -26,7 +26,7 @@ export default function BecomeMentorPage() {
         "hiringOrganization": {
             "@type": "Organization",
             "name": "OutlineDev",
-            "sameAs": "https://outlinedev.com"
+            "sameAs": "https://www.outlinedev.com"
         },
         "employmentType": "CONTRACTOR",
         "jobLocationType": "TELECOMMUTE",

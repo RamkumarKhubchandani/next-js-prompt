@@ -70,10 +70,10 @@ export async function generateMetadata({ params }) {
     // JSON-LD Schema (Professional Service / Educational Org)
     const mainSchema = {
         '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
-        '@id': `https://outlinedev.com/mentors/${slug}#org`,
+        '@id': `https://www.outlinedev.com/mentors/${slug}#org`,
         'name': titleStr,
         'description': description,
-        'url': `https://outlinedev.com/mentors/${slug}`,
+        'url': `https://www.outlinedev.com/mentors/${slug}`,
         'image': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200',
         'address': {
             '@type': 'PostalAddress',
@@ -130,7 +130,7 @@ export async function generateMetadata({ params }) {
             images: ['https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop'],
         },
         alternates: {
-            canonical: `https://outlinedev.com/mentors/${slug}`,
+            canonical: `https://www.outlinedev.com/mentors/${slug}`,
         },
         other: {
             'script:ld+json': JSON.stringify(graphSchema)

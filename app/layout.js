@@ -13,7 +13,7 @@ import { Suspense } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL('https://outlinedev.com'),
+  metadataBase: new URL('https://www.outlinedev.com'),
   title: {
     default: "OutlineDev | Free Agentic Coding Bootcamp & Mentorship",
     template: "%s | OutlineDev"
@@ -39,10 +39,10 @@ export const metadata = {
   creator: "OutlineDev",
   publisher: "OutlineDev",
   alternates: {
-    canonical: 'https://outlinedev.com/',
+    canonical: 'https://www.outlinedev.com/',
     languages: {
-      'en-US': 'https://outlinedev.com/',
-      'en-IN': 'https://outlinedev.com/',
+      'en-US': 'https://www.outlinedev.com/',
+      'en-IN': 'https://www.outlinedev.com/',
     },
   },
   icons: {
@@ -53,11 +53,11 @@ export const metadata = {
   openGraph: {
     title: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
     description: "Join the #1 Free Coding Mentorship platform. Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification.",
-    url: 'https://outlinedev.com/',
+    url: 'https://www.outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
       {
-        url: 'https://outlinedev.com/brand/linkedin-banner-final.png',
+        url: 'https://www.outlinedev.com/brand/linkedin-banner-final.png',
         width: 1200,
         height: 630,
         alt: 'OutlineDev - Free Coding Bootcamp & Mentorship',
@@ -70,7 +70,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: "OutlineDev | Free Coding Bootcamp & 1-on-1 Mentorship",
     description: "Master JavaScript, React, Angular & Full Stack with 1-on-1 expert guidance, mock interviews and certification — 100% free.",
-    images: ['https://outlinedev.com/brand/linkedin-banner-final.png'],
+    images: ['https://www.outlinedev.com/brand/linkedin-banner-final.png'],
     creator: "@outlinedev",
   },
   robots: {
@@ -99,12 +99,12 @@ export default async function RootLayout({ children }) {
         "@type": "WebSite",
         "name": "OutlineDev",
         "alternateName": "OutlineDev",
-        "url": "https://outlinedev.com",
+        "url": "https://www.outlinedev.com",
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://outlinedev.com/search?q={search_term_string}"
+            "urlTemplate": "https://www.outlinedev.com/search?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
@@ -112,20 +112,20 @@ export default async function RootLayout({ children }) {
       // 2. Organization Schema (Enhanced for Logo & Knowledge Panel)
       {
         "@type": ["EducationalOrganization", "Organization"],
-        "@id": "https://outlinedev.com/#organization",
+        "@id": "https://www.outlinedev.com/#organization",
         "name": "OutlineDev",
         "legalName": "OutlineDev",
-        "url": "https://outlinedev.com",
+        "url": "https://www.outlinedev.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://outlinedev.com/logo-outlinedev-icon.png",
+          "url": "https://www.outlinedev.com/logo-outlinedev-icon.png",
           "width": 512,
           "height": 512,
           "caption": "OutlineDev Logo"
         },
         "image": {
           "@type": "ImageObject",
-          "url": "https://outlinedev.com/brand/linkedin-banner-final.png",
+          "url": "https://www.outlinedev.com/brand/linkedin-banner-final.png",
           "width": 1200,
           "height": 630
         },
@@ -212,7 +212,7 @@ export default async function RootLayout({ children }) {
         "@type": "Service",
         "serviceType": "Coding Mentorship",
         "provider": {
-          "@id": "https://outlinedev.com/#organization"
+          "@id": "https://www.outlinedev.com/#organization"
         },
         "areaServed": "Worldwide",
         "hasOfferCatalog": {

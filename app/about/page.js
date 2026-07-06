@@ -118,6 +118,97 @@ export default function AboutPage() {
                     </div>
                 </div>
 
+                {/* Methodology Section (E-E-A-T Trust Builder) */}
+                <div className="max-w-7xl mx-auto px-6 mb-32">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-extrabold mb-4">Our Learning Methodology</h2>
+                        <p className="text-slate-600 dark:text-slate-405 max-w-xl mx-auto">
+                            A scientific, hands-on framework designed to transform aspiring coders into autonomous software engineers.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                title: "1. Vetted Engineering Curriculums",
+                                desc: "No random tutorials. Our interactive roadmaps are built backward from the technical standards of leading tech firms, ensuring you learn only production-relevant skills.",
+                                icon: Code
+                            },
+                            {
+                                title: "2. Active Debugging Sprints",
+                                desc: "Real engineers don't just write code; they fix it. Our Bug Squash Arena challenges train your mental model to isolate, debug, and resolve issues in standard runtimes.",
+                                icon: Target
+                            },
+                            {
+                                title: "3. Collaborative Squads",
+                                desc: "Work in simulated agile environments. Build alongside 5-person peer teams, participate in mock standups, and learn to write clean pull requests that pass code reviews.",
+                                icon: Users
+                            }
+                        ].map((item, idx) => (
+                            <div key={idx} className="bg-white dark:bg-[#0c0c14] border border-slate-200 dark:border-white/5 p-8 rounded-3xl shadow-sm">
+                                <div className="w-12 h-12 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary mb-6">
+                                    <item.icon size={22} />
+                                </div>
+                                <h3 className="text-lg font-bold mb-3">{item.title}</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Team & Founding Mentors Section */}
+                <div className="max-w-7xl mx-auto px-6 mb-20">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-extrabold mb-4">Meet Our Founding Mentors</h2>
+                        <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+                            Get mentored by industry practitioners with decades of combined engineering and teaching experience.
+                        </p>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[
+                            {
+                                name: "Ramkumar Khubchandani",
+                                role: "Founder & Head Mentor",
+                                bio: "Ex-Senior Systems Architect with 12+ years of experience building high-performance systems. Passionate about bringing Silicon Valley standards to learners worldwide.",
+                                initials: "RK",
+                                gradient: "from-blue-600 to-indigo-650"
+                            },
+                            {
+                                name: "Anjali Khubchandani",
+                                role: "Co-Founder & React Lead",
+                                bio: "Senior Frontend Engineer specializing in advanced React patterns, client state-management, and rendering optimizations. Ex-Adtech UI Architect.",
+                                initials: "AK",
+                                gradient: "from-purple-600 to-pink-650"
+                            },
+                            {
+                                name: "Lamia Khan",
+                                role: "Full Stack & DevRel Lead",
+                                bio: "Full-stack instructor and developer advocate. Specialized in Node.js event-loop optimization, MongoDB database schemas, and microservice patterns.",
+                                initials: "LK",
+                                gradient: "from-yellow-400 to-orange-500"
+                            }
+                        ].map((mentor, idx) => (
+                            <div key={idx} className="bg-white dark:bg-[#0c0c14] border border-slate-200 dark:border-white/5 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                <div className="p-8">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${mentor.gradient} flex items-center justify-center text-white font-bold text-xl`}>
+                                            {mentor.initials}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-lg leading-tight">{mentor.name}</h3>
+                                            <p className="text-xs text-brand-primary font-semibold mt-1">{mentor.role}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                                        {mentor.bio}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
             </main>
         </div>
     );

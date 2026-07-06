@@ -6,7 +6,7 @@ export const metadata = {
     description: 'Get instant 1:1 coding help from vetted experts. Find the best JavaScript tutor, Python mentor, or React coach. We connect you in 60 minutes. Global 24/7 support.',
     keywords: ['1:1 coding tutor', 'javascript mentor', 'python tutor', 'react mentorship', 'find coding teacher', 'best java tutor', 'coding help for kids'],
     alternates: {
-        canonical: 'https://outlinedev.com/mentorship',
+        canonical: 'https://www.outlinedev.com/mentorship',
     },
     openGraph: {
         title: 'Find Your Perfect Coding Mentor | 1:1 Help',
@@ -21,7 +21,7 @@ export default function MentorshipPage() {
         "@type": "EducationalOrganization",
         "name": "OutlineDev Mentorship Platform",
         "description": "Global 1:1 coding mentorship platform connecting students with expert developers.",
-        "url": "https://outlinedev.com/mentorship",
+        "url": "https://www.outlinedev.com/mentorship",
         "sameAs": [
             "https://twitter.com/outlinedev",
             "https://linkedin.com/company/outlinedev"

@@ -20,7 +20,7 @@ export const metadata = {
         images: ['https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1200&auto=format&fit=crop'],
     },
     alternates: {
-        canonical: 'https://outlinedev.com/events',
+        canonical: 'https://www.outlinedev.com/events',
     }
 };
 
@@ -34,19 +34,19 @@ export default function EventsPage() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "JavaScript + React + Zustand Masterclass",
-                "url": "https://outlinedev.com/events/js-react-workshop"
+                "url": "https://www.outlinedev.com/events/js-react-workshop"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Enterprise Stack: JS + TS + Angular 21",
-                "url": "https://outlinedev.com/events/js-ts-angular-workshop"
+                "url": "https://www.outlinedev.com/events/js-ts-angular-workshop"
             },
             {
                 "@type": "ListItem",
                 "position": 3,
                 "name": "Full Stack: JS + Node.js + MongoDB",
-                "url": "https://outlinedev.com/events/js-node-mongo-workshop"
+                "url": "https://www.outlinedev.com/events/js-node-mongo-workshop"
             }
         ]
     };

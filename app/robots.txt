@@ -5,4 +5,4 @@ Disallow: /login
 Disallow: /register
 
 # Sitemap pointing to your new, optimized file
-Sitemap: https://outlinedev.com/sitemap.xml
+Sitemap: https://www.outlinedev.com/sitemap.xml

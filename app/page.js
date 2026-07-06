@@ -4,7 +4,7 @@ export const metadata = {
   title: "OutlineDev | Free Agentic Coding Bootcamp & Mentorship",
   description: "Join the #1 Free Agentic Coding Bootcamp. Master React, Node.js, and Full Stack with 1-on-1 expert mentorship and certification. 100% free.",
   alternates: {
-    canonical: 'https://outlinedev.com/',
+    canonical: 'https://www.outlinedev.com/',
   },
   keywords: [
     "free coding bootcamp",
@@ -22,11 +22,11 @@ export const metadata = {
   openGraph: {
     title: "OutlineDev | Free Coding Bootcamp & Mentorship",
     description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
-    url: 'https://outlinedev.com/',
+    url: 'https://www.outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
       {
-        url: 'https://outlinedev.com/brand/linkedin-banner-final.png',
+        url: 'https://www.outlinedev.com/brand/linkedin-banner-final.png',
         width: 1200,
         height: 630,
         alt: 'OutlineDev - Free Coding Bootcamp & Mentorship for JavaScript, React, Angular, Node.js',
@@ -39,7 +39,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: "OutlineDev | Free Coding Bootcamp & Mentorship",
     description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship — 100% free.",
-    images: ['https://outlinedev.com/brand/linkedin-banner-final.png'],
+    images: ['https://www.outlinedev.com/brand/linkedin-banner-final.png'],
     creator: "@outlinedev",
   },
 };
@@ -96,7 +96,7 @@ export default function Page() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://outlinedev.com"
+        "item": "https://www.outlinedev.com"
       }
     ]
   };

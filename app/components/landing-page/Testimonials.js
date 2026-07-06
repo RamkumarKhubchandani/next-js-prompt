@@ -56,7 +56,6 @@ const TestimonialCard = ({ data, index }) => (
                     {data.name}
                     <ShieldCheck className="inline-block ml-1.5 w-4 h-4 text-brand-primary align-text-bottom" fill="currentColor" stroke="black" />
                 </h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">{data.email}</p>
                 <div className="flex items-center gap-1 mt-1.5 text-[10px] text-gray-400 uppercase tracking-wider font-bold">
                     <MapPin size={10} />
                     {data.location}

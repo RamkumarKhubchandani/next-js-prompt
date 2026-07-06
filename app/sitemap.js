@@ -40,7 +40,7 @@ const PHASE_1_LOCATIONS = [
 ];
 
 export default function sitemap() {
-  const baseUrl = "https://outlinedev.com"; // Production URL
+  const baseUrl = "https://www.outlinedev.com"; // Production URL
   const currentDate = new Date().toISOString().split('T')[0];
 
   // 1. Core Static Routes
