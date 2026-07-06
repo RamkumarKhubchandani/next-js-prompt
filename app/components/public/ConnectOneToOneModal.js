@@ -81,9 +81,25 @@ export default function ConnectOneToOneModal({
   }, [open, initialEmail, initialName, timezone]);
 
   const submit = async () => {
+    if (!form.email?.trim()) {
+      setStatus('err');
+      setError('Email address is required.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email.trim())) {
+      setStatus('err');
+      setError('Please enter a valid email address.');
+      return;
+    }
     if (!form.phone?.trim()) {
       setStatus('err');
       setError('Mobile number is required for 1:1 connect.');
+      return;
+    }
+    if (!form.preferredTime) {
+      setStatus('err');
+      setError('Preferred date and time is required.');
       return;
     }
     setSubmitting(true);
@@ -244,7 +260,7 @@ export default function ConnectOneToOneModal({
                     )}
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Contact</label>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Contact (Email) *</label>
                       <input
                         value={form.email}
                         onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
@@ -278,7 +294,7 @@ export default function ConnectOneToOneModal({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Preferred Time</label>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Preferred Time *</label>
                         <input
                           type="datetime-local"
                           value={form.preferredTime}

@@ -7,6 +7,7 @@ import { authOptions } from "./lib/auth";
 import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ActivityTracker from "./components/ActivityTracker";
+import WhatsAppWidget from "./components/WhatsAppWidget";
 import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -262,6 +263,7 @@ export default async function RootLayout({ children }) {
           <ThemeProvider>
             {children}
             <XPNotification />
+            <WhatsAppWidget />
             <Suspense fallback={null}>
               <ActivityTracker />
             </Suspense>

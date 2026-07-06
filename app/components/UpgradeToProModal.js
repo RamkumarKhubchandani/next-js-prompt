@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Loader2, CheckCircle } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function UpgradeToProModal({ open, onClose }) {
     const { data: session } = useSession();
+    const router = useRouter();
+    const pathname = usePathname();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -64,30 +67,49 @@ export default function UpgradeToProModal({ open, onClose }) {
                                         Unlock unlimited access to all courses, premium mock interviews, and advanced resume optimization.
                                     </p>
 
-                                    <div className="space-y-4 text-left mb-8">
-                                        <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Your Email</label>
-                                            <div className="font-mono text-sm text-slate-900 dark:text-slate-200 truncate">{session?.user?.email}</div>
+                                    {!session ? (
+                                        <div className="space-y-4">
+                                            <div className="p-4 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-900/30 text-left text-amber-800 dark:text-amber-300 text-sm">
+                                                Please log in or create a free account to upgrade your membership.
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    onClose();
+                                                    router.push(`/login?callbackUrl=${encodeURIComponent(pathname || '/')}`);
+                                                }}
+                                                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg shadow-purple-500/25 transition-all active:scale-[0.98]"
+                                            >
+                                                Log In / Register
+                                            </button>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <>
+                                            <div className="space-y-4 text-left mb-8">
+                                                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Your Email</label>
+                                                    <div className="font-mono text-sm text-slate-900 dark:text-slate-200 truncate">{session?.user?.email}</div>
+                                                </div>
+                                            </div>
 
-                                    <button
-                                        onClick={handleSubmit}
-                                        disabled={loading}
-                                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg shadow-purple-500/25 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                    >
-                                        {loading ? (
-                                            <>
-                                                <Loader2 size={18} className="animate-spin" />
-                                                Sending Request...
-                                            </>
-                                        ) : (
-                                            'Submit Upgrade Request'
-                                        )}
-                                    </button>
-                                    <p className="text-xs text-slate-400 mt-4">
-                                        Admins will review your request shortly.
-                                    </p>
+                                            <button
+                                                onClick={handleSubmit}
+                                                disabled={loading}
+                                                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg shadow-purple-500/25 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                            >
+                                                {loading ? (
+                                                    <>
+                                                        <Loader2 size={18} className="animate-spin" />
+                                                        Sending Request...
+                                                    </>
+                                                ) : (
+                                                    'Submit Upgrade Request'
+                                                )}
+                                            </button>
+                                            <p className="text-xs text-slate-400 mt-4">
+                                                Admins will review your request shortly.
+                                            </p>
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <div className="py-8">
