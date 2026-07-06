@@ -5,6 +5,7 @@ import { Footer } from '../Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Shield, CheckCircle, ArrowRight, Code, Users, Zap, X, Globe, MessageSquare, Sparkles, Building2, PenTool } from 'lucide-react';
 import MentorshipClient from '../../mentorship/MentorshipClient';
+import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 
 // INITIAL REVIEWS DATA
 const INITIAL_REVIEWS = [
@@ -38,6 +39,9 @@ export function MentorshipLanding({ skill, location, suffix }) {
     const [reviews, setReviews] = useState(INITIAL_REVIEWS);
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [newReview, setNewReview] = useState({ name: '', role: '', company: '', text: '', stars: 5 });
+
+    const skillContent = getSkillContent(skill.id);
+    const locationContent = getLocationContent(location.id, location.name);
 
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
     const toggleForm = () => setShowForm(!showForm);
@@ -98,7 +102,7 @@ export function MentorshipLanding({ skill, location, suffix }) {
                                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                                 className="text-xl text-slate-600 dark:text-gray-300 max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
                             >
-                                Stop struggling with bugs alone. Get instant, 1:1 {suffix.includes('help') ? 'assistance' : 'mentorship'} from senior {skill.name} engineers who provide expert guidance online.
+                                {skillContent.description} Get instant, 1:1 {suffix.includes('help') ? 'assistance' : 'mentorship'} from senior {skill.name} engineers who provide expert guidance in {location.name} online.
                             </motion.p>
 
                             <motion.div
@@ -325,20 +329,20 @@ export function MentorshipLanding({ skill, location, suffix }) {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div className="bg-white dark:bg-dark-900 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
                             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6"><Globe size={24} /></div>
-                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">Insider {location.name} Access</h3>
-                            <p className="text-slate-600 dark:text-gray-400">Get referrals to top companies in {location.name}. Our mentors work at the companies you want to join.</p>
+                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{location.name} Tech Ecosystem</h3>
+                            <p className="text-slate-600 dark:text-gray-400">{locationContent.techHubDescription} {locationContent.referralNetwork}</p>
                         </div>
 
                         <div className="bg-white dark:bg-dark-900 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
                             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6"><Users size={24} /></div>
-                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">Local Networking</h3>
-                            <p className="text-slate-600 dark:text-gray-400">Connect with other {skill.name} developers in {location.country}. Build a network that lasts a lifetime.</p>
+                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{skill.name} Core Syllabus</h3>
+                            <p className="text-slate-600 dark:text-gray-400">Our structured milestones cover: {skillContent.modules.map(m => m.title).join(', ')}. Each module includes building production-ready apps.</p>
                         </div>
 
                         <div className="bg-white dark:bg-dark-900 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
                             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 mb-6"><Code size={24} /></div>
-                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">Real-world Standards</h3>
-                            <p className="text-slate-600 dark:text-gray-400">Stop writing "tutorial code". Learn the design patterns used by senior engineers in {location.name} today.</p>
+                            <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">Interview Spotlight</h3>
+                            <p className="text-slate-600 dark:text-gray-400"><strong>{skillContent.faq.question}</strong> {skillContent.faq.answer.substring(0, 140)}...</p>
                         </div>
                     </div>
                 </div>
@@ -350,6 +354,7 @@ export function MentorshipLanding({ skill, location, suffix }) {
                     <h2 className="text-3xl font-black text-center text-slate-900 dark:text-white mb-12">Frequently Asked Questions</h2>
                     <div className="space-y-4">
                         {[
+                            { q: skillContent.faq.question, a: skillContent.faq.answer },
                             { q: "Is the first chat really free?", a: "Yes. You can chat with potential mentors, discuss your goals, and ensure they are a good fit before you ever pay a cent." },
                             { q: "How does the AI matching work?", a: "Our system analyzes your specific 'ask' (e.g. 'Playwright v1.4 debugging') and matches you with mentors who have solved that exact problem recently." },
                             { q: "Is my payment secure?", a: "100% Secure. Your payment is held in escrow by us. We only release it to the mentor after you confirm you are satisfied with the session." }
