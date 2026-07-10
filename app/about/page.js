@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Target, Users, Globe, Award, Briefcase, Code } from 'lucide-react';
+import { Target, Users, Globe, Award, Briefcase, Code, Linkedin, Github } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '../components/Header';
 
@@ -172,21 +172,27 @@ export default function AboutPage() {
                                 role: "Founder & Head Mentor",
                                 bio: "Ex-Senior Systems Architect with 12+ years of experience building high-performance systems. Passionate about bringing Silicon Valley standards to learners worldwide.",
                                 initials: "RK",
-                                gradient: "from-blue-600 to-indigo-650"
+                                gradient: "from-blue-600 to-indigo-650",
+                                linkedin: "https://www.linkedin.com/in/ramkumarkhubchandani",
+                                github: "https://github.com/ramkumarkhubchandani"
                             },
                             {
                                 name: "Anjali Khubchandani",
                                 role: "Co-Founder & React Lead",
                                 bio: "Senior Frontend Engineer specializing in advanced React patterns, client state-management, and rendering optimizations. Ex-Adtech UI Architect.",
                                 initials: "AK",
-                                gradient: "from-purple-600 to-pink-650"
+                                gradient: "from-purple-600 to-pink-650",
+                                linkedin: "https://www.linkedin.com/company/outlinedev",
+                                github: "https://github.com/outlinedev"
                             },
                             {
                                 name: "Lamia Khan",
                                 role: "Full Stack & DevRel Lead",
                                 bio: "Full-stack instructor and developer advocate. Specialized in Node.js event-loop optimization, MongoDB database schemas, and microservice patterns.",
                                 initials: "LK",
-                                gradient: "from-yellow-400 to-orange-500"
+                                gradient: "from-yellow-400 to-orange-500",
+                                linkedin: "https://www.linkedin.com/company/outlinedev",
+                                github: "https://github.com/outlinedev"
                             }
                         ].map((mentor, idx) => (
                             <div key={idx} className="bg-white dark:bg-[#0c0c14] border border-slate-200 dark:border-white/5 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -203,6 +209,14 @@ export default function AboutPage() {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                                         {mentor.bio}
                                     </p>
+                                    <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-white/5">
+                                        <a href={mentor.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors">
+                                            <Linkedin size={16} />
+                                        </a>
+                                        <a href={mentor.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-black dark:hover:text-white transition-colors">
+                                            <Github size={16} />
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         ))}

@@ -72,6 +72,63 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Programmatic SEO Link Farm */}
+        <div className="border-t border-white/5 pt-10 pb-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+            <div>
+              <h4 className="text-white font-bold uppercase tracking-widest mb-4">Popular Technologies</h4>
+              <div className="flex flex-wrap gap-x-3 gap-y-2">
+                {[
+                  { name: "React Tutors", href: "/mentors/react-mentors-in-online" },
+                  { name: "Redux State", href: "/mentors/redux-mentors-in-online" },
+                  { name: "Node.js Mentors", href: "/mentors/node-mentors-in-online" },
+                  { name: "JavaScript Mentoring", href: "/mentors/javascript-mentors-in-online" },
+                  { name: "TypeScript Experts", href: "/mentors/typescript-mentors-in-online" },
+                  { name: "Angular Teachers", href: "/mentors/angular-mentors-in-online" },
+                  { name: "Vue Coaches", href: "/mentors/vue-mentors-in-online" },
+                  { name: "Playwright Automation", href: "/mentors/playwright-mentors-in-online" },
+                  { name: "Python Instructors", href: "/mentors/python-mentors-in-online" },
+                  { name: "Micro Frontends (MFE)", href: "/mentors/mfe-mentors-in-online" },
+                  { name: "AI Front End", href: "/mentors/aifrontend-mentors-in-online" },
+                  { name: "HTML & CSS Layouts", href: "/mentors/html-mentors-in-online" }
+                ].map(item => (
+                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-white font-bold uppercase tracking-widest mb-4">Top Tech Hubs</h4>
+              <div className="flex flex-wrap gap-x-3 gap-y-2">
+                {[
+                  { name: "London", href: "/mentors/react-mentors-in-london" },
+                  { name: "San Francisco", href: "/mentors/react-mentors-in-san-francisco" },
+                  { name: "New York", href: "/mentors/react-mentors-in-new-york" },
+                  { name: "Berlin", href: "/mentors/react-mentors-in-berlin" },
+                  { name: "Toronto", href: "/mentors/react-mentors-in-toronto" },
+                  { name: "Singapore", href: "/mentors/react-mentors-in-singapore" },
+                  { name: "Sydney", href: "/mentors/react-mentors-in-sydney" },
+                  { name: "Dubai", href: "/mentors/react-mentors-in-dubai" },
+                  { name: "Bangalore", href: "/mentors/react-mentors-in-bangalore" },
+                  { name: "Mumbai", href: "/mentors/react-mentors-in-mumbai" },
+                  { name: "Pune", href: "/mentors/react-mentors-in-pune" },
+                  { name: "Hyderabad", href: "/mentors/react-mentors-in-hyderabad" },
+                  { name: "Austin", href: "/mentors/react-mentors-in-austin" },
+                  { name: "Seattle", href: "/mentors/react-mentors-in-seattle" },
+                  { name: "Boston", href: "/mentors/react-mentors-in-boston" },
+                  { name: "Dublin", href: "/mentors/react-mentors-in-dublin" },
+                  { name: "Tokyo", href: "/mentors/react-mentors-in-tokyo" }
+                ].map(item => (
+                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                    Tutors in {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* BOTTOM BAR */}
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Brand */}

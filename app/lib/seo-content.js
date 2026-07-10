@@ -106,6 +106,78 @@ export const SKILL_CONTENT = {
             question: "Why is Playwright considered superior to Selenium for modern testing?",
             answer: "Playwright is built for modern web architectures: 1) It runs out-of-process and communicates over a single WebSocket connection (using Chrome DevTools Protocol), making it much faster than Selenium's HTTP-based WebDriver. 2) It has built-in auto-waiting, which waits for elements to be actionable, resolving flaky selectors. 3) It supports multi-page tab context isolated execution natively without opening a fresh browser instance, saving massive memory and startup time."
         }
+    },
+    python: {
+        description: "Master Python programming, object-oriented design, dynamic scripting, automated testing, data structures, and integrations with standard libraries and frameworks like Django or Flask.",
+        modules: [
+            { title: "Python Core & Scripting", desc: "Understand namespaces, decorators, generators, list comprehensions, context managers, and memory reference counts." },
+            { title: "OOP & Design Patterns", desc: "Implement classes, multiple inheritance, metaclasses, abstract base classes, and clean SOLID principles." },
+            { title: "Pipelines & Web Frameworks", desc: "Build RESTful APIs with Django/FastAPI and manage dependency isolation using poetry/pipenv." }
+        ],
+        faq: {
+            question: "What is the GIL (Global Interpreter Lock) in Python and how do you bypass it?",
+            answer: "The GIL is a mutex that protects access to Python objects, preventing multiple native threads from executing Python bytecodes at once in CPython. This makes single-threaded code fast but limits multi-threaded CPU-bound code from utilizing multiple cores. To bypass it, you can: 1) Use the `multiprocessing` module to run tasks on separate processes (each having its own interpreter and memory space). 2) Offload heavy computational work to C-extensions (like NumPy) which release the GIL during execution. 3) Use asyncio for I/O-bound concurrency."
+        }
+    },
+    html: {
+        description: "Master HTML5 semantic structures, accessible document outlines, forms validation, SEO best practices, and DOM node hierarchies.",
+        modules: [
+            { title: "Semantic HTML5 & Accessibility", desc: "Learn to write accessible layouts using semantic elements (main, article, section) and ARIA attributes." },
+            { title: "Forms & Validation API", desc: "Create secure forms, handle inputs, custom validations, and file transfer setups." },
+            { title: "SEO & Metadata Integration", desc: "Implement rich microdata, OpenGraph cards, search engine directives, and viewport settings." }
+        ],
+        faq: {
+            question: "What is semantic HTML and why is it important for SEO?",
+            answer: "Semantic HTML uses tags that describe the meaning of the content (like `<nav>`, `<article>`, `<header>`, `<footer>`) rather than just its visual style (`<div>`, `<span>`). It is critical for SEO because it helps search engines understand the structure and hierarchy of your page, allowing them to index your content more accurately. It also improves accessibility for screen readers and assistive technologies."
+        }
+    },
+    css: {
+        description: "Write advanced CSS, custom layouts using Flexbox and Grid, CSS custom properties, responsive design, animations, and TailwindCSS configuration.",
+        modules: [
+            { title: "Layouts: Grid & Flexbox", desc: "Master responsive, multidimensional layouts, alignment properties, and flexbox distribution patterns." },
+            { title: "Variables & Themes", desc: "Configure CSS custom properties to build robust light/dark mode engines and dynamic style tokens." },
+            { title: "Transitions & Keyframe Animations", desc: "Create smooth, performant hardware-accelerated animations and interactive hover micro-states." }
+        ],
+        faq: {
+            question: "What is the CSS Box Model and how does box-sizing: border-box affect it?",
+            answer: "The CSS Box Model represents the space occupied by HTML elements, consisting of: Content, Padding, Border, and Margin. By default (`box-sizing: content-box`), when you set a width or height, it only applies to the Content. Adding padding or borders increases the element's actual rendered size. Using `box-sizing: border-box` forces the width and height to include padding and borders, preventing layout breaking and making size calculations highly intuitive."
+        }
+    },
+    redux: {
+        description: "Master global state management with Redux Toolkit (RTK), slice generation, async middleware with Thunks, and RTK Query data fetching.",
+        modules: [
+            { title: "Slices & Actions", desc: "Design clean state stores using Redux Toolkit slices, reducers, and immutable state updates." },
+            { title: "Redux Thunks & Middleware", desc: "Manage asynchronous actions, API side effects, logs, and custom middleware flows." },
+            { title: "RTK Query (RTKQ)", desc: "Implement automated caching, query pooling, optimistic updates, and client-side database synchronization." }
+        ],
+        faq: {
+            question: "What is Redux Toolkit and how does it differ from legacy Redux?",
+            answer: "Redux Toolkit (RTK) is the official, recommended way to write Redux code. It eliminates the boilerplate of legacy Redux by: 1) Providing `configureStore` which sets up DevTools and middleware automatically. 2) Utilizing `createSlice` to generate actions and reducers together. 3) Integrating Immer under the hood to allow you to write 'mutating' logic that updates state immutably. 4) Shipping with RTK Query for efficient data fetching."
+        }
+    },
+    mfe: {
+        description: "Architect scalable, decentralized frontend applications using Webpack Module Federation, custom shell micro-routing, and shared dependency profiles.",
+        modules: [
+            { title: "Webpack Module Federation", desc: "Configure hosts and remote containers to share dynamic runtime builds and dependencies." },
+            { title: "Shell Shell & Routing orchestration", desc: "Design main application shells that handle lazy-loaded sub-applications and shared routing states." },
+            { title: "State & Communication hubs", desc: "Implement decoupled cross-app communication using custom events, state stores, or pub-sub channels." }
+        ],
+        faq: {
+            question: "What is Webpack Module Federation and how does it help in Micro Frontend architectures?",
+            answer: "Webpack Module Federation is a feature that allows a Webpack compilation to import code from another Webpack compilation at runtime. This enables Micro Frontends by allowing team repositories to deploy sub-applications independently, while the parent 'shell' application dynamically pulls in the latest hosted bundle at runtime without needing to rebuild or redeploy the main container."
+        }
+    },
+    aifrontend: {
+        description: "Integrate LLM API endpoints, streaming responses, real-time audio streams, token-usage monitoring, and vector database queries into your React applications.",
+        modules: [
+            { title: "Streaming API Integrations", desc: "Handle stream chunks from OpenAI/Anthropic/Gemini directly into React state variables using reader loops." },
+            { title: "AI SDK & Tool Calling", desc: "Leverage Vercel AI SDK to build interactive agents, prompt structures, and functional tool pipelines." },
+            { title: "Real-time voice & Canvas UI", desc: "Implement WebRTC voice channels, vector search result cards, and dynamic workspace canvas interfaces." }
+        ],
+        faq: {
+            question: "How do you stream LLM responses in a React UI without freezing the page?",
+            answer: "To stream LLM responses, you use the browser's `Fetch API` with `ReadableStream` (often wrapped by utilities like Vercel AI SDK's `useCompletion` or `useChat`). You read chunks of text asynchronously from the response reader loop and append them to a state variable. By executing this inside an asynchronous loop or web worker, React renders each text token as it arrives, creating a fast, typewriter-like typing effect without blocking the main browser thread."
+        }
     }
 };
 
@@ -178,6 +250,30 @@ export const LOCATION_CONTENT = {
         techHubDescription: "Dubai is the digital center of the Middle East, with dedicated business zones like Dubai Internet City and Dubai Silicon Oasis hosting top web developers and startups.",
         referralNetwork: "Tap into Dubai Internet City product development teams."
     },
+    chicago: {
+        techHubDescription: "Chicago boasts a diverse technology landscape, blending traditional finance, logistics, and trading firms in the Loop with growing healthcare and tech start-up corridors in River North and Fulton Market.",
+        referralNetwork: "Get connected with lead developers in Loop financial hubs and Fulton Market startups."
+    },
+    seattle: {
+        techHubDescription: "Seattle is a global cloud computing and enterprise titan. Home to AWS and Microsoft, as well as massive hubs for Google and Meta, the Puget Sound region has a deep demand for cloud-native systems engineers.",
+        referralNetwork: "Access active referral channels for top cloud and enterprise teams across Seattle and Bellevue."
+    },
+    austin: {
+        techHubDescription: "Austin ('Silicon Hills') is a rapidly growing technology hub. With major operations for Tesla, Apple, and Oracle, and a massive start-up community, it draws developers looking to work in dynamic, fast-paced teams.",
+        referralNetwork: "Unlock direct referrals to Silicon Hills startups and Austin-based hardware/software firms."
+    },
+    boston: {
+        techHubDescription: "Boston is a leading hub for biotechnology, robotics, and academic R&D, centered around Kendall Square in Cambridge and the Seaport District, housing elite research labs and enterprise software firms.",
+        referralNetwork: "Leverage Cambridge and Seaport developer networks to connect with advanced tech leaders."
+    },
+    dublin: {
+        techHubDescription: "Dublin is the Silicon Valley of Europe. Silicon Docks hosts the European headquarters of Google, Meta, Stripe, and LinkedIn, creating an incredibly dense and active developer ecosystem.",
+        referralNetwork: "Connect with engineering leads and mentors at major multinational campuses in Silicon Docks."
+    },
+    tokyo: {
+        techHubDescription: "Tokyo is Asia's advanced technology capital. From massive robotics developers to high-growth mobile, web, and e-commerce startups in Shibuya and Roppongi, the city demands skilled programmers.",
+        referralNetwork: "Tap into Shibuya and Roppongi developer channels and global networking circles."
+    },
     remote: {
         techHubDescription: "Global remote engineering has changed how software is built. Working across distributed teams requires strong asynchronous communication and deep technical expertise.",
         referralNetwork: "Leverage global remote networks to unlock freelance and full-time contracts."
@@ -201,6 +297,12 @@ export function getSkillContent(skillId) {
     else if (normId.includes('node')) key = 'node';
     else if (normId.includes('mongo')) key = 'mongodb';
     else if (normId.includes('playwright')) key = 'playwright';
+    else if (normId.includes('python') || normId === 'py') key = 'python';
+    else if (normId.includes('html')) key = 'html';
+    else if (normId.includes('css') || normId.includes('tailwind')) key = 'css';
+    else if (normId.includes('redux') || normId.includes('rtk')) key = 'redux';
+    else if (normId.includes('mfe') || normId.includes('microfrontend') || normId.includes('federation')) key = 'mfe';
+    else if (normId.includes('aifrontend') || normId.includes('aife') || normId.includes('aifront')) key = 'aifrontend';
     else {
         // Fallback generator for other stacks
         const prettyName = skillId.charAt(0).toUpperCase() + skillId.slice(1);
