@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { Users, FileText, PlusCircle, BarChart, Settings, Shield, ClipboardList, Calendar, CheckCircle } from 'lucide-react';
+import { Users, FileText, PlusCircle, BarChart, Settings, Shield, ClipboardList, Calendar, CheckCircle, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
@@ -18,6 +18,13 @@ export default function AdminDashboard() {
             icon: <Users size={32} />,
             href: "/admin/users",
             color: "bg-blue-500"
+        },
+        {
+            title: "Manage Jobs",
+            desc: "Add, filter, and delete open job listings.",
+            icon: <Briefcase size={32} />,
+            href: "/admin/jobs",
+            color: "bg-yellow-500"
         },
         {
             title: "Create Tutorial",

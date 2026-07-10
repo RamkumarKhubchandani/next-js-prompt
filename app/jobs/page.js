@@ -11,6 +11,8 @@ export default function JobsPage() {
     const [workplace, setWorkplace] = useState('all');
     const [role, setRole] = useState('all');
     const [q, setQ] = useState('');
+    const [sortBy, setSortBy] = useState('latest');
+    const [expandedJobId, setExpandedJobId] = useState(null);
     const [selectedJob, setSelectedJob] = useState(null); // For Interview Modal
     const [chatMessages, setChatMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
@@ -44,7 +46,7 @@ export default function JobsPage() {
         setSelectedJob(job);
         setChatMessages([{
             role: 'ai',
-            text: `Hi! I'm the AI Recruiter for ${job.company}. I see you're interested in the ${job.title} role. Can you tell me a bit about your experience with ${job.tags[0]}?`
+            text: `Hi! I'm the AI Recruiter for ${job.company}. I see you're interested in the ${job.title} role. Can you tell me a bit about your experience with ${job.tags[0] || 'frontend technologies'}?`
         }]);
     };
 
@@ -72,6 +74,20 @@ export default function JobsPage() {
             setIsTyping(false);
         }, 1500);
     };
+
+    // Client-side Sorting
+    const sortedJobs = [...jobs].sort((a, b) => {
+        if (sortBy === 'latest') {
+            return new Date(b.postedAt) - new Date(a.postedAt);
+        }
+        if (sortBy === 'oldest') {
+            return new Date(a.postedAt) - new Date(b.postedAt);
+        }
+        if (sortBy === 'company') {
+            return a.company.localeCompare(b.company);
+        }
+        return 0;
+    });
 
     return (
         <div className="min-h-screen bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
@@ -127,6 +143,15 @@ export default function JobsPage() {
                                 <option value="hybrid">Hybrid</option>
                                 <option value="onsite">Onsite</option>
                             </select>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="bg-light-100 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-700 rounded-xl px-3 py-2 text-sm text-dark-900 dark:text-white font-semibold"
+                            >
+                                <option value="latest">Sort: Latest</option>
+                                <option value="oldest">Sort: Oldest</option>
+                                <option value="company">Sort: Company</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -134,9 +159,9 @@ export default function JobsPage() {
                 <div className="space-y-6">
                     {loading ? (
                         <div className="text-center py-12 text-dark-900/60 dark:text-light-100/70">Loading jobs…</div>
-                    ) : jobs.length === 0 ? (
+                    ) : sortedJobs.length === 0 ? (
                         <div className="text-center py-12 text-dark-900/60 dark:text-light-100/70">No jobs found for these filters.</div>
-                    ) : jobs.map((job) => (
+                    ) : sortedJobs.map((job) => (
                         <motion.div 
                             key={job._id || job.sourceId || `${job.company}-${job.title}`}
                             initial={{ opacity: 0, y: 20 }}
@@ -144,33 +169,60 @@ export default function JobsPage() {
                             className="bg-white/70 dark:bg-dark-800 rounded-2xl p-6 border border-dark-700/10 dark:border-dark-700 hover:border-brand-primary/50 transition-all group backdrop-blur-lg shadow-lg"
                         >
                             <div className="flex flex-col md:flex-row justify-between gap-6">
-                                <div className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-light-100 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-700 flex items-center justify-center text-2xl font-extrabold">
+                                <div className="flex-1 flex gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-light-100 dark:bg-dark-900 border border-dark-700/10 dark:border-dark-700 flex items-center justify-center text-2xl font-extrabold shrink-0">
                                         {job.company.charAt(0)}
                                     </div>
-                                    <div>
-                                        <h3 className="text-xl font-extrabold text-dark-900 dark:text-white group-hover:text-brand-primary transition-colors">{job.title}</h3>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <h3 className="text-xl font-extrabold text-dark-900 dark:text-white group-hover:text-brand-primary transition-colors truncate">{job.title}</h3>
+                                            {job.source === 'internal' && (
+                                                <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold rounded">
+                                                    Featured
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-dark-900/60 dark:text-light-100/70 font-semibold">{job.company}</p>
                                         
-                                        <div className="flex flex-wrap gap-4 mt-3 text-sm text-dark-900/50 dark:text-light-100/50">
+                                        <div className="flex flex-wrap gap-4 mt-3 text-xs text-dark-900/50 dark:text-light-100/50">
                                             <div className="flex items-center gap-1">
-                                                <MapPin size={14} /> {job.location}
+                                                <MapPin size={12} /> {job.location} ({job.workplace})
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <DollarSign size={14} /> {job.salary}
+                                                <DollarSign size={12} /> {job.salary || 'Competitive'}
                                             </div>
                                             <div className="flex items-center gap-1">
-                                                <Clock size={14} /> {job.type}
+                                                <Clock size={12} /> {job.type}
+                                            </div>
+                                            <div className="flex items-center gap-1 font-semibold text-brand-primary">
+                                                <Clock size={12} /> Posted: {new Date(job.postedAt).toLocaleDateString()} {new Date(job.postedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </div>
 
-                                        <div className="flex gap-2 mt-4">
+                                        <div className="flex flex-wrap gap-2 mt-4">
                                             {(job.tags || []).map(tag => (
                                                 <span key={tag} className="px-2 py-1 bg-light-100 dark:bg-dark-900 rounded-lg text-xs font-mono text-brand-primary border border-dark-700/10 dark:border-dark-700">
                                                     {tag}
                                                 </span>
                                             ))}
                                         </div>
+
+                                        <button
+                                            onClick={() => setExpandedJobId(expandedJobId === job._id ? null : job._id)}
+                                            className="text-xs font-bold text-brand-primary mt-4 hover:underline flex items-center gap-1"
+                                        >
+                                            {expandedJobId === job._id ? 'Hide details ↑' : 'Show job details ↓'}
+                                        </button>
+
+                                        {expandedJobId === job._id && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                className="mt-4 p-4 bg-light-200 dark:bg-dark-900/40 rounded-xl text-sm leading-relaxed text-dark-900/80 dark:text-light-100/80 whitespace-pre-wrap border border-dark-700/10 dark:border-dark-700 font-medium"
+                                            >
+                                                {job.description || "No job description specified."}
+                                            </motion.div>
+                                        )}
                                     </div>
                                 </div>
 

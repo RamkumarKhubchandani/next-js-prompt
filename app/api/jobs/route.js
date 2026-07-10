@@ -51,9 +51,10 @@ export async function GET(req) {
             }
 
             // Keep at least some results; if API fails, fall back to existing (yesterday) jobs in DB if present.
+            // Keep at least some results; if API fails, fall back to existing (yesterday) jobs in DB if present.
             if (fetched.jobs?.length) {
-                // Replace today's bucket for this country
-                await Job.deleteMany({ dateKey, country });
+                // Replace today's bucket for this country (leaving internal jobs untouched)
+                await Job.deleteMany({ dateKey, country, source: { $ne: 'internal' } });
                 await Job.insertMany(fetched.jobs, { ordered: false });
 
                 await JobFetchCache.updateOne(
@@ -93,7 +94,13 @@ export async function GET(req) {
             }
         }
 
-        const bucketJobs = await Job.find({ dateKey, country }).sort({ postedAt: -1 }).lean();
+        // Retrieve both internal listings and cache-bucket external listings
+        const bucketJobs = await Job.find({
+            $or: [
+                { source: 'internal' },
+                { dateKey, country, source: { $ne: 'internal' } }
+            ]
+        }).sort({ postedAt: -1 }).lean();
         const filtered = filterJobs(bucketJobs, { workplace, role, q }).slice(0, limit);
         const cache = await JobFetchCache.findOne({ dateKey, country }).lean();
 
