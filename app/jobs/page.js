@@ -42,6 +42,23 @@ export default function JobsPage() {
         return () => { mounted = false; };
     }, [workplace, role, q]);
 
+    // Handle deep-linking to specific jobs (auto-expand and scroll)
+    useEffect(() => {
+        if (jobs.length > 0) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jId = urlParams.get('jobId');
+            if (jId) {
+                setExpandedJobId(jId);
+                setTimeout(() => {
+                    const el = document.getElementById(`job-card-${jId}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 300);
+            }
+        }
+    }, [jobs]);
+
     const startInterview = (job) => {
         setSelectedJob(job);
         setChatMessages([{
@@ -163,10 +180,15 @@ export default function JobsPage() {
                         <div className="text-center py-12 text-dark-900/60 dark:text-light-100/70">No jobs found for these filters.</div>
                     ) : sortedJobs.map((job) => (
                         <motion.div 
+                            id={job._id ? `job-card-${job._id}` : undefined}
                             key={job._id || job.sourceId || `${job.company}-${job.title}`}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white/70 dark:bg-dark-800 rounded-2xl p-6 border border-dark-700/10 dark:border-dark-700 hover:border-brand-primary/50 transition-all group backdrop-blur-lg shadow-lg"
+                            className={`bg-white/70 dark:bg-dark-800 rounded-2xl p-6 border transition-all group backdrop-blur-lg shadow-lg ${
+                                expandedJobId === job._id 
+                                    ? 'border-brand-primary' 
+                                    : 'border-dark-700/10 dark:border-dark-700 hover:border-brand-primary/50'
+                            }`}
                         >
                             <div className="flex flex-col md:flex-row justify-between gap-6">
                                 <div className="flex-1 flex gap-4">
@@ -175,11 +197,35 @@ export default function JobsPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <h3 className="text-xl font-extrabold text-dark-900 dark:text-white group-hover:text-brand-primary transition-colors truncate">{job.title}</h3>
+                                            <h3 
+                                                onClick={() => {
+                                                    const url = `${window.location.origin}/jobs?jobId=${job._id}`;
+                                                    navigator.clipboard.writeText(url);
+                                                    alert('Job link copied to clipboard! Share it in your WhatsApp groups.');
+                                                }}
+                                                className="text-xl font-extrabold text-dark-900 dark:text-white group-hover:text-brand-primary cursor-pointer transition-colors truncate"
+                                                title="Click to copy direct link for WhatsApp"
+                                            >
+                                                {job.title}
+                                            </h3>
                                             {job.source === 'internal' && (
-                                                <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold rounded">
-                                                    Featured
-                                                </span>
+                                                <>
+                                                    <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold rounded">
+                                                        Featured
+                                                    </span>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const url = `${window.location.origin}/jobs?jobId=${job._id}`;
+                                                            navigator.clipboard.writeText(url);
+                                                            alert('Job link copied to clipboard! You can now paste and share this direct link in WhatsApp groups.');
+                                                        }}
+                                                        className="px-2 py-0.5 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 border border-brand-primary/20 text-[10px] font-bold rounded flex items-center gap-1 transition-colors"
+                                                        title="Copy link for WhatsApp group"
+                                                    >
+                                                        🔗 Copy Link
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                         <p className="text-dark-900/60 dark:text-light-100/70 font-semibold">{job.company}</p>
@@ -228,14 +274,21 @@ export default function JobsPage() {
 
                                 <div className="flex flex-col gap-3 justify-center min-w-[180px]">
                                     {job.applyLink ? (
-                                        <a
-                                            href={job.applyLink}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="w-full px-4 py-2 bg-dark-900 text-white dark:bg-white dark:text-dark-900 font-extrabold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-                                        >
-                                            Apply Now <ExternalLink size={16} />
-                                        </a>
+                                        <div className="text-center w-full flex flex-col gap-2">
+                                            <a
+                                                href={job.applyLink}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="w-full px-4 py-2 bg-dark-900 text-white dark:bg-white dark:text-dark-900 font-extrabold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                                            >
+                                                Apply Now <ExternalLink size={16} />
+                                            </a>
+                                            {job.applyLink.startsWith('mailto:') && (
+                                                <span className="block text-xs font-black text-dark-900 dark:text-light-100">
+                                                    Email: <span className="underline select-all text-brand-primary font-black">{job.applyLink.replace('mailto:', '')}</span>
+                                                </span>
+                                            )}
+                                        </div>
                                     ) : (
                                         <button disabled className="w-full px-4 py-2 bg-dark-900/10 dark:bg-dark-700 text-dark-900/40 dark:text-light-100/40 font-extrabold rounded-xl cursor-not-allowed">
                                             No link
