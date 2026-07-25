@@ -27,6 +27,25 @@ export default function AdminEventsPage() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [activeTab, setActiveTab] = useState("schedule"); // "schedule" or "registrations"
+    const [registrations, setRegistrations] = useState([]);
+    const [regsLoading, setRegsLoading] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'registrations') {
+            setRegsLoading(true);
+            fetch('/api/admin/event-registrations')
+                .then(res => res.json())
+                .then(data => {
+                    setRegistrations(Array.isArray(data) ? data : []);
+                    setRegsLoading(false);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch registrations", err);
+                    setRegsLoading(false);
+                });
+        }
+    }, [activeTab]);
 
     // Fetch initial data from API to ensure we see persisted data
     useEffect(() => {
@@ -184,101 +203,179 @@ export default function AdminEventsPage() {
             </header>
 
             <main className="p-8 max-w-[1600px] mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search events..."
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                {/* Tabs */}
+                <div className="flex gap-6 mb-8 border-b border-gray-200 dark:border-dark-700 pb-px">
+                    <button
+                        onClick={() => setActiveTab('schedule')}
+                        className={`pb-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-all ${
+                            activeTab === 'schedule'
+                                ? 'border-brand-primary text-brand-primary'
+                                : 'border-transparent text-gray-400 hover:text-dark-900 dark:hover:text-white'
+                        }`}
+                    >
+                        Workshop Schedule
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('registrations')}
+                        className={`pb-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-all ${
+                            activeTab === 'registrations'
+                                ? 'border-brand-primary text-brand-primary'
+                                : 'border-transparent text-gray-400 hover:text-dark-900 dark:hover:text-white'
+                        }`}
+                    >
+                        Event Registrations
+                    </button>
                 </div>
 
-                {/* Table Container */}
-                <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="bg-gray-50 dark:bg-dark-700/50 border-b border-gray-100 dark:border-dark-700">
-                                    <th className="px-6 py-4 text-left font-bold text-gray-400 w-12">#</th>
-                                    <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider w-[40%]">Event Name</th>
-                                    <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Metrics</th>
-                                    <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Cohort Date</th>
-                                    <th className="px-6 py-4 text-right font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <Reorder.Group as="tbody" axis="y" values={events} onReorder={handleReorder}>
-                                {events.filter(e => e.title.toLowerCase().includes(searchTerm.toLowerCase())).map((event) => (
-                                    <Reorder.Item
-                                        key={event.id}
-                                        value={event}
-                                        className="border-b border-gray-50 dark:border-dark-700/50 hover:bg-gray-50 dark:hover:bg-dark-700/30 transition-colors bg-white dark:bg-dark-800 group"
-                                    >
-                                        <td className="px-6 py-4">
-                                            <GripVertical className="text-gray-300 cursor-grab active:cursor-grabbing hover:text-brand-primary" size={20} />
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-start gap-4">
-                                                <div className="w-16 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100 dark:border-gray-700 mt-1">
-                                                    <img src={event.image} alt="" className="w-full h-full object-cover" />
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <div className="font-bold text-dark-900 dark:text-white text-base leading-tight mb-1">{event.title}</div>
-                                                    <div className="text-xs text-gray-500 truncate font-mono">{event.slug}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-1.5 bg-yellow-50 dark:bg-yellow-900/10 px-2 py-1 rounded-md w-fit">
-                                                <Star size={14} className="fill-yellow-500 text-yellow-500" />
-                                                <span className="font-bold text-yellow-700 dark:text-yellow-500">{event.rating}</span>
-                                                <span className="text-xs text-yellow-600/60 dark:text-yellow-500/60">({event.reviewCount})</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <button
-                                                onClick={() => handleStatusToggle(event.id)}
-                                                className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${event.isComingSoon
-                                                    ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                                                    : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'}`}
+                {activeTab === 'schedule' ? (
+                    <>
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                            <div className="relative w-full md:w-96">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="Search events..."
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Table Container */}
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-sm">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-50 dark:bg-dark-700/50 border-b border-gray-100 dark:border-dark-700">
+                                            <th className="px-6 py-4 text-left font-bold text-gray-400 w-12">#</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider w-[40%]">Event Name</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Metrics</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">Cohort Date</th>
+                                            <th className="px-6 py-4 text-right font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <Reorder.Group as="tbody" axis="y" values={events} onReorder={handleReorder}>
+                                        {events.filter(e => e.title.toLowerCase().includes(searchTerm.toLowerCase())).map((event) => (
+                                            <Reorder.Item
+                                                key={event.id}
+                                                value={event}
+                                                className="border-b border-gray-50 dark:border-dark-700/50 hover:bg-gray-50 dark:hover:bg-dark-700/30 transition-colors bg-white dark:bg-dark-800 group"
                                             >
-                                                {event.isComingSoon ? "Waitlist Only" : "Active Cohort"}
-                                            </button>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-                                                <Calendar size={14} className="text-gray-400" />
-                                                {event.dates[0]?.date || "TBA"}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    onClick={() => setEditingEvent(event)}
-                                                    className="p-2 text-gray-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-lg transition-colors border border-transparent hover:border-brand-primary/20"
-                                                    title="Edit Details"
-                                                >
-                                                    <Edit3 size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(event.id)}
-                                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
-                                                    title="Delete Event"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </Reorder.Item>
-                                ))}
-                            </Reorder.Group>
-                        </table>
+                                                <td className="px-6 py-4">
+                                                    <GripVertical className="text-gray-300 cursor-grab active:cursor-grabbing hover:text-brand-primary" size={20} />
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="w-16 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100 dark:border-gray-700 mt-1">
+                                                            <img src={event.image} alt="" className="w-full h-full object-cover" />
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <div className="font-bold text-dark-900 dark:text-white text-base leading-tight mb-1">{event.title}</div>
+                                                            <div className="text-xs text-gray-500 truncate font-mono">{event.slug}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-1.5 bg-yellow-50 dark:bg-yellow-900/10 px-2 py-1 rounded-md w-fit">
+                                                        <Star size={14} className="fill-yellow-500 text-yellow-500" />
+                                                        <span className="font-bold text-yellow-700 dark:text-yellow-500">{event.rating}</span>
+                                                        <span className="text-xs text-yellow-600/60 dark:text-yellow-500/60">({event.reviewCount})</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <button
+                                                        onClick={() => handleStatusToggle(event.id)}
+                                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${event.isComingSoon
+                                                            ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                                            : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'}`}
+                                                    >
+                                                        {event.isComingSoon ? "Waitlist Only" : "Active Cohort"}
+                                                    </button>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                                        <Calendar size={14} className="text-gray-400" />
+                                                        {event.dates[0]?.date || "TBA"}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <button
+                                                            onClick={() => setEditingEvent(event)}
+                                                            className="p-2 text-gray-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-lg transition-colors border border-transparent hover:border-brand-primary/20"
+                                                            title="Edit Details"
+                                                            type="button"
+                                                        >
+                                                            <Edit3 size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(event.id)}
+                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
+                                                            title="Delete Event"
+                                                            type="button"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </Reorder.Item>
+                                        ))}
+                                    </Reorder.Group>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className="bg-white dark:bg-dark-800 rounded-2xl border border-gray-200 dark:border-dark-700 overflow-hidden shadow-sm">
+                        {regsLoading ? (
+                            <div className="flex items-center justify-center p-12 text-brand-primary">
+                                <Loader2 className="animate-spin" size={24} />
+                            </div>
+                        ) : registrations.length === 0 ? (
+                            <div className="text-center p-12 text-gray-500">
+                                No registrations found.
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-50 dark:bg-dark-700/50 border-b border-gray-100 dark:border-dark-700">
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Email</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">WhatsApp</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Event</th>
+                                            <th className="px-6 py-4 text-left font-bold text-gray-500 uppercase tracking-wider">Registered At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {registrations.map((reg) => (
+                                            <tr key={reg._id} className="border-b border-gray-50 dark:border-dark-700/50 hover:bg-gray-50 dark:hover:bg-dark-700/30 transition-colors">
+                                                <td className="px-6 py-4 font-bold text-dark-900 dark:text-white">{reg.name}</td>
+                                                <td className="px-6 py-4">{reg.email}</td>
+                                                <td className="px-6 py-4">
+                                                    <a href={`https://wa.me/${reg.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-brand-primary font-bold hover:underline">
+                                                        {reg.whatsapp}
+                                                    </a>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <span className="font-semibold">{reg.eventTitle}</span>
+                                                        <div className="text-xs text-gray-400 font-mono">{reg.eventSlug}</div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-500">
+                                                    {new Date(reg.createdAt).toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
-                </div>
+                )}
             </main>
 
             {/* Edit Modal */}

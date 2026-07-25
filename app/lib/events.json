@@ -1,5 +1,81 @@
 [
     {
+        "id": "resume-optimization",
+        "title": "AI-Driven Resume Optimization Masterclass",
+        "slug": "resume-optimization",
+        "price": "FREE",
+        "reviewCount": "540+",
+        "rating": 4.9,
+        "shortDescription": "Bypass the ATS. Land 5x more interviews using advanced AI prompting pipelines and metric formulas.",
+        "fullDescription": "98% of candidate resumes are filtered out automatically by Applicant Tracking Systems (ATS) before a human recruiter even sees them. In this workshop, learn how to audit your resume using LLMs, apply Google's X-Y-Z metric formula, and target job descriptions semantically.",
+        "highlights": [
+            "ATS-Proof Format Building",
+            "Google's X-Y-Z Impact Metric Formula",
+            "AI-Assisted Keyword Audits",
+            "Recruiter-First Layout Checklists"
+        ],
+        "reviews": [
+            {
+                "id": 1,
+                "name": "Kunal Sen",
+                "role": "SDE II @ Amazon",
+                "avatar": "https://randomuser.me/api/portraits/men/33.jpg",
+                "rating": 5,
+                "text": "Applying Google's X-Y-Z formula to my bullets got me interview calls from 3 FAANG companies within a week."
+            },
+            {
+                "id": 2,
+                "name": "Meera Joshi",
+                "role": "Frontend Dev @ Swiggy",
+                "avatar": "https://randomuser.me/api/portraits/women/42.jpg",
+                "rating": 5,
+                "text": "The AI keyword audit method is brilliant. It showed me exactly what technical skills my resume was missing."
+            }
+        ],
+        "curriculum": [
+            {
+                "day": "Stage 1",
+                "title": "ATS Parsers & Rejections",
+                "topics": [
+                    "How ATS algorithms score keyword density",
+                    "Common layout pitfalls (columns, images, charts)",
+                    "Sanitizing resumes for parser readability",
+                    "Initial score audit with custom LLM prompts"
+                ]
+            },
+            {
+                "day": "Stage 2",
+                "title": "Impact-Driven Bullet Writing",
+                "topics": [
+                    "Google's X-Y-Z formula breakdown",
+                    "Replacing weak passive verbs with action tokens",
+                    "Extracting performance metrics from daily dev tasks",
+                    "Live bullet rewriting workspace"
+                ]
+            },
+            {
+                "day": "Stage 3",
+                "title": "Semantic JD Alignment",
+                "topics": [
+                    "AI prompts to extract target keywords from Job Descriptions",
+                    "Balancing keyword density without keyword stuffing",
+                    "Customizing resumes dynamically per role",
+                    "Final recruiter checklist verification"
+                ]
+            }
+        ],
+        "dates": [
+            {
+                "id": 1,
+                "date": "Jan 31, 2026",
+                "time": "07:00 PM - 08:30 PM IST",
+                "spotsLeft": 12
+            }
+        ],
+        "isComingSoon": false,
+        "image": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=2670&auto=format&fit=crop"
+    },
+    {
         "id": "js-react-workshop",
         "title": "JavaScript + React + Zustand Masterclass",
         "slug": "js-react-workshop",
