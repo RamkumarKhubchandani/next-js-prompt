@@ -14,10 +14,11 @@ export const mernStackRoadmap = {
         { id: "introduction", label: "01. Introduction: Full Stack in 2026" },
         { id: "mern-overview", label: "02. The MERN Stack Components" },
         { id: "comparison", label: "03. SQL vs NoSQL Database Decision" },
-        { id: "roadmap-steps", label: "04. Step-by-Step Learning Path" },
-        { id: "ai-driven", label: "05. The AI-Driven MERN Developer" },
-        { id: "code-example", label: "06. Live Express + MongoDB Code Example" },
-        { id: "faq", label: "07. Frequently Asked Questions" }
+        { id: "traditional-vs-modern", label: "04. Traditional vs. Modern MERN (2026 Shift)" },
+        { id: "roadmap-steps", label: "05. Step-by-Step Learning Path" },
+        { id: "ai-driven", label: "06. The AI-Driven MERN Developer" },
+        { id: "code-example", label: "07. Live Express + MongoDB Code Example" },
+        { id: "faq", label: "08. Frequently Asked Questions" }
     ],
     schema: {
         "@context": "https://schema.org",
@@ -106,9 +107,9 @@ export const mernStackRoadmap = {
                 <span class="text-brand-primary">02.</span>
                 The MERN Stack Components
             </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                The MERN stack stands for **MongoDB**, **Express**, **React**, and **Node.js**. Together, they form a cohesive JavaScript-only ecosystem that allows you to write frontend, backend, and database queries in a single programming language.
-            </p>
+             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                The MERN stack stands for <strong>MongoDB</strong>, <strong>Express</strong>, <strong>React</strong>, and <strong>Node.js</strong>. Together, they form a cohesive JavaScript-only ecosystem that allows you to write frontend, backend, and database queries in a single programming language.
+             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div class="bg-gray-100 dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
@@ -178,10 +179,75 @@ export const mernStackRoadmap = {
             </div>
         </section>
 
-        <!-- 04. Step-by-Step Learning Path -->
-        <section id="roadmap-steps" class="scroll-mt-32">
+        <!-- 04. Traditional vs. Modern MERN (2026 Shift) -->
+        <section id="traditional-vs-modern" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-brand-primary">04.</span>
+                Traditional vs. Modern MERN (2026 Shift)
+             </h2>
+             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Building web applications in 2026 requires moving away from the slow, boilerplate-heavy configurations of the past. Let's look at a direct, side-by-side comparison of how developers used to build MERN systems versus the cutting-edge tools and frameworks required today.
+             </p>
+
+             <div class="overflow-x-auto mb-12 border dark:border-slate-800 rounded-xl">
+                 <table class="w-full text-left text-sm border-collapse">
+                     <thead>
+                         <tr class="bg-gray-100 dark:bg-slate-900 border-b dark:border-slate-800">
+                             <th class="p-4 font-bold">Feature Layer</th>
+                             <th class="p-4 font-bold text-red-600 dark:text-red-400">Traditional MERN (What was earlier)</th>
+                             <th class="p-4 font-bold text-emerald-600 dark:text-emerald-400">Modern MERN (What we need in 2026)</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">Bundler / Setup</td>
+                             <td class="p-4 text-gray-500">Create React App (CRA) or complex, manual Webpack builds (slow hot-reload, large file size).</td>
+                             <td class="p-4"><strong>Vite</strong> or <strong>Next.js App Router</strong> (instant compilation, optimized code splitting).</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">React Core Engine</td>
+                             <td class="p-4 text-gray-500">React 16/17/18 with class components, manual state memoization (useMemo/useCallback), forwardRef.</td>
+                             <td class="p-4"><strong>React 19</strong> (native Server Components, React Compiler, <code>useActionState</code>, <code>useOptimistic</code>).</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">State & Caching</td>
+                             <td class="p-4 text-gray-500">Heavy Redux Boilerplate (Redux Saga/Thunk) requiring dozens of actions/reducers for simple sync states.</td>
+                             <td class="p-4">Lightweight client state (<strong>Zustand</strong> / <strong>Jotai</strong>) paired with <strong>TanStack Query v5</strong> for server caching.</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">Node.js Engine</td>
+                             <td class="p-4 text-gray-500">Node 14/16/18 with CommonJS (<code>require</code> statements), third-party env loaders, manual test runners.</td>
+                             <td class="p-4"><strong>Node.js 22+</strong> (native ES Modules, native env file loader <code>--env-file</code>, built-in Fetch API, native test runner).</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">API Routing</td>
+                             <td class="p-4 text-gray-500">Standard Express.js routes plagued by nested callback chains and unhandled promise rejections.</td>
+                             <td class="p-4"><strong>Express 5+</strong> or <strong>Hono</strong> (edge-compatible, fast router) with clean async error handling.</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">Database Management</td>
+                             <td class="p-4 text-gray-500">Basic MongoDB Atlas collections accessed without compound indexes, schema validations, or search features.</td>
+                             <td class="p-4"><strong>MongoDB Atlas Serverless</strong>, using compound indexing, Mongoose constraints, and Atlas Vector Search for semantic AI.</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">CSS & UI Styles</td>
+                             <td class="p-4 text-gray-500">Traditional CSS sheets or heavy Sass pre-processors requiring manual style configurations.</td>
+                             <td class="p-4"><strong>Tailwind CSS v4</strong> (CSS-variables first layout, instant compiler) or modern pure CSS with nesting.</td>
+                         </tr>
+                         <tr class="border-b dark:border-slate-800">
+                             <td class="p-4 font-semibold">AI Integration</td>
+                             <td class="p-4 text-gray-500">Manual search, StackOverflow copy-pasting, coding everything manually from scratch.</td>
+                             <td class="p-4">AI-pair assistants (<strong>Cursor / Windsurf</strong>) configured with strict project files (<code>.cursorrules</code>).</td>
+                         </tr>
+                     </tbody>
+                 </table>
+             </div>
+        </section>
+
+        <!-- 05. Step-by-Step Learning Path -->
+        <section id="roadmap-steps" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-brand-primary">05.</span>
                 Step-by-Step Learning Path
             </h2>
             
@@ -211,17 +277,18 @@ export const mernStackRoadmap = {
         </section>
 
         <!-- 05. The AI-Driven MERN Developer -->
-        <section id="ai-driven" class="scroll-mt-32">
-             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-                <span class="text-brand-primary">05.</span>
-                The AI-Driven MERN Developer
-             </h2>
-             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                In 2026, writing full-stack JavaScript is no longer about typing syntax from scratch. High-performing MERN developers leverage AI coding assistants (like Cursor, Windsurf, or GitHub Copilot) to generate boilerplates, write database validation schemas, and draft unit tests.
-             </p>
-             <p class="text-base text-gray-700 dark:text-gray-300 mb-6">
-                However, relying blindly on AI prompts leads to buggy code, memory leaks, and severe security flaws. To become an **AI-augmented system architect**, you must master these core AI workflows:
-             </p>
+         <!-- 06. The AI-Driven MERN Developer -->
+         <section id="ai-driven" class="scroll-mt-32">
+              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                 <span class="text-brand-primary">06.</span>
+                 The AI-Driven MERN Developer
+              </h2>
+              <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                 In 2026, writing full-stack JavaScript is no longer about typing syntax from scratch. High-performing MERN developers leverage AI coding assistants (like Cursor, Windsurf, or GitHub Copilot) to generate boilerplates, write database validation schemas, and draft unit tests.
+              </p>
+              <p class="text-base text-gray-700 dark:text-gray-300 mb-6">
+                 However, relying blindly on AI prompts leads to buggy code, memory leaks, and severe security flaws. To become an <strong>AI-augmented system architect</strong>, you must master these core AI workflows:
+              </p>
              
              <div class="space-y-8 mb-12">
                  <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
@@ -259,10 +326,10 @@ export const mernStackRoadmap = {
              </div>
         </section>
 
-        <!-- 06. Live Express + MongoDB Code Example -->
+        <!-- 07. Live Express + MongoDB Code Example -->
         <section id="code-example" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
-                <span class="text-brand-primary">06.</span>
+                <span class="text-brand-primary">07.</span>
                 Live Express + MongoDB Code Example
              </h2>
              <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
@@ -270,10 +337,10 @@ export const mernStackRoadmap = {
              </p>
         </section>
 
-        <!-- 07. FAQ -->
+        <!-- 08. FAQ -->
         <section id="faq" class="scroll-mt-32 border-t pt-12 dark:border-gray-800">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4">
-                <span class="text-brand-primary">07.</span>
+                <span class="text-brand-primary">08.</span>
                 Frequently Asked Questions
             </h2>
             <div class="space-y-6">
