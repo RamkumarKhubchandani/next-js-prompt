@@ -15,8 +15,9 @@ export const mernStackRoadmap = {
         { id: "mern-overview", label: "02. The MERN Stack Components" },
         { id: "comparison", label: "03. SQL vs NoSQL Database Decision" },
         { id: "roadmap-steps", label: "04. Step-by-Step Learning Path" },
-        { id: "code-example", label: "05. Live Express + MongoDB Code Example" },
-        { id: "faq", label: "06. Frequently Asked Questions" }
+        { id: "ai-driven", label: "05. The AI-Driven MERN Developer" },
+        { id: "code-example", label: "06. Live Express + MongoDB Code Example" },
+        { id: "faq", label: "07. Frequently Asked Questions" }
     ],
     schema: {
         "@context": "https://schema.org",
@@ -209,21 +210,70 @@ export const mernStackRoadmap = {
             </div>
         </section>
 
-        <!-- 05. Live Express + MongoDB Code Example -->
-        <section id="code-example" class="scroll-mt-32">
+        <!-- 05. The AI-Driven MERN Developer -->
+        <section id="ai-driven" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-brand-primary">05.</span>
-                Live Express + MongoDB Code Example
-            </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                Below is a production-ready template showing how to initialize an Express server, establish a connection to MongoDB using Mongoose, and define a schema with index keys to keep queries fast.
-            </p>
+                The AI-Driven MERN Developer
+             </h2>
+             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                In 2026, writing full-stack JavaScript is no longer about typing syntax from scratch. High-performing MERN developers leverage AI coding assistants (like Cursor, Windsurf, or GitHub Copilot) to generate boilerplates, write database validation schemas, and draft unit tests.
+             </p>
+             <p class="text-base text-gray-700 dark:text-gray-300 mb-6">
+                However, relying blindly on AI prompts leads to buggy code, memory leaks, and severe security flaws. To become an **AI-augmented system architect**, you must master these core AI workflows:
+             </p>
+             
+             <div class="space-y-8 mb-12">
+                 <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">1. Establishing Custom AI Rules (.cursorrules)</h3>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Do not let the AI guess your codebase configuration. Initialize a <code>.cursorrules</code> file in your repository root to enforce strict design patterns. Tell the AI to:
+                     </p>
+                     <ul class="list-disc pl-5 text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                         <li>Use TypeScript with strict type constraints for all Express request/response payloads.</li>
+                         <li>Prevent the generation of unindexed MongoDB queries.</li>
+                         <li>Comply strictly with WCAG 2.1 AA accessibility guidelines on the React frontend.</li>
+                         <li>Isolate business logic inside service layers rather than cluttering Express controller functions.</li>
+                     </ul>
+                 </div>
+
+                 <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">2. Prompting for Database Modeling & Validations</h3>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        When creating schemas, standard prompts yield unsafe database representations with no indexes or relationship modeling. Use structural prompting to build complete configurations:
+                     </p>
+                     <div class="bg-slate-950 p-4 rounded-lg font-mono text-xs text-brand-primary mb-4">
+                        "Act as a Principal Database Engineer. Generate a Mongoose schema for a Course resource. It must enforce validation rules (email regex, min/max lengths), declare compound indexes for search optimization, automatically handle soft deletes, and include helper pre-save middleware to slugify the course title."
+                     </div>
+                 </div>
+
+                 <div class="bg-gray-50 dark:bg-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-slate-800">
+                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">3. AI-Assisted Security & Performance Audits</h3>
+                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Use LLMs to find vulnerabilities in Express route handlers before pushing to production. Prompt the AI:
+                     </p>
+                     <div class="bg-slate-950 p-4 rounded-lg font-mono text-xs text-emerald-400">
+                        "Inspect this Express controller method. Check for NoSQL Injection vulnerabilities, unhandled promise rejections, lack of input sanitization, and potential race conditions in database transactions."
+                     </div>
+                 </div>
+             </div>
         </section>
 
-        <!-- 06. FAQ -->
+        <!-- 06. Live Express + MongoDB Code Example -->
+        <section id="code-example" class="scroll-mt-32">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
+                <span class="text-brand-primary">06.</span>
+                Live Express + MongoDB Code Example
+             </h2>
+             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Below is a production-ready template showing how to initialize an Express server, establish a connection to MongoDB using Mongoose, and define a schema with index keys to keep queries fast.
+             </p>
+        </section>
+
+        <!-- 07. FAQ -->
         <section id="faq" class="scroll-mt-32 border-t pt-12 dark:border-gray-800">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4">
-                <span class="text-brand-primary">06.</span>
+                <span class="text-brand-primary">07.</span>
                 Frequently Asked Questions
             </h2>
             <div class="space-y-6">
