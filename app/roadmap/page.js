@@ -7,7 +7,7 @@ import FrontendRoadmap from '../components/roadmap/FrontendRoadmap';
 import { FRONTEND_ROADMAP_2025 } from '../lib/roadmap/frontend-roadmap';
 
 function isProPlan(plan) {
-  return typeof plan === 'string' && plan.startsWith('pro_');
+  return true;
 }
 
 export default async function RoadmapPage() {

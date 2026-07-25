@@ -1020,7 +1020,7 @@ export default function LearningPathPage() {
   const lessonTopRef = useRef(null);
   const didScrollOnMountRef = useRef(false);
 
-  const isPro = session?.user?.plan?.includes('pro') || session?.user?.role === 'admin' || session?.user?.role === 'pro';
+  const isPro = !!session;
   // First 3 days (1, 2, 3) are free. Day 4+ is locked.
   const isLocked = !isPro && activeDay > 3;
 

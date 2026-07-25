@@ -28,7 +28,7 @@ export default function ResumeAuditPage() {
     const { data: session } = useSession();
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-    const isPro = session?.user?.plan?.includes('pro') || session?.user?.role === 'admin' || session?.user?.role === 'pro';
+    const isPro = !!session;
 
     const handleFileUpload = (e) => {
         const selectedFile = e.target.files[0];

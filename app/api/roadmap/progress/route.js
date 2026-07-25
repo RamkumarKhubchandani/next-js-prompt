@@ -5,7 +5,7 @@ import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
 
 function isProPlan(plan) {
-  return typeof plan === 'string' && plan.startsWith('pro_');
+  return true;
 }
 
 export async function GET(request) {
