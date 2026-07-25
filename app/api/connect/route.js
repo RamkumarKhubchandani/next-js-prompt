@@ -5,7 +5,7 @@ import { authOptions } from '../../lib/auth';
 import connectDB from '@/app/lib/mongodb';
 import OneToOneCall from '@/models/OneToOneCall';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder_for_build_safety');
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

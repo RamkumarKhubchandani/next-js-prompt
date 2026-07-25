@@ -63,6 +63,12 @@ export default async function TutorialPage({ params }) {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#030303] selection:bg-brand-primary selection:text-white overflow-x-hidden relative">
+            {tutorial.schema && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(tutorial.schema) }}
+                />
+            )}
             {/* ... backgrounds ... */}
 
             <div className="fixed inset-0 z-0 pointer-events-none opacity-40"

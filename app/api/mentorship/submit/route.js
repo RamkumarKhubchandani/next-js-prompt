@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import connectDB from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder_for_build_safety');
 
 export async function POST(request) {
     try {

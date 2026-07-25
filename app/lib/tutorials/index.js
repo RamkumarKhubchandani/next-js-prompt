@@ -65,8 +65,12 @@ import { angularMaterial3 } from './angular-material-3';
 import { angularAdvancedDi } from './angular-advanced-di';
 import { angularTestingSignals } from './angular-testing-signals';
 import { angularDevtools2026 } from './angular-devtools-2026';
+import { aiPromptsFe } from './ai-prompts-fe';
+import { mernStackRoadmap } from './mern-stack-roadmap-2026';
 
 const STATIC_TUTORIALS = [
+  mernStackRoadmap,
+  aiPromptsFe,
   masteringUseEffect,
   reactServerComponents,
   nextjsAppRouter,
@@ -146,26 +150,35 @@ function formatDate(date) {
  * Unified Service to get all tutorials (Static + DB)
  */
 export async function getAllTutorials() {
-  await connectDB();
+  let dynamicTutorials = [];
 
-  // 1. Fetch Dynamic (DB)
-  const dynamicDocs = await Tutorial.find({ isPublished: true }).sort({ createdAt: -1 });
-  const dynamicTutorials = dynamicDocs.map(doc => ({
-    _id: doc._id.toString(),
-    title: doc.title,
-    slug: doc.slug,
-    description: doc.description,
-    tags: doc.tags || [],
-    difficulty: doc.difficulty || 'Intermediate',
-    readTime: doc.readTime || '5 min read',
-    createdAt: doc.createdAt.toISOString(),
-    formattedDate: formatDate(doc.createdAt),
-    type: 'dynamic', // It comes from DB
-    isPremium: false, // Default text blogs are free
-    author: doc.author,
-    thumbnail: doc.thumbnail || null,
-    image: doc.image || null, // Pass image through
-  }));
+  if (process.env.MONGODB_URI) {
+    try {
+      await connectDB();
+      // 1. Fetch Dynamic (DB)
+      const dynamicDocs = await Tutorial.find({ isPublished: true }).sort({ createdAt: -1 });
+      dynamicTutorials = dynamicDocs.map(doc => ({
+        _id: doc._id.toString(),
+        title: doc.title,
+        slug: doc.slug,
+        description: doc.description,
+        tags: doc.tags || [],
+        difficulty: doc.difficulty || 'Intermediate',
+        readTime: doc.readTime || '5 min read',
+        createdAt: doc.createdAt.toISOString(),
+        formattedDate: formatDate(doc.createdAt),
+        type: 'dynamic', // It comes from DB
+        isPremium: false, // Default text blogs are free
+        author: doc.author,
+        thumbnail: doc.thumbnail || null,
+        image: doc.image || null, // Pass image through
+      }));
+    } catch (err) {
+      console.warn("Warning: Could not connect to database for dynamic tutorials fetching. Falling back to static guides only.", err.message);
+    }
+  } else {
+    console.warn("Warning: MONGODB_URI is not defined. Only static tutorials will be rendered.");
+  }
 
   // 2. Format Static
   const staticTutorials = STATIC_TUTORIALS.map(t => ({

@@ -1,4 +1,5 @@
 import events from "./lib/events.json";
+import { getAllTutorials } from "./lib/tutorials";
 
 const PHASE_1_SKILLS = [
   "javascript",
@@ -39,7 +40,7 @@ const PHASE_1_LOCATIONS = [
   "online"
 ];
 
-export default function sitemap() {
+export default async function sitemap() {
   const baseUrl = "https://www.outlinedev.com"; // Production URL
   const currentDate = new Date().toISOString().split('T')[0];
 
@@ -158,5 +159,26 @@ export default function sitemap() {
     });
   });
 
-  return [...staticRoutes, ...utilityRoutes, ...officialEventRoutes, ...mentorRoutes, ...eventRoutes];
+  // 7. Dynamic & Static Blog Routes
+  let blogRoutes = [];
+  try {
+    const tutorials = await getAllTutorials();
+    blogRoutes = tutorials.map((t) => ({
+      url: `${baseUrl}/blogs/${t.slug}`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Error generating blog routes in sitemap:", error);
+  }
+
+  return [
+    ...staticRoutes,
+    ...utilityRoutes,
+    ...officialEventRoutes,
+    ...mentorRoutes,
+    ...eventRoutes,
+    ...blogRoutes
+  ];
 }
