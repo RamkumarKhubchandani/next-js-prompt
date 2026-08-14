@@ -68,8 +68,10 @@ import { angularDevtools2026 } from './angular-devtools-2026';
 import { aiPromptsFe } from './ai-prompts-fe';
 import { mernStackRoadmap } from './mern-stack-roadmap-2026';
 import { nextjs15ProductionSetup } from './nextjs-production-setup';
+import { cursorVsCopilotVsWindsurfReact } from './cursor-vs-github-copilot-vs-windsurf-react-developers-2026';
 
 const STATIC_TUTORIALS = [
+  cursorVsCopilotVsWindsurfReact,
   nextjs15ProductionSetup,
   mernStackRoadmap,
   aiPromptsFe,
