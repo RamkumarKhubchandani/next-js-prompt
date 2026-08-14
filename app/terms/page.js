@@ -5,6 +5,9 @@ import Link from 'next/link';
 export const metadata = {
     title: 'Terms of Service | OutlineDev',
     description: 'Terms and conditions for using OutlineDev services.',
+    alternates: {
+        canonical: 'https://www.outlinedev.com/terms',
+    }
 };
 
 import { Header } from '../components/Header'; // Import Header

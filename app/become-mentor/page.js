@@ -4,6 +4,9 @@ export const metadata = {
     title: "Become a Mentor | Share Knowledge & Earn Money | OutlineDev",
     description: "Join our elite network of engineering mentors. Teach React, Node.js, and System Design to students worldwide. Set your own rates and work from anywhere.",
     keywords: "become a coding mentor, teach programming online, react mentor jobs, javascript tutor jobs, earn money coding, developer mentorship program",
+    alternates: {
+        canonical: 'https://www.outlinedev.com/become-mentor',
+    },
     openGraph: {
         title: "Become a Coding Mentor - Earn Globally",
         description: "Share your engineering expertise with the next generation. Join OutlineDev's global mentor network.",

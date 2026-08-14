@@ -7,6 +7,9 @@ import Link from 'next/link';
 export const metadata = {
     title: 'Privacy Policy | OutlineDev',
     description: 'How we collect, use, and protect your data.',
+    alternates: {
+        canonical: 'https://www.outlinedev.com/privacy',
+    }
 };
 
 export default function PrivacyPage() {

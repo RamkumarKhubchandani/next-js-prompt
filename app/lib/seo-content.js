@@ -281,6 +281,18 @@ export const LOCATION_CONTENT = {
     online: {
         techHubDescription: "Online mentorship removes all boundaries. Learn directly from seniors from top tech hubs in Silicon Valley, London, and Bangalore from the comfort of your desk.",
         referralNetwork: "Join our global student community and network with peers worldwide."
+    },
+    india: {
+        techHubDescription: "India is a global powerhouse for software development, IT services, and startup innovation. From Bangalore and Pune to Hyderabad and NCR, the country drives digital transformation globally.",
+        referralNetwork: "Get referrals to top-tier MNCs, Indian tech unicorns, and international remote operations."
+    },
+    usa: {
+        techHubDescription: "The United States is the birthplace of modern software giants and venture-backed startups, setting global trends in Web development, AI, Cloud infrastructure, and software engineering standards.",
+        referralNetwork: "Tap into elite networks across Silicon Valley, Silicon Hills, Silicon Alley, and remote US firms."
+    },
+    uk: {
+        techHubDescription: "The United Kingdom has a massive technology market, combining London's world-leading FinTech ecosystem with tech corridors in Manchester, Edinburgh, and Bristol.",
+        referralNetwork: "Connect with mentors and lead developers at top tech hubs in London, Manchester, and Leeds."
     }
 };
 

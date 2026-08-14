@@ -19,10 +19,12 @@ const PHASE_1_SKILLS = [
 ];
 
 const PHASE_1_LOCATIONS = [
-  "pune",
-  "mumbai",
+  "remote",
+  "online",
   "bangalore",
+  "pune",
   "hyderabad",
+  "mumbai",
   "noida",
   "delhi",
   "gurgaon",
@@ -30,14 +32,10 @@ const PHASE_1_LOCATIONS = [
   "london",
   "san-francisco",
   "new-york",
-  "berlin",
-  "toronto",
-  "vancouver",
-  "sydney",
-  "singapore",
-  "dubai",
-  "remote",
-  "online"
+  "austin",
+  "india",
+  "usa",
+  "uk"
 ];
 
 export default async function sitemap() {

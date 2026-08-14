@@ -6,6 +6,9 @@ import { Footer } from '../components/Footer';
 export const metadata = {
     title: 'Browse High-Quality Coding Mentors by Skill & Location',
     description: 'Find expert developers for 1:1 mentorship in JavaScript, React, Python and more across London, New York, Bangalore and global remote hubs.',
+    alternates: {
+        canonical: 'https://www.outlinedev.com/mentors',
+    }
 };
 
 export default function MentorsIndexPage() {

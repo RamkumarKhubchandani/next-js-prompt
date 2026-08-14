@@ -46,8 +46,11 @@ export const metadata = {
     },
   },
   icons: {
-    icon: '/logo-outlinedev-icon.png',
-    shortcut: '/logo-outlinedev-icon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo-outlinedev-icon.png', type: 'image/png', sizes: '512x512' }
+    ],
+    shortcut: '/favicon.ico',
     apple: '/logo-outlinedev-icon.png',
   },
   openGraph: {

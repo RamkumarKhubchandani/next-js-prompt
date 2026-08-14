@@ -6,6 +6,8 @@ import SafeTiptapView from '../../components/public/SafeTiptapView'; // Reusing 
 import StaticHtmlContent from '../../components/public/StaticHtmlContent';
 import { Sandpack } from "@codesandbox/sandpack-react";
 import { dracula } from "@codesandbox/sandpack-themes";
+import JsonLd from '../../components/seo/JsonLd';
+import { getBlogPostingSchema } from '../../lib/schema-helpers';
 
 // Update Metadata logic
 export async function generateMetadata({ params }) {
@@ -63,12 +65,7 @@ export default async function TutorialPage({ params }) {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#030303] selection:bg-brand-primary selection:text-white overflow-x-hidden relative">
-            {tutorial.schema && (
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(tutorial.schema) }}
-                />
-            )}
+            <JsonLd schema={tutorial.schema || getBlogPostingSchema(tutorial)} />
             {/* ... backgrounds ... */}
 
             <div className="fixed inset-0 z-0 pointer-events-none opacity-40"

@@ -133,7 +133,44 @@ export function Footer() {
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Brand */}
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-green-600 flex items-center justify-center font-black text-dark-900 shadow-lg shadow-brand-primary/20 text-lg">OD</div>
+            <div className="relative w-10 h-10 shrink-0">
+              <svg
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full drop-shadow-[0_0_12px_rgba(0,245,160,0.6)]"
+              >
+                <defs>
+                  <linearGradient id="footer-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#05c285" />
+                    <stop offset="100%" stopColor="#0099cc" />
+                  </linearGradient>
+                </defs>
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="url(#footer-logo-gradient)"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  className="opacity-40"
+                />
+                <path
+                  d="M50 8 A 42 42 0 0 1 92 50"
+                  stroke="url(#footer-logo-gradient)"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M35 35 L65 50 L35 65"
+                  stroke="url(#footer-logo-gradient)"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </svg>
+            </div>
             <div>
               <span className="block text-xl font-bold text-white tracking-tight">OutlineDev</span>
               <span className="block text-xs text-gray-500 uppercase tracking-widest">Premium Mentorship</span>

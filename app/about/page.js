@@ -7,6 +7,9 @@ import { Header } from '../components/Header';
 export const metadata = {
     title: 'About Us | OutlineDev',
     description: 'Learn about our mission to create the next generation of senior engineers.',
+    alternates: {
+        canonical: 'https://www.outlinedev.com/about',
+    }
 };
 
 export default function AboutPage() {

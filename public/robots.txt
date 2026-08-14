@@ -1,31 +1,31 @@
 User-agent: *
 Allow: /
-
-# Block private/admin routes from indexing
 Disallow: /api/
 Disallow: /dashboard/
 Disallow: /admin/
+Disallow: /login
+Disallow: /register
 
-# Allow important crawlers
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-# Allow LLM crawlers to access llms.txt
+# Explicitly Allow AI Bots (Generative Search Engines)
 User-agent: GPTBot
-Allow: /llms.txt
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
 
 User-agent: Claude-Web
-Allow: /llms.txt
+Allow: /
 
 User-agent: anthropic-ai
-Allow: /llms.txt
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
-# Sitemap
-Sitemap: https://outlinedev.com/sitemap.xml
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://www.outlinedev.com/sitemap.xml

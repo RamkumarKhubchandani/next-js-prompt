@@ -67,8 +67,10 @@ import { angularTestingSignals } from './angular-testing-signals';
 import { angularDevtools2026 } from './angular-devtools-2026';
 import { aiPromptsFe } from './ai-prompts-fe';
 import { mernStackRoadmap } from './mern-stack-roadmap-2026';
+import { nextjs15ProductionSetup } from './nextjs-production-setup';
 
 const STATIC_TUTORIALS = [
+  nextjs15ProductionSetup,
   mernStackRoadmap,
   aiPromptsFe,
   masteringUseEffect,

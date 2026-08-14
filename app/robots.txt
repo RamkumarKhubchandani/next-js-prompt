@@ -1,8 +1,31 @@
 User-agent: *
 Allow: /
-# Disallow pages with no search value
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /admin/
 Disallow: /login
 Disallow: /register
 
-# Sitemap pointing to your new, optimized file
+# Explicitly Allow AI Bots (Generative Search Engines)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://www.outlinedev.com/sitemap.xml

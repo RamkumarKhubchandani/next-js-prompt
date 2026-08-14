@@ -132,6 +132,17 @@ export async function generateMetadata({ params }) {
         alternates: {
             canonical: `https://www.outlinedev.com/mentors/${slug}`,
         },
+        robots: [
+            "remote", "online", "bangalore", "pune", "hyderabad", "mumbai",
+            "noida", "delhi", "gurgaon", "chennai", "london", "san-francisco",
+            "new-york", "austin", "india", "usa", "uk"
+        ].includes(location.id) ? {
+            index: true,
+            follow: true,
+        } : {
+            index: false,
+            follow: true,
+        },
         other: {
             'script:ld+json': JSON.stringify(graphSchema)
         }

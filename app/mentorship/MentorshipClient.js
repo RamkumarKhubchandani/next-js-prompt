@@ -164,10 +164,9 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                 <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
                                     Expert Help <span className="block md:inline">for</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-600">Everyone.</span>
                                 </h1>
-                                <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                                    From <strong>kids learning Scratch</strong> to <strong>seniors architecting systems</strong>.
-                                    We connect you with top-tier professionals vetted for quality and patience.
-                                </p>
+                                 <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                                    OutlineDev Mentorship connects developers, students, and kids with senior software engineers for live 1-on-1 coding sessions, code reviews, and career guidance. Simply select your goal, pick your tech stack, and get matched with a vetted expert.
+                                 </p>
                             </div>
                         )}
 

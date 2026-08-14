@@ -7,6 +7,9 @@ import TutorialsBrowser from '../components/public/TutorialsBrowser';
 export const metadata = {
     title: 'Tutorials & Guides | Master Modern Development',
     description: 'Deep dive tutorials, interactive guides, and expert articles on React, Next.js, and Modern Web Development.',
+    alternates: {
+        canonical: 'https://www.outlinedev.com/blogs',
+    }
 };
 
 export default async function TutorialsPage() {
