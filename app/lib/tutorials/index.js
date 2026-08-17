@@ -73,8 +73,12 @@ import { reactCompilerVsManualMemo } from './react-compiler-vs-usememo-usecallba
 import { aiCodingAssistantsSecureFrontend } from './ai-coding-assistants-secure-frontend-code-csrf-xss';
 import { tsStrictModeMigrationGuide } from './typescript-strict-mode-migration-guide-legacy-javascript';
 import { v0VsLovableVsBolt } from './v0-vs-lovable-vs-bolt-ai-ui-generator-comparison';
+import { varVsLetVsConstJs } from './var-vs-let-vs-const-javascript';
+import { jsArrayCrudOperations } from './javascript-array-crud-operations-methods-push-pop-slice-splice';
 
 const STATIC_TUTORIALS = [
+  jsArrayCrudOperations,
+  varVsLetVsConstJs,
   v0VsLovableVsBolt,
   tsStrictModeMigrationGuide,
   aiCodingAssistantsSecureFrontend,
