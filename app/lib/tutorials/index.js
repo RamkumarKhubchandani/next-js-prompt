@@ -70,8 +70,10 @@ import { mernStackRoadmap } from './mern-stack-roadmap-2026';
 import { nextjs15ProductionSetup } from './nextjs-production-setup';
 import { cursorVsCopilotVsWindsurfReact } from './cursor-vs-github-copilot-vs-windsurf-react-developers-2026';
 import { reactCompilerVsManualMemo } from './react-compiler-vs-usememo-usecallback-2026';
+import { aiCodingAssistantsSecureFrontend } from './ai-coding-assistants-secure-frontend-code-csrf-xss';
 
 const STATIC_TUTORIALS = [
+  aiCodingAssistantsSecureFrontend,
   reactCompilerVsManualMemo,
   cursorVsCopilotVsWindsurfReact,
   nextjs15ProductionSetup,
