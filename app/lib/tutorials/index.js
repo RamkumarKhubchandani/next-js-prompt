@@ -75,8 +75,12 @@ import { tsStrictModeMigrationGuide } from './typescript-strict-mode-migration-g
 import { v0VsLovableVsBolt } from './v0-vs-lovable-vs-bolt-ai-ui-generator-comparison';
 import { varVsLetVsConstJs } from './var-vs-let-vs-const-javascript';
 import { jsArrayCrudOperations } from './javascript-array-crud-operations-methods-push-pop-slice-splice';
+import { aiDesignSystemsConsistency } from './ai-design-systems-component-library-consistency';
+import { frontendInterviewPrep2026 } from './frontend-interview-prep-2026-ai-copilot-era';
 
 const STATIC_TUTORIALS = [
+  frontendInterviewPrep2026,
+  aiDesignSystemsConsistency,
   jsArrayCrudOperations,
   varVsLetVsConstJs,
   v0VsLovableVsBolt,

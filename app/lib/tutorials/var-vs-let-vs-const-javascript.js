@@ -116,10 +116,10 @@ console.log(variableTwo); // ReferenceError: variableTwo is not defined</code></
                 <p>
                     In JavaScript, variable declarations are "hoisted" to the top of their scope during compilation.
                 </p>
-                <p>
-                    *   **var hoisting:** <code>var</code> is hoisted and automatically initialized as <code>undefined</code>. You can reference it before the line it is declared on without a crash.
-                    *   **let and const hoisting:** These are hoisted but **not** initialized. They exist in a **Temporal Dead Zone (TDZ)** from the start of the block until the declaration line. Accessing them before initialization throws a <code>ReferenceError</code>.
-                </p>
+                <ul class="list-disc pl-6 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <li><strong>var hoisting:</strong> <code>var</code> is hoisted and automatically initialized as <code>undefined</code>. You can reference it before the line it is declared on without a crash.</li>
+                    <li><strong>let and const hoisting:</strong> These are hoisted but <strong>not</strong> initialized. They exist in a <strong>Temporal Dead Zone (TDZ)</strong> from the start of the block until the declaration line. Accessing them before initialization throws a <code>ReferenceError</code>.</li>
+                </ul>
                 
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-8">Hoisting Example</h3>
                 <pre class="bg-gray-900 text-gray-100 p-6 rounded-2xl overflow-x-auto text-sm border border-white/10 shadow-xl">
@@ -167,13 +167,13 @@ user = { name: "Test" }; </code></pre>
                     To write reliable, modern JavaScript:
                 </p>
                 <p>
-                    Use **const** by default for variables that do not need to be reassigned.
+                    Use <strong>const</strong> by default for variables that do not need to be reassigned.
                 </p>
                 <p>
-                    Use **let** for loop counters or variables that require reassignment.
+                    Use <strong>let</strong> for loop counters or variables that require reassignment.
                 </p>
                 <p>
-                    Avoid **var** entirely to prevent global window object pollution and bugs related to block leakage and hoisting.
+                    Avoid <strong>var</strong> entirely to prevent global window object pollution and bugs related to block leakage and hoisting.
                 </p>
                 <p>
                     To test your skills in managing JavaScript scope and variables, explore our [INTERNAL LINK: frontend coding challenges], or join our [INTERNAL LINK: React Masterclass learning path]. You can also book [INTERNAL LINK: 1:1 expert mentorship sessions] with our senior engineers to audit your application structure.
