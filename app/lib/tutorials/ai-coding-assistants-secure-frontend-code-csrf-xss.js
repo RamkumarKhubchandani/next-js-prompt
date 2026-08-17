@@ -116,7 +116,7 @@ async function handleLogin(credentials) {
 async function fetchSecureData(url) {
   const token = localStorage.getItem("authToken");
   return fetch(url, {
-    headers: { "Authorization": `Bearer ${token}` }
+    headers: { "Authorization": "Bearer " + token }
   });
 }</code></pre>
 
@@ -173,7 +173,7 @@ export default function WeatherWidget() {
   const apiKey = process.env.NEXT_PUBLIC_WEATHER_SECRET_KEY; 
   
   useEffect(() => {
-    fetch(`https://api.weather.com/data?key=${apiKey}`)
+    fetch("https://api.weather.com/data?key=" + apiKey)
       .then(res => res.json())
       .then(data => console.log(data));
   }, []);
@@ -191,7 +191,7 @@ export default function WeatherWidget() {
 export async function GET() {
   // Secure: Secret key is never sent to the browser
   const apiKey = process.env.WEATHER_SECRET_KEY; 
-  const res = await fetch(`https://api.weather.com/data?key=${apiKey}`);
+  const res = await fetch("https://api.weather.com/data?key=" + apiKey);
   const data = await res.json();
   return Response.json(data);
 }

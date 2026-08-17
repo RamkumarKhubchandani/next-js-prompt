@@ -71,8 +71,10 @@ import { nextjs15ProductionSetup } from './nextjs-production-setup';
 import { cursorVsCopilotVsWindsurfReact } from './cursor-vs-github-copilot-vs-windsurf-react-developers-2026';
 import { reactCompilerVsManualMemo } from './react-compiler-vs-usememo-usecallback-2026';
 import { aiCodingAssistantsSecureFrontend } from './ai-coding-assistants-secure-frontend-code-csrf-xss';
+import { tsStrictModeMigrationGuide } from './typescript-strict-mode-migration-guide-legacy-javascript';
 
 const STATIC_TUTORIALS = [
+  tsStrictModeMigrationGuide,
   aiCodingAssistantsSecureFrontend,
   reactCompilerVsManualMemo,
   cursorVsCopilotVsWindsurfReact,
