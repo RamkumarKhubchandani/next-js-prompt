@@ -72,8 +72,10 @@ import { cursorVsCopilotVsWindsurfReact } from './cursor-vs-github-copilot-vs-wi
 import { reactCompilerVsManualMemo } from './react-compiler-vs-usememo-usecallback-2026';
 import { aiCodingAssistantsSecureFrontend } from './ai-coding-assistants-secure-frontend-code-csrf-xss';
 import { tsStrictModeMigrationGuide } from './typescript-strict-mode-migration-guide-legacy-javascript';
+import { v0VsLovableVsBolt } from './v0-vs-lovable-vs-bolt-ai-ui-generator-comparison';
 
 const STATIC_TUTORIALS = [
+  v0VsLovableVsBolt,
   tsStrictModeMigrationGuide,
   aiCodingAssistantsSecureFrontend,
   reactCompilerVsManualMemo,
