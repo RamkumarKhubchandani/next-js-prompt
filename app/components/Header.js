@@ -14,7 +14,7 @@ import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 const navigation = [
     { name: "Find Mentor", href: "/mentorship", isNew: true },
     { name: "Events", href: "/events", isNew: true },
-    { name: "Tutorials", href: "/blogs" },
+    { name: "Blogs", href: "/blogs" },
     { name: "Become Mentor", href: "/become-mentor" },
 ];
 

@@ -145,21 +145,57 @@ export const frontendInterviewPrep2026 = {
         <section id="prep-playbook" class="scroll-mt-32">
              <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-8 flex items-center gap-4 border-b pb-4 dark:border-gray-800">
                 <span class="text-rose-600 dark:text-rose-500">06.</span>
-                Your 2026 Interview Preparation Playbook
+                Interactive Homework & Mock Challenges
             </h2>
-            <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 leading-8 space-y-6">
-                <p>
-                    To prepare for frontend technical interviews in 2026:
+            <div class="space-y-8">
+                <p class="text-lg text-gray-700 dark:text-gray-300">
+                    To prepare for real-world 2026 interview loops, practice building these two critical code patterns without AI assistance. Copy the baseline code into your local editor:
                 </p>
-                <p>
-                    Practice coding challenges without AI assistance to ensure you maintain strong fundamentals.
-                </p>
-                <p>
-                    Focus on understanding the underlying mechanics of your code—how JavaScript runs, how the browser paints layouts, and how to verify accessibility.
-                </p>
-                <p>
-                    Be prepared to explain "why" you made specific design decisions, rather than just delivering code.
-                </p>
+
+                <!-- Challenge 1 -->
+                <div class="bg-gray-50 dark:bg-dark-800 p-8 rounded-2xl border border-gray-200 dark:border-dark-700 space-y-4">
+                    <h4 class="font-bold text-xl text-slate-900 dark:text-white">Challenge 1: Safe Network Data-Fetching (Race Condition Guard)</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Write a <code>useEffect</code> query integration that ignores state updates if a subsequent request completes first.
+                    </p>
+                    <pre class="bg-gray-900 text-gray-100 p-6 rounded-xl text-xs overflow-x-auto">
+<code>function SearchResults({ query }) {
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    // TODO: Implement boolean flag cleanup mapping to prevent race conditions
+    fetch("/api/search?q=" + query)
+      .then(res => res.json())
+      .then(data => {
+        // Only set results if this is the active request
+      });
+
+    // Return cleanup to invalidate out-of-order responses
+  }, [query]);
+
+  return &lt;ul&gt;{results.map(r =&gt; &lt;li key={r.id}&gt;{r.name}&lt;/li&gt;)}&lt;/ul&gt;;
+}</code></pre>
+                </div>
+
+                <!-- Challenge 2 -->
+                <div class="bg-gray-50 dark:bg-dark-800 p-8 rounded-2xl border border-gray-200 dark:border-dark-700 space-y-4">
+                    <h4 class="font-bold text-xl text-slate-900 dark:text-white">Challenge 2: Accessible Keyboard Navigation Hook</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Implement a custom hook <code>useKeyboardNavigation(listLength, onSelect)</code> that intercepts arrow keys and enter keys for an autocomplete menu.
+                    </p>
+                    <pre class="bg-gray-900 text-gray-100 p-6 rounded-xl text-xs overflow-x-auto">
+<code>function useKeyboardNavigation(listLength, onSelect) {
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  // TODO: Add window event listener for ArrowUp, ArrowDown, and Enter
+  // Prevent default scroll behavior for arrows and invoke onSelect on Enter
+
+  return selectedIndex;
+}</code></pre>
+                </div>
+            </div>
+            
+            <div class="prose prose-xl max-w-none text-gray-700 dark:text-gray-300 leading-8 space-y-6 mt-12">
                 <p>
                     To test your skills in preparing for technical interviews, explore our [INTERNAL LINK: frontend coding challenges], or join our [INTERNAL LINK: React Masterclass learning path]. You can also book [INTERNAL LINK: 1:1 expert mentorship sessions] with our senior engineers to practice mock coding interviews.
                 </p>
