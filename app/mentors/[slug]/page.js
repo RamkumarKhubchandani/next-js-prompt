@@ -135,7 +135,8 @@ export async function generateMetadata({ params }) {
         robots: [
             "remote", "online", "bangalore", "pune", "hyderabad", "mumbai",
             "noida", "delhi", "gurgaon", "chennai", "london", "san-francisco",
-            "new-york", "austin", "india", "usa", "uk"
+            "new-york", "berlin", "toronto", "vancouver", "sydney", "singapore",
+            "dubai", "austin", "india", "usa", "uk"
         ].includes(location.id) ? {
             index: true,
             follow: true,
