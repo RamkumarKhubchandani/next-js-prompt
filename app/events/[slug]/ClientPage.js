@@ -14,6 +14,7 @@ export default function EventDetailPage({ initialEvent }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [openModule, setOpenModule] = useState(null);
+    const [activeTab, setActiveTab] = useState("group");
 
     // If event not found, return null (the server component handles 404 usually, but good to be safe)
     if (!event) {
@@ -141,8 +142,38 @@ export default function EventDetailPage({ initialEvent }) {
                         {/* Timeline Curriculum */}
                         <div className="mb-20">
                             <h2 className="text-3xl font-black text-dark-900 dark:text-white mb-8">Professional Roadmap</h2>
+
+                            {/* Tab Switcher */}
+                            {event.groupCurriculum && event.oneToOneCurriculum && (
+                                <div className="flex border border-gray-200 dark:border-dark-700 mb-8 p-1 bg-gray-100/50 dark:bg-dark-800/50 rounded-2xl max-w-lg">
+                                    <button
+                                        onClick={() => { setActiveTab("group"); setOpenModule(null); }}
+                                        className={`flex-1 py-3 text-center text-sm font-bold rounded-xl transition-all ${
+                                            activeTab === "group"
+                                                ? "bg-white dark:bg-dark-700 text-brand-primary shadow-sm"
+                                                : "text-gray-500 hover:text-gray-950 dark:hover:text-white"
+                                        }`}
+                                    >
+                                        Group Workshop (2 Days, 4h)
+                                    </button>
+                                    <button
+                                        onClick={() => { setActiveTab("oneToOne"); setOpenModule(null); }}
+                                        className={`flex-1 py-3 text-center text-sm font-bold rounded-xl transition-all ${
+                                            activeTab === "oneToOne"
+                                                ? "bg-white dark:bg-dark-700 text-brand-primary shadow-sm"
+                                                : "text-gray-500 hover:text-gray-950 dark:hover:text-white"
+                                        }`}
+                                    >
+                                        1-on-1 Training (10 Days)
+                                    </button>
+                                </div>
+                            )}
+
                             <div className="relative border-l-2 border-gray-200 dark:border-dark-700 ml-4 md:ml-6 space-y-8 pb-4">
-                                {event.curriculum.map((item, idx) => {
+                                {((event.groupCurriculum && event.oneToOneCurriculum)
+                                    ? (activeTab === "group" ? event.groupCurriculum : event.oneToOneCurriculum)
+                                    : event.curriculum
+                                ).map((item, idx) => {
                                     const isOpen = openModule === idx;
                                     return (
                                         <div key={idx} className="relative pl-8 md:pl-12">

@@ -2115,7 +2115,7 @@
         ],
         "curriculum": [
             {
-                "day": "Day 1 (Group)",
+                "day": "Day 1",
                 "title": "Advanced JavaScript & React Deep Dive",
                 "topics": [
                     "JavaScript Proxy: Internal mechanics, traps (get, set), and reactive observers",
@@ -2126,7 +2126,7 @@
                 ]
             },
             {
-                "day": "Day 2 (Group)",
+                "day": "Day 2",
                 "title": "AI UI Gen, Cursor Prompting, AI Skills & MCP",
                 "topics": [
                     "AI UI Code Gen: Cursor prompt optimization blueprints for 5x React output speed",
@@ -2135,9 +2135,35 @@
                     "Cloud Agents & Model Context Protocol (MCP): Bridging local dev tools with Cursor",
                     "Pricing options: Session wraps, cohorts schedule, and career planning roadmaps"
                 ]
+            }
+        ],
+        "groupCurriculum": [
+            {
+                "day": "Day 1",
+                "title": "Advanced JavaScript & React Deep Dive",
+                "topics": [
+                    "JavaScript Proxy: Internal mechanics, traps (get, set), and reactive observers",
+                    "JavaScript Generators: Why we need them, yield/next mechanics, and async flow control",
+                    "React Hooks & State: useState queue, batching, useReducer, and custom hooks",
+                    "React Context & Portals: Performance safe global state, avoiding re-render cascades",
+                    "React Performance: Reconciliation, diffing, useMemo, useCallback, and React.memo"
+                ]
             },
             {
-                "day": "Day 3 (1-on-1)",
+                "day": "Day 2",
+                "title": "AI UI Gen, Cursor Prompting, AI Skills & MCP",
+                "topics": [
+                    "AI UI Code Gen: Cursor prompt optimization blueprints for 5x React output speed",
+                    "Reusable AI Skills: Creating, customizing, and scaling custom skills for teams",
+                    "AI Rules: Writing and optimizing .cursorrules for components consistency",
+                    "Cloud Agents & Model Context Protocol (MCP): Bridging local dev tools with Cursor",
+                    "Pricing options: Session wraps, cohorts schedule, and career planning roadmaps"
+                ]
+            }
+        ],
+        "oneToOneCurriculum": [
+            {
+                "day": "Day 1",
                 "title": "JavaScript Proxy & Custom State Engine",
                 "topics": [
                     "Custom State Store: Building a custom reactive state store from scratch using JS Proxies",
@@ -2145,7 +2171,7 @@
                 ]
             },
             {
-                "day": "Day 4 (1-on-1)",
+                "day": "Day 2",
                 "title": "Asynchronous API Resiliency & Race Condition Guards",
                 "topics": [
                     "Advanced useEffect cleanup: Resolving network race conditions and out-of-order responses",
@@ -2153,7 +2179,7 @@
                 ]
             },
             {
-                "day": "Day 5 (1-on-1)",
+                "day": "Day 3",
                 "title": "Advanced React Component Design Patterns",
                 "topics": [
                     "Component Composition patterns: Higher-Order Components (HOC), Render Props, and Compound Components",
@@ -2161,7 +2187,7 @@
                 ]
             },
             {
-                "day": "Day 6 (1-on-1)",
+                "day": "Day 4",
                 "title": "Custom Model Context Protocol (MCP) Development",
                 "topics": [
                     "Building custom MCP servers: Bridging local databases and filesystem structures to Cursor",
@@ -2169,7 +2195,7 @@
                 ]
             },
             {
-                "day": "Day 7 (1-on-1)",
+                "day": "Day 5",
                 "title": "Bespoke Directives & Prompt Optimization",
                 "topics": [
                     "Optimizing .cursorrules: Building tailored developer directives for specific codebases",
@@ -2177,7 +2203,7 @@
                 ]
             },
             {
-                "day": "Day 8 (1-on-1)",
+                "day": "Day 6",
                 "title": "Capstone Project: Production-Ready UI Design Library",
                 "topics": [
                     "Developing custom components: Implementing custom atomic elements using modern styles",
@@ -2185,7 +2211,7 @@
                 ]
             },
             {
-                "day": "Day 9 (1-on-1)",
+                "day": "Day 7",
                 "title": "Performance Profiling & Accessibility (A11y) Audits",
                 "topics": [
                     "Profiling components: Finding rendering bottlenecks and memory leaks using Chrome DevTools",
@@ -2193,7 +2219,7 @@
                 ]
             },
             {
-                "day": "Day 10 (1-on-1)",
+                "day": "Day 8",
                 "title": "System Design & Frontend Application Scaling",
                 "topics": [
                     "Scalable UI Architectures: Micro-frontends, Monorepos (Nx/Turborepo), and lazy chunking",
@@ -2201,7 +2227,7 @@
                 ]
             },
             {
-                "day": "Day 11 (1-on-1)",
+                "day": "Day 9",
                 "title": "Mock Technical Interview & Event Loop Deep Dive",
                 "topics": [
                     "Live Mock Technical Interview: In-depth execution on event loop mechanics, closures, and design layouts",
@@ -2209,7 +2235,7 @@
                 ]
             },
             {
-                "day": "Day 12 (1-on-1)",
+                "day": "Day 10",
                 "title": "Career Support: ATS Resume & Linkedin Audit",
                 "topics": [
                     "ATS Resume Audit: Rewriting engineering metrics bullets using Google's X-Y-Z formula",
