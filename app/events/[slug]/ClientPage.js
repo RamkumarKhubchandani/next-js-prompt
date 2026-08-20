@@ -236,11 +236,22 @@ export default function EventDetailPage({ initialEvent }) {
                                             {event.price}
                                         </span>
                                     </div>
-                                    {event.price === 'FREE' && (
+                                    {event.price === 'FREE' ? (
                                         <p className="text-sm font-medium text-green-600 mt-2 bg-green-50 dark:bg-green-900/20 inline-block px-3 py-1 rounded-full">
                                             Usually $499 • Scholarship applied
                                         </p>
-                                    )}
+                                    ) : event.pricingDetails ? (
+                                        <div className="mt-4 p-3 rounded-xl bg-gray-50 dark:bg-dark-700/50 border border-gray-100 dark:border-dark-700 text-left space-y-2 text-xs font-medium">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-500">Group Cohort:</span>
+                                                <span className="font-bold text-dark-900 dark:text-white">{event.pricingDetails.group}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-500">1-on-1 Mentorship:</span>
+                                                <span className="font-bold text-dark-900 dark:text-white">{event.pricingDetails.oneToOne}</span>
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
 
                                 <div className="space-y-3 mb-8">

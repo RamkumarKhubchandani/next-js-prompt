@@ -2001,5 +2001,161 @@
         ],
         "isComingSoon": false,
         "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop"
+    },
+    {
+        "id": "js-react19-ai-masterclass",
+        "title": "Advanced JS + React 19 + AI-Driven Cohort",
+        "slug": "js-react19-ai-masterclass",
+        "price": "₹2,000",
+        "reviewCount": "180+",
+        "rating": 4.9,
+        "shortDescription": "Master Proxies, Generators, React 19 (Actions, RSC, hooks), and advanced AI coding frameworks (Cursor prompt optimization, custom AI Skills/Rules, MCP connectors) in a 4-hour high-impact session.",
+        "fullDescription": "Master the advanced features of modern JavaScript and React 19 alongside elite AI-driven engineering workflows. This intensive 4-hour workshop (2 hours each day) covers how proxies and generators work under the hood, how to leverage React 19's new Actions, server directives, and hooks (use, useOptimistic), and how to 5x your output speed using advanced Cursor prompting, reusable AI Skills, optimized AI rules, and Model Context Protocol (MCP) integrations.",
+        "highlights": [
+            "Advanced JavaScript: Proxies & Generators",
+            "React 19 Actions, directives, and new hooks",
+            "5x Code Speeds with Cursor Prompting & Skills",
+            "MCP Connectors, Cloud Agents & AI Rules"
+        ],
+        "reviews": [
+            {
+                "id": 1,
+                "name": "Abhishek Roy",
+                "role": "Senior Dev @ Razorpay",
+                "avatar": "https://randomuser.me/api/portraits/men/46.jpg",
+                "rating": 5,
+                "text": "The Cursor AI prompt optimization and Custom AI Skills sections completely revolutionized my daily coding workflow. 5x speed is not an exaggeration."
+            },
+            {
+                "id": 2,
+                "name": "Nisha Mehta",
+                "role": "Frontend Architect @ Swiggy",
+                "avatar": "https://randomuser.me/api/portraits/women/36.jpg",
+                "rating": 5,
+                "text": "Finally understood how proxies and generators work under the hood. The React 19 Action and useOptimistic coverage was extremely clear and production-ready."
+            }
+        ],
+        "curriculum": [
+            {
+                "day": "Day 1",
+                "title": "Advanced JavaScript & React 19 Features",
+                "topics": [
+                    "JavaScript Proxy: Internal mechanics and real-world reactive use cases",
+                    "JavaScript Generators: Why we need them and how they execute step-by-step",
+                    "React 19 Actions: Simplifying async state, form submissions, and errors",
+                    "Server Components & Directives: 'use client' and 'use server' boundary mechanics",
+                    "React 19 Hooks: Practical implementations of the use() hook and useOptimistic()"
+                ]
+            },
+            {
+                "day": "Day 2",
+                "title": "AI UI Gen, Cursor Prompting, AI Skills & MCP",
+                "topics": [
+                    "AI UI Code Gen: Cursor Best Prompts for React to increase coding speed 5x",
+                    "Reusable AI Skills: How to create, customize, and generate them for your workflow",
+                    "AI Rules: Connecting custom AI rules with actual codebases and optimizing .cursorrules",
+                    "Cloud Agents & Model Context Protocol (MCP) Connectors with Cursor",
+                    "1-on-1 vs Group Session structures, career roadmaps, and pricing details"
+                ]
+            }
+        ],
+        "dates": [
+            {
+                "id": 1,
+                "date": "Feb 28, 2026",
+                "time": "06:00 PM - 08:00 PM IST",
+                "spotsLeft": 12
+            },
+            {
+                "id": 2,
+                "date": "Mar 01, 2026",
+                "time": "06:00 PM - 08:00 PM IST",
+                "spotsLeft": 18
+            }
+        ],
+        "pricingDetails": {
+            "group": "₹2,000",
+            "oneToOne": "₹15,000"
+        },
+        "isComingSoon": false,
+        "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=2670&auto=format&fit=crop"
+    },
+    {
+        "id": "js-react-ai-masterclass",
+        "title": "Advanced JS + React (Full Features) + AI-Driven Cohort",
+        "slug": "js-react-ai-masterclass",
+        "price": "₹2,000",
+        "reviewCount": "210+",
+        "rating": 4.9,
+        "shortDescription": "Master Proxies, Generators, React core/advanced features (hooks, state, performance, portals), and AI-driven frameworks (Cursor prompt optimization, custom AI Skills/Rules, MCP connectors) in a 4-hour high-impact session.",
+        "fullDescription": "Master the advanced features of modern JavaScript and React alongside elite AI-driven engineering workflows. This intensive 4-hour workshop (2 hours each day) covers how proxies and generators work under the hood, how to leverage React's lifecycle and hook paradigms, state architecture (Zustand/Redux), performance optimizations (useMemo, useCallback, lazy), and how to 5x your output speed using advanced Cursor prompting, reusable AI Skills, optimized AI rules, and Model Context Protocol (MCP) integrations.",
+        "highlights": [
+            "Advanced JavaScript: Proxies & Generators",
+            "React: Lifecycle, Hooks, State & Context",
+            "5x Code Speeds with Cursor Prompting & Skills",
+            "MCP Connectors, Cloud Agents & AI Rules"
+        ],
+        "reviews": [
+            {
+                "id": 1,
+                "name": "Abhishek Roy",
+                "role": "Senior Dev @ Razorpay",
+                "avatar": "https://randomuser.me/api/portraits/men/46.jpg",
+                "rating": 5,
+                "text": "The Cursor AI prompt optimization and Custom AI Skills sections completely revolutionized my daily coding workflow. 5x speed is not an exaggeration."
+            },
+            {
+                "id": 2,
+                "name": "Nisha Mehta",
+                "role": "Frontend Architect @ Swiggy",
+                "avatar": "https://randomuser.me/api/portraits/women/36.jpg",
+                "rating": 5,
+                "text": "Finally understood how proxies and generators work under the hood. The React hooks and performance optimization day was extremely clear and production-ready."
+            }
+        ],
+        "curriculum": [
+            {
+                "day": "Day 1",
+                "title": "Advanced JavaScript & React Deep Dive",
+                "topics": [
+                    "JavaScript Proxy: Internal mechanics and real-world reactive use cases",
+                    "JavaScript Generators: Why we need them and how they execute step-by-step",
+                    "React Hooks & State: useState, useEffect, useReducer, and custom hooks",
+                    "React Context & Portals: Global state boundaries and DOM escape hatches",
+                    "React Performance: Rendering, re-renders, useMemo, useCallback, and React.memo"
+                ]
+            },
+            {
+                "day": "Day 2",
+                "title": "AI UI Gen, Cursor Prompting, AI Skills & MCP",
+                "topics": [
+                    "AI UI Code Gen: Cursor Best Prompts for React to increase coding speed 5x",
+                    "Reusable AI Skills: How to create, customize, and generate them for your workflow",
+                    "AI Rules: Connecting custom AI rules with actual codebases and optimizing .cursorrules",
+                    "Cloud Agents & Model Context Protocol (MCP) Connectors with Cursor",
+                    "1-on-1 vs Group Session structures, career roadmaps, and pricing details"
+                ]
+            }
+        ],
+        "dates": [
+            {
+                "id": 1,
+                "date": "Feb 28, 2026",
+                "time": "06:00 PM - 08:00 PM IST",
+                "spotsLeft": 12
+            },
+            {
+                "id": 2,
+                "date": "Mar 01, 2026",
+                "time": "06:00 PM - 08:00 PM IST",
+                "spotsLeft": 18
+            }
+        ],
+        "pricingDetails": {
+            "group": "₹2,000",
+            "oneToOne": "₹15,000"
+        },
+        "isComingSoon": false,
+        "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2670&auto=format&fit=crop"
     }
 ]
