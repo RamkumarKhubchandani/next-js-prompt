@@ -20,19 +20,26 @@ export default function BecomeMentorPage() {
         "@context": "https://schema.org",
         "@type": "JobPosting",
         "title": "Senior Engineering Mentor (Remote)",
-        "description": "We are looking for experienced software engineers to mentor students in React, Angular, Node.js, and System Design. You will conduct 1-on-1 sessions and code reviews.",
+        "description": "<p>We are looking for experienced software engineers to mentor students in React, Angular, Node.js, and System Design. You will conduct 1-on-1 sessions and code reviews.</p><p><strong>Responsibilities:</strong></p><ul><li>Conduct 1-on-1 personalized mentorship sessions</li><li>Perform comprehensive code reviews and system architecture teardowns</li><li>Provide guidance on interview prep, live debugging, and career roadmaps</li></ul><p><strong>Requirements:</strong></p><ul><li>Proven experience in frontend, backend, or fullstack development</li><li>Strong communication skills and passion for teaching</li><li>Ability to work remotely from anywhere in the world</li></ul>",
         "identifier": {
             "@type": "PropertyValue",
             "name": "OutlineDev",
             "value": "MENTOR-001"
         },
+        "datePosted": "2026-01-01T00:00:00Z",
+        "validThrough": "2027-12-31T23:59:59Z",
         "hiringOrganization": {
             "@type": "Organization",
             "name": "OutlineDev",
-            "sameAs": "https://www.outlinedev.com"
+            "sameAs": "https://www.outlinedev.com",
+            "logo": "https://www.outlinedev.com/icon.png"
         },
-        "employmentType": "CONTRACTOR",
+        "employmentType": ["CONTRACTOR", "PART_TIME"],
         "jobLocationType": "TELECOMMUTE",
+        "applicantLocationRequirements": {
+            "@type": "Country",
+            "name": "Worldwide"
+        },
         "baseSalary": {
             "@type": "MonetaryAmount",
             "currency": "USD",
@@ -43,10 +50,8 @@ export default function BecomeMentorPage() {
                 "unitText": "HOUR"
             }
         },
-        "applicantLocationRequirements": {
-            "@type": "Country",
-            "name": "Worldwide"
-        }
+        "directApply": true,
+        "url": "https://www.outlinedev.com/become-mentor"
     };
 
     return (

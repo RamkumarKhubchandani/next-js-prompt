@@ -53,6 +53,7 @@ export default async function sitemap() {
     { url: "/", changeFrequency: "daily", priority: 1.0 }, // Homepage
     { url: "/mentorship", changeFrequency: "weekly", priority: 0.9 },
     { url: "/mentors", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/become-mentor", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
     { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => ({
