@@ -77,8 +77,10 @@ import { varVsLetVsConstJs } from './var-vs-let-vs-const-javascript';
 import { jsArrayCrudOperations } from './javascript-array-crud-operations-methods-push-pop-slice-splice';
 import { aiDesignSystemsConsistency } from './ai-design-systems-component-library-consistency';
 import { frontendInterviewPrep2026 } from './frontend-interview-prep-2026-ai-copilot-era';
+import { cssCss3StepByStepGuide } from './css-css3-complete-step-by-step-guide-beginners-to-advanced';
 
 const STATIC_TUTORIALS = [
+  cssCss3StepByStepGuide,
   frontendInterviewPrep2026,
   aiDesignSystemsConsistency,
   jsArrayCrudOperations,
