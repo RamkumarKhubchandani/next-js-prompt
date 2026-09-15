@@ -62,6 +62,7 @@ export const SKILLS = [
     { id: 'website-design', name: 'Website Design', keywords: ['web-design', 'website-development', 'ui-ux', 'responsive-design', 'landing-page-design', 'web-designer'] },
     { id: 'job-support', name: 'IT Job Support', keywords: ['job-support', 'it-job-support', 'project-support', 'sprint-support', 'on-the-job-support', 'daily-standup-support'] },
     { id: 'fullstack', name: 'Full Stack Development', keywords: ['full-stack', 'mern', 'mern-stack', 'mean', 'fullstack-developer'] },
+    { id: 'aifrontend', name: 'AI Frontend Development', keywords: ['aifrontend', 'ai-frontend', 'ai-fe', 'genai-frontend', 'ai-front-end'] },
 ];
 
 export const LOCATIONS = [
@@ -159,13 +160,13 @@ export const LOCATIONS = [
     { id: 'dublin', name: 'Dublin', country: 'Ireland' },
     { id: 'zurich', name: 'Zurich', country: 'Switzerland' },
     { id: 'geneva', name: 'Geneva', country: 'Switzerland' },
-    { id: 'london', name: 'London', country: 'UK' }, // Kept for reference
+    { id: 'london', name: 'London', country: 'UK' },
     { id: 'madrid', name: 'Madrid', country: 'Spain' },
     { id: 'barcelona', name: 'Barcelona', country: 'Spain' },
     { id: 'rome', name: 'Rome', country: 'Italy' },
     { id: 'milan', name: 'Milan', country: 'Italy' },
     { id: 'vienna', name: 'Vienna', country: 'Austria' },
-    { id: 'bruvsels', name: 'Brussels', country: 'Belgium' },
+    { id: 'brussels', name: 'Brussels', country: 'Belgium' },
     { id: 'lisbon', name: 'Lisbon', country: 'Portugal' },
     { id: 'warsaw', name: 'Warsaw', country: 'Poland' },
     { id: 'prague', name: 'Prague', country: 'Czech Republic' },
@@ -221,57 +222,67 @@ export const LOCATIONS = [
 ];
 
 export const SUFFIXES = [
-    // 1. Hiring & Staffing (High Value)
-    'developers',
-    'engineers',
-    'programmers',
-    'coders',
-    'freelancers',
-    'consultants',
-    'contractors',
-    'architects',
-    'experts',
-    'specialists',
-
-    // 2. Mentorship & Coaching (Core)
-    'mentors',
-    'tutors',
-    'teachers',
-    'coaches',
-    'trainers',
-    'instructors',
-    'guide',
-
-    // 3. Problem Solving (Pain Points)
-    'help',
-    'support',
-    'troubleshooting',
-    'debugging',
-    'code-review',
-    'consulting',
-    'crash-course',
-
-    // 4. Career & Student
-    'job-support',
+    // 1. Multi-word Compound Suffixes (Must match first before single-word suffixes)
+    'interview-help',
+    'debugging-help',
+    'troubleshooting-help',
     'interview-prep',
     'mock-interviews',
+    'job-support',
+    'project-support',
+    'project-help',
     'assignment-help',
     'homework-help',
-    'project-help',
-    'project-support',
     'exam-help',
     'coursework-help',
     'tutoring-help',
     'online-classes',
-    // 5. Singular (Restored)
-    'tutor',
-    'mentor',
-    'teacher',
-    'expert',
-    'coach',
+    'crash-course',
+    'code-review',
+
+    // 2. Hiring & Staffing (Plural & Singular)
+    'developers',
+    'developer',
+    'engineers',
+    'engineer',
+    'programmers',
+    'programmer',
+    'coders',
+    'coder',
+    'freelancers',
+    'freelancer',
+    'consultants',
     'consultant',
+    'contractors',
+    'contractor',
+    'architects',
+    'architect',
+    'experts',
+    'expert',
+    'specialists',
+    'specialist',
+
+    // 3. Mentorship & Coaching
+    'mentors',
+    'mentor',
+    'tutors',
+    'tutor',
+    'teachers',
+    'teacher',
+    'coaches',
+    'coach',
+    'trainers',
     'trainer',
+    'instructors',
     'instructor',
+    'guide',
+
+    // 4. Single-Word Problem Solving
+    'troubleshooting',
+    'debugging',
+    'consulting',
+    'support',
+    'help',
 ];
 
 export const PREFIXES = [
@@ -307,16 +318,9 @@ export const PREFIXES = [
 ];
 
 export function parseSeoSlug(slug) {
-    // Expected formats: 
-    // [prefix]-[skill]-tutors-in-[location]
-    // [skill]-tutor-near-me
-    // [skill]-teachers-in-[location]
-    // one-to-one-[skill]-teacher-in-[location]
-
     let normalizedSlug = slug.toLowerCase();
 
-    // 1. Handle "near-me" queries by converting them to the "in-near-me" format our parser expects
-    // e.g. "javascript-tutor-near-me" -> "javascript-tutor-in-near-me"
+    // 1. Handle "near-me" queries
     if (normalizedSlug.endsWith('-near-me') && !normalizedSlug.includes('-in-')) {
         normalizedSlug = normalizedSlug.replace('-near-me', '-in-near-me');
     }
@@ -339,14 +343,14 @@ export function parseSeoSlug(slug) {
         }
     }
 
-    // 4. Extract Skill
+    // 4. Extract Skill by matching longest suffixes first
     let foundSkill = null;
     let usedSuffix = '';
 
-    // Try finding suffix first
-    for (const suffix of SUFFIXES) {
+    const sortedSuffixes = [...SUFFIXES].sort((a, b) => b.length - a.length);
+
+    for (const suffix of sortedSuffixes) {
         if (skillPart.endsWith('-' + suffix)) {
-            usedSuffix = suffix;
             const potentialSkillId = skillPart.replace('-' + suffix, '');
 
             // Try exact ID match
@@ -362,7 +366,10 @@ export function parseSeoSlug(slug) {
                 foundSkill = SKILLS.find(s => s.keywords.some(k => k === potentialSkillId));
             }
 
-            if (foundSkill) break;
+            if (foundSkill) {
+                usedSuffix = suffix;
+                break;
+            }
         }
     }
 
@@ -393,6 +400,6 @@ export function parseSeoSlug(slug) {
         skill: foundSkill,
         location: foundLocation,
         suffix: usedSuffix || 'mentors',
-        prefix: usedPrefix // Pass this back so we can use it in titles
+        prefix: usedPrefix
     };
 }

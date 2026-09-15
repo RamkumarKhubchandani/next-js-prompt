@@ -32,6 +32,31 @@ const nextConfig = {
         destination: '/blogs',
         permanent: true,
       },
+      {
+        source: '/blogs/:path(store|createCartSlice|CartWidget)',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/:path(createCartSlice|createAuthSlice|CartWidget|store|Component|Widget|ThemeProvider|theme)',
+        destination: '/blogs',
+        permanent: true,
+      },
+      {
+        source: '/todos',
+        destination: '/challenges',
+        permanent: true,
+      },
+      {
+        source: '/dashboard/:path(123|test)',
+        destination: '/dashboard',
+        permanent: true,
+      },
+      {
+        source: '/:path(config|app/config|app/config/settings.json|out.txt|pkg/image_filters|src/app/:subpath*)',
+        destination: '/',
+        permanent: true,
+      },
     ]
   },
 };
