@@ -52,10 +52,16 @@ export const SKILLS = [
     { id: 'cybersecurity', name: 'Cybersecurity', keywords: ['infosec', 'penetration-testing', 'ethical-hacking'] },
     { id: 'data-science', name: 'Data Science', keywords: ['pandas', 'numpy', 'jupyter', 'analysis'] },
 
-    // Testing
-    { id: 'playwright', name: 'Playwright', keywords: ['e2e', 'automation', 'testing'] },
+    // Testing & Automation
+    { id: 'playwright', name: 'Playwright', keywords: ['e2e', 'automation', 'testing', 'qa-automation'] },
     { id: 'cypress', name: 'Cypress', keywords: ['e2e', 'automation'] },
     { id: 'selenium', name: 'Selenium', keywords: ['automation', 'webdriver'] },
+
+    // High Intent & Specialized Services
+    { id: 'frontend-engineering', name: 'Frontend Engineering', keywords: ['frontend', 'fe-it', 'frontend-developer', 'fe-developer', 'frontend-architecture', 'fe-engineer'] },
+    { id: 'website-design', name: 'Website Design', keywords: ['web-design', 'website-development', 'ui-ux', 'responsive-design', 'landing-page-design', 'web-designer'] },
+    { id: 'job-support', name: 'IT Job Support', keywords: ['job-support', 'it-job-support', 'project-support', 'sprint-support', 'on-the-job-support', 'daily-standup-support'] },
+    { id: 'fullstack', name: 'Full Stack Development', keywords: ['full-stack', 'mern', 'mern-stack', 'mean', 'fullstack-developer'] },
 ];
 
 export const LOCATIONS = [

@@ -4,41 +4,61 @@ import { getAllTutorials } from "./lib/tutorials";
 const PHASE_1_SKILLS = [
   "javascript",
   "react",
-  "angular",
+  "typescript",
   "nodejs",
   "nextjs",
-  "mongodb",
+  "angular",
   "vue",
-  "playwright",
-  "typescript",
-  "react-native",
   "svelte",
+  "react-native",
+  "playwright",
+  "mongodb",
+  "frontend-engineering",
+  "website-design",
+  "job-support",
+  "fullstack",
   "html-css",
   "tailwind",
-  "fullstack"
+  "redux",
+  "python"
 ];
 
 const PHASE_1_LOCATIONS = [
-  "remote",
   "online",
-  "bangalore",
-  "pune",
-  "hyderabad",
-  "mumbai",
-  "noida",
-  "delhi",
-  "gurgaon",
-  "chennai",
-  "london",
+  "remote",
+  "near-me",
   "san-francisco",
   "new-york",
+  "seattle",
+  "austin",
+  "boston",
+  "chicago",
+  "los-angeles",
+  "dallas",
+  "london",
+  "manchester",
   "berlin",
+  "amsterdam",
+  "dublin",
+  "paris",
+  "stockholm",
+  "zurich",
   "toronto",
   "vancouver",
-  "sydney",
+  "montreal",
   "singapore",
+  "sydney",
+  "melbourne",
   "dubai",
-  "austin",
+  "tokyo",
+  "bangalore",
+  "hyderabad",
+  "pune",
+  "gurgaon",
+  "noida",
+  "chennai",
+  "mumbai",
+  "delhi",
   "india",
   "usa",
   "uk"
@@ -80,15 +100,7 @@ export default async function sitemap() {
 
   PHASE_1_SKILLS.forEach((skill) => {
     PHASE_1_LOCATIONS.forEach((location) => {
-      // 3. Middle Tier: Standard Programmatic Pages (Volume) -> 0.7
-      mentorRoutes.push({
-        url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
-        lastModified: currentDate,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      });
-
-      // 4. High Tier: Conversion Pages (Commercial Intent) -> 0.9
+      // 3. High Intent: 1-on-1 Tutors / Mentors -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/one-to-one-${skill}-tutors-in-${location}`,
         lastModified: currentDate,
@@ -96,36 +108,35 @@ export default async function sitemap() {
         priority: 0.9,
       });
 
-      // 5. Hiring: Specific Commercial Pages -> 0.8
-      if (["react", "nodejs", "typescript", "fullstack"].includes(skill)) {
-        mentorRoutes.push({
-          url: `${baseUrl}/mentors/hire-${skill}-developers-in-${location}`,
-          lastModified: currentDate,
-          changeFrequency: "weekly",
-          priority: 0.8,
-        });
-
-        mentorRoutes.push({
-          url: `${baseUrl}/mentors/freelance-${skill}-experts-in-${location}`,
-          lastModified: currentDate,
-          changeFrequency: "weekly",
-          priority: 0.8,
-        });
-      }
-
-      // 6. Long Tail -> 0.6
+      // 4. Job Support & On-the-Job Sprint Assistance -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-job-support-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.6,
+        priority: 0.9,
       });
 
+      // 5. Commercial Hiring & Freelance Consulting -> 0.8
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/hire-${skill}-developers-in-${location}`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.8,
+      });
+
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/freelance-${skill}-experts-in-${location}`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.8,
+      });
+
+      // 6. Interview Preparation & Mock Interviews -> 0.8
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-interview-help-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
-        priority: 0.6,
+        priority: 0.8,
       });
     });
   });

@@ -38,13 +38,6 @@ export const metadata = {
   authors: [{ name: "OutlineDev Mentors" }],
   creator: "OutlineDev",
   publisher: "OutlineDev",
-  alternates: {
-    canonical: 'https://www.outlinedev.com/',
-    languages: {
-      'en-US': 'https://www.outlinedev.com/',
-      'en-IN': 'https://www.outlinedev.com/',
-    },
-  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },

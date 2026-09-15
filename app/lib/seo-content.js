@@ -178,6 +178,54 @@ export const SKILL_CONTENT = {
             question: "How do you stream LLM responses in a React UI without freezing the page?",
             answer: "To stream LLM responses, you use the browser's `Fetch API` with `ReadableStream` (often wrapped by utilities like Vercel AI SDK's `useCompletion` or `useChat`). You read chunks of text asynchronously from the response reader loop and append them to a state variable. By executing this inside an asynchronous loop or web worker, React renders each text token as it arrives, creating a fast, typewriter-like typing effect without blocking the main browser thread."
         }
+    },
+    frontendengineering: {
+        description: "Master modern Frontend Engineering (FE IT), high-scale client architectures, Core Web Vitals optimization, state synchronization, and scalable Design Systems.",
+        modules: [
+            { title: "Core Web Vitals & Performance", desc: "Optimize LCP, INP, and CLS metrics with bundle chunking, asset prefetching, and render path reduction." },
+            { title: "Enterprise Design Systems & UI", desc: "Build reusable, accessible component libraries conforming to WCAG 2.1 AA with Tailwind and Radix primitives." },
+            { title: "Frontend State & Cache Sync", desc: "Design optimistic state engines, client-side offline storage, WebSocket synchronizations, and query caches." }
+        ],
+        faq: {
+            question: "What is the difference between a Junior Frontend Developer and a Senior Frontend Engineer?",
+            answer: "A junior frontend developer focuses primarily on implementing UI designs into HTML/CSS/React components. A senior frontend engineer designs the overall client architecture, manages build pipelines, ensures web accessibility (a11y), optimizes Core Web Vitals (LCP, INP, CLS), establishes design systems, manages complex state synchronization, and mentors the development team."
+        }
+    },
+    websitedesign: {
+        description: "Design and build stunning, high-converting responsive websites, landing pages, modern typography systems, micro-animations, and UX wireframes.",
+        modules: [
+            { title: "High-Converting Landing Page Design", desc: "Craft conversion-focused hero layouts, visual hierarchies, CTA placements, and mobile-first design systems." },
+            { title: "Responsive Layouts & Micro-Interactions", desc: "Implement seamless Flexbox/Grid layouts, Framer Motion transitions, and fluid CSS clamp typography." },
+            { title: "SEO-Optimized Web Development", desc: "Combine clean semantic HTML, fast loading speeds, structured schema markup, and responsive graphics." }
+        ],
+        faq: {
+            question: "What are the core principles of high-converting website design?",
+            answer: "High-converting web design relies on: 1) A crystal-clear value proposition above the fold. 2) Clean visual hierarchy that guides the user's eye directly to primary Call-To-Action (CTA) buttons. 3) Fast page load times (under 1.5s) to prevent bounce rates. 4) Mobile responsiveness. 5) Social proof (testimonials, metrics, certifications) placed strategically near conversion points."
+        }
+    },
+    jobsupport: {
+        description: "Get real-time on-the-job IT support, daily standup guidance, production debugging assistance, sprint task delivery, and senior architectural code reviews.",
+        modules: [
+            { title: "Daily Sprint & Task Delivery Support", desc: "Receive live 1-on-1 pair programming support to unblock challenging Jira tickets and feature deliveries." },
+            { title: "Production Debugging & Bug Resolution", desc: "Debug complex production errors, performance bottlenecks, race conditions, and test suite failures." },
+            { title: "Standup Preparation & Code Reviews", desc: "Review your PRs and code architecture before team submission to ensure adherence to company coding standards." }
+        ],
+        faq: {
+            question: "How does 1-on-1 IT Job Support work?",
+            answer: "IT Job Support connects you with a dedicated senior engineer in your tech stack (React, TypeScript, Node.js, Playwright, MongoDB). Whenever you encounter a difficult sprint task, production bug, or architectural requirement at work, you can schedule live 1-on-1 screen-sharing sessions to analyze requirements, debug issues, write clean code, and prepare for daily standups with full confidence."
+        }
+    },
+    fullstack: {
+        description: "Master end-to-end Full Stack Development with React, Next.js, Node.js, Express, TypeScript, MongoDB, and modern cloud deployment architectures.",
+        modules: [
+            { title: "Frontend to Backend Integration", desc: "Connect React/Next.js client applications to Node.js/Express REST and GraphQL microservices." },
+            { title: "Database Modeling & Aggregations", desc: "Design high-performance MongoDB/PostgreSQL schemas, indexing strategies, and transactional queries." },
+            { title: "Authentication, DevOps & CI/CD", desc: "Deploy containerized applications with Docker, AWS/Vercel hosting, OAuth security, and GitHub Actions." }
+        ],
+        faq: {
+            question: "Why is the MERN / Next.js stack so popular for modern full stack engineering?",
+            answer: "The MERN (MongoDB, Express, React, Node.js) and Next.js full stack enables end-to-end JavaScript/TypeScript development. This allows developers to share data types, utility libraries, and validation schemas seamlessly across client and server, dramatically speeding up feature development and simplifying CI/CD deployment pipelines."
+        }
     }
 };
 
@@ -293,6 +341,42 @@ export const LOCATION_CONTENT = {
     uk: {
         techHubDescription: "The United Kingdom has a massive technology market, combining London's world-leading FinTech ecosystem with tech corridors in Manchester, Edinburgh, and Bristol.",
         referralNetwork: "Connect with mentors and lead developers at top tech hubs in London, Manchester, and Leeds."
+    },
+    amsterdam: {
+        techHubDescription: "Amsterdam is a premier European tech hub, housing global headquarters like Booking.com, Uber EMEA, and Adyen, with high demand for React, TypeScript, and Node.js engineers.",
+        referralNetwork: "Access referral networks across Amsterdam's Zuidas and Silicon Canals tech ecosystems."
+    },
+    paris: {
+        techHubDescription: "Paris has become one of Europe's top AI and startup capitals, centered around Station F and the Silicon Sentier, seeking skilled full-stack and frontend architects.",
+        referralNetwork: "Connect with engineering mentors and tech leads at Station F and Paris tech startups."
+    },
+    stockholm: {
+        techHubDescription: "Stockholm is the Nordic unicorn capital, known for global successes like Spotify and Klarna, with massive demand for frontend engineering and automated testing.",
+        referralNetwork: "Tap into Stockholm developer circles and Nordic engineering channels."
+    },
+    zurich: {
+        techHubDescription: "Zurich is a powerhouse for enterprise engineering, housing Google's largest European engineering campus and leading Swiss financial tech innovators.",
+        referralNetwork: "Connect with lead software engineers and tutors across Zurich's technology corridor."
+    },
+    melbourne: {
+        techHubDescription: "Melbourne is a thriving Australian digital hub, boasting high-growth SaaS companies, digital agencies, and rapid demand for modern JavaScript, React, and Playwright talent.",
+        referralNetwork: "Access active developer referral channels across Melbourne's CBD and tech precincts."
+    },
+    dallas: {
+        techHubDescription: "Dallas-Fort Worth ('Silicon Prairie') is a massive corporate technology hub with telecom, enterprise SaaS, and IT consulting firms seeking full-stack engineers.",
+        referralNetwork: "Get connected with engineering leads in DFW's Silicon Prairie corporate tech hubs."
+    },
+    atlanta: {
+        techHubDescription: "Atlanta is the FinTech and enterprise software capital of the American Southeast, centered around Midtown and Tech Square with deep demand for Node.js and React developers.",
+        referralNetwork: "Tap into Atlanta Tech Square networks and enterprise software referral groups."
+    },
+    "los-angeles": {
+        techHubDescription: "Los Angeles ('Silicon Beach') blends entertainment, e-commerce, and tech startups across Santa Monica, Venice, and Culver City with heavy demand for website design and React.",
+        referralNetwork: "Connect with Silicon Beach tech leads and web design agencies in Los Angeles."
+    },
+    montreal: {
+        techHubDescription: "Montreal is a global AI and software innovation center, featuring cutting-edge development studios, video game tech giants, and modern web startups.",
+        referralNetwork: "Access developer networks across Montreal's Mile End and downtown tech hubs."
     }
 };
 
@@ -303,6 +387,10 @@ export function getSkillContent(skillId) {
     let key = 'javascript';
     if (normId.includes('react') && !normId.includes('native')) key = 'react';
     else if (normId.includes('typescript') || normId === 'ts') key = 'typescript';
+    else if (normId.includes('frontend') || normId.includes('feit') || normId === 'fe') key = 'frontendengineering';
+    else if (normId.includes('design') || normId.includes('webdesign') || normId.includes('uiux')) key = 'websitedesign';
+    else if (normId.includes('jobsupport') || normId.includes('sprintsupport') || normId.includes('projectsupport')) key = 'jobsupport';
+    else if (normId.includes('fullstack') || normId.includes('mern') || normId.includes('mean')) key = 'fullstack';
     else if (normId.includes('next')) key = 'nextjs';
     else if (normId.includes('angular')) key = 'angular';
     else if (normId.includes('vue')) key = 'vue';
