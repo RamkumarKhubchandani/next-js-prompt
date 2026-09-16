@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import ConnectOneToOneModal from '../components/public/ConnectOneToOneModal';
+import GoogleReviewsSection from '../components/public/GoogleReviewsSection';
 import { useSession } from 'next-auth/react';
 import {
     Layout,
@@ -217,6 +218,9 @@ export default function ServicesClient() {
                     </div>
                 </div>
             </section>
+
+            {/* Google Reviews Social Proof Section */}
+            <GoogleReviewsSection />
 
             {/* FAQs */}
             <section className="py-20 bg-slate-950 border-t border-slate-800">
