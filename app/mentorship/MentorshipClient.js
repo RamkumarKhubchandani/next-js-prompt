@@ -336,11 +336,11 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                                                    <input name="name" required type="text" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="Your Name" />
+                                                    <input name="name" required type="text" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all" placeholder="Your Name" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Budget ($)</label>
-                                                    <select name="budget" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none">
+                                                    <select name="budget" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all">
                                                         <option value="">Flexible / Not Sure</option>
                                                         <option value="free">Looking for Free/Scholarship</option>
                                                         <option value="low">Under $20/hr</option>
@@ -351,23 +351,25 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                                                <input name="email" required type="email" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none" placeholder="email@example.com" />
+                                                <input name="email" required type="email" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all" placeholder="email@example.com" />
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">WhatsApp Number *</label>
-                                                <PhoneInput
-                                                    international
-                                                    defaultCountry="IN"
-                                                    value={formData.phone}
-                                                    onChange={(value) => setFormData({ ...formData, phone: value })}
-                                                    className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none phone-input-custom"
-                                                    placeholder="Enter phone number"
-                                                    required
-                                                />
+                                                <div className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus-within:ring-2 focus-within:ring-brand-primary/50 focus-within:border-brand-primary transition-all flex items-center">
+                                                    <PhoneInput
+                                                        international
+                                                        defaultCountry="IN"
+                                                        value={formData.phone}
+                                                        onChange={(value) => setFormData({ ...formData, phone: value })}
+                                                        className="w-full text-gray-900 dark:text-white font-medium"
+                                                        placeholder="Enter phone number"
+                                                        required
+                                                    />
+                                                </div>
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Brief Description</label>
-                                                <textarea name="description" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 focus:ring-2 focus:ring-brand-primary/50 outline-none h-24" placeholder="I need help with..." />
+                                                <textarea name="description" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none h-24 transition-all resize-none" placeholder="I need help with..." />
                                             </div>
 
                                             <div className="pt-4 flex items-center justify-between">

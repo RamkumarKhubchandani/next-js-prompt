@@ -134,7 +134,7 @@ export function RegistrationModal({ open, onClose, eventName, date, time, slug }
                                                 required
                                                 value={formData.name}
                                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 focus:ring-2 focus:ring-brand-primary outline-none transition-all text-sm font-medium"
+                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all text-sm font-medium"
                                                 placeholder="Alex Johnson"
                                             />
                                         </div>
@@ -148,7 +148,7 @@ export function RegistrationModal({ open, onClose, eventName, date, time, slug }
                                                 required
                                                 value={formData.email}
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 focus:ring-2 focus:ring-brand-primary outline-none transition-all text-sm font-medium"
+                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all text-sm font-medium"
                                                 placeholder="you@company.com"
                                             />
                                         </div>
@@ -162,7 +162,7 @@ export function RegistrationModal({ open, onClose, eventName, date, time, slug }
                                                 required
                                                 value={formData.whatsapp}
                                                 onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 focus:ring-2 focus:ring-brand-primary outline-none transition-all text-sm font-medium"
+                                                className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all text-sm font-medium"
                                                 placeholder="+1 415 555 2671 or +91 98765 43210"
                                             />
                                             <p className="text-[11px] text-gray-500 mt-1">Used to send direct Google Meet links & workshop files.</p>
@@ -177,7 +177,7 @@ export function RegistrationModal({ open, onClose, eventName, date, time, slug }
                                                     type="text"
                                                     value={formData.city}
                                                     onChange={e => setFormData({ ...formData, city: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 focus:ring-2 focus:ring-brand-primary outline-none transition-all text-sm font-medium"
+                                                    className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all text-sm font-medium"
                                                     placeholder="San Francisco / London"
                                                 />
                                             </div>
@@ -189,7 +189,7 @@ export function RegistrationModal({ open, onClose, eventName, date, time, slug }
                                                     type="text"
                                                     value={formData.country}
                                                     onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                                    className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 focus:ring-2 focus:ring-brand-primary outline-none transition-all text-sm font-medium"
+                                                    className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-dark-700 text-dark-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none transition-all text-sm font-medium"
                                                     placeholder="United States"
                                                 />
                                             </div>

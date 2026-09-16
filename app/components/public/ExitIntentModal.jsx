@@ -171,62 +171,74 @@ export default function ExitIntentModal() {
                         </div>
 
                         {/* Form */}
-                        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+                        <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
                             <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    Your Full Name <span className="text-brand-primary">*</span>
+                                </label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="Your Full Name"
-                                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-primary focus:outline-none transition-colors"
+                                    placeholder="e.g. Alex Johnson"
+                                    className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder:text-slate-400 text-sm font-medium focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 focus:bg-slate-800 outline-none transition-all shadow-inner"
                                 />
                             </div>
 
                             <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    Work / Personal Email <span className="text-brand-primary">*</span>
+                                </label>
                                 <input
                                     type="email"
                                     required
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="Your Email (where we send the PDF)"
-                                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-primary focus:outline-none transition-colors"
+                                    placeholder="alex@company.com (PDF sent here)"
+                                    className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder:text-slate-400 text-sm font-medium focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 focus:bg-slate-800 outline-none transition-all shadow-inner"
                                 />
                             </div>
 
-                            <div className="phone-input-dark">
-                                <PhoneInput
-                                    international
-                                    defaultCountry="IN"
-                                    value={formData.phone}
-                                    onChange={(val) => setFormData({ ...formData, phone: val || '' })}
-                                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-brand-primary focus:outline-none"
-                                />
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    WhatsApp / Mobile Number <span className="text-brand-primary">*</span>
+                                </label>
+                                <div className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white text-sm font-medium focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/25 focus-within:bg-slate-800 transition-all shadow-inner flex items-center">
+                                    <PhoneInput
+                                        international
+                                        defaultCountry="IN"
+                                        value={formData.phone}
+                                        onChange={(val) => setFormData({ ...formData, phone: val || '' })}
+                                        placeholder="Enter phone number"
+                                        className="w-full text-white text-sm font-medium"
+                                    />
+                                </div>
                             </div>
 
                             {error && (
-                                <p className="text-xs text-red-400 font-semibold">{error}</p>
+                                <p className="text-xs text-red-400 font-semibold bg-red-900/20 border border-red-800/40 p-2.5 rounded-xl">{error}</p>
                             )}
 
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full py-3.5 rounded-xl font-extrabold text-slate-900 bg-gradient-to-r from-brand-primary via-emerald-400 to-brand-primary hover:opacity-95 shadow-lg shadow-brand-primary/25 transition-all text-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                                className="w-full py-4 rounded-xl font-black text-slate-900 bg-gradient-to-r from-brand-primary via-emerald-400 to-brand-primary hover:opacity-95 shadow-lg shadow-brand-primary/25 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-1"
                             >
                                 {submitting ? (
                                     <span>Sending Toolkit...</span>
                                 ) : (
                                     <>
-                                        <Download size={15} />
+                                        <Download size={16} />
                                         <span>Download Checklist & Claim Free 15-Min Audit</span>
-                                        <ArrowRight size={15} />
+                                        <ArrowRight size={16} />
                                     </>
                                 )}
                             </button>
                         </form>
 
-                        <p className="text-[10px] text-slate-500 text-center mt-2.5">
-                            🔒 100% Free. No spam, ever. Unsubscribe anytime in 1-click.
+                        <p className="text-[11px] text-slate-400 text-center mt-3">
+                            🔒 100% Free. Zero spam. Instant delivery to your inbox.
                         </p>
                     </div>
                 ) : (

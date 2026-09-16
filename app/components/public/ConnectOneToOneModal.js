@@ -264,22 +264,24 @@ export default function ConnectOneToOneModal({
                       <input
                         value={form.email}
                         onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all outline-none font-medium text-sm"
                         placeholder="Email"
                       />
                     </div>
 
                     <div className="space-y-1">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">WhatsApp Number *</label>
-                      <PhoneInput
-                        international
-                        defaultCountry="IN"
-                        value={form.phone}
-                        onChange={(value) => setForm((p) => ({ ...p, phone: value }))}
-                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
-                        placeholder="Enter phone number"
-                        required
-                      />
+                      <div className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/20 transition-all flex items-center">
+                        <PhoneInput
+                          international
+                          defaultCountry="IN"
+                          value={form.phone}
+                          onChange={(value) => setForm((p) => ({ ...p, phone: value }))}
+                          className="w-full text-gray-900 dark:text-white font-medium text-sm"
+                          placeholder="Enter phone number"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-1">
@@ -287,7 +289,7 @@ export default function ConnectOneToOneModal({
                       <input
                         value={form.name}
                         onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all outline-none font-medium text-sm"
                         placeholder="Your Name"
                       />
                     </div>
@@ -299,7 +301,7 @@ export default function ConnectOneToOneModal({
                           type="datetime-local"
                           value={form.preferredTime}
                           onChange={(e) => setForm((p) => ({ ...p, preferredTime: e.target.value }))}
-                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium text-sm"
+                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 text-gray-900 dark:text-white transition-all outline-none font-medium text-sm"
                         />
                       </div>
                       <div className="space-y-1">
@@ -307,7 +309,7 @@ export default function ConnectOneToOneModal({
                         <select
                           value={form.timezone}
                           onChange={(e) => setForm((p) => ({ ...p, timezone: e.target.value }))}
-                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium"
+                          className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 text-gray-900 dark:text-white transition-all outline-none font-medium text-sm"
                         >
                           <option value="">Select Timezone</option>
                           <optgroup label="🇮🇳 India">
@@ -396,7 +398,7 @@ export default function ConnectOneToOneModal({
                         value={form.notes}
                         onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
                         rows={4}
-                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-brand-primary/50 focus:bg-white dark:focus:bg-black text-gray-900 dark:text-white transition-all outline-none font-medium resize-none"
+                        className="w-full px-4 py-3.5 rounded-2xl bg-gray-50 dark:bg-dark-800 border border-gray-200 dark:border-dark-700 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all outline-none font-medium text-sm resize-none"
                         placeholder="What's blocking you?"
                       />
                     </div>

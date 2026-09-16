@@ -352,8 +352,8 @@ export default function MentorMatchWizard({ title, subtitle, className = '' }) {
                                 {/* Contact Fields */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                                            Your Full Name <span className="text-red-400">*</span>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            Your Full Name <span className="text-brand-primary">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -361,12 +361,12 @@ export default function MentorMatchWizard({ title, subtitle, className = '' }) {
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             placeholder="e.g. Rahul Sharma"
-                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:border-brand-primary focus:outline-none transition-colors"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder:text-slate-400 text-sm font-medium focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 focus:bg-slate-800 outline-none transition-all shadow-inner"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                                            Email Address <span className="text-red-400">*</span>
+                                        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                            Email Address <span className="text-brand-primary">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -374,31 +374,32 @@ export default function MentorMatchWizard({ title, subtitle, className = '' }) {
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             placeholder="rahul@example.com"
-                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:border-brand-primary focus:outline-none transition-colors"
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder:text-slate-400 text-sm font-medium focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 focus:bg-slate-800 outline-none transition-all shadow-inner"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                                        WhatsApp / Mobile Number (with country code) <span className="text-red-400">*</span>
+                                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                        WhatsApp / Mobile Number (with country code) <span className="text-brand-primary">*</span>
                                     </label>
-                                    <div className="phone-input-dark">
+                                    <div className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white text-sm font-medium focus-within:border-brand-primary focus-within:ring-2 focus-within:ring-brand-primary/25 focus-within:bg-slate-800 transition-all shadow-inner flex items-center">
                                         <PhoneInput
                                             international
                                             defaultCountry="IN"
                                             value={formData.phone}
                                             onChange={(val) => setFormData({ ...formData, phone: val || '' })}
-                                            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:border-brand-primary focus:outline-none"
+                                            placeholder="Enter phone number"
+                                            className="w-full text-white text-sm font-medium"
                                         />
                                     </div>
-                                    <p className="text-[11px] text-slate-500 mt-1">
+                                    <p className="text-[11px] text-slate-400 mt-1.5">
                                         🔒 We respect your privacy. Used solely to coordinate your 1:1 session or WhatsApp confirmation.
                                     </p>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">
                                         Brief Note / Specific Bug or Goal (Optional)
                                     </label>
                                     <textarea
@@ -406,7 +407,7 @@ export default function MentorMatchWizard({ title, subtitle, className = '' }) {
                                         value={formData.notes}
                                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                                         placeholder="e.g. Need help debugging React state issue or PR review before standup..."
-                                        className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm focus:border-brand-primary focus:outline-none resize-none transition-colors"
+                                        className="w-full px-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder:text-slate-400 text-sm font-medium focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/25 focus:bg-slate-800 outline-none resize-none transition-all shadow-inner"
                                     />
                                 </div>
 
