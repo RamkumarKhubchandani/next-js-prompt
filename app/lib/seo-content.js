@@ -226,6 +226,78 @@ export const SKILL_CONTENT = {
             question: "Why is the MERN / Next.js stack so popular for modern full stack engineering?",
             answer: "The MERN (MongoDB, Express, React, Node.js) and Next.js full stack enables end-to-end JavaScript/TypeScript development. This allows developers to share data types, utility libraries, and validation schemas seamlessly across client and server, dramatically speeding up feature development and simplifying CI/CD deployment pipelines."
         }
+    },
+    svelte: {
+        description: "Master modern reactive web applications with Svelte 5, Runes ($state, $derived, $effect), SvelteKit routing, server load functions, and optimized bundle output.",
+        modules: [
+            { title: "Svelte 5 Runes & Reactivity", desc: "Understand universal reactivity with $state, $derived, $effect, and fine-grained DOM mutation signals." },
+            { title: "SvelteKit Full Stack Architecture", desc: "Design file-based routing, server endpoints (+server.js), data loaders (+page.server.js), and form actions." },
+            { title: "Animation & Performance Optimization", desc: "Implement built-in Svelte transitions, spring physics, store contracts, and zero-runtime CSS." }
+        ],
+        faq: {
+            question: "How does Svelte differ fundamentally from React and Vue?",
+            answer: "Unlike React and Vue which use a Virtual DOM and execute runtime reconciliation in the browser, Svelte is a compiler. It converts your declarative components into highly optimized, tiny imperative JavaScript at build time that directly updates the DOM when state changes. Svelte 5 takes this further with Runes ($state, $derived), offering fine-grained signal-based reactivity across the entire application without virtual DOM diffing overhead."
+        }
+    },
+    reactnative: {
+        description: "Build high-performance cross-platform iOS and Android mobile apps using React Native, Expo EAS, Reanimated 3, native module bridges, and Hermes engine tuning.",
+        modules: [
+            { title: "Expo EAS & Native CLI Setup", desc: "Master configuration of app.json, EAS build pipelines, OTA updates, and native permissions." },
+            { title: "Gesture Handler & Reanimated 3", desc: "Create 60/120 FPS fluid mobile gestures, shared element transitions, and hardware-accelerated animations on the UI thread." },
+            { title: "Navigation, Offline Sync & SQLite", desc: "Implement Expo Router / React Navigation with deep linking, state persistence, and SQLite local storage." }
+        ],
+        faq: {
+            question: "What is the New Architecture in React Native and why does Fabric / TurboModules matter?",
+            answer: "The React Native New Architecture replaces the legacy asynchronous JSON bridge with JSI (JavaScript Interface). This enables direct, synchronous C++ communication between JavaScript and native modules (TurboModules), and introduces Fabric—a concurrent rendering system that renders UI directly on native threads without serialization delays, eliminating UI stutter and bridge bottlenecks."
+        }
+    },
+    tailwind: {
+        description: "Architect scalable, maintainable Design Systems with Tailwind CSS, custom configuration plugins, JIT compiler optimizations, fluid typography, and dark mode.",
+        modules: [
+            { title: "Utility-First Architecture & Design Tokens", desc: "Structure theme colors, spacing scales, typography clamps, and custom CSS variables for multi-brand apps." },
+            { title: "Tailwind JIT & Arbitrary Variants", desc: "Leverage Just-In-Time compilation, container queries, group/peer modifiers, and custom directives." },
+            { title: "Component Libraries with Radix & Headless UI", desc: "Build fully accessible, headless UI components (modals, dropdowns, comboboxes) styled with Tailwind." }
+        ],
+        faq: {
+            question: "How do you prevent Tailwind CSS from bloating production bundle sizes?",
+            answer: "Tailwind CSS uses a built-in Just-In-Time (JIT) compiler that scans your template files (JSX, TSX, HTML) and generates only the exact CSS classes you actually used in your code. By properly configuring the content array in tailwind.config.js, unused utility classes are never compiled into your final CSS file, keeping production CSS stylesheets tiny (typically under 10-20KB gzipped)."
+        }
+    },
+    websitedevelopment: {
+        description: "Build scalable, responsive, and SEO-engineered web applications with modern frontend frameworks, backend APIs, Core Web Vitals optimization, and CMS integrations.",
+        modules: [
+            { title: "Full Lifecycle Web Architecture", desc: "Plan technical requirements, responsive layouts, client/server boundaries, and database design." },
+            { title: "Speed & Core Web Vitals (CWV)", desc: "Achieve 95+ Google Lighthouse scores by optimizing LCP, INP, and CLS through bundle splitting and asset caching." },
+            { title: "Security, Analytics & Deployment", desc: "Implement CSP headers, OAuth auth, event conversion tracking, CDN edge distribution, and continuous deployment." }
+        ],
+        faq: {
+            question: "What are the most critical factors in modern high-performance website development?",
+            answer: "High-performance website development requires: 1) Sub-second Largest Contentful Paint (LCP) via Server-Side Rendering (SSR) and edge CDN caching. 2) Zero layout shifts (CLS < 0.1) by reserving explicit image and font bounding boxes. 3) Seamless Interaction to Next Paint (INP < 200ms) with lightweight JavaScript bundles. 4) Mobile-first accessibility (WCAG 2.1) and rich Schema.org structured markup for maximum search engine discoverability."
+        }
+    },
+    testing: {
+        description: "Master modern automated software testing, unit tests with Jest/Vitest, integration tests with React Testing Library, and end-to-end automation with Playwright and Cypress.",
+        modules: [
+            { title: "Unit & Integration Testing (Vitest/RTL)", desc: "Write isolated component tests, mock API handlers with MSW, and test state reducer logic." },
+            { title: "E2E Automation (Playwright & Cypress)", desc: "Author robust UI user journeys, handle auth states, multi-tab workflows, and visual regression testing." },
+            { title: "CI/CD Test Automation Pipelines", desc: "Run parallel test shards on GitHub Actions, generate HTML coverage reports, and eliminate flaky tests." }
+        ],
+        faq: {
+            question: "What is the Testing Trophy approach and how does it balance Unit, Integration, and E2E tests?",
+            answer: "The Testing Trophy emphasizes that Integration tests give the highest confidence with the best trade-off in execution speed and maintenance cost. Static analysis (TypeScript, ESLint) forms the base, followed by Unit tests for complex business logic, a large middle layer of Integration tests to verify how components communicate, and targeted End-to-End (E2E) tests for critical user flows like checkout and authentication."
+        }
+    },
+    devops: {
+        description: "Deploy, containerize, and orchestrate modern full-stack web applications using Docker, Kubernetes, GitHub Actions CI/CD, AWS cloud infrastructure, and Vercel edge networks.",
+        modules: [
+            { title: "Docker Containerization & Multi-stage Builds", desc: "Write production-ready Dockerfiles, optimize image layer caching, and manage multi-container apps with Docker Compose." },
+            { title: "CI/CD Automation with GitHub Actions", desc: "Build automated test, lint, build, security scan, and auto-deploy pipelines for production releases." },
+            { title: "Cloud Hosting & Edge CDN Infrastructure", desc: "Deploy serverless and microservice apps with AWS (ECS/S3/CloudFront), Vercel edge middleware, and DNS SSL routing." }
+        ],
+        faq: {
+            question: "Why are Docker multi-stage builds critical for deploying Node.js and Next.js applications?",
+            answer: "Multi-stage builds allow you to separate the build environment (which needs heavy devDependencies, compilers, and source files) from the final runtime container. In the first stage, you compile the app and install packages; in the final lightweight alpine stage, you only copy over the generated standalone build artifacts and production dependencies. This slashes final Docker image sizes from ~1GB to under 100MB, dramatically improving deployment speed and container security."
+        }
     }
 };
 
@@ -385,12 +457,18 @@ export function getSkillContent(skillId) {
     
     // Map alternate names to primary keys
     let key = 'javascript';
-    if (normId.includes('react') && !normId.includes('native')) key = 'react';
+    if (normId.includes('reactnative')) key = 'reactnative';
+    else if (normId.includes('react') && !normId.includes('native')) key = 'react';
+    else if (normId.includes('svelte')) key = 'svelte';
     else if (normId.includes('typescript') || normId === 'ts') key = 'typescript';
+    else if (normId.includes('tailwind')) key = 'tailwind';
+    else if (normId.includes('webdevelopment') || normId.includes('websitedevelopment')) key = 'websitedevelopment';
     else if (normId.includes('frontend') || normId.includes('feit') || normId === 'fe') key = 'frontendengineering';
     else if (normId.includes('design') || normId.includes('webdesign') || normId.includes('uiux')) key = 'websitedesign';
     else if (normId.includes('jobsupport') || normId.includes('sprintsupport') || normId.includes('projectsupport')) key = 'jobsupport';
     else if (normId.includes('fullstack') || normId.includes('mern') || normId.includes('mean')) key = 'fullstack';
+    else if (normId.includes('testing') || normId.includes('cypress') || normId.includes('jest') || normId.includes('vitest')) key = 'testing';
+    else if (normId.includes('devops') || normId.includes('docker')) key = 'devops';
     else if (normId.includes('next')) key = 'nextjs';
     else if (normId.includes('angular')) key = 'angular';
     else if (normId.includes('vue')) key = 'vue';
@@ -399,7 +477,7 @@ export function getSkillContent(skillId) {
     else if (normId.includes('playwright')) key = 'playwright';
     else if (normId.includes('python') || normId === 'py') key = 'python';
     else if (normId.includes('html')) key = 'html';
-    else if (normId.includes('css') || normId.includes('tailwind')) key = 'css';
+    else if (normId.includes('css')) key = 'css';
     else if (normId.includes('redux') || normId.includes('rtk')) key = 'redux';
     else if (normId.includes('mfe') || normId.includes('microfrontend') || normId.includes('federation')) key = 'mfe';
     else if (normId.includes('aifrontend') || normId.includes('aife') || normId.includes('aifront')) key = 'aifrontend';

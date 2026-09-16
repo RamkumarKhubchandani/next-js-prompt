@@ -133,10 +133,13 @@ export async function generateMetadata({ params }) {
             canonical: `https://www.outlinedev.com/mentors/${slug}`,
         },
         robots: [
-            "remote", "online", "bangalore", "pune", "hyderabad", "mumbai",
-            "noida", "delhi", "gurgaon", "chennai", "london", "san-francisco",
-            "new-york", "berlin", "toronto", "vancouver", "sydney", "singapore",
-            "dubai", "austin", "india", "usa", "uk"
+            "online", "remote", "near-me",
+            "san-francisco", "new-york", "seattle", "austin", "boston", "chicago", "los-angeles", "dallas",
+            "london", "manchester", "berlin", "amsterdam", "dublin", "paris", "stockholm", "zurich",
+            "toronto", "vancouver", "montreal",
+            "singapore", "sydney", "melbourne", "dubai", "tokyo",
+            "bangalore", "hyderabad", "pune", "gurgaon", "noida", "chennai", "mumbai", "delhi",
+            "india", "usa", "uk"
         ].includes(location.id) ? {
             index: true,
             follow: true,

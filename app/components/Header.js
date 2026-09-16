@@ -12,7 +12,9 @@ import { useSession, signOut } from "next-auth/react";
 import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
 
 const navigation = [
-    { name: "Find Mentor", href: "/mentorship", isNew: true },
+    { name: "Find Mentor", href: "/mentorship" },
+    { name: "Job Support", href: "/job-support", badge: "HOT" },
+    { name: "Services", href: "/services" },
     { name: "Events", href: "/events", isNew: true },
     { name: "Blogs", href: "/blogs" },
     { name: "Become Mentor", href: "/become-mentor" },
@@ -167,14 +169,18 @@ export function Header({ showNav = true }) {
                                                 if (String(item.href).startsWith("/#")) return;
                                                 startNavigate(item.href);
                                             }}
-                                            className={`relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2 ${item.isNew ? "mr-6" : ""}`}
+                                            className={`relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2 ${item.badge || item.isNew ? "mr-6" : ""}`}
                                         >
                                             {item.name}
-                                            {item.isNew && (
+                                            {item.badge ? (
+                                                <span className="absolute -top-1.5 -right-6 z-20 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-amber-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm border border-red-400/50 leading-none">
+                                                    {item.badge}
+                                                </span>
+                                            ) : item.isNew ? (
                                                 <span className="absolute -top-1.5 -right-6 z-20 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
                                                     NEW
                                                 </span>
-                                            )}
+                                            ) : null}
                                         </Link>
                                     </motion.div>
                                 );
@@ -408,11 +414,15 @@ export function Header({ showNav = true }) {
                                                                 className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
                                                             >
                                                                 {item.name}
-                                                                {item.isNew && (
+                                                                {item.badge ? (
+                                                                    <span className="ml-2 inline-flex items-center rounded-md bg-red-500/20 px-2 py-0.5 text-xs font-bold text-orange-400 ring-1 ring-inset ring-orange-500/30">
+                                                                        {item.badge}
+                                                                    </span>
+                                                                ) : item.isNew ? (
                                                                     <span className="ml-2 inline-flex items-center rounded-md bg-brand-primary/10 px-2 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
                                                                         New
                                                                     </span>
-                                                                )}
+                                                                ) : null}
                                                             </Link>
                                                         );
                                                     })}
