@@ -8,6 +8,7 @@ import { CheckCircle, AlertCircle, Lightbulb, ArrowLeft, RefreshCw, Zap } from '
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Header } from '../../components/Header';
+import { ChallengeSidebarCTA } from '../../components/public/ChallengeMentorshipCTA';
 
 export default function ChallengePage() {
     const { slug } = useParams();
@@ -170,6 +171,9 @@ export default function ChallengePage() {
                                 </div>
                             </motion.div>
                         )}
+
+                        {/* High-Converting 1:1 Live Help & Interview Prep Card */}
+                        <ChallengeSidebarCTA challengeTitle={challenge.title} difficulty={challenge.difficulty} />
                     </div>
                 </div>
 

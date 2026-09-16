@@ -3,6 +3,7 @@ import { getAllTutorials } from '../lib/tutorials';
 import { Search, BookOpen, Sparkles } from 'lucide-react';
 import TutorialCard from '../components/public/TutorialCard';
 import TutorialsBrowser from '../components/public/TutorialsBrowser';
+import { BlogBottomCTA } from '../components/public/BlogMentorshipCTA';
 
 export const metadata = {
     title: 'Tutorials & Guides | Master Modern Development',
@@ -84,6 +85,11 @@ export default async function TutorialsPage() {
             {/* Client Browser with Filtering */}
             <div className="relative z-10 w-full">
                 <TutorialsBrowser tutorials={tutorials} />
+            </div>
+
+            {/* Bottom 1:1 Mentorship & Job Support Banner */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-12 mt-12">
+                <BlogBottomCTA tutorialTitle="Full Stack & Modern Frontend Engineering" tags={["Full Stack", "React", "Node.js", "TypeScript"]} />
             </div>
         </div>
     );

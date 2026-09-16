@@ -5,6 +5,7 @@ import { Header } from '../components/Header';
 import { Bug, ArrowRight, Zap, CheckCircle, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
+import { ChallengeBannerCTA } from '../components/public/ChallengeMentorshipCTA';
 
 export default function ChallengesIndexPage() {
     const [challenges, setChallenges] = useState([]);
@@ -182,6 +183,9 @@ export default function ChallengesIndexPage() {
                         ))}
                     </div>
                 )}
+
+                {/* Senior Mock Coding & 1:1 Mentorship Accelerator Banner */}
+                <ChallengeBannerCTA />
             </main>
         </div>
     );

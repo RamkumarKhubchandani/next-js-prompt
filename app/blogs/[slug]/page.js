@@ -8,6 +8,7 @@ import { Sandpack } from "@codesandbox/sandpack-react";
 import { dracula } from "@codesandbox/sandpack-themes";
 import JsonLd from '../../components/seo/JsonLd';
 import { getBlogPostingSchema } from '../../lib/schema-helpers';
+import { BlogSidebarCTA, BlogBottomCTA } from '../../components/public/BlogMentorshipCTA';
 
 // Update Metadata logic
 export async function generateMetadata({ params }) {
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }) {
             tags: tutorial.tags,
             images: [
                 {
-                    url: `https://asiofication.com/og/${tutorial.slug}.png`,
+                    url: `https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop`,
                     width: 1200,
                     height: 630,
                     alt: tutorial.title,
@@ -39,7 +40,10 @@ export async function generateMetadata({ params }) {
             card: 'summary_large_image',
             title: tutorial.title,
             description: tutorial.description,
-            creator: '@asiofication',
+            creator: '@outlinedev',
+        },
+        alternates: {
+            canonical: `https://www.outlinedev.com/blogs/${slug}`,
         }
     };
 }
@@ -205,10 +209,15 @@ export default async function TutorialPage({ params }) {
                                 </div>
                             </div>
                         )}
+                        {/* Bottom Mentorship & Job Support CTA Hero */}
+                        <BlogBottomCTA tutorialTitle={tutorial.title} tags={tutorial.tags} />
                     </article>
 
                     <aside className="hidden lg:block relative">
-                        <div className="sticky top-32 space-y-8">
+                        <div className="sticky top-28 space-y-6">
+                            {/* High-Converting 1:1 Mentorship & Job Support Card */}
+                            <BlogSidebarCTA tutorialTitle={tutorial.title} tags={tutorial.tags} />
+
                             <div className="bg-white/80 dark:bg-dark-900/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-xl">
                                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">
                                     <BookOpen className="w-4 h-4" /> On this page
@@ -240,7 +249,7 @@ export default async function TutorialPage({ params }) {
 
                                 <div className="grid grid-cols-2 gap-3 relative z-10">
                                     <a
-                                        href={`https://twitter.com/intent/tweet?text=Reading%20${encodeURIComponent(tutorial.title)}&url=https://asiofication.com/blogs/${tutorial.slug}`}
+                                        href={`https://twitter.com/intent/tweet?text=Reading%20${encodeURIComponent(tutorial.title)}&url=https://www.outlinedev.com/blogs/${tutorial.slug}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-white/80 dark:bg-[#0a0a0a]/50 hover:bg-white dark:hover:bg-teal-900/30 text-slate-700 dark:text-teal-100 text-xs font-black py-3 rounded-xl transition-all border border-teal-200/50 dark:border-teal-700/30 hover:scale-[1.02] hover:shadow-lg hover:shadow-teal-500/10 flex items-center justify-center gap-2"
@@ -248,7 +257,7 @@ export default async function TutorialPage({ params }) {
                                         Twitter
                                     </a>
                                     <a
-                                        href={`https://www.linkedin.com/sharing/share-offsite/?url=https://asiofication.com/blogs/${tutorial.slug}`}
+                                        href={`https://www.linkedin.com/sharing/share-offsite/?url=https://www.outlinedev.com/blogs/${tutorial.slug}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-white/80 dark:bg-[#0a0a0a]/50 hover:bg-white dark:hover:bg-blue-900/30 text-slate-700 dark:text-blue-100 text-xs font-black py-3 rounded-xl transition-all border border-blue-200/50 dark:border-blue-700/30 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 flex items-center justify-center gap-2"
