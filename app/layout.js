@@ -8,6 +8,9 @@ import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ActivityTracker from "./components/ActivityTracker";
 import WhatsAppWidget from "./components/WhatsAppWidget";
+import StickyPromoBanner from "./components/public/StickyPromoBanner";
+import SocialProofTicker from "./components/public/SocialProofTicker";
+import ExitIntentModal from "./components/public/ExitIntentModal";
 import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -257,9 +260,12 @@ export default async function RootLayout({ children }) {
         <GoogleAnalytics />
         <AuthProvider session={session}>
           <ThemeProvider>
+            <StickyPromoBanner />
             {children}
             <XPNotification />
             <WhatsAppWidget />
+            <SocialProofTicker />
+            <ExitIntentModal />
             <Suspense fallback={null}>
               <ActivityTracker />
             </Suspense>

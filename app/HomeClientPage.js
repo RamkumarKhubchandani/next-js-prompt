@@ -7,6 +7,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/landing-page/Hero';
 
 // Lazy load below-the-fold components
+const MentorMatchWizard = dynamic(() => import('./components/public/MentorMatchWizard'), { ssr: true, loading: () => <SectionSkeleton /> });
 const Features = dynamic(() => import('./components/landing-page/Features').then(mod => ({ default: mod.Features })), { ssr: true, loading: () => <SectionSkeleton /> });
 const DailyChallenges = dynamic(() => import('./components/landing-page/DailyChallenges').then(mod => ({ default: mod.DailyChallenges })), { ssr: true, loading: () => <SectionSkeleton /> });
 const FeaturedBlogs = dynamic(() => import('./components/landing-page/FeaturedBlogs').then(mod => ({ default: mod.FeaturedBlogs })), { ssr: true, loading: () => <SectionSkeleton /> });
@@ -29,6 +30,9 @@ export default function HomeClientPage() {
             <Header />
             <main>
                 <Hero />
+                <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    <MentorMatchWizard />
+                </section>
                 <Features />
                 <CurriculumRoadmap />
                 <DailyChallenges />
