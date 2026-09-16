@@ -7,24 +7,28 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, resolvedTheme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   if (!mounted) {
-    // Render a placeholder or nothing to avoid hydration mismatch
+    // Render a placeholder to avoid hydration mismatch
     return <div className="w-[70px] h-[34px]" />;
   }
 
+  const currentTheme = resolvedTheme || theme || 'light';
+
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark')
   }
 
   return (
-    <div 
-      className="relative w-[70px] h-[34px] bg-light-200/80 dark:bg-dark-700 rounded-full flex items-center p-1 cursor-pointer border border-dark-700/10 dark:border-dark-700"
+    <button
+      type="button"
+      aria-label="Toggle Theme"
+      className="relative w-[70px] h-[34px] bg-light-200/80 dark:bg-dark-700 rounded-full flex items-center p-1 cursor-pointer border border-dark-700/10 dark:border-dark-700 focus:outline-none"
       onClick={toggleTheme}
     >
       <div className="flex justify-between w-full px-1">
@@ -36,10 +40,10 @@ export function ThemeSwitcher() {
         layout
         transition={{ type: "spring", stiffness: 700, damping: 30 }}
         style={{
-          left: theme === 'light' ? '4px' : 'auto',
-          right: theme === 'dark' ? '4px' : 'auto',
+          left: currentTheme === 'light' ? '4px' : 'auto',
+          right: currentTheme === 'dark' ? '4px' : 'auto',
         }}
       />
-    </div>
+    </button>
   )
 }
