@@ -5,32 +5,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, MessageSquare, Calendar, X, Sparkles } from 'lucide-react';
 
 export default function StickyPromoBanner() {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Check if user dismissed in the last 24 hours
+        setMounted(true);
         try {
-            const dismissedAt = localStorage.getItem('outline_promo_dismissed_at');
-            if (dismissedAt) {
-                const hoursSince = (Date.now() - Number(dismissedAt)) / (1000 * 60 * 60);
-                if (hoursSince < 24) {
-                    return;
-                }
+            if (sessionStorage.getItem('outline_promo_dismissed')) {
+                setIsVisible(false);
             }
         } catch { }
-
-        // Delay appearance slightly for smooth UX
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-        }, 800);
-
-        return () => clearTimeout(timer);
     }, []);
 
-    const handleDismiss = () => {
+    const handleDismiss = (e) => {
+        e?.stopPropagation();
         setIsVisible(false);
         try {
-            localStorage.setItem('outline_promo_dismissed_at', String(Date.now()));
+            sessionStorage.setItem('outline_promo_dismissed', 'true');
         } catch { }
     };
 

@@ -10,6 +10,7 @@ import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSession, signOut } from "next-auth/react";
 import ConnectOneToOneModal from "./public/ConnectOneToOneModal";
+import StickyPromoBanner from "./public/StickyPromoBanner";
 
 const navigation = [
     { name: "Find Mentor", href: "/mentorship" },
@@ -120,9 +121,12 @@ export function Header({ showNav = true }) {
             // Always keep header readable in both themes; use a glass look.
             "fixed inset-x-0 top-0 z-50 transition-all duration-300 backdrop-blur-lg border-b",
             isScrolled
-                ? "bg-light-100/80 dark:bg-dark-800/80 shadow-lg border-dark-700/20 dark:border-dark-700/60"
-                : "bg-light-100/60 dark:bg-dark-800/40 border-dark-700/10 dark:border-dark-700/40"
+                ? "bg-light-100/90 dark:bg-dark-800/90 shadow-lg border-dark-700/20 dark:border-dark-700/60"
+                : "bg-light-100/70 dark:bg-dark-800/60 border-dark-700/10 dark:border-dark-700/40"
         )}>
+            {/* Sitewide Top Promo Banner */}
+            <StickyPromoBanner />
+
             {/* Route-loading indicator (helps users understand navigation is happening) */}
             <AnimatePresence>
                 {navLoading && (
@@ -143,16 +147,16 @@ export function Header({ showNav = true }) {
             </AnimatePresence>
             {/* Full-width header so logo can sit further left */}
             <div className="w-full px-3 sm:px-4 lg:px-6">
-                <div className="grid grid-cols-[auto,1fr,auto] items-center h-20 gap-3 relative">
+                <div className="grid grid-cols-[auto,1fr,auto] items-center h-16 sm:h-20 gap-2 sm:gap-3 relative">
                     <div className="flex items-center pr-1">
                         <Link href="/">
                             <Logo />
                         </Link>
                     </div>
 
-                    {/* Center Navigation - Only shown if showNav is true */}
+                    {/* Center Navigation - Visible on all standard desktop/laptop screens (xl+) */}
                     {showNav && (
-                        <nav className="hidden 2xl:flex min-w-0 justify-center gap-x-3">
+                        <nav className="hidden xl:flex min-w-0 justify-center items-center gap-x-2 2xl:gap-x-4">
                             {navigation.map((item) => {
                                 if (item.authOnly && !session) return null;
 
@@ -169,15 +173,15 @@ export function Header({ showNav = true }) {
                                                 if (String(item.href).startsWith("/#")) return;
                                                 startNavigate(item.href);
                                             }}
-                                            className={`relative text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-2 ${item.badge || item.isNew ? "mr-6" : ""}`}
+                                            className={`relative text-xs 2xl:text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-1.5 ${item.badge || item.isNew ? "mr-5 2xl:mr-6" : ""}`}
                                         >
                                             {item.name}
                                             {item.badge ? (
-                                                <span className="absolute -top-1.5 -right-6 z-20 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-amber-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm border border-red-400/50 leading-none">
+                                                <span className="absolute -top-1.5 -right-5 2xl:-right-6 z-20 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-amber-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm border border-red-400/50 leading-none">
                                                     {item.badge}
                                                 </span>
                                             ) : item.isNew ? (
-                                                <span className="absolute -top-1.5 -right-6 z-20 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
+                                                <span className="absolute -top-1.5 -right-5 2xl:-right-6 z-20 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
                                                     NEW
                                                 </span>
                                             ) : null}
@@ -323,7 +327,7 @@ export function Header({ showNav = true }) {
                         </div>
 
                         {/* Mobile Menu Trigger - Always shown */}
-                        <div className="2xl:hidden ml-2">
+                        <div className="xl:hidden ml-2">
                             <button
                                 type="button"
                                 onClick={() => setMobileMenuOpen(true)}
@@ -348,7 +352,7 @@ export function Header({ showNav = true }) {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.2 }}
-                                className="fixed inset-0 z-[99999] 2xl:hidden bg-black/60 backdrop-blur-sm flex justify-end"
+                                className="fixed inset-0 z-[99999] xl:hidden bg-black/60 backdrop-blur-sm flex justify-end"
                             >
                                 <div className="absolute inset-0" onClick={() => setMobileMenuOpen(false)} />
                                 <motion.div
