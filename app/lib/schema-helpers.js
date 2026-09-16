@@ -53,7 +53,9 @@ export function getBlogPostingSchema(tutorial) {
     "dateModified": publishDate,
     "author": {
       "@type": "Person",
-      "name": tutorial.author || "OutlineDev Mentor"
+      "name": tutorial.author || "Ramkumar Khubchandani",
+      "url": "https://www.linkedin.com/in/ramkumar-khubchandani/",
+      "jobTitle": "Staff Frontend Architect & Lead Mentor"
     },
     "publisher": {
       "@type": "Organization",
