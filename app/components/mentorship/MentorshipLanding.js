@@ -22,7 +22,10 @@ import {
     Layers,
     Compass,
     BookOpen,
-    Briefcase
+    Briefcase,
+    Trophy,
+    Clock,
+    Check
 } from 'lucide-react';
 import MentorshipClient from '../../mentorship/MentorshipClient';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
@@ -228,6 +231,98 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                 <MentorshipClient prefill={{ stack: [skill.id] }} isInModal={false} />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Live Activity Ticker - Dynamic Social Proof */}
+            <div className="bg-brand-primary text-slate-950 border-y border-emerald-500/20 py-3.5 overflow-hidden font-bold sticky top-16 z-30 shadow-md">
+                <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
+                    {[...requests, ...requests, ...requests, ...requests].map((r, i) => (
+                        <div key={i} className="flex items-center gap-3 text-sm">
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-950 animate-ping" />
+                            <span>{r.name} from {r.loc} connected with a <strong className="underline">{r.topic}</strong> mentor {r.time}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* How It Works (AI Matching Process) */}
+            <section className="py-24 bg-white dark:bg-[#080b14] relative overflow-hidden transition-colors duration-500">
+                <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-brand-primary/10 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+                <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 relative z-10">
+                    <div className="text-center mb-20">
+                        <span className="inline-block py-1 px-4 rounded-full bg-brand-primary/15 text-brand-primary border border-brand-primary/30 font-bold text-xs uppercase tracking-wider mb-4">
+                            How OutlineDev Works
+                        </span>
+                        <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tight">
+                            Get Matched with an Expert <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-emerald-400 to-teal-300">
+                                {skill.name} Engineer in 15 Minutes
+                            </span>
+                        </h2>
+                        <p className="mt-4 text-base md:text-lg text-slate-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            No endless browsing or unverified freelancers. Our platform pairs you directly with engineers who work with your exact tech stack.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                        {/* Step 1 */}
+                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                            <div className="w-12 h-12 bg-brand-primary text-slate-950 font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-brand-primary/30">
+                                1
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Share Your Challenge</h3>
+                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                                Tell us whether you need 1-on-1 coaching, sprint debugging help, code reviews, or senior interview preparation.
+                            </p>
+                        </div>
+
+                        {/* Step 2 */}
+                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                            <div className="w-12 h-12 bg-blue-500 text-white font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-blue-500/30">
+                                2
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Instant Mentor Pairing</h3>
+                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                                We match you with senior engineers who have already solved production problems in {skill.name}.
+                            </p>
+                        </div>
+
+                        {/* Step 3 */}
+                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                            <div className="w-12 h-12 bg-emerald-500 text-white font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-emerald-500/30">
+                                3
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Live Pair-Programming</h3>
+                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                                Jump into a 1-on-1 session with screen share, live terminal debugging, and clear architectural feedback.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Vetting / Trust Card */}
+                    <div className="mt-16 p-8 md:p-10 bg-slate-100 dark:bg-dark-850 border border-slate-200 dark:border-dark-700 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+                        <div className="max-w-2xl">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-xs font-bold uppercase mb-3">
+                                <Trophy size={14} />
+                                Rigorously Vetted Engineers
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+                                Top 1% Senior Technical Mentors
+                            </h3>
+                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                                Every mentor undergoes a multi-step code review and live technical screening to ensure you receive world-class guidance on modern architecture, security, and best practices.
+                            </p>
+                        </div>
+                        <button
+                            onClick={toggleForm}
+                            className="px-8 py-4 rounded-xl font-bold text-slate-950 bg-brand-primary hover:bg-emerald-400 transition-all shrink-0 shadow-lg shadow-brand-primary/25 cursor-pointer"
+                        >
+                            Find a {skill.name} Mentor Now
+                        </button>
                     </div>
                 </div>
             </section>
