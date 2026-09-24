@@ -20,10 +20,12 @@ const PHASE_1_SKILLS = [
   "html-css",
   "tailwind",
   "redux",
-  "python"
+  "python",
+  "ai-frontend"
 ];
 
 const PHASE_1_LOCATIONS = [
+  // Existing 38 locations (Preserved 100%)
   "online",
   "remote",
   "near-me",
@@ -61,7 +63,52 @@ const PHASE_1_LOCATIONS = [
   "delhi",
   "india",
   "usa",
-  "uk"
+  "uk",
+
+  // High-Value Global Tech Hubs (Expanded)
+  "silicon-valley",
+  "san-jose",
+  "denver",
+  "atlanta",
+  "phoenix",
+  "houston",
+  "philadelphia",
+  "munich",
+  "frankfurt",
+  "hamburg",
+  "madrid",
+  "barcelona",
+  "milan",
+  "rome",
+  "vienna",
+  "warsaw",
+  "prague",
+  "copenhagen",
+  "brussels",
+  "lisbon",
+  "geneva",
+  "calgary",
+  "ottawa",
+  "brisbane",
+  "perth",
+  "auckland",
+  "hong-kong",
+  "seoul",
+  "bangkok",
+  "kuala-lumpur",
+  "jakarta",
+  "abu-dhabi",
+  "riyadh",
+  "tel-aviv",
+  "cairo",
+  "johannesburg",
+  "lagos",
+  "ahmedabad",
+  "kolkata",
+  "jaipur",
+  "indore",
+  "chandigarh",
+  "kochi"
 ];
 
 export default async function sitemap() {
@@ -86,6 +133,7 @@ export default async function sitemap() {
     { url: "/career", changeFrequency: "weekly", priority: 0.8 },
     { url: "/code-review", changeFrequency: "weekly", priority: 0.8 },
     { url: "/pricing", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/developer-toolkit-2026", changeFrequency: "weekly", priority: 0.9 },
   ].map((route) => ({
     url: `${baseUrl}${route.url}`,
     lastModified: currentDate,
@@ -111,6 +159,14 @@ export default async function sitemap() {
       // 3. High Intent: 1-on-1 Tutors / Mentors -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/one-to-one-${skill}-tutors-in-${location}`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.9,
+      });
+
+      // Standard mentors variation -> 0.9
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
         lastModified: currentDate,
         changeFrequency: "weekly",
         priority: 0.9,
@@ -152,7 +208,6 @@ export default async function sitemap() {
   // ---------------------------------------------------------
   // OFFICIAL EVENT ROUTES (The 4 Live Events)
   // ---------------------------------------------------------
-  // These are core content, keep high
   const officialEventRoutes = events.map((event) => ({
     url: `${baseUrl}/events/${event.slug}`,
     lastModified: currentDate,
@@ -165,7 +220,6 @@ export default async function sitemap() {
   // ---------------------------------------------------------
   const eventRoutes = [];
 
-  // Suffixes that map to "Events"
   const EVENT_TYPES = [
     "workshop",
     "masterclass",
@@ -175,7 +229,6 @@ export default async function sitemap() {
 
   PHASE_1_SKILLS.forEach((topic) => {
     EVENT_TYPES.forEach((type) => {
-      // Lead Gen -> 0.8
       eventRoutes.push({
         url: `${baseUrl}/events/free-${topic}-${type}`,
         lastModified: currentDate,

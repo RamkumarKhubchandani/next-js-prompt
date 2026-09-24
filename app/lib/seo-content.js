@@ -480,7 +480,7 @@ export function getSkillContent(skillId) {
     else if (normId.includes('css')) key = 'css';
     else if (normId.includes('redux') || normId.includes('rtk')) key = 'redux';
     else if (normId.includes('mfe') || normId.includes('microfrontend') || normId.includes('federation')) key = 'mfe';
-    else if (normId.includes('aifrontend') || normId.includes('aife') || normId.includes('aifront')) key = 'aifrontend';
+    else if (normId.includes('aifrontend') || normId.includes('ai-front') || normId.includes('aife') || normId.includes('aifront')) key = 'aifrontend';
     else {
         // Fallback generator for other stacks
         const prettyName = skillId.charAt(0).toUpperCase() + skillId.slice(1);

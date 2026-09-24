@@ -63,6 +63,7 @@ export const SKILLS = [
     { id: 'job-support', name: 'IT Job Support', keywords: ['job-support', 'it-job-support', 'project-support', 'sprint-support', 'on-the-job-support', 'daily-standup-support'] },
     { id: 'fullstack', name: 'Full Stack Development', keywords: ['full-stack', 'mern', 'mern-stack', 'mean', 'fullstack-developer'] },
     { id: 'aifrontend', name: 'AI Frontend Development', keywords: ['aifrontend', 'ai-frontend', 'ai-fe', 'genai-frontend', 'ai-front-end'] },
+    { id: 'ai-frontend', name: 'AI Frontend Development', keywords: ['aifrontend', 'ai-frontend', 'ai-fe', 'genai-frontend', 'ai-front-end'] },
 ];
 
 export const LOCATIONS = [
@@ -81,6 +82,12 @@ export const LOCATIONS = [
     { id: 'los-angeles', name: 'Los Angeles', country: 'USA' },
     { id: 'chicago', name: 'Chicago', country: 'USA' },
     { id: 'silicon-valley', name: 'Silicon Valley', country: 'USA' },
+    { id: 'san-jose', name: 'San Jose', country: 'USA' },
+    { id: 'denver', name: 'Denver', country: 'USA' },
+    { id: 'atlanta', name: 'Atlanta', country: 'USA' },
+    { id: 'phoenix', name: 'Phoenix', country: 'USA' },
+    { id: 'houston', name: 'Houston', country: 'USA' },
+    { id: 'philadelphia', name: 'Philadelphia', country: 'USA' },
 
     // UK
     { id: 'london', name: 'London', country: 'UK' },

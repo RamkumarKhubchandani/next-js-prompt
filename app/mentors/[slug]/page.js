@@ -1,21 +1,21 @@
 import { notFound } from 'next/navigation';
 import { MentorshipLanding } from '../../components/mentorship/MentorshipLanding';
-import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data'; // Adjust path if needed
+import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 
 // Generate static params for top combinations to boost SEO speed
 export async function generateStaticParams() {
     const params = [];
 
-    // Create combinations for top 5 skills and top 10 locations
-    const topSkills = SKILLS.slice(0, 5); // JS, React, Next, Node, Python
-    const topLocations = LOCATIONS.slice(0, 10); // London, NY, SF, Bangalore, Pune, etc.
+    // Top skills and top hubs pre-rendered at build time
+    const topSkills = SKILLS.slice(0, 8);
+    const topLocations = LOCATIONS.slice(0, 15);
 
     topSkills.forEach(skill => {
         topLocations.forEach(location => {
-            // url: javascript-mentors-in-london
+            params.push({ slug: `one-to-one-${skill.id}-tutors-in-${location.id}` });
             params.push({ slug: `${skill.id}-mentors-in-${location.id}` });
-            params.push({ slug: `${skill.id}-tutors-in-${location.id}` }); // variation
+            params.push({ slug: `${skill.id}-job-support-in-${location.id}` });
         });
     });
 
@@ -33,6 +33,11 @@ function getDeterministicMetrics(slug) {
     return { ratingValue, reviewCount };
 }
 
+function capitalize(s) {
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export async function generateMetadata({ params }) {
     const { slug } = params;
     const data = parseSeoSlug(slug);
@@ -44,30 +49,42 @@ export async function generateMetadata({ params }) {
     const locationContent = getLocationContent(location.id, location.name);
     const { ratingValue, reviewCount } = getDeterministicMetrics(slug);
 
-    // SEO MAGIC: Dynamic Title Construction based on user intent (prefix)
-    let titleStr = '';
+    const isHiring = prefix === 'hire' || prefix === 'freelance' || suffix === 'developers' || suffix === 'experts';
+    const isJobSupport = suffix === 'job-support' || suffix === 'project-support';
+    const isInterview = suffix === 'interview-help' || suffix === 'interview-prep' || suffix === 'mock-interviews';
+    const isOneToOne = prefix === 'one-to-one' || prefix === '1-on-1' || suffix === 'tutors' || suffix === 'tutor';
 
-    if (prefix) {
-        // e.g. "One-to-one Javascript Tutor in London | Top Rated Experts"
+    // SEO Title Construction targeting high-volume singular + plural queries
+    let titleStr = '';
+    if (isOneToOne) {
+        titleStr = `1-on-1 ${skill.name} Tutor & Mentorship in ${location.name}`;
+    } else if (isJobSupport) {
+        titleStr = `${skill.name} Job Support & Sprint Assistance in ${location.name}`;
+    } else if (isInterview) {
+        titleStr = `${skill.name} Interview Prep & Mock Interviews in ${location.name}`;
+    } else if (isHiring) {
+        titleStr = `Hire ${skill.name} Developers & Freelance Experts in ${location.name}`;
+    } else if (prefix) {
         titleStr = `${capitalize(prefix.replace(/-/g, ' '))} ${skill.name} ${capitalize(suffix)} in ${location.name}`;
     } else {
-        // Default: "Best Javascript Tutors in London | Top Rated Experts"
-        titleStr = `Best ${skill.name} ${capitalize(suffix)} in ${location.name}`;
+        titleStr = `Best ${skill.name} Mentors & Tutors in ${location.name}`;
     }
 
     const title = `${titleStr} | Top Rated Experts`;
 
-    const isHiring = prefix === 'hire' || prefix === 'freelance' || suffix === 'developers' || suffix === 'experts';
-
-    // Dynamic Description Logic
+    // Dynamic Description Logic covering both singular & plural intents
     let description = '';
     if (isHiring) {
-        description = `Hire top 1% ${skill.name} ${suffix} in ${location.name}. Vetted experts available for contract, freelance, or 1:1 consulting. Start your project today.`;
+        description = `Hire vetted top 1% ${skill.name} developers and freelance consultants in ${location.name}. Fast matching, 1:1 sprint consulting, and guaranteed quality.`;
+    } else if (isJobSupport) {
+        description = `Get dedicated 1-on-1 ${skill.name} job support and on-the-job sprint assistance in ${location.name}. Daily standup guidance, bug troubleshooting, and code reviews.`;
+    } else if (isInterview) {
+        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and senior staff engineer feedback.`;
     } else {
-        description = `${skillContent.description.substring(0, 100)}... Get personalized 1:1 ${skill.name} ${suffix} in ${location.name} with custom syllabus goals and job support.`;
+        description = `Find expert 1-on-1 ${skill.name} tutors and mentors in ${location.name}. Get personalized coding sessions, live pair programming, and career fast-track guidance.`;
     }
 
-    // JSON-LD Schema (Professional Service / Educational Org)
+    // JSON-LD Schema (Professional Service / Educational Org / Course)
     const mainSchema = {
         '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
         '@id': `https://www.outlinedev.com/mentors/${slug}#org`,
@@ -99,6 +116,14 @@ export async function generateMetadata({ params }) {
                     '@type': 'Answer',
                     'text': skillContent.faq.answer
                 }
+            },
+            {
+                '@type': 'Question',
+                'name': `How does 1-on-1 ${skill.name} mentorship in ${location.name} work?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `You are paired directly with a vetted Senior ${skill.name} Engineer. You receive personalized live coding sessions, code reviews, debugging support, and job interview preparation tailored to your career goals.`
+                }
             }
         ]
     };
@@ -115,14 +140,15 @@ export async function generateMetadata({ params }) {
         title,
         description,
         keywords: [
-            `${prefix ? prefix.replace(/-/g, ' ') + ' ' : 'best '}${skill.name} ${suffix} in ${location.name}`,
-            `${skill.name} ${suffix} for hire`,
-            `freelance ${skill.name} experts ${location.name}`,
-            `hire ${skill.name} mentor ${location.name}`,
-            `one to one ${skill.name} teacher`,
-            `${skill.name} coaching ${location.name}`,
-            `${skill.name} job support`,
-            isHiring ? `hire ${skill.name} developer` : `learn ${skill.name}`
+            `1 on 1 ${skill.name.toLowerCase()} tutor in ${location.name.toLowerCase()}`,
+            `one to one ${skill.name.toLowerCase()} tutor in ${location.name.toLowerCase()}`,
+            `one to one ${skill.name.toLowerCase()} tutors in ${location.name.toLowerCase()}`,
+            `${skill.name.toLowerCase()} tutor ${location.name.toLowerCase()}`,
+            `${skill.name.toLowerCase()} mentors in ${location.name.toLowerCase()}`,
+            `hire ${skill.name.toLowerCase()} developer in ${location.name.toLowerCase()}`,
+            `${skill.name.toLowerCase()} job support in ${location.name.toLowerCase()}`,
+            `freelance ${skill.name.toLowerCase()} expert ${location.name.toLowerCase()}`,
+            `learn ${skill.name.toLowerCase()} online`
         ],
         openGraph: {
             title,
@@ -132,29 +158,21 @@ export async function generateMetadata({ params }) {
         alternates: {
             canonical: `https://www.outlinedev.com/mentors/${slug}`,
         },
-        robots: [
-            "online", "remote", "near-me",
-            "san-francisco", "new-york", "seattle", "austin", "boston", "chicago", "los-angeles", "dallas",
-            "london", "manchester", "berlin", "amsterdam", "dublin", "paris", "stockholm", "zurich",
-            "toronto", "vancouver", "montreal",
-            "singapore", "sydney", "melbourne", "dubai", "tokyo",
-            "bangalore", "hyderabad", "pune", "gurgaon", "noida", "chennai", "mumbai", "delhi",
-            "india", "usa", "uk"
-        ].includes(location.id) ? {
+        robots: {
             index: true,
             follow: true,
-        } : {
-            index: false,
-            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+            },
         },
         other: {
             'script:ld+json': JSON.stringify(graphSchema)
         }
     };
-}
-
-function capitalize(s) {
-    return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export default function MentorSeoPage({ params }) {
@@ -170,6 +188,8 @@ export default function MentorSeoPage({ params }) {
             skill={data.skill}
             location={data.location}
             suffix={data.suffix}
+            prefix={data.prefix}
+            currentSlug={slug}
         />
     );
 }
