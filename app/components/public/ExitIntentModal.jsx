@@ -243,16 +243,26 @@ export default function ExitIntentModal() {
                     </div>
                 ) : (
                     /* Success State */
-                    <div className="text-center py-6">
-                        <div className="w-14 h-14 rounded-full bg-brand-primary/20 border-2 border-brand-primary flex items-center justify-center text-brand-primary mx-auto mb-4">
+                    <div className="text-center py-5">
+                        <div className="w-14 h-14 rounded-full bg-brand-primary/20 border-2 border-brand-primary flex items-center justify-center text-brand-primary mx-auto mb-3 shadow-lg shadow-brand-primary/20">
                             <CheckCircle size={30} />
                         </div>
-                        <h4 className="text-xl font-extrabold text-white">Toolkit Sent & Audit Activated!</h4>
+                        <h4 className="text-xl font-extrabold text-white">🎉 Your Toolkit is Ready!</h4>
                         <p className="text-xs text-slate-300 mt-2 max-w-sm mx-auto leading-relaxed">
-                            We have sent your 2026 Developer Toolkit to <strong className="text-brand-primary">{formData.email}</strong>.
+                            Your 2026 Developer Toolkit & Cheatsheet is unlocked below. A confirmation has also been queued to <strong className="text-brand-primary">{formData.email}</strong>.
                         </p>
 
-                        <div className="mt-6 flex flex-col gap-3">
+                        <div className="mt-5 flex flex-col gap-3">
+                            <a
+                                href="/developer-toolkit-2026"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full py-3.5 rounded-xl font-black text-xs text-slate-900 bg-gradient-to-r from-brand-primary via-emerald-400 to-brand-primary hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-primary/25"
+                            >
+                                <Download size={16} />
+                                📥 Instant View / Download 2026 Cheatsheet
+                            </a>
+
                             <a
                                 href="https://wa.me/918237320942?text=Hi%20Ram%2C%20I%20just%20claimed%20the%202026%20Developer%20Cheatsheet%20and%20want%20to%20schedule%20my%20free%2015-minute%20code%20audit."
                                 target="_blank"
@@ -260,8 +270,9 @@ export default function ExitIntentModal() {
                                 className="w-full py-3 rounded-xl font-bold text-xs text-white bg-[#25D366] hover:bg-[#1ebe5d] transition-all flex items-center justify-center gap-2 shadow-md"
                             >
                                 <MessageSquare size={16} />
-                                Schedule 15-Min Audit on WhatsApp
+                                💬 Schedule 15-Min Free Audit on WhatsApp
                             </a>
+
                             <button
                                 onClick={handleClose}
                                 className="text-xs text-slate-400 hover:text-white py-1 transition-colors"

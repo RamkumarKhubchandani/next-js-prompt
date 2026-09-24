@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Senior Developer Toolkit & Next.js 15 Architecture Cheatsheet</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        ul {
+            list-style: none;
+        }
+        li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        li strong {
+            color: #ffffff;
+        }
+        .cta-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .cta-card h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: #0f172a;
+            font-weight: 800;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 15px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        }
+        .cta-btn:hover {
+            background: #34d399;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        @media print {
+            body { background: white; color: black; }
+            .section-card { background: white; border: 1px solid #ccc; color: black; }
+            li { color: #333; }
+            li strong { color: black; }
+            .cta-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="badge">Official 2026 Developer Edition</span>
+            <h1>2026 Senior Developer Toolkit & Cheatsheet</h1>
+            <p class="subtitle">Curated by Senior Staff Engineers for Next.js 15, React 19, and FAANG Interview Preparation</p>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">1. React 19 & Next.js 15 App Router Architecture</div>
+            <ul>
+                <li><strong>Server Components (RSC) vs Client Components:</strong> Keep data fetching, ORM queries, and heavy parsing on the server for 0kb client bundle.</li>
+                <li><strong>React 19 Actions:</strong> Replace manual isLoading/error useState boilerplate with native useActionState and useOptimistic transitions.</li>
+                <li><strong>Next.js 15 Caching:</strong> Use explicit 'use cache' directives rather than relying on automatic fetch caching.</li>
+                <li><strong>Streaming SSR & Suspense:</strong> Deliver critical viewport layout in <200ms and stream slower async promises asynchronously.</li>
+                <li><strong>Hydration Optimization:</strong> Avoid browser-specific window/localStorage checks during initial SSR render to eliminate hydration flashes.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">2. Senior Frontend & System Design Principles</div>
+            <ul>
+                <li><strong>State Management:</strong> Use Zustand or Nano Stores for lightweight client state; let TanStack Query handle server cache syncing.</li>
+                <li><strong>Micro-Frontends & Module Federation:</strong> Decouple large scale applications with independent build pipelines while sharing vendor dependencies.</li>
+                <li><strong>Real-Time Architecture:</strong> Implement WebSockets with heartbeat reconnection logic or Server-Sent Events (SSE) for unidirectional streaming.</li>
+                <li><strong>Security Best Practices:</strong> Strict Content Security Policy (CSP), HttpOnly SameSite=Lax session cookies, and sanitized HTML input via DOMPurify.</li>
+                <li><strong>Core Web Vitals:</strong> Target Interaction to Next Paint (INP < 200ms), Largest Contentful Paint (LCP < 2.5s), and Cumulative Layout Shift (CLS < 0.1).</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">3. FAANG Technical Interview Preparation</div>
+            <ul>
+                <li><strong>JavaScript Internals:</strong> Master Microtask queue (Promises) vs Macrotask queue (setTimeout), V8 garbage collection & memory leaks.</li>
+                <li><strong>Custom Resilient Hooks:</strong> Implement useDebounce, useThrottle, and useAsyncWithAbort with standard AbortController cancellation.</li>
+                <li><strong>Polyfill Implementation:</strong> Be prepared to write Promise.all, Promise.allSettled, and deepClone handling cyclical references.</li>
+                <li><strong>System Architecture Whiteboard:</strong> Designing Google Docs collaborative editing, Figma real-time canvas, or Netflix video feed.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">4. Free 15-Minute Code Audit Checklist</div>
+            <ul>
+                <li><strong>Repository Profiling:</strong> Uncovering memory leaks, unnecessary re-renders, and duplicate network requests.</li>
+                <li><strong>Architecture Refactoring:</strong> Converting bloated components into reusable domain modules.</li>
+                <li><strong>Resume & Career Blueprint:</strong> Transforming project descriptions into quantifiable engineering achievements.</li>
+            </ul>
+        </div>
+
+        <div class="cta-card">
+            <h2>Ready for Your 1-on-1 Code Review & Mentorship?</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Connect directly with Ramkumar on WhatsApp to schedule your 15-minute diagnostic session.</p>
+            <a href="https://wa.me/918237320942?text=Hi%20Ram%2C%20I%20have%20read%20the%202026%20Developer%20Toolkit%20and%20want%20to%20schedule%20my%2015-minute%20free%20code%20audit." class="cta-btn" target="_blank">💬 Schedule Free 15-Min Audit on WhatsApp</a>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 OutlineDev Mentorship Platform. All Rights Reserved.</p>
+            <p>Visit <a href="https://www.outlinedev.com" style="color: var(--primary);">www.outlinedev.com</a> for full courses, job support, and mentorship.</p>
+        </div>
+    </div>
+</body>
+</html>
