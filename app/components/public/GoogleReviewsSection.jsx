@@ -127,97 +127,161 @@ const GOOGLE_SCREENSHOTS = [
 const GOOGLE_REVIEWS = [
     {
         id: 1,
-        name: "Arjun Mehta",
-        role: "Senior Frontend Engineer",
-        company: "TCS (Client: US FinTech)",
-        location: "Bengaluru, India",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        name: "Nitin Jangra",
+        role: "React Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Nitin+Jangra&background=0284c7&color=fff&bold=true",
         rating: 5,
-        date: "2 days ago",
-        category: "Job & Sprint Support",
-        tech: "React 19 & Next.js App Router",
-        review: "I was completely stuck on a critical Next.js server actions race condition before a sprint demo. Ramkumar joined on Google Meet within 15 minutes, identified the memory leak, and showed me clean architecture patterns to prevent it. My team lead was super impressed with the PR. Lifesaver!",
-        helpfulCount: 24,
+        date: "Verified Review",
+        category: "React & AI Integration",
+        tech: "React & AI Integration",
+        review: "Ramkumar Sir provided exceptionally detailed and precise instruction for the React AI course. He presented the material in a way that made it feel straightforward, and his teaching experience clearly reflected current best practices in coding.",
+        helpfulCount: 12,
         verified: true
     },
     {
         id: 2,
-        name: "Sarah Jenkins",
-        role: "Full Stack Developer",
-        company: "UK HealthTech Startup",
-        location: "London, United Kingdom",
-        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+        name: "Riya Shelar",
+        role: "Web Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Riya+Shelar&background=0d9488&color=fff&bold=true",
         rating: 5,
-        date: "1 week ago",
+        date: "Verified Review",
         category: "1:1 Mentorship",
-        tech: "TypeScript & Node.js Architecture",
-        review: "OutlineDev mentorship is unmatched. Unlike generic YouTube tutorials, the mentor reviewed my actual GitHub repository, pointed out anti-patterns in our Redux state, and guided me step-by-step to implement high-performance event handlers. Worth every second.",
-        helpfulCount: 38,
+        tech: "JavaScript, React & Chakra UI",
+        review: "The one-on-one mentorship was an incredible learning experience and had a significant impact on both my technical skills and my confidence as a developer. I was able to develop a strong foundation in JavaScript, CSS, React, and Chakra UI.",
+        helpfulCount: 18,
         verified: true
     },
     {
         id: 3,
-        name: "David Chen",
-        role: "Software Development Engineer II",
-        company: "E-Commerce SaaS",
-        location: "Seattle, USA",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        name: "Komal Sharma",
+        role: "Student / Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Komal+Sharma&background=7c3aed&color=fff&bold=true",
         rating: 5,
-        date: "2 weeks ago",
-        category: "Mock Interview",
-        tech: "Frontend System Design & FAANG Prep",
-        review: "Booked 2 mock interview sessions for L5 Frontend role. The system design breakdown for a real-time collaborative workspace was eye-opening. Cleared all 4 rounds and received an offer last Friday! The feedback notes were gold.",
-        helpfulCount: 42,
+        date: "Verified Review",
+        category: "Live 1:1 Session",
+        tech: "Problem Solving & Guidance",
+        review: "Today's session was truly amazing and full of valuable knowledge and insightful points. I learned so many new things today, and every point was really informative and helpful. Grateful for such a session! ❤️",
+        helpfulCount: 9,
         verified: true
     },
     {
         id: 4,
-        name: "Pooja Deshmukh",
-        role: "Automation QA Lead",
-        company: "Infosys",
-        location: "Pune, India",
-        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        name: "Jayesh",
+        role: "Local Guide (341 reviews)",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Jayesh&background=ea580c&color=fff&bold=true",
         rating: 5,
-        date: "3 weeks ago",
-        category: "Job & Sprint Support",
-        tech: "Playwright CI/CD & TypeScript",
-        review: "Our Playwright test suite was failing intermittently on GitHub Actions runners. Within a single 45-minute live screen share session, we overhauled the async fixtures and parallel workers. Tests now run in under 4 minutes with 0 flakiness.",
-        helpfulCount: 19,
+        date: "Verified Review",
+        category: "Full Stack Development",
+        tech: "JavaScript, AI & React",
+        review: "Its very good website to find mentor of javascript AI React and for full stack development. I found good mentor and he help me a lot. Must attend free workshop!",
+        helpfulCount: 15,
         verified: true
     },
     {
         id: 5,
-        name: "Michael Berg",
-        role: "Lead UI Architect",
-        company: "Digital Agency",
-        location: "Stockholm, Sweden",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+        name: "Khanak Tyagi",
+        role: "Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Khanak+Tyagi&background=db2777&color=fff&bold=true",
         rating: 5,
-        date: "1 month ago",
-        category: "Next.js & React",
-        tech: "Performance Optimization & SSR",
-        review: "Ramkumar's deep expertise in Next.js internals helped us bring our Core Web Vitals score from 58 to 99 on mobile. The Lighthouse audit recommendations were crystal clear and practical. 10/10 recommendation.",
-        helpfulCount: 29,
+        date: "Verified Review",
+        category: "Live 1:1 Session",
+        tech: "1:1 Mentorship",
+        review: "Today's session was very knowledgeable and I experienced and learn new thing very clearly thankyou sir ☺️",
+        helpfulCount: 7,
         verified: true
     },
     {
         id: 6,
-        name: "Ananya Roy",
-        role: "Career Switcher & Junior Dev",
-        company: "Recently Placed",
-        location: "Hyderabad, India",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+        name: "Rankita Sulya",
+        role: "Frontend Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Rankita+Sulya&background=2563eb&color=fff&bold=true",
         rating: 5,
-        date: "1 month ago",
+        date: "Verified Review",
+        category: "Frontend Foundations",
+        tech: "HTML, CSS & Core Concepts",
+        review: "The session was really informative and easy to understand. I learned many new HTML concepts and improved my basics. It was a great learning experience!",
+        helpfulCount: 11,
+        verified: true
+    },
+    {
+        id: 7,
+        name: "Smita Sahoo",
+        role: "Software Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Smita+Sahoo&background=059669&color=fff&bold=true",
+        rating: 5,
+        date: "Verified Review",
+        category: "React & Career Growth",
+        tech: "React.js Career Growth",
+        review: "Very good platform to learn reactjs and get lots of useful valuable information for career growth.",
+        helpfulCount: 8,
+        verified: true
+    },
+    {
+        id: 8,
+        name: "Chinchu Kurian",
+        role: "Software Engineer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Chinchu+Kurian&background=4f46e5&color=fff&bold=true",
+        rating: 5,
+        date: "Verified Review",
         category: "1:1 Mentorship",
-        tech: "MERN Stack Full Program",
-        review: "Coming from a non-CS background, I was overwhelmed by full-stack concepts. The step-by-step roadmap, live weekly code reviews, and constant WhatsApp encouragement gave me the skills and confidence to transition into a full-time engineering career.",
-        helpfulCount: 51,
+        tech: "Frontend & Web Architecture",
+        review: "A good platform for developers to learn and improve their skills. The 1:1 mentorship is very helpful, and the sessions are scheduled based on our convenience.",
+        helpfulCount: 14,
+        verified: true
+    },
+    {
+        id: 9,
+        name: "Smitesh Solanki",
+        role: "Frontend Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Smitesh+Solanki&background=d97706&color=fff&bold=true",
+        rating: 5,
+        date: "Verified Review",
+        category: "Full Stack Development",
+        tech: "React, JS & Angular Training",
+        review: "Its very informative and perfect website, I got good help and one to one support for JavaScript and React. The Group training of React and Angular was amazing.",
+        helpfulCount: 16,
+        verified: true
+    },
+    {
+        id: 10,
+        name: "Nitesh More",
+        role: "Full Stack Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Nitesh+More&background=16a34a&color=fff&bold=true",
+        rating: 5,
+        date: "Verified Review",
+        category: "Full Stack Development",
+        tech: "React JS, Angular & AI",
+        review: "Thank you for your invaluable guidance, support, and mentorship throughout my learning journey. Your encouragement and knowledge sharing have helped me grow significantly in React JS, Angular, and AI.",
+        helpfulCount: 10,
+        verified: true
+    },
+    {
+        id: 11,
+        name: "Shweta Rajput",
+        role: "Developer",
+        location: "Verified Google Review",
+        avatar: "https://ui-avatars.com/api/?name=Shweta+Rajput&background=9333ea&color=fff&bold=true",
+        rating: 5,
+        date: "Verified Review",
+        category: "1:1 Mentorship",
+        tech: "React & JavaScript Mentorship",
+        review: "This website is really good.. have gained a lot of knowledge from here whether it be React, JS and so on and the mentors are very supportive and helpful.",
+        helpfulCount: 13,
         verified: true
     }
 ];
 
-const CATEGORIES = ["All Reviews", "Job & Sprint Support", "1:1 Mentorship", "Mock Interview", "Next.js & React"];
+const CATEGORIES = ["All Reviews", "1:1 Mentorship", "Full Stack Development", "React & AI Integration", "Frontend Foundations"];
 
 export default function GoogleReviewsSection({ className = '' }) {
     const [viewMode, setViewMode] = useState('photos'); // Default to real photo proof!
@@ -282,7 +346,7 @@ export default function GoogleReviewsSection({ className = '' }) {
                                     ))}
                                 </div>
                                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 text-left">
-                                    Based on <strong>120+ verified reviews</strong>
+                                    Based on <strong>16 verified reviews</strong>
                                 </p>
                             </div>
                         </div>
@@ -468,8 +532,8 @@ export default function GoogleReviewsSection({ className = '' }) {
                                                             <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                                 {rev.role}
                                                             </p>
-                                                            <p className="text-[10px] text-slate-400 dark:text-slate-500">
-                                                                {rev.company} • {rev.location}
+                                                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold text-emerald-600 dark:text-emerald-400">
+                                                                {rev.company ? `${rev.company} • ${rev.location}` : rev.location}
                                                             </p>
                                                         </div>
                                                     </div>

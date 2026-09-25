@@ -66,7 +66,7 @@ const PRICING_TIERS = [
     {
         name: "Pay-As-You-Go",
         tag: "Instant Fix",
-        price: "$35",
+        price: "$20",
         unit: "/ hour",
         desc: "Best for immediate blockers, quick PR reviews, or one-off debugging sessions.",
         features: [
@@ -82,7 +82,7 @@ const PRICING_TIERS = [
     {
         name: "Sprint Deliveries",
         tag: "Most Popular",
-        price: "$199",
+        price: "$120",
         unit: "/ 8 hours",
         desc: "Ideal for handling a tough 2-week sprint with continuous guidance and PR prep.",
         features: [
@@ -99,7 +99,7 @@ const PRICING_TIERS = [
     {
         name: "Monthly Retainer",
         tag: "Complete Peace of Mind",
-        price: "$499",
+        price: "$350",
         unit: "/ month",
         desc: "Dedicated personal staff engineer in your corner for all your daily job needs.",
         features: [
@@ -210,7 +210,7 @@ export default function JobSupportClient() {
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <Star size={16} className="text-brand-primary" />
-                                <span>4.9/5 Rating (500+ Devs)</span>
+                                <span>4.9/5 Rating (16 Reviews)</span>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <Lock size={16} className="text-brand-primary" />
