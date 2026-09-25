@@ -109,6 +109,7 @@ const PHASE_1_LOCATIONS = [
   "jaipur",
   "indore",
   "chandigarh",
+  "jamnagar",
   "kochi"
 ];
 
@@ -136,6 +137,8 @@ export default async function sitemap() {
     { url: "/code-review", changeFrequency: "weekly", priority: 0.8 },
     { url: "/pricing", changeFrequency: "weekly", priority: 0.8 },
     { url: "/developer-toolkit-2026", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/coding-classes-for-beginners", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/bca-mca-training-jamnagar", changeFrequency: "weekly", priority: 0.9 },
   ].map((route) => ({
     url: `${baseUrl}${route.url}`,
     lastModified: currentDate,

@@ -130,6 +130,7 @@ export const LOCATIONS = [
     { id: 'faridabad', name: 'Faridabad', country: 'India' },
     { id: 'meerut', name: 'Meerut', country: 'India' },
     { id: 'rajkot', name: 'Rajkot', country: 'India' },
+    { id: 'jamnagar', name: 'Jamnagar', country: 'India' },
     { id: 'varanasi', name: 'Varanasi', country: 'India' },
     { id: 'srinagar', name: 'Srinagar', country: 'India' },
     { id: 'aurangabad', name: 'Aurangabad', country: 'India' },
@@ -284,7 +285,11 @@ export const SUFFIXES = [
     'instructor',
     'guide',
 
-    // 4. Single-Word Problem Solving
+    // 4. Classes & Courses
+    'classes',
+    'course',
+
+    // 5. Single-Word Problem Solving
     'troubleshooting',
     'debugging',
     'consulting',

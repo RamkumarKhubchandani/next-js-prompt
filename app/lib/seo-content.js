@@ -449,6 +449,10 @@ export const LOCATION_CONTENT = {
     montreal: {
         techHubDescription: "Montreal is a global AI and software innovation center, featuring cutting-edge development studios, video game tech giants, and modern web startups.",
         referralNetwork: "Access developer networks across Montreal's Mile End and downtown tech hubs."
+    },
+    jamnagar: {
+        techHubDescription: "OutlineDev provides 1-on-1 online mentorship to students and working professionals across Jamnagar and Gujarat, helping them build in-demand development skills without needing to relocate to a metro tech hub. Sessions are fully remote, live, and personalized to your background — whether you're a BCA/MCA student, a self-taught beginner, or switching careers. Led by mentor Ramkumar Khubchandani, who brings 12+ years of industry experience in React, full-stack development, and AI-integrated frontend engineering.",
+        referralNetwork: "Get personalized guidance and career support tailored for learners based in Jamnagar and across Gujarat."
     }
 };
 

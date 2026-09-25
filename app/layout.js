@@ -225,6 +225,15 @@ export default async function RootLayout({ children }) {
             }
           ]
         }
+      },
+      // 4. Person Schema (Lead Mentor)
+      {
+        "@type": "Person",
+        "name": "Ramkumar Khubchandani",
+        "jobTitle": "Lead Mentor",
+        "description": "Ramkumar Khubchandani is a software engineer with 12+ years of industry experience, currently working at Emtec, a global IT consultancy. He specializes in frontend and full-stack development — including HTML, React, Node.js, and MongoDB — with a focus on AI-integrated frontend engineering. He provides 1-on-1 mentorship to developers worldwide through OutlineDev.",
+        "knowsAbout": ["HTML", "React", "Full Stack Development", "Node.js", "MongoDB", "AI Frontend Development"],
+        "sameAs": ["https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"]
       }
     ]
   };
