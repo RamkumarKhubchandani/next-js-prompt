@@ -8,7 +8,6 @@ import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ActivityTracker from "./components/ActivityTracker";
 import WhatsAppWidget from "./components/WhatsAppWidget";
-import SocialProofTicker from "./components/public/SocialProofTicker";
 import ExitIntentModal from "./components/public/ExitIntentModal";
 import { Suspense } from "react";
 
@@ -245,7 +244,6 @@ export default async function RootLayout({ children }) {
             {children}
             <XPNotification />
             <WhatsAppWidget />
-            <SocialProofTicker />
             <ExitIntentModal />
             <Suspense fallback={null}>
               <ActivityTracker />
