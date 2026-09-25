@@ -1,5 +1,6 @@
 import events from "./lib/events.json";
 import { getAllTutorials } from "./lib/tutorials";
+import { getSkillContent, getLocationContent } from "./lib/seo-content";
 
 const PHASE_1_SKILLS = [
   "javascript",
@@ -114,6 +115,7 @@ const PHASE_1_LOCATIONS = [
 export default async function sitemap() {
   const baseUrl = "https://www.outlinedev.com"; // Production URL
   const currentDate = new Date().toISOString().split('T')[0];
+  const MENTOR_PAGES_LAST_MODIFIED = "2026-09-01";
 
   // 1. Core Static Routes
   const staticRoutes = [
@@ -156,10 +158,14 @@ export default async function sitemap() {
 
   PHASE_1_SKILLS.forEach((skill) => {
     PHASE_1_LOCATIONS.forEach((location) => {
+      const skillC = getSkillContent(skill);
+      const locC = getLocationContent(location);
+      if (skillC.isFallback || locC.isFallback) return;
+
       // 3. High Intent: 1-on-1 Tutors / Mentors -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/one-to-one-${skill}-tutors-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.9,
       });
@@ -167,7 +173,7 @@ export default async function sitemap() {
       // Standard mentors variation -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.9,
       });
@@ -175,7 +181,7 @@ export default async function sitemap() {
       // 4. Job Support & On-the-Job Sprint Assistance -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-job-support-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.9,
       });
@@ -183,14 +189,14 @@ export default async function sitemap() {
       // 5. Commercial Hiring & Freelance Consulting -> 0.8
       mentorRoutes.push({
         url: `${baseUrl}/mentors/hire-${skill}-developers-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.8,
       });
 
       mentorRoutes.push({
         url: `${baseUrl}/mentors/freelance-${skill}-experts-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.8,
       });
@@ -198,7 +204,7 @@ export default async function sitemap() {
       // 6. Interview Preparation & Mock Interviews -> 0.8
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-interview-help-in-${location}`,
-        lastModified: currentDate,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.8,
       });

@@ -25,35 +25,22 @@ import {
     Briefcase,
     Trophy,
     Clock,
-    Check
+    Check,
+    ExternalLink
 } from 'lucide-react';
 import MentorshipClient from '../../mentorship/MentorshipClient';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 
-// INITIAL REVIEWS DATA
-const INITIAL_REVIEWS = [
-    // Row 1
-    { name: "Jason M.", role: "Frontend Dev", company: "Freelance", img: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop", text: "I was stuck on a hydration error for 3 days. My mentor fixed it in 2 minutes.", stars: 5 },
-    { name: "Anjali P.", role: "Student", company: "University", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop", text: "The Mock Interview service is a game changer. I cracked the Amazon SDE-1 interview.", stars: 5 },
-    { name: "Michael T.", role: "CTO", company: "Startup", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop", text: "We use this to train our juniors. The quality of mentors is consistently excellent.", stars: 5 },
-    { name: "Sarah L.", role: "QA Engineer", company: "TechCorp", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop", text: "My test scripts were flaky. The mentor showed me the best patterns and now they are stable.", stars: 5 },
-    { name: "David K.", role: "Full Stack", company: "Agency", img: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop", text: "Worth every penny. I learned more tricks in 1 hour here than in 20 hours of Udemy.", stars: 5 },
-    { name: "Elena R.", role: "Backend Dev", company: "FinTech", img: "https://images.unsplash.com/photo-1554151228-14d9def656ec?w=100&h=100&fit=crop", text: "The expert helped me optimize my database queries. Saved us 50% on AWS bills!", stars: 5 },
-    { name: "James H.", role: "Student", company: "Bootcamp", img: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop", text: "My bootcamp didn't teach advanced patterns. This mentorship filled that gap perfectly.", stars: 5 },
-    { name: "Priya S.", role: "Senior Dev", company: "MNC", img: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop", text: "I needed a second opinion on my architecture. The mentor was world-class.", stars: 5 },
-    { name: "Tom B.", role: "Indie Hacker", company: "Self", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop", text: "Built my MVP thanks to weekly guidance. Launched and profitable now!", stars: 5 },
-    { name: "Grace L.", role: "Junior Dev", company: "Studio", img: "https://images.unsplash.com/photo-1595152772835-219674b2fa82?w=100&h=100&fit=crop", text: "I was terrified of deployment. My mentor walked me through CI/CD step by step.", stars: 5 },
-    // Row 2
-    { name: "Aiden M.", role: "Mobile Dev", company: "AppCo", img: "https://images.unsplash.com/photo-1618641986557-1ecd23095910?w=100&h=100&fit=crop", text: "Transitioning to a new stack was hard until I found this site. The roadmap helped immensely.", stars: 5 },
-    { name: "Olivia C.", role: "Product Mgr", company: "SaaS", img: "https://images.unsplash.com/photo-1491349174775-aaafddd81942?w=100&h=100&fit=crop", text: "I learned enough to communicate better with my eng team. Highly recommended for PMs.", stars: 4 },
-    { name: "Daniel W.", role: "Freelancer", company: "Remote", img: "https://images.unsplash.com/photo-1600486913747-55e5470d6f40?w=100&h=100&fit=crop", text: "The escrow payment help makes me feel safe. No risk of getting scammed.", stars: 5 },
-    { name: "Sophia K.", role: "Founder", company: "AI Startup", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop", text: "We hired a consultant here to review our code. Found critical security bugs instantly.", stars: 5 },
-    { name: "Lucas F.", role: "Intern", company: "BigTech", img: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&h=100&fit=crop", text: "My mentor prepared me for my return offer interview. I got the job!", stars: 5 },
-    { name: "Mia V.", role: "Self Taught", company: "N/A", img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=100&h=100&fit=crop", text: "Self-learning is lonely. Having a mentor to check in with weekly kept me accountable.", stars: 5 },
-    { name: "Ethan R.", role: "DevOps", company: "CloudInc", img: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100&h=100&fit=crop", text: "Needed help with Docker integration. The expert knew exactly what flag I was missing.", stars: 5 },
-    { name: "Ava J.", role: "Designer", company: "Creative", img: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop", text: "I bridge the gap between design and code now. Thanks to my amazing mentor!", stars: 5 },
-    { name: "Noah P.", role: "SRE", company: "Bank", img: "https://images.unsplash.com/photo-1628157588553-5eeea00af15c?w=100&h=100&fit=crop", text: "Fixed a critical production bug in our service with help from a senior mentor.", stars: 5 },
-    { name: "Bella T.", role: "Student", company: "College", img: "https://images.unsplash.com/photo-1628890917312-ac6235806175?w=100&h=100&fit=crop", text: "Best investment in my education. Way better than my university lectures.", stars: 5 }
+// REAL GOOGLE REVIEWS DATA (Avatars generated dynamically via ui-avatars)
+const REAL_REVIEWS = [
+  { name: "Khanak Tyagi", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Khanak+Tyagi&background=random&color=fff", text: "Today's session was very knowledgeable and I experienced and learn new thing very clearly thankyou sir ☺️", stars: 5 },
+  { name: "Nitin Jangra", role: "React Developer", company: "", img: "https://ui-avatars.com/api/?name=Nitin+Jangra&background=random&color=fff", text: "Ramkumar Sir provided exceptionally detailed and precise instruction for the React AI course. He presented the material in a way that made it feel straightforward, and his teaching experience clearly reflected current best practices in coding.", stars: 5 },
+  { name: "Komal Sharma", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Komal+Sharma&background=random&color=fff", text: "Today's session was truly amazing and full of valuable knowledge and insightful points. I learned so many new things today, and every point was really informative and helpful.", stars: 5 },
+  { name: "Rankita Sulya", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Rankita+Sulya&background=random&color=fff", text: "The session was really informative and easy to understand. I learned many new HTML concepts and improved my basics. It was a great learning experience!", stars: 5 },
+  { name: "Smitesh Solanki", role: "Frontend Developer", company: "", img: "https://ui-avatars.com/api/?name=Smitesh+Solanki&background=random&color=fff", text: "Its very informative and perfect website, I got good help and one to one support for JavaScript and React. The Group training of React and Angular was amazing.", stars: 5 },
+  { name: "Shweta Rajput", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Shweta+Rajput&background=random&color=fff", text: "This website is really good.. have gained a lot of knowledge from here whether it be React, JS and so on and the mentors are very supportive and helpful.", stars: 5 },
+  { name: "Riya Shelar", role: "Web Developer", company: "", img: "https://ui-avatars.com/api/?name=Riya+Shelar&background=random&color=fff", text: "The one-on-one mentorship was an incredible learning experience and had a significant impact on both my technical skills and my confidence as a developer. I was able to develop a strong foundation in JavaScript, CSS, React, and Chakra UI.", stars: 5 },
+  { name: "Nitesh More", role: "Developer", company: "", img: "https://ui-avatars.com/api/?name=Nitesh+More&background=random&color=fff", text: "Thank you for your invaluable guidance, support, and mentorship throughout my learning journey. Your encouragement and knowledge sharing have helped me grow significantly in React JS, Angular, and AI.", stars: 5 }
 ];
 
 // TOP TECH SKILLS FOR CROSS-LINKING
@@ -116,32 +103,13 @@ const MAJOR_TECH_HUBS = [
 
 export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug }) {
     const [showForm, setShowForm] = useState(false);
-
-    const [reviews, setReviews] = useState(INITIAL_REVIEWS);
-    const [showReviewModal, setShowReviewModal] = useState(false);
-    const [newReview, setNewReview] = useState({ name: '', role: '', company: '', text: '', stars: 5 });
+    const [reviews] = useState(REAL_REVIEWS);
 
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
 
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
     const toggleForm = () => setShowForm(!showForm);
-    const toggleReviewModal = () => setShowReviewModal(!showReviewModal);
-
-    const handleReviewSubmit = (e) => {
-        e.preventDefault();
-        const reviewToAdd = { ...newReview, img: `https://ui-avatars.com/api/?name=${newReview.name.replace(' ', '+')}&background=random&color=fff` };
-        setReviews([reviewToAdd, ...reviews]);
-        setShowReviewModal(false);
-        setNewReview({ name: '', role: '', company: '', text: '', stars: 5 });
-        alert('Thanks for your feedback! Your review has been added to the Wall of Love.');
-    };
-
-    const requests = [
-        { name: 'Rahul', topic: skill.name, loc: 'Bangalore, India', time: 'just now' },
-        { name: 'Sarah', topic: 'Full Stack', loc: 'Austin, USA', time: '2 mins ago' },
-        { name: 'Amit', topic: 'React', loc: 'Pune, India', time: '5 mins ago' }
-    ];
 
     const midPoint = Math.ceil(reviews.length / 2);
     const row1 = reviews.slice(0, midPoint);
@@ -234,18 +202,6 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                     </div>
                 </div>
             </section>
-
-            {/* Live Activity Ticker - Dynamic Social Proof */}
-            <div className="bg-brand-primary text-slate-950 border-y border-emerald-500/20 py-3.5 overflow-hidden font-bold sticky top-16 z-30 shadow-md">
-                <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
-                    {[...requests, ...requests, ...requests, ...requests].map((r, i) => (
-                        <div key={i} className="flex items-center gap-3 text-sm">
-                            <div className="w-2.5 h-2.5 rounded-full bg-slate-950 animate-ping" />
-                            <span>{r.name} from {r.loc} connected with a <strong className="underline">{r.topic}</strong> mentor {r.time}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
 
             {/* How It Works (AI Matching Process) */}
             <section className="py-24 bg-white dark:bg-[#080b14] relative overflow-hidden transition-colors duration-500">
@@ -360,6 +316,20 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Direct Google Review Link */}
+                <div className="mt-10 text-center">
+                    <a
+                        href="https://g.page/r/CY3XmUbJHFMmEBM/review"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-white dark:bg-dark-800 text-slate-800 dark:text-white border border-slate-200 dark:border-dark-700 hover:border-brand-primary hover:text-brand-primary shadow-sm transition-all"
+                    >
+                        <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                        <span>Leave us a review on Google</span>
+                        <ExternalLink size={14} className="text-slate-400" />
+                    </a>
                 </div>
             </section>
 
@@ -518,33 +488,6 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative w-full max-w-5xl bg-white dark:bg-dark-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                             <button onClick={toggleForm} className="absolute top-4 right-4 z-50 p-2 bg-slate-100 dark:bg-dark-800 rounded-full hover:bg-slate-200 dark:hover:bg-dark-700 transition-colors" title="Close"><X size={20} /></button>
                             <div className="flex-1 overflow-y-auto custom-scrollbar"><div className="p-1"><MentorshipClient prefill={{ stack: [skill.id] }} isInModal={true} /></div></div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {showReviewModal && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={toggleReviewModal} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                        <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="relative w-full max-w-lg bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 rounded-2xl shadow-2xl p-8 z-10">
-                            <button onClick={toggleReviewModal} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 dark:text-gray-500 dark:hover:text-white"><X size={24} /></button>
-                            <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary mx-auto mb-4"><Star size={32} fill="currentColor" /></div>
-                                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Share Your Experience</h3>
-                            </div>
-                            <form onSubmit={handleReviewSubmit} className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div><label className="block text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">Name</label><input required type="text" className="w-full bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-primary focus:outline-none" value={newReview.name} onChange={e => setNewReview({ ...newReview, name: e.target.value })} /></div>
-                                    <div><label className="block text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">Role</label><input required type="text" className="w-full bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-primary focus:outline-none" value={newReview.role} onChange={e => setNewReview({ ...newReview, role: e.target.value })} /></div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-500 dark:text-gray-400 mb-3">Rating</label>
-                                    <div className="flex justify-center gap-2">{[1, 2, 3, 4, 5].map(star => (<button type="button" key={star} onClick={() => setNewReview({ ...newReview, stars: star })} className={`p-2 rounded-full transition-all ${newReview.stars >= star ? 'text-yellow-400 scale-110' : 'text-slate-300 dark:text-gray-600'}`}><Star size={28} fill={newReview.stars >= star ? "currentColor" : "none"} /></button>))}</div>
-                                </div>
-                                <div><label className="block text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">Review</label><textarea required rows={3} className="w-full bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-primary focus:outline-none resize-none" value={newReview.text} onChange={e => setNewReview({ ...newReview, text: e.target.value })} /></div>
-                                <button type="submit" className="w-full py-4 bg-brand-primary text-dark-900 font-black text-lg rounded-xl hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-dark-900 transition-colors mt-4">Submit Review</button>
-                            </form>
                         </motion.div>
                     </div>
                 )}

@@ -3,6 +3,11 @@ import { MentorshipLanding } from '../../components/mentorship/MentorshipLanding
 import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 
+const REAL_RATING = {
+    ratingValue: "4.9",
+    reviewCount: "16"
+};
+
 // Generate static params for top combinations to boost SEO speed
 export async function generateStaticParams() {
     const params = [];
@@ -22,17 +27,6 @@ export async function generateStaticParams() {
     return params;
 }
 
-// Generate organic-looking metrics dynamically based on slug to avoid footprint detection
-function getDeterministicMetrics(slug) {
-    let hash = 0;
-    for (let i = 0; i < slug.length; i++) {
-        hash = slug.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const ratingValue = (4.8 + (Math.abs(hash) % 2) * 0.1).toFixed(1); // 4.8 or 4.9
-    const reviewCount = 950 + (Math.abs(hash) % 400); // 950 to 1349 reviews
-    return { ratingValue, reviewCount };
-}
-
 function capitalize(s) {
     if (!s) return '';
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -47,7 +41,7 @@ export async function generateMetadata({ params }) {
     const { skill, location, suffix, prefix } = data;
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
-    const { ratingValue, reviewCount } = getDeterministicMetrics(slug);
+    const hasRealContent = !skillContent.isFallback && !locationContent.isFallback;
 
     const isHiring = prefix === 'hire' || prefix === 'freelance' || suffix === 'developers' || suffix === 'experts';
     const isJobSupport = suffix === 'job-support' || suffix === 'project-support';
@@ -99,8 +93,8 @@ export async function generateMetadata({ params }) {
         },
         'aggregateRating': {
             '@type': 'AggregateRating',
-            'ratingValue': ratingValue,
-            'reviewCount': reviewCount.toString()
+            'ratingValue': REAL_RATING.ratingValue,
+            'reviewCount': REAL_RATING.reviewCount
         },
         'priceRange': '$$'
     };
@@ -158,7 +152,7 @@ export async function generateMetadata({ params }) {
         alternates: {
             canonical: `https://www.outlinedev.com/mentors/${slug}`,
         },
-        robots: {
+        robots: hasRealContent ? {
             index: true,
             follow: true,
             googleBot: {
@@ -168,6 +162,9 @@ export async function generateMetadata({ params }) {
                 'max-image-preview': 'large',
                 'max-snippet': -1,
             },
+        } : {
+            index: false,
+            follow: true,
         },
         other: {
             'script:ld+json': JSON.stringify(graphSchema)

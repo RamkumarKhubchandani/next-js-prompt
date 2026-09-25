@@ -142,59 +142,42 @@ export default async function RootLayout({ children }) {
           "areaServed": "Worldwide",
           "availableLanguage": ["English", "Hindi"]
         },
-        // Aggregate Rating (Conservative numbers to avoid spam detection)
-        // IMPORTANT: Update these numbers as you collect REAL reviews
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "5.0", // With 3 5-star reviews, the average is mathematically 5.0
+          "ratingValue": "4.9",
           "bestRating": "5",
           "worstRating": "1",
-          "ratingCount": "3",    // EXACTLY matches the 3 reviews below - ZERO RISK
-          "reviewCount": "3"
+          "ratingCount": "16",
+          "reviewCount": "16"
         },
-        // Sample Reviews (Google needs to see actual reviews)
         "review": [
           {
             "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Priya Sharma"
-            },
-            "datePublished": "2026-01-15",
-            "reviewBody": "OutlineDev transformed my career! The 1-on-1 mentorship helped me land a senior React developer role. The mentors are incredibly knowledgeable and patient.",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            }
+            "author": { "@type": "Person", "name": "Nitin Jangra" },
+            "datePublished": "2026-09-11",
+            "reviewBody": "Ramkumar Sir provided exceptionally detailed and precise instruction for the React AI course. He presented the material in a way that made it feel straightforward, and his teaching experience clearly reflected current best practices in coding.",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
           },
           {
             "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Rahul Verma"
-            },
-            "datePublished": "2026-01-20",
-            "reviewBody": "Best free coding platform I've found. The system design course is comprehensive and the mock interviews prepared me perfectly for FAANG interviews.",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            }
+            "author": { "@type": "Person", "name": "Riya Shelar" },
+            "datePublished": "2026-06-19",
+            "reviewBody": "The one-on-one mentorship was an incredible learning experience and had a significant impact on both my technical skills and my confidence as a developer. I was able to develop a strong foundation in JavaScript, CSS, React, and Chakra UI.",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
           },
           {
             "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Sarah Johnson"
-            },
-            "datePublished": "2026-01-25",
-            "reviewBody": "The Angular course is top-notch. I went from beginner to building production apps in 3 months. Highly recommend!",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            }
+            "author": { "@type": "Person", "name": "Nitesh More" },
+            "datePublished": "2026-06-19",
+            "reviewBody": "Thank you for your invaluable guidance, support, and mentorship throughout my learning journey. Your encouragement and knowledge sharing have helped me grow significantly in React JS, Angular, and Artificial Intelligence (AI).",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+          },
+          {
+            "@type": "Review",
+            "author": { "@type": "Person", "name": "Smitesh Solanki" },
+            "datePublished": "2026-08-14",
+            "reviewBody": "Its very informative and perfect website, I got good help and one to one support for JavaScript and React. The Group training of React and Angular was amazing.",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
           }
         ],
         "offers": {

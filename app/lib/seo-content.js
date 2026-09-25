@@ -485,6 +485,7 @@ export function getSkillContent(skillId) {
         // Fallback generator for other stacks
         const prettyName = skillId.charAt(0).toUpperCase() + skillId.slice(1);
         return {
+            isFallback: true,
             description: `Master ${prettyName} with personalized 1-on-1 coaching, architectural code reviews, hands-on projects, and real-world implementation tips.`,
             modules: [
                 { title: `${prettyName} Fundamentals`, desc: `Understand syntax, setup, core paradigms, and operational runtime of ${prettyName}.` },
@@ -498,19 +499,20 @@ export function getSkillContent(skillId) {
         };
     }
 
-    return SKILL_CONTENT[key];
+    return { ...SKILL_CONTENT[key], isFallback: false };
 }
 
 export function getLocationContent(locationId, locationName) {
     const key = (locationId || '').toLowerCase();
     
     if (LOCATION_CONTENT[key]) {
-        return LOCATION_CONTENT[key];
+        return { ...LOCATION_CONTENT[key], isFallback: false };
     }
 
     // Auto-generate for dynamic cities (Infinite Locations Feature)
     const name = locationName || locationId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     return {
+        isFallback: true,
         techHubDescription: `${name} has a thriving ecosystem of developers and tech companies. Tutors and consultants here support students and juniors to master modern coding standards.`,
         referralNetwork: `Access referral channels and local developer groups in ${name}.`
     };
