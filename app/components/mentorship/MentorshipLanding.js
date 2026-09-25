@@ -139,28 +139,25 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                 <div className="max-w-7xl mx-auto relative z-10">
                     <div className="flex flex-col lg:flex-row items-center gap-16">
                         <div className="flex-1 text-center lg:text-left">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                            <div
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100/50 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/10 text-brand-primary font-bold mb-8 shadow-xl"
                             >
                                 <Users size={18} className="animate-bounce" />
                                 <span className="text-slate-800 dark:text-white">World-class experts available for {location.name}</span>
-                            </motion.div>
+                            </div>
 
-                            <motion.h1
-                                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}
+                            <h1
                                 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-tight text-slate-900 dark:text-white"
                             >
                                 Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-500 dark:to-purple-400">{skill.name}</span> <br />
                                 with Premium {cap(suffix).replace(/-/g, ' ')}.
-                            </motion.h1>
+                            </h1>
 
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                            <p
                                 className="text-lg md:text-xl text-slate-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
                             >
                                 Accelerate your career with elite 1-on-1 {skill.name} coaching, live code reviews, and on-demand sprint debugging in {location.name}. Custom syllabus, job support, and zero fluff.
-                            </motion.p>
+                            </p>
 
                             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
                                 <button
@@ -196,7 +193,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                 <p className="text-xs text-slate-500 dark:text-gray-400 mb-6">
                                     Tell us your current challenge or learning goal. We'll match you within 15 minutes.
                                 </p>
-                                <MentorshipClient prefill={{ stack: [skill.id] }} isInModal={false} />
+                                <MentorshipClient prefill={{ stack: [skill.id] }} isInModal={true} />
                             </div>
                         </div>
                     </div>
