@@ -139,6 +139,10 @@ export default async function sitemap() {
     { url: "/developer-toolkit-2026", changeFrequency: "weekly", priority: 0.9 },
     { url: "/coding-classes-for-beginners", changeFrequency: "weekly", priority: 0.9 },
     { url: "/bca-mca-training-jamnagar", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/hire/react-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/nextjs-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/full-stack-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/typescript-developer", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => ({
     url: `${baseUrl}${route.url}`,
     lastModified: currentDate,

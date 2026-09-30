@@ -178,6 +178,27 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <span>Chat on WhatsApp</span>
                                 </a>
                             </div>
+
+                            {((prefix === 'hire' || prefix === 'freelance') && ['react', 'nextjs', 'fullstack', 'typescript'].includes(skill.id)) && (
+                                <div className="mt-8 p-4 rounded-2xl bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 shadow-sm text-left max-w-xl">
+                                    <p className="text-[11px] text-slate-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Looking for direct project development?</p>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                                                Hire Ramkumar Khubchandani ({skill.name})
+                                            </h4>
+                                            <p className="text-xs text-slate-600 dark:text-gray-400">12+ years experience • Starting from $30/hr</p>
+                                        </div>
+                                        <Link
+                                            href={`/hire/${skill.id === 'react' ? 'react-developer' : skill.id === 'nextjs' ? 'nextjs-developer' : skill.id === 'fullstack' ? 'full-stack-developer' : 'typescript-developer'}`}
+                                            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-900 bg-brand-primary hover:bg-emerald-400 transition-colors shrink-0 inline-flex items-center gap-1 justify-center"
+                                        >
+                                            <span>View Profile & Hire</span>
+                                            <ArrowRight size={13} />
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right Form Card */}
