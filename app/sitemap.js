@@ -22,7 +22,8 @@ const PHASE_1_SKILLS = [
   "tailwind",
   "redux",
   "python",
-  "ai-frontend"
+  "ai-frontend",
+  "web-development"
 ];
 
 const PHASE_1_LOCATIONS = [
@@ -180,6 +181,20 @@ export default async function sitemap() {
       // Standard mentors variation -> 0.9
       mentorRoutes.push({
         url: `${baseUrl}/mentors/${skill}-mentors-in-${location}`,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.9,
+      });
+
+      // Teacher variation -> 0.9
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/one-to-one-${skill}-teachers-in-${location}`,
+        lastModified: MENTOR_PAGES_LAST_MODIFIED,
+        changeFrequency: "weekly",
+        priority: 0.9,
+      });
+      mentorRoutes.push({
+        url: `${baseUrl}/mentors/${skill}-teachers-in-${location}`,
         lastModified: MENTOR_PAGES_LAST_MODIFIED,
         changeFrequency: "weekly",
         priority: 0.9,

@@ -118,6 +118,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
     // Related format slugs for the current skill + location
     const formatVariations = [
         { label: `1:1 ${skill.name} Tutors`, href: `/mentors/one-to-one-${skill.id}-tutors-in-${location.id}`, desc: "Personalized private coaching" },
+        { label: `1:1 ${skill.name} Teachers`, href: `/mentors/one-to-one-${skill.id}-teachers-in-${location.id}`, desc: "Dedicated 1-on-1 teaching sessions" },
         { label: `${skill.name} Job Support`, href: `/mentors/${skill.id}-job-support-in-${location.id}`, desc: "Sprint assistance & debugging" },
         { label: `${skill.name} Interview Prep`, href: `/mentors/${skill.id}-interview-help-in-${location.id}`, desc: "Mock interviews & system design" },
         { label: `Hire ${skill.name} Developers`, href: `/mentors/hire-${skill.id}-developers-in-${location.id}`, desc: "Vetted top 1% contract engineers" },
