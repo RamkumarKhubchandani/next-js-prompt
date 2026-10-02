@@ -63,6 +63,7 @@ export const SKILLS = [
     { id: 'job-support', name: 'IT Job Support', keywords: ['job-support', 'it-job-support', 'project-support', 'sprint-support', 'on-the-job-support', 'daily-standup-support'] },
     { id: 'fullstack', name: 'Full Stack Development', keywords: ['full-stack', 'mern', 'mern-stack', 'mean', 'fullstack-developer'] },
     { id: 'web-development', name: 'Web Development', keywords: ['website-development', 'web-dev', 'website-building'] },
+    { id: 'mfe', name: 'Micro Frontend (MFE)', keywords: ['micro-frontend', 'micro-frontends', 'microfrontend', 'microfrontends', 'module-federation', 'webpack-module-federation', 'mfe-architecture'] },
     { id: 'ai-frontend', name: 'AI Frontend Development', keywords: ['aifrontend', 'ai-frontend', 'ai-fe', 'genai-frontend', 'ai-front-end'] },
 ];
 

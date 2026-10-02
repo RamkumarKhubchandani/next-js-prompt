@@ -23,7 +23,8 @@ const PHASE_1_SKILLS = [
   "redux",
   "python",
   "ai-frontend",
-  "web-development"
+  "web-development",
+  "mfe"
 ];
 
 const PHASE_1_LOCATIONS = [

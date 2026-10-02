@@ -156,15 +156,15 @@ export const SKILL_CONTENT = {
         }
     },
     mfe: {
-        description: "Architect scalable, decentralized frontend applications using Webpack Module Federation, custom shell micro-routing, and shared dependency profiles.",
+        description: "Master Micro Frontend (MFE) architecture, Module Federation, decoupled client-side deployments, shell application orchestration, independent team pipelines, and shared runtime dependency management.",
         modules: [
-            { title: "Webpack Module Federation", desc: "Configure hosts and remote containers to share dynamic runtime builds and dependencies." },
-            { title: "Shell Shell & Routing orchestration", desc: "Design main application shells that handle lazy-loaded sub-applications and shared routing states." },
-            { title: "State & Communication hubs", desc: "Implement decoupled cross-app communication using custom events, state stores, or pub-sub channels." }
+            { title: "Module Federation & Runtime Sharing", desc: "Configure Webpack and Vite Module Federation host and remote containers with shared singleton dependencies, dynamic remote entry URLs, and version fallback controls." },
+            { title: "Shell Architecture & Micro-Routing", desc: "Design resilient application shells handling independent routing, unified authentication tokens, layout orchestration, and graceful fallback boundaries." },
+            { title: "Cross-MFE State & Event Hubs", desc: "Implement decoupled inter-application communication using browser CustomEvents, reactive pub/sub event buses, and distributed state caching without tight coupling." }
         ],
         faq: {
-            question: "What is Webpack Module Federation and how does it help in Micro Frontend architectures?",
-            answer: "Webpack Module Federation is a feature that allows a Webpack compilation to import code from another Webpack compilation at runtime. This enables Micro Frontends by allowing team repositories to deploy sub-applications independently, while the parent 'shell' application dynamically pulls in the latest hosted bundle at runtime without needing to rebuild or redeploy the main container."
+            question: "What is Webpack Module Federation and how does it solve Micro Frontend challenges?",
+            answer: "Webpack Module Federation allows independent web applications (remotes) to expose and consume JavaScript modules at runtime without bundling them together at build time. It solves key micro frontend challenges by: 1) Enabling independent deployment cycles where teams ship updates without rebuilding the host shell. 2) Sharing singleton runtime dependencies (like React or UI design systems) to prevent downloading duplicate libraries. 3) Providing dynamic remote entry resolution with robust error boundary fallbacks if a remote fails to load."
         }
     },
     aifrontend: {
