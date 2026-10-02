@@ -15,6 +15,7 @@ const AiQuizCta = dynamic(() => import('./components/landing-page/AiQuizCta').th
 const CareerGoalPromo = dynamic(() => import('./components/landing-page/CareerGoalPromo').then(mod => ({ default: mod.CareerGoalPromo })), { ssr: true, loading: () => <SectionSkeleton /> });
 const HowItWorks = dynamic(() => import('./components/landing-page/HowItWorks').then(mod => ({ default: mod.HowItWorks })), { ssr: true, loading: () => <SectionSkeleton /> });
 const CurriculumRoadmap = dynamic(() => import('./components/landing-page/CurriculumRoadmap').then(mod => ({ default: mod.CompleteCurriculumRoadmap })), { ssr: true, loading: () => <SectionSkeleton /> });
+const VideoTestimonials = dynamic(() => import('./components/landing-page/VideoTestimonials').then(mod => ({ default: mod.VideoTestimonials })), { ssr: true, loading: () => <SectionSkeleton /> });
 const GoogleReviewsSection = dynamic(() => import('./components/public/GoogleReviewsSection'), { ssr: true, loading: () => <SectionSkeleton /> });
 const Testimonials = dynamic(() => import('./components/landing-page/Testimonials').then(mod => ({ default: mod.Testimonials })), { ssr: true, loading: () => <SectionSkeleton /> });
 const Footer = dynamic(() => import('./components/Footer').then(mod => ({ default: mod.Footer })), { ssr: true });
@@ -41,6 +42,7 @@ export default function HomeClientPage() {
                 <AiQuizCta />
                 <CareerGoalPromo />
                 <HowItWorks />
+                <VideoTestimonials />
                 <GoogleReviewsSection />
                 <Testimonials />
             </main>
