@@ -1,8 +1,7 @@
 "use client";
 import React from 'react';
-import { Code, CheckCircle, Github, MessageSquare, ArrowRight, Shield, Zap, Layers, Terminal, Star } from 'lucide-react';
+import { Code, CheckCircle, Github, ArrowRight, Shield, Zap, Layers, Terminal, MessageSquare } from 'lucide-react';
 import { Header } from '../components/Header';
-import { motion } from 'framer-motion';
 
 export default function CodeReviewPage() {
 
@@ -17,27 +16,6 @@ export default function CodeReviewPage() {
         });
         window.dispatchEvent(event);
     };
-
-    const testimonials = [
-        {
-            name: "Alex Rivera",
-            role: "Frontend Dev at Startup Inc",
-            text: "I thought my React code was clean until the OutlineDev team reviewed it. They found 3 major performance bottlenecks and a security flaw I missed. Best investment ever.",
-            image: "https://randomuser.me/api/portraits/men/33.jpg"
-        },
-        {
-            name: "Emily Zhang",
-            role: "Junior Engineer",
-            text: "It's like having a Staff Engineer looking over your shoulder. The feedback wasn't just 'fix this', it was 'here is why this is bad and how to do it better'. Learned so much.",
-            image: "https://randomuser.me/api/portraits/women/26.jpg"
-        },
-        {
-            name: "Michael Scott",
-            role: "Full Stack Developer",
-            text: "The detailed breakdown of my API structure helped me refactor my entire backend. Now it's scalable and much easier to maintain.",
-            image: "https://randomuser.me/api/portraits/men/55.jpg"
-        }
-    ];
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#050510] relative text-slate-900 dark:text-slate-100 font-sans">
@@ -58,7 +36,7 @@ export default function CodeReviewPage() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Spaghetti Code</span>
                         </h1>
                         <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-                            OutlineDev Code Review is a free pull request (PR) auditing and code analysis service. Submit your repository link, and our senior engineers will analyze your code for security vulnerabilities, performance bottlenecks, and architectural optimizations within 24 hours.
+                            OutlineDev Code Review provides PR auditing and code analysis. Submit your repository or pull request link, and our senior engineers will analyze your code for security vulnerabilities, performance bottlenecks, and architectural optimizations.
                         </p>
                         <ul className="space-y-4">
                             {[
@@ -73,7 +51,7 @@ export default function CodeReviewPage() {
                                 </li>
                             ))}
                         </ul>
-                        <div className="pt-4 flex flex-wrap gap-4">
+                        <div className="pt-4 flex flex-wrap gap-4 items-center">
                             <button
                                 onClick={openConnectModal}
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 hover:scale-105 transition-all shadow-lg shadow-blue-600/25"
@@ -81,14 +59,6 @@ export default function CodeReviewPage() {
                                 Request a Review
                                 <ArrowRight size={18} />
                             </button>
-                            <div className="flex items-center gap-[-10px]">
-                                <div className="flex -space-x-3">
-                                    {testimonials.map((t, i) => (
-                                        <img key={i} src={t.image} alt={t.name} className="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900" />
-                                    ))}
-                                </div>
-                                <span className="ml-4 text-sm font-bold text-slate-500">Loved by 500+ devs</span>
-                            </div>
                         </div>
                     </div>
 
@@ -144,26 +114,22 @@ export default function CodeReviewPage() {
                     </div>
                 </div>
 
-                {/* Testimonials */}
-                <div className="max-w-7xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">Developer Love</h2>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {testimonials.map((t, i) => (
-                            <div key={i} className="bg-slate-50 dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 relative">
-                                <div className="flex gap-1 text-orange-400 mb-4">
-                                    {[1, 2, 3, 4, 5].map(star => <Star key={star} size={14} fill="currentColor" />)}
-                                </div>
-                                <p className="text-slate-700 dark:text-slate-300 mb-6 italic">"{t.text}"</p>
-                                <div className="flex items-center gap-4">
-                                    <img src={t.image} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
-                                    <div>
-                                        <div className="font-bold text-sm text-slate-900 dark:text-white">{t.name}</div>
-                                        <div className="text-xs text-slate-500 font-bold uppercase">{t.role}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                {/* Honest Early Client Section */}
+                <div className="max-w-4xl mx-auto text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 md:p-16 shadow-lg shadow-slate-200/50 dark:shadow-none">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 mx-auto mb-6">
+                        <MessageSquare size={32} />
                     </div>
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">Be One of Our First Code Review Clients</h2>
+                    <p className="text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto mb-8 leading-relaxed">
+                        Submit your repository or pull request today. Get actionable feedback on performance, code structure, and security directly from experienced engineers.
+                    </p>
+                    <button
+                        onClick={openConnectModal}
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 hover:scale-105 transition-all shadow-lg shadow-blue-600/25"
+                    >
+                        Submit Your Code for Review
+                        <ArrowRight size={18} />
+                    </button>
                 </div>
 
             </main>

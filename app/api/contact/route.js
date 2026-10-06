@@ -1,61 +1,128 @@
-// app/api/contact/route.js
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
-// Named export for POST method
-export async function POST(req) {
-  if (req.method === 'OPTIONS') {
-    return new NextResponse('ok', { status: 200 });
-  }
+// Simple in-memory rate limiting: IP -> [timestamp]
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_REQUESTS_PER_WINDOW = 5;
 
-  try {
-    const { email, phoneNumber, countryCode } = await req.json();
+function isRateLimited(ip) {
+    const now = Date.now();
+    const timestamps = rateLimitMap.get(ip) || [];
+    const validTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
 
-    // Validate required fields
-    if (!email || !phoneNumber || !countryCode) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+        return true;
     }
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: 'hi@outlinedev.com',
-      subject: 'New Contact Form Submission',
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone Number:</strong> ${countryCode.dialCode} ${phoneNumber}</p>
-        <p><strong>Country:</strong> ${countryCode.name}</p>
-        <p><strong>Submitted at:</strong> ${new Date().toLocaleString()}</p>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json(
-      { success: true, message: 'Email sent successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to send email' },
-      { status: 500 }
-    );
-  }
+    validTimestamps.push(now);
+    rateLimitMap.set(ip, validTimestamps);
+    return false;
 }
 
-// If you need other HTTP methods, export them like this:
-export async function GET() {
-  return NextResponse.json({ message: 'Method not allowed' }, { status: 405 });
+export async function POST(req) {
+    try {
+        const forwarded = req.headers.get('x-forwarded-for');
+        const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
+
+        if (isRateLimited(ip)) {
+            return NextResponse.json(
+                { success: false, error: 'Too many messages sent. Please wait a few minutes before trying again.' },
+                { status: 429 }
+            );
+        }
+
+        const body = await req.json();
+        const { name, email, message, website } = body;
+
+        // 1. Honeypot check: reject bots silently
+        if (website) {
+            return NextResponse.json({ success: true, message: 'Message received' }, { status: 200 });
+        }
+
+        // 2. Validate required fields
+        if (!name || !email || !message) {
+            return NextResponse.json(
+                { success: false, error: 'Please fill in all required fields (Name, Email, and Message).' },
+                { status: 400 }
+            );
+        }
+
+        // 3. Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return NextResponse.json(
+                { success: false, error: 'Please provide a valid email address.' },
+                { status: 400 }
+            );
+        }
+
+        const recipient = process.env.CONTACT_FORM_TO || process.env.HIRE_INQUIRY_TO || 'hi@outlinedev.com';
+        const submittedAt = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
+                <h2 style="color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+                    📬 New Contact Us Message
+                </h2>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #475569; width: 140px;">Sender Name:</td>
+                        <td style="padding: 8px 0; color: #0f172a;">${name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #475569;">Email:</td>
+                        <td style="padding: 8px 0; color: #0f172a;"><a href="mailto:${email}">${email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #475569; vertical-align: top;">Message:</td>
+                        <td style="padding: 8px 0; color: #0f172a; white-space: pre-wrap;">${message}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #475569;">Submitted At:</td>
+                        <td style="padding: 8px 0; color: #64748b;">${submittedAt}</td>
+                    </tr>
+                </table>
+            </div>
+        `;
+
+        // 4. Send email using Resend or Nodemailer
+        if (process.env.RESEND_API_KEY) {
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            await resend.emails.send({
+                from: 'OutlineDev Contact <onboarding@resend.dev>',
+                to: recipient,
+                reply_to: email,
+                subject: `📬 Contact Form Submission from ${name}`,
+                html: htmlContent
+            });
+        } else if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
+
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: recipient,
+                replyTo: email,
+                subject: `📬 Contact Form Submission from ${name}`,
+                html: htmlContent
+            });
+        } else {
+            console.log('ℹ️ [Contact Message Received - Local / Dev Mode]:', { name, email, message });
+        }
+
+        return NextResponse.json({ success: true, message: 'Message sent successfully' }, { status: 200 });
+    } catch (error) {
+        console.error('Error handling contact submission:', error);
+        return NextResponse.json(
+            { success: false, error: 'Internal server error while sending your message. Please try again later.' },
+            { status: 500 }
+        );
+    }
 }

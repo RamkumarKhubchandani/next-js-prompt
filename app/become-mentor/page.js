@@ -1,15 +1,15 @@
 import BecomeMentorClient from './BecomeMentorClient';
 
 export const metadata = {
-    title: "Become a Mentor | Share Knowledge & Earn Money | OutlineDev",
-    description: "Join our elite network of engineering mentors. Teach React, Node.js, and System Design to students worldwide. Set your own rates and work from anywhere.",
-    keywords: "become a coding mentor, teach programming online, react mentor jobs, javascript tutor jobs, earn money coding, developer mentorship program",
+    title: "Become a Mentor | Share Knowledge & Mentor Developers | OutlineDev",
+    description: "Join our network of engineering mentors. Teach React, Node.js, and System Design to students worldwide. Set your own rates and work remotely.",
+    keywords: "become a coding mentor, teach programming online, react mentor, javascript tutor, developer mentorship program",
     alternates: {
         canonical: 'https://www.outlinedev.com/become-mentor',
     },
     openGraph: {
-        title: "Become a Coding Mentor - Earn Globally",
-        description: "Share your engineering expertise with the next generation. Join OutlineDev's global mentor network.",
+        title: "Become a Coding Mentor - OutlineDev",
+        description: "Share your engineering expertise with the next generation. Join OutlineDev's mentor network.",
         images: ['/assets/mentor-hero.png'],
     }
 };
@@ -39,16 +39,6 @@ export default function BecomeMentorPage() {
         "applicantLocationRequirements": {
             "@type": "Country",
             "name": "Worldwide"
-        },
-        "baseSalary": {
-            "@type": "MonetaryAmount",
-            "currency": "USD",
-            "value": {
-                "@type": "QuantitativeValue",
-                "minValue": 50,
-                "maxValue": 200,
-                "unitText": "HOUR"
-            }
         },
         "directApply": true,
         "url": "https://www.outlinedev.com/become-mentor"

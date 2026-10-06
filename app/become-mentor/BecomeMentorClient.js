@@ -63,14 +63,10 @@ export default function BecomeMentorClient() {
                         setFormData(prev => ({
                             ...prev,
                             ...data.application,
-                            // Ensure arrays are arrays
                             skills: data.application.skills || []
                         }));
-                        // If they are already pending/approved, we might show the success screen initially?
-                        // Or let them edit. The user asked to "edit and send back".
-                        // So we just load the data.
                         if (data.application.status === 'pending') {
-                            setIsSuccess(true); // Show "Received" screen first, but provide "Edit" button there?
+                            setIsSuccess(true);
                         }
                     }
                 }
@@ -134,7 +130,7 @@ export default function BecomeMentorClient() {
                         </div>
                         <h2 className="text-3xl font-black mb-4 text-dark-900 dark:text-white">Application Received!</h2>
                         <p className="text-gray-600 dark:text-gray-300 mb-8">
-                            Thank you for applying to join the Elite Mentor League. Our team will review your profile and schedule a <strong>Skill Assessment Interview</strong> within 48 hours.
+                            Thank you for applying to join our mentor network. Our team will review your profile within 3-5 business days.
                         </p>
                         <div className="space-y-3">
                             <button
@@ -167,14 +163,14 @@ export default function BecomeMentorClient() {
                         transition={{ duration: 0.6 }}
                     >
                         <span className="inline-block py-1 px-3 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest mb-6">
-                            Join the Top 1% of Educators
+                            Join Our Mentorship Network
                         </span>
                         <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 text-dark-900 dark:text-white">
                             Share Knowledge. <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600">Earn Globally.</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600">Mentor Engineers.</span>
                         </h1>
                         <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                            Join the world's fastest-growing mentorship platform. We handle the marketing, scheduling, and payments. You focus on <strong>building the next generation of engineers.</strong>
+                            Connect with learners looking for direct guidance in React, Node.js, and System Design. Set your terms, teach directly, and help build the next generation of engineers.
                         </p>
                     </motion.div>
                 </section>
@@ -192,7 +188,7 @@ export default function BecomeMentorClient() {
                             </div>
                             <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Global Reach</h3>
                             <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                Teach students from 150+ countries. Our platform localizes payments and schedules, connecting you with eager learners worldwide.
+                                Connect with motivated learners seeking personalized 1-on-1 mentorship, code reviews, and career guidance.
                             </p>
                         </div>
 
@@ -203,9 +199,9 @@ export default function BecomeMentorClient() {
                             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 text-green-600 dark:text-green-400">
                                 <DollarSign size={24} />
                             </div>
-                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Set Your Own Rates</h3>
+                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Direct Terms & Payments</h3>
                             <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                You decide what your time is worth. Top mentors earn over <strong>$5,000/month</strong> teaching part-time. We take a minimal platform fee.
+                                You arrange payment directly with the client or student — we don't take a cut, and we don't hold your money. We introduce the lead; terms are between you and them.
                             </p>
                         </div>
 
@@ -216,9 +212,9 @@ export default function BecomeMentorClient() {
                             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 text-purple-600 dark:text-purple-400">
                                 <Users size={24} />
                             </div>
-                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Integrated Tools</h3>
+                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Focused Mentorship</h3>
                             <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                No more Zoom links or messy calendars. Our platform includes built-in video conferencing, code collaboration, and scheduling.
+                                Focus on hands-on pairing, code reviews, and system architecture walkthroughs using your preferred workflow and tools.
                             </p>
                         </div>
                     </div>
@@ -262,7 +258,7 @@ export default function BecomeMentorClient() {
                                     <AnimatePresence mode="wait">
                                         {/* STEP 1: PERSONAL INFO */}
                                         {step === 1 && (
-                                            <motion.div
+                                             <motion.div
                                                 key="step1"
                                                 initial={{ opacity: 0, x: 20 }}
                                                 animate={{ opacity: 1, x: 0 }}
@@ -451,7 +447,7 @@ export default function BecomeMentorClient() {
                                                         <Video size={16} /> Interview Process
                                                     </h4>
                                                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                        After submission, we will schedule a 30-min video interview to verify your skills. Once approved, your profile goes live to millions.
+                                                        For most applicants, we schedule a short 30-minute video interview to verify your skills — strong profiles with clear project history may be approved without one.
                                                     </p>
                                                 </div>
 
