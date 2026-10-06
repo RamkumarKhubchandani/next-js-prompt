@@ -2,17 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video } from 'lucide-react';
+import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video, Search, X, Check } from 'lucide-react';
 import { countryList } from '../components/countryList';
+import { SKILLS as SEO_SKILLS } from '../lib/seo-data';
 import Link from 'next/link';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-
-const SKILLS = [
-    "React", "Node.js", "Angular", "Vue.js", "System Design",
-    "Python", "Java", "Go", "Rust", "AWS", "Docker", "Kubernetes",
-    "Product Management", "UI/UX Design", "Career Coaching"
-];
 
 function StepIndicator({ currentStep, totalSteps }) {
     return (
@@ -33,9 +28,12 @@ export default function BecomeMentorClient() {
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [skillSearch, setSkillSearch] = useState('');
+    const [roleError, setRoleError] = useState('');
 
     // Form State
     const [formData, setFormData] = useState({
+        roles: [],
         phone: '',
         country: '',
         city: '',
@@ -47,7 +45,8 @@ export default function BecomeMentorClient() {
         availability: '',
         bio: '',
         education: '',
-        videoIntro: '' // Optional URL
+        videoIntro: '', // Optional URL
+        photoUrl: null
     });
 
     // Fetch existing application
@@ -63,6 +62,7 @@ export default function BecomeMentorClient() {
                         setFormData(prev => ({
                             ...prev,
                             ...data.application,
+                            roles: data.application.roles || [],
                             skills: data.application.skills || []
                         }));
                         if (data.application.status === 'pending') {
@@ -80,6 +80,16 @@ export default function BecomeMentorClient() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const toggleRole = (role) => {
+        setRoleError('');
+        setFormData(prev => {
+            const roles = prev.roles.includes(role)
+                ? prev.roles.filter(r => r !== role)
+                : [...prev.roles, role];
+            return { ...prev, roles };
+        });
+    };
+
     const toggleSkill = (skill) => {
         setFormData(prev => {
             const skills = prev.skills.includes(skill)
@@ -88,6 +98,24 @@ export default function BecomeMentorClient() {
             return { ...prev, skills };
         });
     };
+
+    const handleStep1Next = () => {
+        if (!formData.roles || formData.roles.length === 0) {
+            setRoleError('Please select at least one role you are applying for.');
+            return;
+        }
+        if (!formData.phone || !formData.country || !formData.linkedin) {
+            alert('Please fill in your phone number, country, and LinkedIn profile.');
+            return;
+        }
+        setStep(2);
+    };
+
+    const filteredSkills = SEO_SKILLS.filter(s => {
+        const q = skillSearch.toLowerCase().trim();
+        if (!q) return true;
+        return s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.keywords?.some(k => k.toLowerCase().includes(q));
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -256,15 +284,60 @@ export default function BecomeMentorClient() {
                                     <StepIndicator currentStep={step} totalSteps={3} />
 
                                     <AnimatePresence mode="wait">
-                                        {/* STEP 1: PERSONAL INFO */}
+                                        {/* STEP 1: PERSONAL INFO & ROLE SELECTION */}
                                         {step === 1 && (
-                                             <motion.div
+                                            <motion.div
                                                 key="step1"
                                                 initial={{ opacity: 0, x: 20 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -20 }}
                                                 className="space-y-6"
                                             >
+                                                {/* Role Selection */}
+                                                <div>
+                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                                                        I am applying as: <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleRole('mentor')}
+                                                            className={`p-4 rounded-xl border text-left flex items-start gap-3 transition-all ${
+                                                                formData.roles.includes('mentor')
+                                                                    ? "border-brand-primary bg-brand-primary/10 text-dark-900 dark:text-white"
+                                                                    : "border-gray-200 dark:border-white/10 hover:border-gray-400 text-gray-700 dark:text-gray-300"
+                                                            }`}
+                                                        >
+                                                            <div className={`w-5 h-5 rounded flex items-center justify-center border mt-0.5 ${formData.roles.includes('mentor') ? 'bg-brand-primary border-brand-primary text-dark-900' : 'border-gray-400'}`}>
+                                                                {formData.roles.includes('mentor') && <Check size={14} />}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-sm">Mentor</div>
+                                                                <div className="text-xs text-gray-500 dark:text-gray-400">Teaching, coaching & 1-on-1 sessions</div>
+                                                            </div>
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleRole('hire')}
+                                                            className={`p-4 rounded-xl border text-left flex items-start gap-3 transition-all ${
+                                                                formData.roles.includes('hire')
+                                                                    ? "border-brand-primary bg-brand-primary/10 text-dark-900 dark:text-white"
+                                                                    : "border-gray-200 dark:border-white/10 hover:border-gray-400 text-gray-700 dark:text-gray-300"
+                                                            }`}
+                                                        >
+                                                            <div className={`w-5 h-5 rounded flex items-center justify-center border mt-0.5 ${formData.roles.includes('hire') ? 'bg-brand-primary border-brand-primary text-dark-900' : 'border-gray-400'}`}>
+                                                                {formData.roles.includes('hire') && <Check size={14} />}
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-bold text-sm">Available for Hire</div>
+                                                                <div className="text-xs text-gray-500 dark:text-gray-400">Freelance, contract & project work</div>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                    {roleError && <p className="text-xs text-red-500 font-semibold mt-2">{roleError}</p>}
+                                                </div>
+
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="col-span-2">
                                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
@@ -321,7 +394,7 @@ export default function BecomeMentorClient() {
 
                                                 <button
                                                     type="button"
-                                                    onClick={() => setStep(2)}
+                                                    onClick={handleStep1Next}
                                                     className="w-full py-4 mt-4 bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                                                 >
                                                     Next Step <Layout size={18} />
@@ -329,7 +402,7 @@ export default function BecomeMentorClient() {
                                             </motion.div>
                                         )}
 
-                                        {/* STEP 2: PROFESSIONAL INFO */}
+                                        {/* STEP 2: PROFESSIONAL INFO & SEARCHABLE MULTI-SELECT SKILLS */}
                                         {step === 2 && (
                                             <motion.div
                                                 key="step2"
@@ -339,21 +412,81 @@ export default function BecomeMentorClient() {
                                                 className="space-y-6"
                                             >
                                                 <div>
-                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Primary Expertise (Select multiple)</label>
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {SKILLS.map(skill => (
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                                                            Primary Expertise (Select multiple)
+                                                        </label>
+                                                        <span className="text-xs text-gray-500 font-medium">
+                                                            {formData.skills.length} selected
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Selected removable tags */}
+                                                    {formData.skills.length > 0 && (
+                                                        <div className="flex flex-wrap gap-1.5 p-3 mb-3 bg-gray-50 dark:bg-black/30 rounded-xl border border-gray-200 dark:border-white/10 max-h-32 overflow-y-auto">
+                                                            {formData.skills.map(skill => (
+                                                                <span
+                                                                    key={skill}
+                                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-primary text-dark-900 font-bold rounded-lg text-xs"
+                                                                >
+                                                                    {skill}
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => toggleSkill(skill)}
+                                                                        className="hover:opacity-75 focus:outline-none"
+                                                                    >
+                                                                        <X size={12} />
+                                                                    </button>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Search Input */}
+                                                    <div className="relative mb-3">
+                                                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                        <input
+                                                            type="text"
+                                                            value={skillSearch}
+                                                            onChange={(e) => setSkillSearch(e.target.value)}
+                                                            placeholder="Filter skills (e.g. React, Next.js, Python, AWS, MFE)..."
+                                                            className="w-full pl-10 pr-8 py-2.5 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none text-sm transition-colors"
+                                                        />
+                                                        {skillSearch && (
                                                             <button
-                                                                key={skill}
                                                                 type="button"
-                                                                onClick={() => toggleSkill(skill)}
-                                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all ${formData.skills.includes(skill)
-                                                                    ? "bg-brand-primary text-dark-900 border-brand-primary"
-                                                                    : "bg-transparent text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-700 hover:border-gray-400"
-                                                                    }`}
+                                                                onClick={() => setSkillSearch('')}
+                                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
                                                             >
-                                                                {skill}
+                                                                <X size={14} />
                                                             </button>
-                                                        ))}
+                                                        )}
+                                                    </div>
+
+                                                    {/* Filterable Skill Grid */}
+                                                    <div className="max-h-48 overflow-y-auto p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/40 flex flex-wrap gap-1.5">
+                                                        {filteredSkills.length > 0 ? (
+                                                            filteredSkills.map(skill => {
+                                                                const isSelected = formData.skills.includes(skill.name);
+                                                                return (
+                                                                    <button
+                                                                        key={skill.id}
+                                                                        type="button"
+                                                                        onClick={() => toggleSkill(skill.name)}
+                                                                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                                                                            isSelected
+                                                                                ? "bg-brand-primary text-dark-900 border-brand-primary shadow-sm"
+                                                                                : "bg-transparent text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-primary/50"
+                                                                        }`}
+                                                                    >
+                                                                        {isSelected ? "✓ " : "+ "}
+                                                                        {skill.name}
+                                                                    </button>
+                                                                );
+                                                            })
+                                                        ) : (
+                                                            <p className="text-xs text-gray-400 p-2">No matching skills found for "{skillSearch}".</p>
+                                                        )}
                                                     </div>
                                                 </div>
 

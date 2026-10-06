@@ -7,6 +7,15 @@ const mentorApplicationSchema = new mongoose.Schema({
         required: true
     },
     // Application Data
+    roles: {
+        type: [String],
+        enum: ['mentor', 'hire'],
+        default: []
+    },
+    photoUrl: {
+        type: String,
+        default: null
+    },
     phone: String,
     country: String,
     linkedin: String,
