@@ -461,7 +461,8 @@ export function getSkillContent(skillId) {
     
     // Map alternate names to primary keys
     let key = 'javascript';
-    if (normId.includes('reactnative')) key = 'reactnative';
+    if (normId === 'javascript' || normId === 'js') key = 'javascript';
+    else if (normId.includes('reactnative')) key = 'reactnative';
     else if (normId.includes('react') && !normId.includes('native')) key = 'react';
     else if (normId.includes('svelte')) key = 'svelte';
     else if (normId.includes('typescript') || normId === 'ts') key = 'typescript';
