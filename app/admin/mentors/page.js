@@ -56,38 +56,53 @@ export default function MentorAdmin() {
                     {applications.map(app => (
                         <div key={app._id} className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-dark-700">
                             <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                                        <h3 className="text-xl font-bold dark:text-white">
-                                            {app.userId?.name || 'Unknown User'}
-                                        </h3>
-                                        {app.roles?.includes('mentor') && (
-                                            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                                                🎓 Mentor
+                                <div className="flex items-start gap-4">
+                                    {app.photoUrl ? (
+                                        <img
+                                            src={app.photoUrl}
+                                            alt={app.userId?.name || 'Applicant'}
+                                            className="w-14 h-14 rounded-full object-cover border-2 border-brand-primary/60 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-dark-700 flex items-center justify-center font-bold text-gray-500 shrink-0">
+                                            {app.userId?.name ? app.userId.name.slice(0, 2).toUpperCase() : 'ME'}
+                                        </div>
+                                    )}
+                                    <div>
+                                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                                            <h3 className="text-xl font-bold dark:text-white">
+                                                {app.userId?.name || 'Unknown User'}
+                                            </h3>
+                                            {app.roles?.includes('mentor') && (
+                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                                    🎓 Mentor
+                                                </span>
+                                            )}
+                                            {app.roles?.includes('hire') && (
+                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                                    💼 Freelance / Hire
+                                                </span>
+                                            )}
+                                            {(!app.roles || app.roles.length === 0) && (
+                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                                    🎓 Mentor
+                                                </span>
+                                            )}
+                                            <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${app.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                app.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                                    'bg-red-100 text-red-800'
+                                                }`}>
+                                                {app.status.toUpperCase()}
                                             </span>
-                                        )}
-                                        {app.roles?.includes('hire') && (
-                                            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                                                💼 Freelance / Hire
-                                            </span>
-                                        )}
-                                        {(!app.roles || app.roles.length === 0) && (
-                                            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                                🎓 Mentor
-                                            </span>
-                                        )}
-                                        <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${app.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                'bg-red-100 text-red-800'
-                                            }`}>
-                                            {app.status.toUpperCase()}
-                                        </span>
+                                        </div>
+                                        <p className="text-sm text-gray-500">{app.userId?.email}</p>
                                     </div>
-                                    <p className="text-sm text-gray-500">{app.userId?.email}</p>
                                 </div>
                                 <div className="text-right text-sm text-gray-500">
                                     <p>{new Date(app.createdAt).toLocaleDateString()}</p>
-                                    <p>{app.country}</p>
+                                    <p className="font-medium text-gray-700 dark:text-gray-300">
+                                        {[app.city, app.state, app.country].filter(Boolean).join(', ') || 'Global'}
+                                    </p>
                                 </div>
                             </div>
 

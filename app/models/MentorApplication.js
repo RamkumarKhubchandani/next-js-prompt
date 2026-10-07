@@ -10,7 +10,7 @@ const mentorApplicationSchema = new mongoose.Schema({
     roles: {
         type: [String],
         enum: ['mentor', 'hire'],
-        default: []
+        default: ['mentor', 'hire']
     },
     photoUrl: {
         type: String,
@@ -18,6 +18,8 @@ const mentorApplicationSchema = new mongoose.Schema({
     },
     phone: String,
     country: String,
+    state: String,
+    city: String,
     linkedin: String,
     skills: [String],
     yearsExperience: Number,

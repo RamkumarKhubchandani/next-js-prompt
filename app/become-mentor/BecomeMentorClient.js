@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video, Search, X, Check } from 'lucide-react';
+import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video, Search, X, Check, Camera, Trash2, Loader2, User, UploadCloud } from 'lucide-react';
 import { countryList } from '../components/countryList';
 import { SKILLS as SEO_SKILLS } from '../lib/seo-data';
 import Link from 'next/link';
@@ -28,14 +28,18 @@ export default function BecomeMentorClient() {
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+    const [photoError, setPhotoError] = useState('');
+    const [photoPreview, setPhotoPreview] = useState(null);
     const [skillSearch, setSkillSearch] = useState('');
     const [roleError, setRoleError] = useState('');
 
     // Form State
     const [formData, setFormData] = useState({
-        roles: [],
+        roles: ['mentor', 'hire'],
         phone: '',
         country: '',
+        state: '',
         city: '',
         linkedin: '',
         portfolio: '',
@@ -62,7 +66,9 @@ export default function BecomeMentorClient() {
                         setFormData(prev => ({
                             ...prev,
                             ...data.application,
-                            roles: data.application.roles || [],
+                            roles: data.application.roles && data.application.roles.length > 0
+                                ? data.application.roles
+                                : ['mentor', 'hire'],
                             skills: data.application.skills || []
                         }));
                         if (data.application.status === 'pending') {
@@ -78,6 +84,49 @@ export default function BecomeMentorClient() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setPhotoError('');
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+        if (!allowedTypes.includes(file.type.toLowerCase())) {
+            setPhotoError('Invalid file format. Please choose a JPG, PNG, or WebP image.');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setPhotoError('Image size exceeds 5MB. Please choose a smaller photo.');
+            return;
+        }
+
+        const localUrl = URL.createObjectURL(file);
+        setPhotoPreview(localUrl);
+        setIsUploadingPhoto(true);
+
+        try {
+            const uploadData = new FormData();
+            uploadData.append('file', file);
+
+            const res = await fetch('/api/mentor/upload-photo', {
+                method: 'POST',
+                body: uploadData
+            });
+            const data = await res.json();
+
+            if (res.ok && data.url) {
+                setFormData(prev => ({ ...prev, photoUrl: data.url }));
+                setPhotoError('');
+            } else {
+                setPhotoError(data.error || 'Upload failed. Please try again.');
+            }
+        } catch (err) {
+            console.error('Photo upload error:', err);
+            setPhotoError('Network error uploading photo. Please try again.');
+        } finally {
+            setIsUploadingPhoto(false);
+        }
     };
 
     const toggleRole = (role) => {
@@ -284,7 +333,7 @@ export default function BecomeMentorClient() {
                                     <StepIndicator currentStep={step} totalSteps={3} />
 
                                     <AnimatePresence mode="wait">
-                                        {/* STEP 1: PERSONAL INFO & ROLE SELECTION */}
+                                        {/* STEP 1: PERSONAL INFO, PHOTO & ROLE SELECTION */}
                                         {step === 1 && (
                                             <motion.div
                                                 key="step1"
@@ -338,6 +387,61 @@ export default function BecomeMentorClient() {
                                                     {roleError && <p className="text-xs text-red-500 font-semibold mt-2">{roleError}</p>}
                                                 </div>
 
+                                                {/* Profile Photo Uploader */}
+                                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-dark-700 flex-shrink-0 flex items-center justify-center border-2 border-brand-primary/50">
+                                                            {(photoPreview || formData.photoUrl) ? (
+                                                                <img src={photoPreview || formData.photoUrl} alt="Mentor Avatar" className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <User size={28} className="text-gray-400" />
+                                                            )}
+                                                            {isUploadingPhoto && (
+                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                                                    <Loader2 size={20} className="animate-spin text-brand-primary" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <label className="block text-sm font-bold text-gray-900 dark:text-white mb-0.5">
+                                                                Profile Photo
+                                                            </label>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                                                Upload a clear headshot or avatar (JPG, PNG, WebP &bull; Max 5MB).
+                                                            </p>
+                                                            <div className="flex items-center gap-2">
+                                                                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-dark-900 text-xs font-bold rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
+                                                                    <UploadCloud size={14} />
+                                                                    {formData.photoUrl ? 'Change Photo' : 'Upload Photo'}
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/jpeg,image/png,image/webp"
+                                                                        onChange={handlePhotoUpload}
+                                                                        className="hidden"
+                                                                        disabled={isUploadingPhoto}
+                                                                    />
+                                                                </label>
+                                                                {(formData.photoUrl || photoPreview) && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setFormData(prev => ({ ...prev, photoUrl: null }));
+                                                                            setPhotoPreview(null);
+                                                                            setPhotoError('');
+                                                                        }}
+                                                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                                    >
+                                                                        <Trash2 size={12} /> Remove
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {photoError && (
+                                                        <p className="text-xs text-red-500 font-semibold mt-2.5 pl-20">{photoError}</p>
+                                                    )}
+                                                </div>
+
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="col-span-2">
                                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
@@ -348,7 +452,7 @@ export default function BecomeMentorClient() {
                                                             className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-black/50 border border-gray-200 dark:border-white/10 text-gray-500 cursor-not-allowed"
                                                         />
                                                     </div>
-                                                    <div className="col-span-2 md:col-span-1">
+                                                    <div className="col-span-2">
                                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
                                                         <input
                                                             type="tel"
@@ -369,11 +473,33 @@ export default function BecomeMentorClient() {
                                                             onChange={handleInputChange}
                                                             className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
                                                         >
-                                                            <option value="">Select...</option>
+                                                            <option value="">Select Country...</option>
                                                             {countryList.map(c => (
                                                                 <option key={c.code} value={c.name}>{c.name}</option>
                                                             ))}
                                                         </select>
+                                                    </div>
+                                                    <div className="col-span-2 md:col-span-1">
+                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">State / Province</label>
+                                                        <input
+                                                            type="text"
+                                                            name="state"
+                                                            placeholder="e.g. California / Maharashtra"
+                                                            value={formData.state || ''}
+                                                            onChange={handleInputChange}
+                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">City</label>
+                                                        <input
+                                                            type="text"
+                                                            name="city"
+                                                            placeholder="e.g. San Francisco / Pune / London"
+                                                            value={formData.city || ''}
+                                                            onChange={handleInputChange}
+                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div>
