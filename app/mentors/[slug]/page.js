@@ -8,6 +8,8 @@ const REAL_RATING = {
     reviewCount: "16"
 };
 
+export const revalidate = 604800;
+
 // Generate static params for top combinations to boost SEO speed
 export async function generateStaticParams() {
     const params = [];

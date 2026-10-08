@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { COURSES } from '../../lib/courses/index';
 import LearningPathPage from './CoursePageClient';
@@ -41,7 +42,9 @@ export default async function Page({ params }) {
     return (
         <>
             <JsonLd schema={courseSchema} />
-            <LearningPathPage />
+            <Suspense fallback={<div className="min-h-screen bg-slate-950" />}>
+                <LearningPathPage />
+            </Suspense>
         </>
     );
 }

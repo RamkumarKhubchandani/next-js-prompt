@@ -2,6 +2,8 @@ import { eventsData } from '../../lib/eventsData';
 import EventDetailPage from './ClientPage';
 import { notFound } from 'next/navigation';
 
+export const revalidate = 86400;
+
 // Helper to find event based on slug keywords
 function findEventBySlug(slug) {
     // 1. Exact match

@@ -2,8 +2,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from './Providers';
 import { ThemeProvider } from "./components/ThemeProvider";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./lib/auth";
 import XPNotification from "./components/public/XPNotification";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import ActivityTracker from "./components/ActivityTracker";
@@ -84,9 +82,7 @@ export const metadata = {
 };
 
 
-export default async function RootLayout({ children }) {
-  const session = await getServerSession(authOptions);
-
+export default function RootLayout({ children }) {
   // Master SEO Schema - Enhanced for Google Rich Results
   const jsonLd = {
     "@context": "https://schema.org",
@@ -248,7 +244,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         <GoogleAnalytics />
-        <AuthProvider session={session}>
+        <AuthProvider>
           <ThemeProvider>
             {children}
             <XPNotification />

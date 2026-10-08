@@ -48,6 +48,8 @@ export async function generateMetadata({ params }) {
     };
 }
 
+export const revalidate = 86400;
+
 // Update Static Params Logic
 export async function generateStaticParams() {
     const tutorials = await getAllTutorials();
