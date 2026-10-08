@@ -6,6 +6,9 @@ Disallow: /admin/
 Disallow: /login
 Disallow: /register
 
+User-agent: GoogleOther
+Disallow: /
+
 # Explicitly Allow AI Bots (Generative Search Engines)
 User-agent: GPTBot
 Allow: /
