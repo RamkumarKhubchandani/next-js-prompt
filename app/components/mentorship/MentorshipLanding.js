@@ -101,12 +101,26 @@ const MAJOR_TECH_HUBS = [
     { id: 'delhi', name: 'Delhi' },
 ];
 
+const HIRE_SLUG_MAP = {
+    'react': 'react-developer',
+    'nextjs': 'nextjs-developer',
+    'fullstack': 'full-stack-developer',
+    'typescript': 'typescript-developer',
+    'nodejs': 'nodejs-developer',
+    'node': 'nodejs-developer',
+    'vue': 'vuejs-developer',
+    'vuejs': 'vuejs-developer',
+    'react-native': 'react-native-developer',
+    'redux': 'redux-developer',
+};
+
 export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug }) {
     const [showForm, setShowForm] = useState(false);
     const [reviews] = useState(REAL_REVIEWS);
 
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
+    const matchingHireSlug = HIRE_SLUG_MAP[skill.id];
 
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
     const toggleForm = () => setShowForm(!showForm);
@@ -180,7 +194,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                 </a>
                             </div>
 
-                            {((prefix === 'hire' || prefix === 'freelance') && ['react', 'nextjs', 'fullstack', 'typescript'].includes(skill.id)) && (
+                            {((prefix === 'hire' || prefix === 'freelance') && matchingHireSlug) && (
                                 <div className="mt-8 p-4 rounded-2xl bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 shadow-sm text-left max-w-xl">
                                     <p className="text-[11px] text-slate-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Looking for direct project development?</p>
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -191,7 +205,8 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                             <p className="text-xs text-slate-600 dark:text-gray-400">12+ years experience • Starting from $30/hr</p>
                                         </div>
                                         <Link
-                                            href={`/hire/${skill.id === 'react' ? 'react-developer' : skill.id === 'nextjs' ? 'nextjs-developer' : skill.id === 'fullstack' ? 'full-stack-developer' : 'typescript-developer'}`}
+                                            href={`/hire/${matchingHireSlug}`}
+                                            prefetch={false}
                                             className="px-4 py-2 rounded-xl text-xs font-bold text-slate-900 bg-brand-primary hover:bg-emerald-400 transition-colors shrink-0 inline-flex items-center gap-1 justify-center"
                                         >
                                             <span>View Profile & Hire</span>

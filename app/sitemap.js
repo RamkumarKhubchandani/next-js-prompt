@@ -145,6 +145,10 @@ export default async function sitemap() {
     { url: "/hire/nextjs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/full-stack-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/typescript-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/nodejs-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/vuejs-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/react-native-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/redux-developer", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => ({
     url: `${baseUrl}${route.url}`,
     lastModified: currentDate,

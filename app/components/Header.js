@@ -21,6 +21,17 @@ const navigation = [
     { name: "Become Mentor", href: "/become-mentor" },
 ];
 
+const hireLinks = [
+    { name: "React Developer", href: "/hire/react-developer" },
+    { name: "Next.js Developer", href: "/hire/nextjs-developer" },
+    { name: "Full Stack Developer", href: "/hire/full-stack-developer" },
+    { name: "TypeScript Developer", href: "/hire/typescript-developer" },
+    { name: "Node.js Developer", href: "/hire/nodejs-developer" },
+    { name: "Vue.js Developer", href: "/hire/vuejs-developer" },
+    { name: "React Native Developer", href: "/hire/react-native-developer" },
+    { name: "Redux Developer", href: "/hire/redux-developer" },
+];
+
 export function Header({ showNav = true }) {
     const { data: session, status } = useSession();
     const pathname = usePathname();
@@ -189,6 +200,35 @@ export function Header({ showNav = true }) {
                                     </motion.div>
                                 );
                             })}
+
+                            {/* Hire Dropdown */}
+                            <div className="relative group">
+                                <button
+                                    type="button"
+                                    className="text-xs 2xl:text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-1 py-1"
+                                >
+                                    <span>Hire</span>
+                                    <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                                </button>
+                                <div className="absolute top-full left-0 pt-2 hidden group-hover:block group-focus-within:block z-50">
+                                    <div className="w-56 rounded-xl bg-white dark:bg-dark-800 p-2 shadow-2xl border border-dark-700/20 dark:border-dark-700">
+                                        <div className="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                            Hire Freelance Developers
+                                        </div>
+                                        {hireLinks.map((item) => (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                prefetch={false}
+                                                onClick={() => startNavigate(item.href)}
+                                                className="block px-3 py-2 text-xs font-semibold rounded-lg text-dark-900 dark:text-light-100 hover:bg-dark-800/5 dark:hover:bg-dark-700 hover:text-brand-primary transition-colors"
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </nav>
                     )}
 
@@ -430,6 +470,27 @@ export function Header({ showNav = true }) {
                                                             </Link>
                                                         );
                                                     })}
+
+                                                    {/* Mobile Hire Group */}
+                                                    <div className="py-2 border-t border-dark-700/60 my-2">
+                                                        <p className="px-3 text-xs font-bold text-light-400 uppercase tracking-wider mb-2">Hire Freelance Developers</p>
+                                                        <div className="grid grid-cols-2 gap-1">
+                                                            {hireLinks.map((item) => (
+                                                                <Link
+                                                                    key={item.href}
+                                                                    href={item.href}
+                                                                    prefetch={false}
+                                                                    onClick={() => {
+                                                                        setMobileMenuOpen(false);
+                                                                        startNavigate(item.href);
+                                                                    }}
+                                                                    className="block px-3 py-1.5 text-xs font-medium text-light-200 hover:text-brand-primary transition-colors"
+                                                                >
+                                                                    {item.name}
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div className="py-6">
                                                     {session ? (

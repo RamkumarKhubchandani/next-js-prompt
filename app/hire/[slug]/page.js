@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
@@ -6,6 +7,7 @@ import { HIRE_SHARED, HIRE_PAGES } from '@/app/lib/hire-data';
 import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
 
 export const dynamicParams = false;
+export const revalidate = 604800;
 
 export async function generateStaticParams() {
     return Object.keys(HIRE_PAGES).map((slug) => ({ slug }));
@@ -45,22 +47,49 @@ export default async function HireDeveloperPage({ params }) {
 
     const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
 
-    // Service JSON-LD Schema (no ratings, no reviews, no worksFor)
+    // Service & BreadcrumbList JSON-LD Schema (no ratings, no reviews, no worksFor)
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "Service",
-        "name": page.h1,
-        "serviceType": page.skill,
-        "description": page.description,
-        "url": `https://www.outlinedev.com/hire/${slug}`,
-        "provider": {
-            "@type": "Person",
-            "name": HIRE_SHARED.name,
-            "sameAs": [
-                "https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"
-            ]
-        },
-        "areaServed": "Worldwide"
+        "@graph": [
+            {
+                "@type": "Service",
+                "name": page.h1,
+                "serviceType": page.skill,
+                "description": page.description,
+                "url": `https://www.outlinedev.com/hire/${slug}`,
+                "provider": {
+                    "@type": "Person",
+                    "name": HIRE_SHARED.name,
+                    "sameAs": [
+                        "https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"
+                    ]
+                },
+                "areaServed": "Worldwide"
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://www.outlinedev.com"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Hire",
+                        "item": "https://www.outlinedev.com/hire"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": page.skill,
+                        "item": `https://www.outlinedev.com/hire/${slug}`
+                    }
+                ]
+            }
+        ]
     };
 
     return (
@@ -91,22 +120,43 @@ export default async function HireDeveloperPage({ params }) {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-4">
-                        {bookingUrl && (
-                            <a
-                                href={bookingUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-950 bg-brand-primary hover:bg-emerald-400 transition-colors"
-                            >
-                                Book a 20-minute call
-                            </a>
+                        {bookingUrl ? (
+                            <>
+                                <a
+                                    href={bookingUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-950 bg-brand-primary hover:bg-emerald-400 transition-colors"
+                                >
+                                    Book a 20-minute call
+                                </a>
+                                <a
+                                    href="#inquiry-form"
+                                    className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    Send an inquiry
+                                </a>
+                            </>
+                        ) : (
+                            <>
+                                <a
+                                    href="#inquiry-form"
+                                    className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-950 bg-brand-primary hover:bg-emerald-400 transition-colors"
+                                >
+                                    Send an inquiry
+                                </a>
+                                <a
+                                    href={`https://wa.me/918237320942?text=${encodeURIComponent(
+                                        `Hi Ramkumar, I'm interested in hiring you for a ${page.skill} project.`
+                                    )}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    Chat on WhatsApp
+                                </a>
+                            </>
                         )}
-                        <a
-                            href="#inquiry-form"
-                            className="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-                        >
-                            Send an inquiry
-                        </a>
                     </div>
                 </header>
 
@@ -125,73 +175,95 @@ export default async function HireDeveloperPage({ params }) {
                     </ul>
                 </section>
 
+                {/* In-Depth Scope & Architecture Sections */}
+                {page.sections && page.sections.length > 0 && (
+                    <>
+                        {page.sections.map((sec, idx) => (
+                            <section key={idx} className="py-12 border-b border-slate-200 dark:border-slate-800">
+                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                                    {sec.heading}
+                                </h2>
+                                <div className="space-y-4 text-slate-700 dark:text-slate-300 text-base leading-relaxed">
+                                    {sec.paragraphs.map((para, pIdx) => (
+                                        <p key={pIdx}>{para}</p>
+                                    ))}
+                                </div>
+                            </section>
+                        ))}
+                    </>
+                )}
+
                 {/* Selected Projects */}
-                <section className="py-12 border-b border-slate-200 dark:border-slate-800">
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                        Selected Projects
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {page.projects.map((projKey) => {
-                            const proj = HIRE_SHARED[projKey];
-                            if (!proj) return null;
-                            // Strip // TODO note from the rendered description
-                            const cleanDescription = proj.description.split('// TODO')[0].trim();
+                {page.projects && page.projects.length > 0 && (
+                    <section className="py-12 border-b border-slate-200 dark:border-slate-800">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                            Selected Projects
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {page.projects.map((projKey) => {
+                                const proj = HIRE_SHARED[projKey];
+                                if (!proj) return null;
+                                // Strip // TODO note from the rendered description
+                                const cleanDescription = proj.description.split('// TODO')[0].trim();
 
-                            return (
-                                <article
-                                    key={projKey}
-                                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
-                                >
-                                    <div>
-                                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                                            {proj.type}
-                                        </span>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2">
-                                            {proj.name}
-                                        </h3>
-                                        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
-                                            {cleanDescription}
-                                        </p>
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-1.5 pt-4 border-t border-slate-100 dark:border-slate-800">
-                                        {proj.stack.map((tech) => (
-                                            <span
-                                                key={tech}
-                                                className="text-xs font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-                                            >
-                                                {tech}
+                                return (
+                                    <article
+                                        key={projKey}
+                                        className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                                    >
+                                        <div>
+                                            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                                {proj.type}
                                             </span>
-                                        ))}
-                                    </div>
-                                </article>
-                            );
-                        })}
-                    </div>
-                </section>
+                                            <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2">
+                                                {proj.name}
+                                            </h3>
+                                            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                                {cleanDescription}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-1.5 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                            {proj.stack.map((tech) => (
+                                                <span
+                                                    key={tech}
+                                                    className="text-xs font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                                                >
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
 
                 {/* Testimonial */}
-                <section className="py-12 border-b border-slate-200 dark:border-slate-800">
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                        Client Feedback
-                    </h2>
-                    <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                        <span className="text-4xl text-slate-400 dark:text-slate-600 font-serif leading-none select-none block mb-2">
-                            “
-                        </span>
-                        <blockquote className="text-base sm:text-lg text-slate-800 dark:text-slate-200 font-normal leading-relaxed mb-6 italic">
-                            "{HIRE_SHARED.testimonial.quote}"
-                        </blockquote>
-                        <div>
-                            <p className="font-bold text-slate-900 dark:text-white text-sm">
-                                {HIRE_SHARED.testimonial.author}
-                            </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                                {HIRE_SHARED.testimonial.role}
-                            </p>
+                {page.showTestimonial !== false && (
+                    <section className="py-12 border-b border-slate-200 dark:border-slate-800">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                            Client Feedback
+                        </h2>
+                        <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                            <span className="text-4xl text-slate-400 dark:text-slate-600 font-serif leading-none select-none block mb-2">
+                                “
+                            </span>
+                            <blockquote className="text-base sm:text-lg text-slate-800 dark:text-slate-200 font-normal leading-relaxed mb-6 italic">
+                                "{HIRE_SHARED.testimonial.quote}"
+                            </blockquote>
+                            <div>
+                                <p className="font-bold text-slate-900 dark:text-white text-sm">
+                                    {HIRE_SHARED.testimonial.author}
+                                </p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    {HIRE_SHARED.testimonial.role}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
 
                 {/* How it Works (Process) */}
                 <section className="py-12 border-b border-slate-200 dark:border-slate-800">
@@ -237,6 +309,36 @@ export default async function HireDeveloperPage({ params }) {
                                 </p>
                             </details>
                         ))}
+                    </div>
+                </section>
+
+                {/* Related hire pages */}
+                <section className="py-12 border-b border-slate-200 dark:border-slate-800">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                        Related Freelance & Consulting Services
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {Object.keys(HIRE_PAGES)
+                            .filter((otherSlug) => otherSlug !== slug)
+                            .map((otherSlug) => {
+                                const otherPage = HIRE_PAGES[otherSlug];
+                                if (!otherPage) return null;
+                                return (
+                                    <Link
+                                        key={otherSlug}
+                                        href={`/hire/${otherSlug}`}
+                                        prefetch={false}
+                                        className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-primary/60 dark:hover:border-brand-primary/60 transition-all block group"
+                                    >
+                                        <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-brand-primary transition-colors">
+                                            Hire {otherPage.skill} Developer
+                                        </h3>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                            {otherPage.description}
+                                        </p>
+                                    </Link>
+                                );
+                            })}
                     </div>
                 </section>
 

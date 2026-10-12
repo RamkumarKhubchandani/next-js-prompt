@@ -27,9 +27,24 @@ export function Footer() {
       <div className="absolute top-20 -left-20 w-72 h-72 bg-purple-500/5 rounded-full blur-[80px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-8 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8 mb-20">
 
-          {/* Column 1 */}
+          {/* Column 1: Hire */}
+          <div className="flex flex-col gap-6">
+            <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Hire</h3>
+            <ul className="space-y-4">
+              <li><Link href="/hire/react-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Developer</Link></li>
+              <li><Link href="/hire/nextjs-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Next.js Developer</Link></li>
+              <li><Link href="/hire/full-stack-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Full Stack Developer</Link></li>
+              <li><Link href="/hire/typescript-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">TypeScript Developer</Link></li>
+              <li><Link href="/hire/nodejs-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Developer</Link></li>
+              <li><Link href="/hire/vuejs-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Vue.js Developer</Link></li>
+              <li><Link href="/hire/react-native-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Native Developer</Link></li>
+              <li><Link href="/hire/redux-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Redux Developer</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 2: Expertise */}
           <div className="flex flex-col gap-6">
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Expertise</h3>
             <ul className="space-y-4">
