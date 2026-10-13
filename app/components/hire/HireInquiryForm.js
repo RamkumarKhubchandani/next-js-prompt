@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { trackEvent } from '@/app/components/GoogleAnalytics';
+import { Phone, Mail, MessageSquare } from 'lucide-react';
 
 export default function HireInquiryForm({ skill = 'React', bookingUrl = '' }) {
     const [formData, setFormData] = useState({
@@ -72,6 +73,29 @@ export default function HireInquiryForm({ skill = 'React', bookingUrl = '' }) {
                     <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto mb-6">
                         Thank you for reaching out. I'll review your project details and get back to you within 24 hours.
                     </p>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 max-w-md mx-auto mb-6 text-left space-y-3">
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Need an immediate response?</p>
+                        <div className="flex flex-col sm:flex-row gap-2.5">
+                            <a
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5d] text-white font-bold text-xs shadow-sm transition-colors"
+                            >
+                                <Phone size={14} />
+                                <span>WhatsApp: +918237320942</span>
+                            </a>
+                            <a
+                                href="mailto:hi@outlinedev.com"
+                                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                            >
+                                <Mail size={14} className="text-brand-primary" />
+                                <span>hi@outlinedev.com</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <button
                         type="button"
                         onClick={() => {
