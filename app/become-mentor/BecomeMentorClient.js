@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Linkedin, GraduationCap, Video, Search, X, Check, Camera, Trash2, Loader2, User, UploadCloud } from 'lucide-react';
+import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Mail, Linkedin, GraduationCap, Video, Search, X, Check, Camera, Trash2, Loader2, User, UploadCloud } from 'lucide-react';
 import { countryList } from '../components/countryList';
 import { SKILLS as SEO_SKILLS } from '../lib/seo-data';
 import Link from 'next/link';
@@ -206,9 +206,32 @@ export default function BecomeMentorClient() {
                             <CheckCircle2 size={40} className="text-green-600 dark:text-green-400" />
                         </div>
                         <h2 className="text-3xl font-black mb-4 text-dark-900 dark:text-white">Application Received!</h2>
-                        <p className="text-gray-600 dark:text-gray-300 mb-8">
+                        <p className="text-gray-600 dark:text-gray-300 mb-6">
                             Thank you for applying to join our mentor network. Our team will review your profile within 3-5 business days.
                         </p>
+
+                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-white/10 mb-6 text-left space-y-2.5">
+                            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Have questions or want a quick update?</p>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <a
+                                    href="https://wa.me/918237320942?text=Hi%20Ram,%20I%20just%20submitted%20my%20mentor%20application%20on%20OutlineDev."
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5d] text-white font-bold text-xs shadow-sm transition-colors"
+                                >
+                                    <Phone size={14} />
+                                    <span>WhatsApp: +918237320942</span>
+                                </a>
+                                <a
+                                    href="mailto:hi@outlinedev.com"
+                                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white font-semibold text-xs hover:bg-gray-300 dark:hover:bg-dark-600 transition-colors"
+                                >
+                                    <Mail size={14} className="text-brand-primary" />
+                                    <span>hi@outlinedev.com</span>
+                                </a>
+                            </div>
+                        </div>
+
                         <div className="space-y-3">
                             <button
                                 onClick={() => setIsSuccess(false)}

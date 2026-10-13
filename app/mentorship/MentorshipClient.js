@@ -25,7 +25,8 @@ import {
     DollarSign,
     Sparkles,
     Users,
-    Trophy
+    Trophy,
+    Mail
 } from 'lucide-react';
 
 export default function MentorshipClient({ prefill, isInModal }) {
@@ -411,18 +412,30 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4 text-left border-t border-gray-100 dark:border-dark-700 pt-4">
-                                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-[#25D366]"><MessageSquare size={20} /></div>
-                                    <div>
-                                        <p className="font-bold">Want an instant response?</p>
-                                        <p className="text-sm text-gray-500 mb-2">Connect directly with a mentor on WhatsApp right now.</p>
-                                        <a 
-                                            href={`https://wa.me/918237320942?text=Hi%20Ram,%20I%20just%20submitted%20a%20mentorship%20request%20on%20OutlineDev%20for%20${encodeURIComponent(formData.stack.join(', ') || 'coding')}.%20Please%20connect%20me!`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-lg font-bold hover:bg-[#20ba5a] transition-colors text-sm shadow-md"
-                                        >
-                                            Chat on WhatsApp
-                                        </a>
+                                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-[#25D366] shrink-0"><MessageSquare size={20} /></div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-bold text-dark-900 dark:text-white">Want an instant response?</p>
+                                        <p className="text-sm text-gray-500 mb-3">Connect directly with a mentor on WhatsApp right now:</p>
+                                        
+                                        <div className="space-y-2">
+                                            <a 
+                                                href={`https://wa.me/918237320942?text=Hi%20Ram,%20I%20just%20submitted%20a%20mentorship%20request%20on%20OutlineDev%20for%20${encodeURIComponent(formData.stack.join(', ') || 'coding')}.%20Please%20connect%20me!`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] text-white rounded-xl font-bold hover:bg-[#20ba5a] transition-colors text-sm shadow-md"
+                                            >
+                                                <Phone size={15} />
+                                                <span>WhatsApp: +918237320942</span>
+                                            </a>
+
+                                            <a 
+                                                href="mailto:hi@outlinedev.com"
+                                                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 text-dark-900 dark:text-white rounded-xl font-semibold transition-colors text-xs"
+                                            >
+                                                <Mail size={14} className="text-brand-primary" />
+                                                <span>Email: hi@outlinedev.com</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
