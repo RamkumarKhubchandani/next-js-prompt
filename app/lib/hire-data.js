@@ -42,10 +42,44 @@ export const HIRE_PAGES = {
     intro: "I'm Ramkumar Khubchandani, a software engineer with 12+ years of industry experience. I build React interfaces for small businesses and product teams who need something clear, fast and easy to use, from booking flows to accessible tools.",
     whatIBuild: ["Booking and scheduling interfaces for service businesses", "Component-based UIs that are easy to maintain and extend", "Interfaces built with accessibility in mind, including screen-reader and voice support"],
     projects: ["soraya", "accessible"],
+    sections: [
+      {
+        heading: "Typical React Engagements I Take On",
+        paragraphs: [
+          "With over 12 years of web engineering experience, I collaborate with founders, small business owners, and agency teams to build and improve React user interfaces. My engagements usually fall into distinct project scopes: building interactive customer-facing web apps from scratch, developing custom booking and scheduling workflows, creating internal dashboards, auditing existing interfaces for usability and performance bottlenecks, and providing dedicated part-time front-end support for teams without a senior React specialist.",
+          "For service businesses, I build booking interfaces where customers can select appointment types, browse service menus, view available calendar slots, and submit confirmation details. For product teams, I translate Figma designs into modular, clean React components that are easy for other developers to understand and maintain. I focus on practical business value rather than over-engineered abstractions.",
+          "When teams face a sudden deadline or lose their front-end developer mid-project, I step in to review the codebase, untangle blocking issues, and bring the work across the finish line with clear commits and documentation."
+        ]
+      },
+      {
+        heading: "Component Architecture & State Management",
+        paragraphs: [
+          "A healthy React application starts with disciplined component boundaries. I organize components by feature and purpose, separating visual presentation from data fetching and business logic. I favor standard React hooks such as useState, useReducer, and useContext for local and contextual state, reaching for external state libraries like Redux Toolkit or Zustand only when application complexity genuinely warrants a global store.",
+          "Over-complicated state trees are one of the most common causes of bugs and sluggish user interfaces in growing codebases. By keeping state close to where it is consumed and establishing clean prop contracts, components remain reusable and straightforward to test. I also design clean custom hooks to encapsulate repetitive asynchronous logic, browser API interactions, and form handling, ensuring that page components remain clean and focused on layout."
+        ]
+      },
+      {
+        heading: "Accessibility & Performance in React Interfaces",
+        paragraphs: [
+          "A great user interface must be fast to load and accessible to everyone who visits it. I build React components using semantic HTML markup, appropriate ARIA roles, and strict keyboard navigation patterns so that users relying on screen readers or non-mouse navigation have an intuitive experience. I have built dedicated accessibility tools for users with vision impairments, where voice feedback and keyboard accessibility are foundational requirements rather than afterthoughts.",
+          "For performance, I focus on eliminating unnecessary re-renders through thoughtful component composition, memoization where measured and necessary, and code-splitting with dynamic imports and React.lazy. I keep external npm dependency trees lean, avoiding bloated UI packages when clean CSS or Tailwind utility styling can achieve the same visual outcome with zero runtime overhead."
+        ]
+      },
+      {
+        heading: "Working with an Existing React Codebase",
+        paragraphs: [
+          "Many of my projects involve stepping into an existing React codebase rather than starting from a blank editor. I begin by conducting a structured code review: analyzing package versions, folder organization, state patterns, console warnings, and recurring error traces. I identify quick wins that improve immediate stability alongside structural issues that should be addressed before adding major new features.",
+          "I work incrementally, respecting your existing conventions while applying modern best practices. If parts of your application still use legacy class components or deprecated lifecycle methods, I can gradually refactor them into modern functional components without requiring a risky, expensive full-rewrite. Throughout the engagement, every pull request includes clear explanations so your in-house team learns from each improvement."
+        ]
+      }
+    ],
     faq: [
       { q: "What kinds of React projects do you take on?", a: "Booking sites, dashboards, marketing sites with interactive parts, and accessibility-focused tools. If you're unsure your project fits, book an intro call." },
       { q: "Can you work with an existing React codebase?", a: "Yes. I can review it, fix problems, and add features. I'll tell you honestly if a part needs restructuring first." },
-      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form with your goals, timeline and budget range." }
+      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form with your goals, timeline and budget range." },
+      { q: "Which styling approaches and UI libraries do you work with?", a: "I work primarily with Tailwind CSS, standard CSS Modules, and clean utility styling. I also have experience integrating component systems like Radix UI, Headless UI, and Material UI depending on what your existing project uses." },
+      { q: "Do you handle API integration and data fetching in React?", a: "Yes. I frequently integrate REST and GraphQL endpoints, handle loading and error states, implement optimistic updates, and configure client caching with tools like TanStack Query (React Query) or RTK Query." },
+      { q: "Can you help set up automated testing for our React app?", a: "Yes. I write unit and integration tests using Vitest or Jest along with React Testing Library, focusing on testing real user interactions and form submissions rather than brittle implementation details." }
     ]
   },
   "nextjs-developer": {
@@ -56,10 +90,44 @@ export const HIRE_PAGES = {
     intro: "If people need to find your business on Google, Next.js gives you fast pages and full control over titles, descriptions and social-sharing previews. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I build Next.js sites that are set up properly from day one.",
     whatIBuild: ["Business and service websites with page-specific titles, descriptions and sharing tags", "Web apps that combine server-rendered pages with interactive features", "Sites that connect to a Node.js and MongoDB backend when you need one"],
     projects: ["soraya", "kids"],
+    sections: [
+      {
+        heading: "Typical Next.js Engagements I Take On",
+        paragraphs: [
+          "With 12+ years of software development experience, I help companies build, optimize, and modernize web applications using Next.js. My freelance engagements include building greenfield business websites, developing customer portals that combine server rendering with interactive dashboards, auditing Next.js architectures for performance and caching defects, optimizing Core Web Vitals, and migrating older React single-page apps or WordPress sites to Next.js.",
+          "For small businesses and service providers, I deliver Next.js sites that load near-instantly and provide clear, crawlable content for search engines. In client work such as Soraya's Hair Braiding & Beauty in Manhattan, I used React and Next.js to build a complete customer-facing platform featuring service menus, online booking flows, deposit verification, and review showcases. Every page was designed to present clear information to customers and search engines alike.",
+          "For early-stage startups and product teams, I assist in building MVP applications with Next.js App Router, combining Server Components for fast initial data loads with interactive Client Components for user workflows, authentication, and payment integrations."
+        ]
+      },
+      {
+        heading: "App Router, ISR/SSR & Caching Decisions",
+        paragraphs: [
+          "Next.js offers a powerful spectrum of rendering modes: Static Site Generation (SSG), Incremental Static Regeneration (ISR), Server-Side Rendering (SSR), and Client-Side Rendering (CSR). Choosing the wrong rendering model can lead to unnecessary server load, sluggish response times, or stale data. I evaluate each route individually to select the optimal strategy based on how frequently your data changes and whether content is public or user-specific.",
+          "With the Next.js App Router, React Server Components (RSC) allow us to keep heavy data-fetching logic and third-party libraries on the server, sending zero unnecessary JavaScript to the user's browser. I carefully organize the boundary between Server and Client Components, configure revalidation cadences with ISR where content updates periodically, and implement sensible caching headers so your hosting costs remain low while page delivery stays fast."
+        ]
+      },
+      {
+        heading: "SEO Foundations Done Properly",
+        paragraphs: [
+          "Search engine optimization begins with solid technical foundations. I ensure that every public page has clean semantic markup, unique and descriptive title tags, meta descriptions within recommended character counts, canonical link tags, Open Graph tags for social preview cards, and automated XML sitemaps. I also configure structured data using JSON-LD (such as LocalBusiness, Service, FAQPage, and BreadcrumbList schemas) so search engine crawlers can understand the exact nature of your offerings.",
+          "I believe in being completely honest about SEO: I cannot and will not promise specific Google keyword rankings, traffic volumes, or overnight revenue gains, because search algorithms involve dozens of factors outside an engineer's control (such as domain authority, backlink profile, competition, and search engine policy changes). What I do promise is that your site's technical architecture, markup, crawlability, and loading performance will be executed according to industry standards, giving your content the best possible opportunity to be discovered."
+        ]
+      },
+      {
+        heading: "Migrating Existing Sites to Next.js",
+        paragraphs: [
+          "If you have an existing single-page React app (built with Create React App or Vite) that suffers from poor search visibility or slow initial load times, migrating to Next.js is often a practical step. I specialize in planned, low-risk migrations where routes, metadata, and backend API connections are ported systematically without disrupting your ongoing business.",
+          "Before recommending a migration, I conduct a thorough evaluation of your current architecture to verify whether Next.js is genuinely the right solution for your needs. If a migration makes sense, I set up URL redirects, preserve existing search-engine equity, verify all form submissions and external integrations, and provide a clear deployment plan on Vercel, AWS, or your preferred hosting infrastructure."
+        ]
+      }
+    ],
     faq: [
       { q: "Why choose Next.js for a business website?", a: "It lets pages load quickly and lets each page carry its own search and sharing details, which helps people find and trust your site. I can't promise a ranking, but I'll set the technical foundations correctly." },
       { q: "Can you migrate my existing site to Next.js?", a: "Often yes. I'll review your current site first and tell you whether migration makes sense." },
-      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." }
+      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." },
+      { q: "Do you work with the Next.js App Router or Pages Router?", a: "I work with both. For new projects, I recommend the App Router with React Server Components for superior performance and caching control. For established codebases on the Pages Router, I can maintain them or manage a gradual route-by-route migration." },
+      { q: "Where do you typically deploy Next.js applications?", a: "Vercel is the most seamless platform for Next.js, but I also deploy to AWS (Amplify, ECS, or Lambda via SST/OpenNext), DigitalOcean, Node.js VPS servers, and Docker containers depending on your infrastructure preferences." },
+      { q: "Can Next.js connect to my existing backend or database?", a: "Yes. Next.js can connect directly to MongoDB, PostgreSQL, or Redis via Server Components and Server Actions, or communicate with an external REST or GraphQL backend running on Node.js, Python, or another service." }
     ]
   },
   "full-stack-developer": {
@@ -70,10 +138,44 @@ export const HIRE_PAGES = {
     intro: "Many small projects need one person who can handle everything. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I build complete web products with React and Next.js on the front end and Node.js and MongoDB behind them.",
     whatIBuild: ["Complete websites and web apps from design to launch", "Booking, scheduling and client-management workflows", "Database design and server logic that fit your business process"],
     projects: ["soraya", "kids"],
+    sections: [
+      {
+        heading: "Typical Full-Stack Engagements I Take On",
+        paragraphs: [
+          "With over 12 years in the software industry, I provide end-to-end full-stack development for startups, small businesses, and agencies. Many projects do not have the budget or management capacity to coordinate separate frontend, backend, and database developers. As a solo full-stack engineer, I take ownership of the complete architecture: designing the user interface in React or Next.js, writing the server logic and APIs in Node.js, and structuring data in MongoDB.",
+          "My engagements include building complete minimum viable products (MVPs) from initial wireframes to launch, developing internal business portals and management dashboards, adding full-stack features (such as authentication, payment collection, or automated email notifications) to existing systems, and conducting end-to-end code reviews to fix cross-layer bugs.",
+          "A concrete example of my full-stack work is the platform I engineered for Soraya's Hair Braiding & Beauty in Manhattan, NY. I designed and deployed the responsive React and Next.js frontend, built the Node.js server to handle booking validation and deposit verification, structured the MongoDB database to manage service catalogs and client appointments, and configured transactional notifications."
+        ]
+      },
+      {
+        heading: "How I Structure a Build from Idea to Launch",
+        paragraphs: [
+          "A successful full-stack build begins with thorough planning rather than jumping straight into code. During discovery, we clarify your core business requirements, user journeys, data entities, and third-party dependencies. I draft a written technical scope outlining the milestones, deliverables, and estimated schedule so everyone is aligned before development starts.",
+          "I build in short, verifiable increments. First, I establish the foundational database models and API endpoints. Next, I construct the user interface components and wire them up with real data flows. Throughout the build, I share staging links and progress demos regularly, giving you full visibility and the opportunity to provide feedback early. This iterative method prevents misunderstandings and ensures the delivered software matches your expectations."
+        ]
+      },
+      {
+        heading: "Data Modelling & APIs (Node.js + MongoDB)",
+        paragraphs: [
+          "The backend and data layer form the backbone of any reliable web product. I design schema models with Mongoose and MongoDB that balance data normalization with query performance. I establish compound indexes to ensure fast query execution, validate incoming data with schema constraints, and write clean middleware for authentication, input sanitization, and structured error handling.",
+          "On the API layer, I build RESTful endpoints that adhere to consistent HTTP conventions and predictable JSON response structures. I implement token-based authentication (such as JWT or session tokens with secure HTTP-only cookies), role-based permissions, and rate limiting to protect endpoints against abuse. When integrating external services — such as payment gateways, SMS alerts, or transactional email providers — I implement retry logic and error logging so unexpected outages do not corrupt database records."
+        ]
+      },
+      {
+        heading: "Deployment, Monitoring & Developer Handover",
+        paragraphs: [
+          "A project is only complete when it is securely deployed, monitored, and thoroughly documented for handoff. I help you set up production hosting environments on platforms such as Vercel, Render, DigitalOcean, or AWS, configuring SSL certificates, environment variables, and automated build pipelines from your GitHub repository.",
+          "At the end of an engagement, you own 100% of the code, repositories, and deployment configurations. I provide clean documentation covering how to run the project locally, deploy updates, run database migrations or backups, and configure third-party services. If your in-house team needs a walkthrough or ongoing technical support, I am available on a flexible retainer basis."
+        ]
+      }
+    ],
     faq: [
       { q: "Do I need to hire separate frontend and backend developers?", a: "For most small and medium projects, one full stack developer is enough and keeps communication simple." },
       { q: "Can you handle hosting and deployment?", a: "Yes, I can help set up and deploy your project. Tell me what you already use and I'll work with it." },
-      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." }
+      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." },
+      { q: "Which tech stack do you recommend for a new web project?", a: "For most web applications, I recommend Next.js or React on the frontend, Node.js on the backend, and MongoDB or PostgreSQL for the database. This stack offers fast development velocity, excellent developer tooling, and flexible hosting options." },
+      { q: "How do you handle user authentication and security?", a: "I implement secure authentication using NextAuth, Auth0, or custom JWT/session cookies with HTTP-only and SameSite flags, password hashing with bcrypt, input sanitization, and role-based access control." },
+      { q: "Can you work with my existing database or third-party APIs?", a: "Yes. I frequently connect to existing MongoDB or SQL databases, integrate third-party APIs (Stripe, Twilio, SendGrid, Resend), and build custom middleware to bridge new interfaces with legacy backend systems." }
     ]
   },
   "typescript-developer": {
@@ -84,10 +186,44 @@ export const HIRE_PAGES = {
     intro: "TypeScript catches many bugs before your users see them and makes a codebase easier to hand over and grow. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I use TypeScript with React, Next.js and Node.js.",
     whatIBuild: ["Typed React and Next.js applications", "Node.js backends with clear, typed data models", "Gradual migration of JavaScript projects to TypeScript"],
     projects: ["kids", "soraya"],
+    sections: [
+      {
+        heading: "Typical TypeScript Engagements I Take On",
+        paragraphs: [
+          "With over 12 years of software engineering experience, I help product teams and business owners build, refactor, and maintain web applications using TypeScript. My freelance TypeScript engagements generally center on four key scenarios: building new React, Next.js, and Node.js codebases with strict type safety from day one; conducting gradual, non-breaking migrations of legacy JavaScript applications to TypeScript; establishing shared type definitions between front-end and back-end systems; and auditing existing TypeScript projects to eliminate unsafe 'any' types and runtime type errors.",
+          "TypeScript is particularly valuable for applications with complex data models, multi-step forms, or collaborative engineering teams. By catching type mismatches and missing properties during development, it prevents entire categories of production bugs before code ever reaches your end users. Whether you are building a new application or strengthening an established codebase, I bring clean typing practices that enhance developer velocity without over-complicating everyday code.",
+          "For startups seeking clean engineering foundations, I set up TypeScript configurations, tsconfig presets, strict linting rules, and typed API contracts so that future developers can contribute quickly and confidently."
+        ]
+      },
+      {
+        heading: "Migrating a JavaScript Codebase Safely",
+        paragraphs: [
+          "Migrating an established JavaScript codebase to TypeScript can feel daunting, but it does not require a disruptive, all-or-nothing rewrite. I employ an incremental migration strategy that allows your team to continue shipping features while progressively increasing type safety. We configure tsconfig with allowJs enabled, begin by typing shared data models and utility functions, and systematically migrate files from .js/.jsx to .ts/.tsx in prioritized batches.",
+          "Throughout the migration, I focus on typing high-risk areas first — such as API request and response boundaries, state management stores, and critical business calculations. We resolve syntax ambiguities and runtime assumptions without relying on permissive 'any' shortcuts, ensuring that each migrated module provides real compile-time guarantees."
+        ]
+      },
+      {
+        heading: "Typing React, Next.js & Node.js Systems",
+        paragraphs: [
+          "Effective TypeScript development requires deep familiarity with the frameworks in use. In React and Next.js, I type component props, custom hook return values, polymorphic UI elements, and server action payloads. I ensure that Server Component async data fetching is typed end-to-end, so that UI components receive strictly verified props that mirror database queries.",
+          "On the backend with Node.js and Express or NestJS, I write typed data transfer objects (DTOs), request handlers, and database schema interfaces with Mongoose or Prisma. Where full-stack repositories or monorepos are utilized, I structure shared type packages so that any schema change on the backend immediately alerts the frontend team at compile time, eliminating silent breaking changes across service boundaries."
+        ]
+      },
+      {
+        heading: "Code Quality, Strictness & Developer Handoff",
+        paragraphs: [
+          "TypeScript should make development smoother and more predictable, not slower or filled with frustrating type gymnastics. I advocate for pragmatic type systems: writing clear interfaces and union types that accurately reflect your domain model, while avoiding deeply nested generic gymnastics that obscure code readability for other engineers on your team.",
+          "I configure ESLint, Prettier, and automated pre-commit type checking (with Husky or GitHub Actions) to maintain consistent code quality across your repository. When handing over the codebase, I provide clear documentation explaining type conventions, build configurations, and guidelines for adding new models, ensuring that your team can maintain and expand the project with confidence."
+        ]
+      }
+    ],
     faq: [
       { q: "Should my project use TypeScript?", a: "For anything you expect to grow or hand to other developers, usually yes. For a very small one-off page it may not matter. I'll give you an honest recommendation." },
       { q: "Can you convert my JavaScript project to TypeScript?", a: "Yes, usually step by step so nothing breaks. I'll review the code first." },
-      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." }
+      { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." },
+      { q: "Do you use strict TypeScript compiler settings?", a: "Yes. For new projects, I recommend strict mode with noImplicitAny and strictNullChecks enabled. For migrations, we start with pragmatic settings and increase strictness step-by-step as coverage expands." },
+      { q: "Can you share TypeScript types between frontend and backend?", a: "Yes. In full-stack or monorepo setups, we can define shared type packages or DTO interfaces so both the Next.js frontend and Node.js backend consume identical type definitions, preventing drift." },
+      { q: "How do you handle runtime validation alongside TypeScript?", a: "TypeScript only validates at compile time. For runtime boundaries (such as user input and external API responses), I pair TypeScript with validation libraries like Zod or Yup to guarantee runtime data integrity." }
     ]
   },
   "nodejs-developer": {

@@ -1,8 +1,8 @@
 import HomeClientPage from './HomeClientPage';
 
 export const metadata = {
-  title: "OutlineDev | Free Agentic Coding Bootcamp & Mentorship",
-  description: "Join the #1 Free Agentic Coding Bootcamp. Master React, Node.js, and Full Stack with 1-on-1 expert mentorship and certification. 100% free.",
+  title: "OutlineDev | 1-on-1 Dev Mentoring, Job Support & Hire a Developer",
+  description: "1-on-1 mentoring, job support and interview prep for React, Node.js and full-stack developers, plus freelance development. Free intro call.",
   alternates: {
     canonical: 'https://www.outlinedev.com/',
   },
@@ -20,8 +20,8 @@ export const metadata = {
     "free programming course india",
   ],
   openGraph: {
-    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
-    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship, mock interviews & global certification — 100% free.",
+    title: "OutlineDev | 1-on-1 Dev Mentoring, Job Support & Hire a Developer",
+    description: "1-on-1 mentoring, job support and interview prep for React, Node.js and full-stack developers, plus freelance development. Free intro call.",
     url: 'https://www.outlinedev.com/',
     siteName: 'OutlineDev',
     images: [
@@ -37,8 +37,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "OutlineDev | Free Coding Bootcamp & Mentorship",
-    description: "Master JavaScript, React, Angular, Node.js & Full Stack. 1-on-1 expert mentorship — 100% free.",
+    title: "OutlineDev | 1-on-1 Dev Mentoring, Job Support & Hire a Developer",
+    description: "1-on-1 mentoring, job support and interview prep for React, Node.js and full-stack developers, plus freelance development. Free intro call.",
     images: ['https://www.outlinedev.com/brand/linkedin-banner-final.png'],
     creator: "@outlinedev",
   },
@@ -55,7 +55,7 @@ export default function Page() {
         "name": "Is OutlineDev really free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes! OutlineDev is 100% free for students, juniors, and professionals. We believe high-quality engineering mentorship should be accessible to everyone."
+          "text": "The first intro call is free. Mentoring sessions, job support and freelance work are paid, with rates agreed directly."
         }
       },
       {
@@ -63,15 +63,7 @@ export default function Page() {
         "name": "How does the 1-on-1 mentorship work?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "You can book unlimited 1-on-1 sessions with senior engineers. We inspect your code, help debug issues, and provide career guidance relevant to Silicon Valley standards."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do you offer certificates?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, upon completing our tracks for React, Angular, or System Design, you receive a verifiable Global Certification to boost your LinkedIn profile."
+          "text": "You can book a 1-on-1 session with a senior engineer. We inspect your code, help debug complex issues, guide project architecture, and provide career and interview preparation."
         }
       },
       {
@@ -79,7 +71,7 @@ export default function Page() {
         "name": "Can beginners join?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Absolutely. We have specialized tracks for coding for kids, absolute beginners, and university students, starting from HTML/CSS all the way to Advanced System Design."
+          "text": "Yes. We welcome beginners and self-taught developers, guiding you step-by-step from core fundamentals in HTML, CSS, and JavaScript through modern React and full-stack development."
         }
       }
     ]

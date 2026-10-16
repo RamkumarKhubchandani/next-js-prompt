@@ -18,6 +18,7 @@ const CurriculumRoadmap = dynamic(() => import('./components/landing-page/Curric
 const VideoTestimonials = dynamic(() => import('./components/landing-page/VideoTestimonials').then(mod => ({ default: mod.VideoTestimonials })), { ssr: true, loading: () => <SectionSkeleton /> });
 const GoogleReviewsSection = dynamic(() => import('./components/public/GoogleReviewsSection'), { ssr: true, loading: () => <SectionSkeleton /> });
 const Testimonials = dynamic(() => import('./components/landing-page/Testimonials').then(mod => ({ default: mod.Testimonials })), { ssr: true, loading: () => <SectionSkeleton /> });
+const HomeHireSection = dynamic(() => import('./components/home/HomeHireSection'), { ssr: true });
 const Footer = dynamic(() => import('./components/Footer').then(mod => ({ default: mod.Footer })), { ssr: true });
 // Loading Skeleton
 const SectionSkeleton = () => (
@@ -45,6 +46,7 @@ export default function HomeClientPage() {
                 <VideoTestimonials />
                 <GoogleReviewsSection />
                 <Testimonials />
+                <HomeHireSection />
             </main>
             <Footer />
         </div>

@@ -118,6 +118,10 @@ const PHASE_1_LOCATIONS = [
 export default async function sitemap() {
   const baseUrl = "https://www.outlinedev.com"; // Production URL
   const currentDate = new Date().toISOString().split('T')[0];
+  // Bump these constants only when the page content really changes.
+  const HIRE_PAGES_LAST_MODIFIED = "2026-10-16";
+  const HOME_LAST_MODIFIED = "2026-10-16";
+  const STATIC_PAGES_LAST_MODIFIED = "2026-10-01";
   const MENTOR_PAGES_LAST_MODIFIED = "2026-09-01";
 
   // 1. Core Static Routes
@@ -149,12 +153,20 @@ export default async function sitemap() {
     { url: "/hire/vuejs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/react-native-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/redux-developer", changeFrequency: "weekly", priority: 0.8 },
-  ].map((route) => ({
-    url: `${baseUrl}${route.url}`,
-    lastModified: currentDate,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  }));
+  ].map((route) => {
+    let lastModified = STATIC_PAGES_LAST_MODIFIED;
+    if (route.url === "/") {
+      lastModified = HOME_LAST_MODIFIED;
+    } else if (route.url.startsWith("/hire/")) {
+      lastModified = HIRE_PAGES_LAST_MODIFIED;
+    }
+    return {
+      url: `${baseUrl}${route.url}`,
+      lastModified,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    };
+  });
 
   // 2. Low Value / Utility Routes (Indexable but low priority)
   const utilityRoutes = [
@@ -162,7 +174,7 @@ export default async function sitemap() {
     "/register",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: currentDate,
+    lastModified: STATIC_PAGES_LAST_MODIFIED,
     changeFrequency: "monthly",
     priority: 0.5,
   }));
