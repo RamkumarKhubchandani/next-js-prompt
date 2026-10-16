@@ -49,11 +49,12 @@ export default function MentorshipDashboard() {
 
     const getStatusColor = (status) => {
         const colors = {
-            pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-            contacted: 'bg-blue-100 text-blue-800 border-blue-300',
-            matched: 'bg-green-100 text-green-800 border-green-300',
-            completed: 'bg-gray-100 text-gray-800 border-gray-300',
-            cancelled: 'bg-red-100 text-red-800 border-red-300'
+            pending: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+            contacted: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+            matched: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+            scheduled: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+            completed: 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700',
+            cancelled: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
         };
         return colors[status] || colors.pending;
     };
@@ -63,6 +64,7 @@ export default function MentorshipDashboard() {
             pending: AlertCircle,
             contacted: Clock,
             matched: CheckCircle,
+            scheduled: CheckCircle,
             completed: CheckCircle,
             cancelled: XCircle
         };
@@ -77,7 +79,7 @@ export default function MentorshipDashboard() {
             <main className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-4xl font-black mb-2">Mentorship Requests</h1>
-                    <p className="text-gray-600 dark:text-gray-400">Manage and track all mentorship requests</p>
+                    <p className="text-gray-600 dark:text-gray-400">Manage and track all mentorship and 1:1 consultation requests</p>
                 </div>
 
                 {/* Filters */}
@@ -122,7 +124,18 @@ export default function MentorshipDashboard() {
                             >
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
-                                        <h3 className="text-xl font-bold mb-1">{request.name}</h3>
+                                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                            <h3 className="text-xl font-bold">{request.name}</h3>
+                                            {request.requestType && (
+                                                <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${
+                                                    request.requestType === '1-on-1 Call'
+                                                        ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800'
+                                                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800'
+                                                }`}>
+                                                    {request.requestType}
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-sm text-gray-500">
                                             {new Date(request.createdAt).toLocaleString('en-IN', {
                                                 dateStyle: 'medium',
@@ -146,8 +159,13 @@ export default function MentorshipDashboard() {
                                     </div>
                                     <div className="flex items-center gap-2 text-sm">
                                         <Phone size={16} className="text-gray-400" />
-                                        <a href={`https://wa.me/${request.phone?.replace(/\D/g, '')}`} className="text-green-600 hover:underline font-medium">
-                                            {request.phone}
+                                        <a
+                                            href={`https://wa.me/${String(request.phone || '').replace(/\D/g, '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-green-600 hover:underline font-medium"
+                                        >
+                                            {request.phone || 'N/A'}
                                         </a>
                                     </div>
                                 </div>
@@ -167,7 +185,9 @@ export default function MentorshipDashboard() {
                                     </div>
                                     <div>
                                         <span className="text-gray-500">Tech Stack:</span>
-                                        <p className="font-medium">{request.stack?.slice(0, 2).join(', ') || 'N/A'}</p>
+                                        <p className="font-medium">
+                                            {Array.isArray(request.stack) ? request.stack.slice(0, 3).join(', ') : (request.stack || 'N/A')}
+                                        </p>
                                     </div>
                                 </div>
 
