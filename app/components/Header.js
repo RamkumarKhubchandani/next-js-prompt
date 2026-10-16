@@ -108,24 +108,6 @@ export function Header({ showNav = true }) {
         return () => window.removeEventListener('open-connect-modal-global', handler);
     }, []);
 
-    // Loading state shell
-    if (status === "loading") {
-        return (
-            <header className={cn(
-                "fixed inset-x-0 top-0 z-50 transition-all duration-300 bg-transparent"
-            )}>
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-20 items-center justify-between">
-                        <div className="flex items-center">
-                            <Link href="/">
-                                <Logo />
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
-        );
-    }
 
     return (
         <header className={cn(
@@ -273,7 +255,9 @@ export function Header({ showNav = true }) {
                             </div>
                         )}
                         <div className="hidden md:flex items-center gap-x-4">
-                            {session ? (
+                            {status === "loading" ? (
+                                <div className="h-8 w-20 rounded-full bg-dark-700/10 dark:bg-dark-700/40 animate-pulse" />
+                            ) : session ? (
                                 <div className="relative" ref={menuRef}>
                                     <button
                                         onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -493,7 +477,9 @@ export function Header({ showNav = true }) {
                                                     </div>
                                                 </div>
                                                 <div className="py-6">
-                                                    {session ? (
+                                                    {status === "loading" ? (
+                                                        <div className="h-10 rounded-lg bg-dark-700/20 dark:bg-dark-800 animate-pulse" />
+                                                    ) : session ? (
                                                         <>
                                                             <div className="flex items-center px-3 py-3 rounded-lg bg-dark-800 mb-4 border border-dark-700">
                                                                 <div className="flex-shrink-0">
