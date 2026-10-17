@@ -149,7 +149,7 @@ export const Testimonials = () => {
                         viewport={{ once: true }}
                         className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed"
                     >
-                        From <span className="font-bold text-gray-900 dark:text-white">Silicon Valley to Tokyo</span>. Join <span className="font-bold text-brand-primary">1,000+</span> architects mastering the modern stack.
+                        Real feedback from the people I have mentored.
                     </motion.p>
 
                     {/* Tech Stack Horizontal Strip */}

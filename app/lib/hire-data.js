@@ -132,7 +132,7 @@ export const HIRE_PAGES = {
   },
   "full-stack-developer": {
     skill: "Full Stack",
-    title: "Hire a Full Stack Developer (React, Node.js, MongoDB) | India & Remote",
+    title: "Hire a Full Stack Developer | React, Node.js, MongoDB",
     description: "Hire a full stack developer for end-to-end web projects: interface, server and database. React, Next.js, Node.js, MongoDB. 12+ years of experience.",
     h1: "Hire a Full Stack Developer: Interface, Server and Database",
     intro: "Many small projects need one person who can handle everything. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I build complete web products with React and Next.js on the front end and Node.js and MongoDB behind them.",
@@ -144,7 +144,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "With over 12 years in the software industry, I provide end-to-end full-stack development for startups, small businesses, and agencies. Many projects do not have the budget or management capacity to coordinate separate frontend, backend, and database developers. As a solo full-stack engineer, I take ownership of the complete architecture: designing the user interface in React or Next.js, writing the server logic and APIs in Node.js, and structuring data in MongoDB.",
           "My engagements include building complete minimum viable products (MVPs) from initial wireframes to launch, developing internal business portals and management dashboards, adding full-stack features (such as authentication, payment collection, or automated email notifications) to existing systems, and conducting end-to-end code reviews to fix cross-layer bugs.",
-          "A concrete example of my full-stack work is the platform I engineered for Soraya's Hair Braiding & Beauty in Manhattan, NY. I designed and deployed the responsive React and Next.js frontend, built the Node.js server to handle booking validation and deposit verification, structured the MongoDB database to manage service catalogs and client appointments, and configured transactional notifications."
+          "A concrete example of my full-stack work is Soraya's Hair Braiding & Beauty in Manhattan, NY. I built the complete website with a React/Next.js frontend and a Node.js and MongoDB backend, including a booking flow where the client submits a deposit reference for the owner to verify, a portfolio gallery, and a review page."
         ]
       },
       {
@@ -180,7 +180,7 @@ export const HIRE_PAGES = {
   },
   "typescript-developer": {
     skill: "TypeScript",
-    title: "Hire a TypeScript Developer (React, Next.js, Node.js) | India & Remote",
+    title: "Hire a TypeScript Developer | React, Next.js, Node",
     description: "Hire a TypeScript developer for maintainable React, Next.js and Node.js projects. 12+ years of industry experience. Start with a 20-minute call.",
     h1: "Hire a TypeScript Developer for Maintainable Web Apps",
     intro: "TypeScript catches many bugs before your users see them and makes a codebase easier to hand over and grow. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I use TypeScript with React, Next.js and Node.js.",
