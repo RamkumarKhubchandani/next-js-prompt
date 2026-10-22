@@ -41,6 +41,10 @@ export function Footer() {
               <li><Link href="/hire/vuejs-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Vue.js Developer</Link></li>
               <li><Link href="/hire/react-native-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Native Developer</Link></li>
               <li><Link href="/hire/redux-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Redux Developer</Link></li>
+              <li><Link href="/hire/angular-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Angular Developer</Link></li>
+              <li><Link href="/hire/javascript-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">JavaScript Developer</Link></li>
+              <li><Link href="/hire/mongodb-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">MongoDB Developer</Link></li>
+              <li><Link href="/hire/html-css-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">HTML/CSS Developer</Link></li>
             </ul>
           </div>
 

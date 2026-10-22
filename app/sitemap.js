@@ -153,6 +153,10 @@ export default async function sitemap() {
     { url: "/hire/vuejs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/react-native-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/redux-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/angular-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/javascript-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/mongodb-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/html-css-developer", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => {
     let lastModified = STATIC_PAGES_LAST_MODIFIED;
     if (route.url === "/") {
