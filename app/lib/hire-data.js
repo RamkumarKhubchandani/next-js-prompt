@@ -36,7 +36,7 @@ export const HIRE_SHARED = {
 export const HIRE_PAGES = {
   "react-developer": {
     skill: "React",
-    title: "Hire a React Developer (India, Remote) | 12+ Years Experience",
+    title: "Hire React Developer | Freelance, India & Remote",
     description: "Hire an experienced React developer for booking sites, dashboards and accessible web apps. 12+ years in the industry. Start with a 20-minute call.",
     h1: "Hire an Experienced React Developer",
     intro: "I'm Ramkumar Khubchandani, a software engineer with 12+ years of industry experience. I build React interfaces for small businesses and product teams who need something clear, fast and easy to use, from booking flows to accessible tools.",
@@ -84,7 +84,7 @@ export const HIRE_PAGES = {
   },
   "nextjs-developer": {
     skill: "Next.js",
-    title: "Hire a Next.js Developer (India, Remote) | SEO-Ready Websites",
+    title: "Hire Next.js Developer | Freelance, India & Remote",
     description: "Hire a Next.js developer to build fast, search-friendly websites and web apps. 12+ years of industry experience. Start with a 20-minute call.",
     h1: "Hire a Next.js Developer for Fast, Findable Websites",
     intro: "If people need to find your business on Google, Next.js gives you fast pages and full control over titles, descriptions and social-sharing previews. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I build Next.js sites that are set up properly from day one.",
@@ -199,7 +199,7 @@ export const HIRE_PAGES = {
         heading: "Migrating a JavaScript Codebase Safely",
         paragraphs: [
           "Migrating an established JavaScript codebase to TypeScript can feel daunting, but it does not require a disruptive, all-or-nothing rewrite. I employ an incremental migration strategy that allows your team to continue shipping features while progressively increasing type safety. We configure tsconfig with allowJs enabled, begin by typing shared data models and utility functions, and systematically migrate files from .js/.jsx to .ts/.tsx in prioritized batches.",
-          "Throughout the migration, I focus on typing high-risk areas first — such as API request and response boundaries, state management stores, and critical business calculations. We resolve syntax ambiguities and runtime assumptions without relying on permissive 'any' shortcuts, ensuring that each migrated module provides real compile-time guarantees."
+          "Throughout the migration, I focus on typing high-risk areas first — such as API request and response boundaries, state management stores, and critical business calculations. We resolve syntax ambiguities and runtime assumptions without relying on permissive 'any' shortcuts, ensuring that each migrated module provides real compile-time type safety."
         ]
       },
       {
@@ -223,7 +223,7 @@ export const HIRE_PAGES = {
       { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." },
       { q: "Do you use strict TypeScript compiler settings?", a: "Yes. For new projects, I recommend strict mode with noImplicitAny and strictNullChecks enabled. For migrations, we start with pragmatic settings and increase strictness step-by-step as coverage expands." },
       { q: "Can you share TypeScript types between frontend and backend?", a: "Yes. In full-stack or monorepo setups, we can define shared type packages or DTO interfaces so both the Next.js frontend and Node.js backend consume identical type definitions, preventing drift." },
-      { q: "How do you handle runtime validation alongside TypeScript?", a: "TypeScript only validates at compile time. For runtime boundaries (such as user input and external API responses), I pair TypeScript with validation libraries like Zod or Yup to guarantee runtime data integrity." }
+      { q: "How do you handle runtime validation alongside TypeScript?", a: "TypeScript only validates at compile time. For runtime boundaries (such as user input and external API responses), I pair TypeScript with validation libraries like Zod or Yup to validate runtime data integrity." }
     ]
   },
   "nodejs-developer": {
@@ -420,7 +420,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "My mobile development scope centers on modern React Native practices. I work comfortably with both managed Expo workflows and bare React Native CLI setups. Expo with EAS (Expo Application Services) has become the gold standard for rapid builds, continuous integration, over-the-air updates, and simplified native dependency management.",
           "When deep native customization is required, I configure native modules in Swift, Objective-C, Kotlin, and Java, ensuring seamless bridging between native SDKs and the JavaScript runtime. Navigation is structured with React Navigation, supporting complex nested stack navigators, authentication switch flows, and universal deep linking.",
-          "Performance is essential on mobile devices. I employ React Native Reanimated and Gesture Handler to run gestures and fluid animations at 60 frames per second on the native thread. For data storage, I implement high-performance local databases such as MMKV and WatermelonDB to guarantee snappy offline access and instant user feedback."
+          "Performance is essential on mobile devices. I employ React Native Reanimated and Gesture Handler to run gestures and fluid animations at 60 frames per second on the native thread. For data storage, I implement high-performance local databases such as MMKV and WatermelonDB to support snappy offline access and instant user feedback."
         ]
       },
       {
@@ -461,7 +461,7 @@ export const HIRE_PAGES = {
       },
       {
         q: "How much code can genuinely be shared between iOS and Android?",
-        a: "Typically 85% to 95% of business logic, state management, API hooks, and UI presentation is shared between iOS and Android. Platform-specific styling adjustments and native permissions are handled cleanly through platform extensions."
+        a: "Most of the business logic, state management, API hooks, and UI presentation is shared between iOS and Android. Platform-specific styling adjustments and native permissions are handled cleanly through platform extensions."
       },
       {
         q: "Can you fix build failures or upgrade an outdated React Native project?",
@@ -531,11 +531,11 @@ export const HIRE_PAGES = {
     faq: [
       {
         q: "Why should our team migrate from legacy Redux to Redux Toolkit?",
-        a: "Redux Toolkit is the official, modern way to write Redux. It reduces boilerplate by over 70%, includes Immer out of the box for safe mutable-style updates, simplifies store configuration, and integrates first-class TypeScript support without manual action type definitions."
+        a: "Redux Toolkit is the official, modern way to write Redux. It greatly reduces boilerplate, includes Immer out of the box for safe mutable-style updates, simplifies store configuration, and integrates first-class TypeScript support without manual action type definitions."
       },
       {
         q: "When is Redux Saga needed instead of Redux Thunk or RTK Query?",
-        a: "RTK Query and Redux Thunk satisfy 95% of application needs for data fetching and async logic. Redux Saga is recommended when you have complex concurrent side-effects, such as debounced search cancellation, complex retry loops, or event-driven background polling."
+        a: "RTK Query and Redux Thunk cover most application needs for data fetching and async logic. Redux Saga is recommended when you have complex concurrent side-effects, such as debounced search cancellation, complex retry loops, or event-driven background polling."
       },
       {
         q: "How does RTK Query eliminate data-fetching boilerplate?",
@@ -576,7 +576,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "Choosing between Angular and React comes down to architectural philosophy and team organizational needs. React is a flexible UI library that requires teams to select and assemble their own routing, form handling, state management, and build tools. For many organizations, this flexibility eventually leads to fragmentation, where different internal teams build incompatible architectures that become difficult to maintain over several years.",
           "Angular provides an opinionated, batteries-included engineering platform out of the box. It includes a mature router, typed reactive forms, dependency injection, an HTTP client with interceptor support, and first-class TypeScript integration by default. When building large enterprise applications or unified corporate dashboards where dozens of developers collaborate, Angular eliminates endless debates over foundational tooling. Every Angular engineer understands where services live, how routing is declared, and how data flows through components, dramatically reducing onboarding overhead and long-term maintenance friction.",
-          "React remains a superior choice when building lightweight embeddable widgets, highly experimental user interfaces, or decoupled micro-frontends with customized rendering pipelines. Angular is the right choice when you need a cohesive, enterprise-grade architecture where standardized conventions, rigorous typing, and built-in tooling are prioritized over ad-hoc customization. TODO_USER: Add specific Angular client project or enterprise dashboard case study here if available."
+          "React remains a superior choice when building lightweight embeddable widgets, highly experimental user interfaces, or decoupled micro-frontends with customized rendering pipelines. Angular is the right choice when you need a cohesive, enterprise-grade architecture where standardized conventions, rigorous typing, and built-in tooling are prioritized over ad-hoc customization."
         ]
       },
       {
@@ -584,7 +584,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "Data-intensive enterprise dashboards frequently struggle with state synchronization, laggy UI updates, and subtle memory leaks caused by unmanaged reactive subscriptions. In Angular, RxJS observables provide a powerful stream-based foundation for handling asynchronous events, user inputs, and live server updates, but they require strict architectural hygiene.",
           "I structure dashboard state using declarative RxJS pipelines rather than imperative subscription callbacks. By leveraging higher-order mapping operators like switchMap, mergeMap, and concatMap alongside combination operators like combineLatest and forkJoin, complex asynchronous workflows are expressed as predictable, traceable data streams. Shared data streams are cached cleanly using shareReplay to avoid redundant HTTP requests when multiple dashboard widgets display the same underlying metrics.",
-          "Crucially, I avoid manual .subscribe() calls inside Angular component classes. Instead, components expose read-only observable streams consumed directly in templates via the async pipe, or converted into signals. This pattern guarantees that subscriptions are automatically cleaned up when components are destroyed, eliminating one of the most common sources of memory leaks in production Angular dashboards."
+          "Crucially, I avoid manual .subscribe() calls inside Angular component classes. Instead, components expose read-only observable streams consumed directly in templates via the async pipe, or converted into signals. This pattern ensures that subscriptions are automatically cleaned up when components are destroyed, eliminating one of the most common sources of memory leaks in production Angular dashboards."
         ]
       },
       {
@@ -690,7 +690,7 @@ export const HIRE_PAGES = {
       {
         heading: "Debugging Real Production Issues",
         paragraphs: [
-          "Production environments expose subtle edge cases that automated local unit tests rarely uncover: network packet drops, erratic user input sequences, memory bloat on low-memory mobile hardware, and timezone boundary bugs. Diagnosing these issues requires systematic forensic debugging rather than guesswork. TODO_USER: Add specific production debugging incident or performance turnaround case study here if available.",
+          "Production environments expose subtle edge cases that automated local unit tests rarely uncover: network packet drops, erratic user input sequences, memory bloat on low-memory mobile hardware, and timezone boundary bugs. Diagnosing these issues requires systematic forensic debugging rather than guesswork.",
           "I specialize in tracking down elusive client-side and server-side memory leaks. In the browser, detached DOM tree nodes, lingering global event listeners, and uncleared timer intervals prevent the garbage collector from reclaiming memory, eventually causing client tabs to crash. Using browser memory heap snapshots and allocation timelines, I pinpoint retained object paths and decouple orphaned references.",
           "On the backend with Node.js, I analyze heap dumps and CPU profiles to identify event-loop starvation caused by accidental synchronous blocking operations, JSON parsing of massive payloads, or regular expression catastrophic backtracking. I configure source maps and structured error monitoring to ensure minified production stack traces translate directly into actionable file locations and line numbers, preventing recurring outages."
         ]
@@ -806,7 +806,7 @@ export const HIRE_PAGES = {
       {
         heading: "Atlas Basics: Clusters, Backups, and Monitoring",
         paragraphs: [
-          "MongoDB Atlas is the industry-standard managed cloud database platform, but running it reliably in production requires careful configuration and continuous oversight. Proper tier selection, automated storage scaling, and regional cluster placement ensure that your database scales smoothly without unexpected budget overruns or sudden storage exhaustion. TODO_USER: Add specific database cluster size, peak request volume, or collection metrics here if available.",
+          "MongoDB Atlas is the industry-standard managed cloud database platform, but running it reliably in production requires careful configuration and continuous oversight. Proper tier selection, automated storage scaling, and regional cluster placement ensure that your database scales smoothly without unexpected budget overruns or sudden storage exhaustion.",
           "I configure production Atlas clusters with replica set redundancy across multiple availability zones, ensuring automatic failover with zero manual intervention during hardware outages. I establish automated snapshot backup policies with point-in-time recovery (PITR) to protect critical business records against accidental data corruption or catastrophic operational mistakes.",
           "Security and monitoring are configured systematically. I enforce strict IP access lists, VPC network peering where required, encrypted TLS connections, and database user accounts restricted by least-privilege role-based access control. In addition, I set up Atlas performance alerts for high CPU utilization, memory pressure, disk IOPS saturation, and slow query execution, ensuring complete visibility into database health."
         ]
@@ -816,7 +816,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "Serverless hosting architectures such as Vercel and AWS Lambda pose unique challenges for MongoDB connection management. Traditional long-running Node.js servers maintain a single, persistent MongoClient connection pool throughout the lifetime of the process. In contrast, stateless serverless functions spin up and spin down dynamically in response to incoming HTTP traffic.",
           "If a serverless endpoint opens a new database connection on every request without caching the client instance, high traffic spikes will quickly exhaust MongoDB's connection pool limits, causing subsequent requests to fail with connection timeout errors. In fact, outlinedev.com itself runs on MongoDB Atlas, utilizing cached global connection promises in Next.js Server Components and API routes to ensure connections are reused across warm function invocations.",
-          "I configure connection pool settings (such as maxPoolSize, minPoolSize, and serverSelectionTimeoutMS) specifically tailored for serverless environments. I implement retry logic for transient network disconnects and ensure that connections close gracefully during process termination, guaranteeing high reliability and uninterrupted uptime under volatile request loads."
+          "I configure connection pool settings (such as maxPoolSize, minPoolSize, and serverSelectionTimeoutMS) specifically tailored for serverless environments. I implement retry logic for transient network disconnects and ensure that connections close gracefully during process termination, supporting high reliability and consistent uptime under volatile request loads."
         ]
       },
       {
@@ -914,8 +914,8 @@ export const HIRE_PAGES = {
       {
         heading: "Email Templates and Landing-Page Work",
         paragraphs: [
-          "HTML email development remains one of the most demanding sub-disciplines in front-end engineering due to obsolete, fractured rendering engines. Desktop versions of Microsoft Outlook still rely on the Microsoft Word rendering engine, while web clients like Gmail and Apple Mail impose strict inline styling limitations. TODO_USER: Add specific client email campaign or landing-page conversion case study here if available.",
-          "I build robust, cross-client HTML email templates using hybrid table-based structures, conditional MSO comments, and carefully inlined CSS styles. Every template is tested to render reliably across dark and light modes on mobile and desktop email clients without broken layouts, font fallbacks, or unreadable text. This guarantees that marketing announcements, transactional receipts, and customer notifications display consistently.",
+          "HTML email development remains one of the most demanding sub-disciplines in front-end engineering due to obsolete, fractured rendering engines. Desktop versions of Microsoft Outlook still rely on the Microsoft Word rendering engine, while web clients like Gmail and Apple Mail impose strict inline styling limitations.",
+          "I build robust, cross-client HTML email templates using hybrid table-based structures, conditional MSO comments, and carefully inlined CSS styles. Every template is tested to render reliably across dark and light modes on mobile and desktop email clients without broken layouts, font fallbacks, or unreadable text. This helps ensure that marketing announcements, transactional receipts, and customer notifications display consistently.",
           "For marketing landing pages, I translate Figma designs into pixel-perfect, high-converting web pages. I focus on clear visual hierarchy, accessible call-to-action buttons, responsive hero sections, and subtle interactive hover states that engage prospective customers while maintaining near-instant load speeds."
         ]
       },
