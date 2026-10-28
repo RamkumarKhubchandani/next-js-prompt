@@ -1,35 +1,36 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Header } from '../Header';
 import { Footer } from '../Footer';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
-    Star, 
-    Shield, 
-    CheckCircle, 
     ArrowRight, 
     Code, 
     Users, 
     Zap, 
-    X, 
     Globe, 
     MessageSquare, 
     Sparkles, 
-    Building2, 
-    PenTool,
-    MapPin,
-    Layers,
-    Compass,
-    BookOpen,
-    Briefcase,
-    Trophy,
-    Clock,
-    Check,
-    ExternalLink
+    MapPin, 
+    Compass, 
+    Briefcase, 
+    Trophy, 
+    ExternalLink 
 } from 'lucide-react';
-import MentorshipClient from '../../mentorship/MentorshipClient';
+import MentorshipModalTrigger from './MentorshipModalTrigger';
+import ReviewMarquee from './ReviewMarquee';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
+
+const MentorshipClient = dynamic(() => import('../../mentorship/MentorshipClient'), {
+    ssr: false,
+    loading: () => (
+        <div className="min-h-[380px] animate-pulse flex flex-col gap-4 justify-center items-center text-slate-400">
+            <div className="w-10 h-10 border-2 border-brand-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs">Loading mentorship form...</p>
+        </div>
+    )
+});
 
 // REAL GOOGLE REVIEWS DATA (Avatars generated dynamically via ui-avatars)
 const REAL_REVIEWS = [
@@ -114,20 +115,24 @@ const HIRE_SLUG_MAP = {
     'redux': 'redux-developer',
 };
 
-export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug }) {
-    const [showForm, setShowForm] = useState(false);
-    const [reviews] = useState(REAL_REVIEWS);
+function StarRating({ count = 5 }) {
+    return (
+        <div className="flex text-yellow-400 text-sm tracking-widest mb-4" aria-label={`${count} stars`}>
+            {"★".repeat(count)}
+        </div>
+    );
+}
 
+export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug }) {
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
     const matchingHireSlug = HIRE_SLUG_MAP[skill.id];
 
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-    const toggleForm = () => setShowForm(!showForm);
 
-    const midPoint = Math.ceil(reviews.length / 2);
-    const row1 = reviews.slice(0, midPoint);
-    const row2 = reviews.slice(midPoint);
+    const midPoint = Math.ceil(REAL_REVIEWS.length / 2);
+    const row1 = REAL_REVIEWS.slice(0, midPoint);
+    const row2 = REAL_REVIEWS.slice(midPoint);
 
     // Related format slugs for the current skill + location
     const formatVariations = [
@@ -175,14 +180,14 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                             </p>
 
                             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                                <button
-                                    onClick={toggleForm}
+                                <MentorshipModalTrigger
+                                    skill={skill}
                                     className="px-8 py-4 rounded-xl font-bold text-slate-950 bg-brand-primary hover:bg-emerald-400 shadow-xl shadow-brand-primary/20 transition-all flex items-center gap-2 cursor-pointer"
                                 >
                                     <Zap size={18} />
                                     <span>Connect with a {skill.name} Mentor</span>
                                     <ArrowRight size={18} />
-                                </button>
+                                </MentorshipModalTrigger>
                                 <a
                                     href={`https://wa.me/918237320942?text=Hi%20Ram%2C%20I%20am%20looking%20for%20a%20${encodeURIComponent(skill.name)}%20mentor%20in%20${encodeURIComponent(location.name)}`}
                                     target="_blank"
@@ -260,7 +265,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                         {/* Step 1 */}
-                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                        <div className="step-card">
                             <div className="w-12 h-12 bg-brand-primary text-slate-950 font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-brand-primary/30">
                                 1
                             </div>
@@ -271,7 +276,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         </div>
 
                         {/* Step 2 */}
-                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                        <div className="step-card">
                             <div className="w-12 h-12 bg-blue-500 text-white font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-blue-500/30">
                                 2
                             </div>
@@ -282,7 +287,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         </div>
 
                         {/* Step 3 */}
-                        <div className="relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg">
+                        <div className="step-card">
                             <div className="w-12 h-12 bg-emerald-500 text-white font-black text-xl rounded-2xl flex items-center justify-center mb-6 shadow-md shadow-emerald-500/30">
                                 3
                             </div>
@@ -307,12 +312,12 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                 Every mentor undergoes a multi-step code review and live technical screening to ensure you receive world-class guidance on modern architecture, security, and best practices.
                             </p>
                         </div>
-                        <button
-                            onClick={toggleForm}
+                        <MentorshipModalTrigger
+                            skill={skill}
                             className="px-8 py-4 rounded-xl font-bold text-slate-950 bg-brand-primary hover:bg-emerald-400 transition-all shrink-0 shadow-lg shadow-brand-primary/25 cursor-pointer"
                         >
                             Find a {skill.name} Mentor Now
-                        </button>
+                        </MentorshipModalTrigger>
                     </div>
                 </div>
             </section>
@@ -325,32 +330,32 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                 </div>
 
                 {/* Row 1 */}
-                <div className="flex gap-6 animate-marquee hover:pause mb-6">
+                <ReviewMarquee className="mb-6">
                     {row1.map((review, i) => (
-                        <div key={i} className="min-w-[400px] bg-white dark:bg-dark-900 p-6 rounded-2xl border border-slate-200 dark:border-dark-700 shadow-lg hover:border-teal-500/50 dark:hover:border-brand-primary/50 transition-colors">
-                            <div className="flex text-yellow-500 dark:text-yellow-400 mb-4 items-center gap-1">{[...Array(review.stars)].map((_, j) => <Star key={j} size={16} fill="currentColor" />)}</div>
-                            <p className="text-slate-700 dark:text-gray-300 mb-6 italic text-sm leading-relaxed">"{review.text}"</p>
-                            <div className="flex items-center gap-3">
-                                <img src={review.img} alt={review.name} className="w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-white/10" />
-                                <div><h4 className="text-slate-900 dark:text-white font-bold text-sm">{review.name}</h4><p className="text-xs text-slate-500 dark:text-gray-500">{review.role} @ {review.company}</p></div>
+                        <div key={i} className="review-card">
+                            <StarRating count={review.stars} />
+                            <p className="review-text">"{review.text}"</p>
+                            <div className="review-meta">
+                                <img src={review.img} alt={review.name} className="review-avatar" />
+                                <div><h4 className="review-name">{review.name}</h4><p className="review-role">{review.role} @ {review.company}</p></div>
                             </div>
                         </div>
                     ))}
-                </div>
+                </ReviewMarquee>
 
                 {/* Row 2 */}
-                <div className="flex gap-6 animate-marquee hover:pause" style={{ animationDirection: 'reverse' }}>
+                <ReviewMarquee reverse={true}>
                     {row2.map((review, i) => (
-                        <div key={i} className="min-w-[400px] bg-white dark:bg-dark-900 p-6 rounded-2xl border border-slate-200 dark:border-dark-700 shadow-lg hover:border-teal-500/50 dark:hover:border-brand-primary/50 transition-colors">
-                            <div className="flex text-yellow-500 dark:text-yellow-400 mb-4 items-center gap-1">{[...Array(review.stars)].map((_, j) => <Star key={j} size={16} fill="currentColor" />)}</div>
-                            <p className="text-slate-700 dark:text-gray-300 mb-6 italic text-sm leading-relaxed">"{review.text}"</p>
-                            <div className="flex items-center gap-3">
-                                <img src={review.img} alt={review.name} className="w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-white/10" />
-                                <div><h4 className="text-slate-900 dark:text-white font-bold text-sm">{review.name}</h4><p className="text-xs text-slate-500 dark:text-gray-500">{review.role} @ {review.company}</p></div>
+                        <div key={i} className="review-card">
+                            <StarRating count={review.stars} />
+                            <p className="review-text">"{review.text}"</p>
+                            <div className="review-meta">
+                                <img src={review.img} alt={review.name} className="review-avatar" />
+                                <div><h4 className="review-name">{review.name}</h4><p className="review-role">{review.role} @ {review.company}</p></div>
                             </div>
                         </div>
                     ))}
-                </div>
+                </ReviewMarquee>
 
                 {/* Direct Google Review Link */}
                 <div className="mt-10 text-center">
@@ -360,7 +365,9 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-white dark:bg-dark-800 text-slate-800 dark:text-white border border-slate-200 dark:border-dark-700 hover:border-brand-primary hover:text-brand-primary shadow-sm transition-all"
                     >
-                        <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
                         <span>Leave us a review on Google</span>
                         <ExternalLink size={14} className="text-slate-400" />
                     </a>
@@ -376,19 +383,19 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
+                        <div className="seo-card">
                             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6"><Globe size={24} /></div>
                             <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{location.name} Tech Ecosystem</h3>
                             <p className="text-slate-600 dark:text-gray-400 text-sm leading-relaxed">{locationContent.techHubDescription} {locationContent.referralNetwork}</p>
                         </div>
 
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
+                        <div className="seo-card">
                             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6"><Users size={24} /></div>
                             <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{skill.name} Core Roadmap</h3>
                             <p className="text-slate-600 dark:text-gray-400 text-sm leading-relaxed">Our structured milestones cover: {skillContent.modules.map(m => m.title).join(', ')}. Each module includes building production-ready apps.</p>
                         </div>
 
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform">
+                        <div className="seo-card">
                             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 mb-6"><Code size={24} /></div>
                             <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">Technical Interview Prep</h3>
                             <p className="text-slate-600 dark:text-gray-400 text-sm leading-relaxed"><strong>{skillContent.faq.question}</strong> {skillContent.faq.answer.substring(0, 140)}...</p>
@@ -408,9 +415,9 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                             { q: "Is the first diagnostic chat free?", a: "Yes. You can chat with your mentor, discuss your blockers or goals, and ensure they are a great fit before committing to paid coaching." },
                             { q: "Do you provide on-the-job sprint support?", a: "Yes! If you are currently working on a production project and need confidential, senior guidance on tricky bugs or architecture, we offer flexible job support packages." }
                         ].map((faq, i) => (
-                            <details key={i} className="group bg-white dark:bg-dark-800 rounded-2xl border border-slate-200 dark:border-dark-700 open:border-brand-primary/50 transition-colors shadow-sm">
-                                <summary className="p-6 cursor-pointer font-bold text-slate-900 dark:text-white flex items-center justify-between">{faq.q}<span className="text-brand-primary group-open:rotate-180 transition-transform"><ArrowRight size={20} className="rotate-90" /></span></summary>
-                                <div className="px-6 pb-6 text-slate-600 dark:text-gray-400 leading-relaxed">{faq.a}</div>
+                            <details key={i} className="group faq-item">
+                                <summary className="faq-summary">{faq.q}<span className="text-brand-primary group-open:rotate-180 transition-transform"><ArrowRight size={20} className="rotate-90" /></span></summary>
+                                <div className="faq-body">{faq.a}</div>
                             </details>
                         ))}
                     </div>
@@ -435,8 +442,8 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Cluster 1: Other Tech Stacks in Current Location */}
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 border border-slate-200 dark:border-dark-700 shadow-lg">
-                            <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100 dark:border-dark-700 text-slate-900 dark:text-white">
+                        <div className="mesh-card">
+                            <div className="mesh-header">
                                 <div className="w-8 h-8 rounded-lg bg-brand-primary/15 text-brand-primary flex items-center justify-center">
                                     <MapPin size={18} />
                                 </div>
@@ -447,10 +454,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={item.id}
                                         href={`/mentors/one-to-one-${item.id}-tutors-in-${location.id}`}
-                                        className={`text-xs px-3 py-2 rounded-xl border transition-all font-medium ${item.id === skill.id
-                                            ? 'bg-brand-primary/15 text-brand-primary border-brand-primary/40 font-bold'
-                                            : 'bg-slate-50 dark:bg-dark-900/80 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-dark-700 hover:border-brand-primary/50 hover:text-brand-primary'
-                                        }`}
+                                        className={`mesh-badge ${item.id === skill.id ? 'mesh-badge-active' : ''}`}
                                     >
                                         1:1 {item.name} in {location.name}
                                     </Link>
@@ -459,8 +463,8 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         </div>
 
                         {/* Cluster 2: Current Tech Stack in Worldwide Global Hubs */}
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 border border-slate-200 dark:border-dark-700 shadow-lg">
-                            <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100 dark:border-dark-700 text-slate-900 dark:text-white">
+                        <div className="mesh-card">
+                            <div className="mesh-header">
                                 <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-500 flex items-center justify-center">
                                     <Globe size={18} />
                                 </div>
@@ -471,10 +475,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={hub.id}
                                         href={`/mentors/one-to-one-${skill.id}-tutors-in-${hub.id}`}
-                                        className={`text-xs px-3 py-2 rounded-xl border transition-all font-medium ${hub.id === location.id
-                                            ? 'bg-blue-500/15 text-blue-500 border-blue-500/40 font-bold'
-                                            : 'bg-slate-50 dark:bg-dark-900/80 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-dark-700 hover:border-blue-500/50 hover:text-blue-500'
-                                        }`}
+                                        className={`mesh-badge ${hub.id === location.id ? 'mesh-badge-hub-active' : ''}`}
                                     >
                                         {skill.name} in {hub.name}
                                     </Link>
@@ -483,8 +484,8 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         </div>
 
                         {/* Cluster 3: Alternative Formats for this Skill & Location */}
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 border border-slate-200 dark:border-dark-700 shadow-lg">
-                            <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100 dark:border-dark-700 text-slate-900 dark:text-white">
+                        <div className="mesh-card">
+                            <div className="mesh-header">
                                 <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-500 flex items-center justify-center">
                                     <Briefcase size={18} />
                                 </div>
@@ -495,17 +496,17 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={idx}
                                         href={v.href}
-                                        className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-dark-900/80 border border-slate-200 dark:border-dark-700 hover:border-purple-500/50 group transition-all"
+                                        className="group mesh-format-card"
                                     >
                                         <div>
-                                            <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-400 transition-colors block">
+                                            <span className="mesh-format-title">
                                                 {v.label}
                                             </span>
-                                            <span className="text-[11px] text-slate-500 dark:text-gray-400">
+                                            <span className="mesh-format-desc">
                                                 {v.desc}
                                             </span>
                                         </div>
-                                        <ArrowRight size={14} className="text-slate-400 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                                        <span className="mesh-format-arrow" aria-hidden="true">&rarr;</span>
                                     </Link>
                                 ))}
                             </div>
@@ -513,19 +514,6 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                     </div>
                 </div>
             </section>
-
-            {/* MODALS */}
-            <AnimatePresence>
-                {showForm && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={toggleForm} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-                        <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative w-full max-w-5xl bg-white dark:bg-dark-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                            <button onClick={toggleForm} className="absolute top-4 right-4 z-50 p-2 bg-slate-100 dark:bg-dark-800 rounded-full hover:bg-slate-200 dark:hover:bg-dark-700 transition-colors" title="Close"><X size={20} /></button>
-                            <div className="flex-1 overflow-y-auto custom-scrollbar"><div className="p-1"><MentorshipClient prefill={{ stack: [skill.id] }} isInModal={true} /></div></div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
 
             <Footer />
         </div>

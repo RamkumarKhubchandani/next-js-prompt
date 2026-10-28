@@ -36,7 +36,7 @@ export const HIRE_SHARED = {
 export const HIRE_PAGES = {
   "react-developer": {
     skill: "React",
-    title: "Hire a React Developer (India, Remote) | 12+ Years Experience",
+    title: "Hire React Developer | Freelance, India & Remote",
     description: "Hire an experienced React developer for booking sites, dashboards and accessible web apps. 12+ years in the industry. Start with a 20-minute call.",
     h1: "Hire an Experienced React Developer",
     intro: "I'm Ramkumar Khubchandani, a software engineer with 12+ years of industry experience. I build React interfaces for small businesses and product teams who need something clear, fast and easy to use, from booking flows to accessible tools.",
@@ -84,7 +84,7 @@ export const HIRE_PAGES = {
   },
   "nextjs-developer": {
     skill: "Next.js",
-    title: "Hire a Next.js Developer (India, Remote) | SEO-Ready Websites",
+    title: "Hire Next.js Developer | Freelance, India & Remote",
     description: "Hire a Next.js developer to build fast, search-friendly websites and web apps. 12+ years of industry experience. Start with a 20-minute call.",
     h1: "Hire a Next.js Developer for Fast, Findable Websites",
     intro: "If people need to find your business on Google, Next.js gives you fast pages and full control over titles, descriptions and social-sharing previews. I'm Ramkumar Khubchandani, with 12+ years of industry experience, and I build Next.js sites that are set up properly from day one.",
@@ -199,7 +199,7 @@ export const HIRE_PAGES = {
         heading: "Migrating a JavaScript Codebase Safely",
         paragraphs: [
           "Migrating an established JavaScript codebase to TypeScript can feel daunting, but it does not require a disruptive, all-or-nothing rewrite. I employ an incremental migration strategy that allows your team to continue shipping features while progressively increasing type safety. We configure tsconfig with allowJs enabled, begin by typing shared data models and utility functions, and systematically migrate files from .js/.jsx to .ts/.tsx in prioritized batches.",
-          "Throughout the migration, I focus on typing high-risk areas first — such as API request and response boundaries, state management stores, and critical business calculations. We resolve syntax ambiguities and runtime assumptions without relying on permissive 'any' shortcuts, ensuring that each migrated module provides real compile-time guarantees."
+          "Throughout the migration, I focus on typing high-risk areas first — such as API request and response boundaries, state management stores, and critical business calculations. We resolve syntax ambiguities and runtime assumptions without relying on permissive 'any' shortcuts, ensuring that each migrated module provides real compile-time type safety."
         ]
       },
       {
@@ -223,7 +223,7 @@ export const HIRE_PAGES = {
       { q: "How do we start?", a: "Book a 20-minute call or send the inquiry form." },
       { q: "Do you use strict TypeScript compiler settings?", a: "Yes. For new projects, I recommend strict mode with noImplicitAny and strictNullChecks enabled. For migrations, we start with pragmatic settings and increase strictness step-by-step as coverage expands." },
       { q: "Can you share TypeScript types between frontend and backend?", a: "Yes. In full-stack or monorepo setups, we can define shared type packages or DTO interfaces so both the Next.js frontend and Node.js backend consume identical type definitions, preventing drift." },
-      { q: "How do you handle runtime validation alongside TypeScript?", a: "TypeScript only validates at compile time. For runtime boundaries (such as user input and external API responses), I pair TypeScript with validation libraries like Zod or Yup to guarantee runtime data integrity." }
+      { q: "How do you handle runtime validation alongside TypeScript?", a: "TypeScript only validates at compile time. For runtime boundaries (such as user input and external API responses), I pair TypeScript with validation libraries like Zod or Yup to validate runtime data integrity." }
     ]
   },
   "nodejs-developer": {
@@ -420,7 +420,7 @@ export const HIRE_PAGES = {
         paragraphs: [
           "My mobile development scope centers on modern React Native practices. I work comfortably with both managed Expo workflows and bare React Native CLI setups. Expo with EAS (Expo Application Services) has become the gold standard for rapid builds, continuous integration, over-the-air updates, and simplified native dependency management.",
           "When deep native customization is required, I configure native modules in Swift, Objective-C, Kotlin, and Java, ensuring seamless bridging between native SDKs and the JavaScript runtime. Navigation is structured with React Navigation, supporting complex nested stack navigators, authentication switch flows, and universal deep linking.",
-          "Performance is essential on mobile devices. I employ React Native Reanimated and Gesture Handler to run gestures and fluid animations at 60 frames per second on the native thread. For data storage, I implement high-performance local databases such as MMKV and WatermelonDB to guarantee snappy offline access and instant user feedback."
+          "Performance is essential on mobile devices. I employ React Native Reanimated and Gesture Handler to run gestures and fluid animations at 60 frames per second on the native thread. For data storage, I implement high-performance local databases such as MMKV and WatermelonDB to support snappy offline access and instant user feedback."
         ]
       },
       {
@@ -461,7 +461,7 @@ export const HIRE_PAGES = {
       },
       {
         q: "How much code can genuinely be shared between iOS and Android?",
-        a: "Typically 85% to 95% of business logic, state management, API hooks, and UI presentation is shared between iOS and Android. Platform-specific styling adjustments and native permissions are handled cleanly through platform extensions."
+        a: "Most of the business logic, state management, API hooks, and UI presentation is shared between iOS and Android. Platform-specific styling adjustments and native permissions are handled cleanly through platform extensions."
       },
       {
         q: "Can you fix build failures or upgrade an outdated React Native project?",
@@ -531,11 +531,11 @@ export const HIRE_PAGES = {
     faq: [
       {
         q: "Why should our team migrate from legacy Redux to Redux Toolkit?",
-        a: "Redux Toolkit is the official, modern way to write Redux. It reduces boilerplate by over 70%, includes Immer out of the box for safe mutable-style updates, simplifies store configuration, and integrates first-class TypeScript support without manual action type definitions."
+        a: "Redux Toolkit is the official, modern way to write Redux. It greatly reduces boilerplate, includes Immer out of the box for safe mutable-style updates, simplifies store configuration, and integrates first-class TypeScript support without manual action type definitions."
       },
       {
         q: "When is Redux Saga needed instead of Redux Thunk or RTK Query?",
-        a: "RTK Query and Redux Thunk satisfy 95% of application needs for data fetching and async logic. Redux Saga is recommended when you have complex concurrent side-effects, such as debounced search cancellation, complex retry loops, or event-driven background polling."
+        a: "RTK Query and Redux Thunk cover most application needs for data fetching and async logic. Redux Saga is recommended when you have complex concurrent side-effects, such as debounced search cancellation, complex retry loops, or event-driven background polling."
       },
       {
         q: "How does RTK Query eliminate data-fetching boilerplate?",
@@ -554,6 +554,413 @@ export const HIRE_PAGES = {
         a: "Rates start from $30/hr as noted in the shared terms, with fixed quotes provided for well-defined refactoring scopes. Payments are handled directly via bank transfer or wire; this website does not process payments."
       }
     ]
+  },
+  "angular-developer": {
+    skill: "Angular",
+    title: "Hire Angular Developer | Freelance, India & Remote",
+    description: "Hire a freelance Angular developer for standalone components, signals, RxJS state, and performance tuning. 12+ years experience. Remote & India.",
+    h1: "Hire an Experienced Freelance Angular Developer",
+    intro: "I'm Ramkumar Khubchandani, a software engineer with 12+ years of industry experience. I help companies build, modernize, and stabilize Angular web applications, focusing on scalable dashboard state with RxJS, modern standalone architectures with signals, and clean performance optimization.",
+    whatIBuild: [
+      "Enterprise web applications and operational dashboards with complex RxJS data streams",
+      "Gradual migrations from legacy NgModule architectures to modern standalone components and signals",
+      "Change detection audits and performance tuning using ChangeDetectionStrategy.OnPush",
+      "Automated test suites for services, components, and data pipelines using Jest and TypeScript",
+      "Clean integration with Node.js, REST APIs, and third-party backend services"
+    ],
+    projects: [],
+    showTestimonial: false,
+    sections: [
+      {
+        heading: "When Angular is the Right Choice Over React",
+        paragraphs: [
+          "Choosing between Angular and React comes down to architectural philosophy and team organizational needs. React is a flexible UI library that requires teams to select and assemble their own routing, form handling, state management, and build tools. For many organizations, this flexibility eventually leads to fragmentation, where different internal teams build incompatible architectures that become difficult to maintain over several years.",
+          "Angular provides an opinionated, batteries-included engineering platform out of the box. It includes a mature router, typed reactive forms, dependency injection, an HTTP client with interceptor support, and first-class TypeScript integration by default. When building large enterprise applications or unified corporate dashboards where dozens of developers collaborate, Angular eliminates endless debates over foundational tooling. Every Angular engineer understands where services live, how routing is declared, and how data flows through components, dramatically reducing onboarding overhead and long-term maintenance friction.",
+          "React remains a superior choice when building lightweight embeddable widgets, highly experimental user interfaces, or decoupled micro-frontends with customized rendering pipelines. Angular is the right choice when you need a cohesive, enterprise-grade architecture where standardized conventions, rigorous typing, and built-in tooling are prioritized over ad-hoc customization."
+        ]
+      },
+      {
+        heading: "RxJS and State Management in Large Dashboards",
+        paragraphs: [
+          "Data-intensive enterprise dashboards frequently struggle with state synchronization, laggy UI updates, and subtle memory leaks caused by unmanaged reactive subscriptions. In Angular, RxJS observables provide a powerful stream-based foundation for handling asynchronous events, user inputs, and live server updates, but they require strict architectural hygiene.",
+          "I structure dashboard state using declarative RxJS pipelines rather than imperative subscription callbacks. By leveraging higher-order mapping operators like switchMap, mergeMap, and concatMap alongside combination operators like combineLatest and forkJoin, complex asynchronous workflows are expressed as predictable, traceable data streams. Shared data streams are cached cleanly using shareReplay to avoid redundant HTTP requests when multiple dashboard widgets display the same underlying metrics.",
+          "Crucially, I avoid manual .subscribe() calls inside Angular component classes. Instead, components expose read-only observable streams consumed directly in templates via the async pipe, or converted into signals. This pattern ensures that subscriptions are automatically cleaned up when components are destroyed, eliminating one of the most common sources of memory leaks in production Angular dashboards."
+        ]
+      },
+      {
+        heading: "Migrating NgModules to Standalone Components and Signals",
+        paragraphs: [
+          "Modern Angular development has shifted decisively toward standalone components, directives, and pipes, leaving behind the cumbersome ceremony of NgModules. Legacy NgModule architectures often suffer from monolithic SharedModules that import hundreds of unrelated dependencies, obscuring component boundaries and bloating initial JavaScript bundle sizes.",
+          "I plan and execute phased migrations from NgModule-based projects to standalone architectures. The migration begins by converting leaf components, utility pipes, and shared directives to standalone: true, decoupling them from sprawling modules. Once components are standalone, feature modules can be eliminated entirely, and route definitions can be converted to functional lazy-loading routes using loadComponent and loadChildren.",
+          "Alongside standalone components, I introduce Angular signals for synchronous reactivity. Signals provide fine-grained, dependency-tracked reactive primitives that eliminate the need to create complex RxJS Subject pipelines for simple local component state. Using signal(), computed(), and toSignal(), state transformations become immediately readable, eliminating boilerplate while maintaining flawless interoperability with existing RxJS streams."
+        ]
+      },
+      {
+        heading: "OnPush Change Detection and Runtime Performance",
+        paragraphs: [
+          "By default, Angular relies on change detection cycles to intercept asynchronous browser events and check template expressions across the entire component tree. In large dashboards with dense data tables, interactive charts, and frequent timer updates, checking every component on every tick causes noticeable frame drops, sluggish scrolling, and delayed user input response.",
+          "I audit and optimize Angular applications by converting component hierarchies to ChangeDetectionStrategy.OnPush. Under OnPush, Angular only evaluates a component template when an input reference changes, an event originated within that component, or an bound signal updates. This drastically reduces the number of change detection checks per second.",
+          "To maximize OnPush performance, I enforce immutable data patterns across services and components, preventing in-place object mutations that fail to trigger template updates. I also implement trackBy functions in loop directives to prevent unnecessary DOM node recreation during list reordering, remove expensive function invocations from template interpolations, and run high-frequency event listeners outside the Angular zone when appropriate."
+        ]
+      },
+      {
+        heading: "Testing Angular Services, Components, and Pipes",
+        paragraphs: [
+          "A reliable Angular application requires automated test suites that verify business logic and user flows without becoming brittle implementation tests. I write fast, maintainable unit and integration tests using Jest and Vitest, pairing them with TypeScript to ensure comprehensive coverage across critical paths.",
+          "For Angular services, I test isolated business logic, data normalization, and HTTP interceptors using mock providers. Reactive streams and complex RxJS operator sequences are tested synchronously using marble testing or TestScheduler, verifying debounce timing, error retry sequences, and caching behaviors without unreliable setTimeout delays.",
+          "For UI components, tests focus on user-observable behavior: verifying form validation feedback, confirming accessibility attributes, checking emitted custom events, and ensuring that view templates reflect updated state. Mocking is kept minimal and focused on network boundaries, ensuring that test suites remain fast, reliable, and easy to run in automated CI/CD pipelines."
+        ]
+      },
+      {
+        heading: "Typical Failure Modes of Angular Projects",
+        paragraphs: [
+          "Over years of reviewing Angular applications, several recurring anti-patterns consistently undermine maintainability and performance. The most widespread is the kitchen-sink SharedModule, where utility pipes, third-party libraries, and disparate UI widgets are dumped into a single module imported everywhere, resulting in poor tree-shaking and inflated initial load times.",
+          "A second critical failure mode is unmanaged RxJS subscriptions. Developers frequently subscribe to observables in ngOnInit without storing references or unsubscribing in ngOnDestroy, leaving zombie listeners that leak memory and trigger duplicate HTTP calls long after the user has navigated away.",
+          "Other frequent failures include abusing two-way data binding with ngModel for complex forms instead of structured Reactive Forms, calling computationally heavy component methods directly inside template bindings, and neglecting to configure trackBy on dynamic lists. Addressing these anti-patterns transforms sluggish, fragile Angular projects into fast, maintainable applications."
+        ]
+      },
+      {
+        heading: "When You Should NOT Hire Me",
+        paragraphs: [
+          "Do not hire me if your project requires legacy AngularJS 1.x maintenance or complex hybrid ngUpgrade architectures; I work exclusively with modern Angular (versions 14 through current stable releases).",
+          "Do not hire me if you require an in-person, on-site developer in an external office; I deliver all consulting, development, and code reviews remotely.",
+          "Do not hire me if you are looking for a multi-developer agency or an offshore body-shop; I work directly and independently as a senior engineer on your codebase."
+        ]
+      },
+      {
+        heading: "How We'd Start",
+        paragraphs: [
+          "We begin with a focused 20-minute discovery conversation or a written message outlining your application requirements, current pain points, or migration goals.",
+          "I conduct an initial assessment of your repository structure, dependency versions, and change detection setup, delivering a written proposal detailing scope, milestone deliverables, and estimated timelines.",
+          "Upon agreement, development proceeds in clear, test-driven iterations with frequent staging deployments, structured pull requests, and transparent communication throughout."
+        ]
+      }
+    ],
+    faq: [
+      {
+        q: "What versions of Angular do you work with?",
+        a: "I work with modern Angular versions from Angular 14 through current releases, with particular focus on standalone components, signals, and typed reactive forms."
+      },
+      {
+        q: "Can you help migrate our application from NgModules to standalone components?",
+        a: "Yes. I plan and execute step-by-step migrations from legacy NgModule architectures to standalone components, eliminating bloated shared modules and modernizing routing."
+      },
+      {
+        q: "How do you prevent RxJS memory leaks in Angular dashboards?",
+        a: "I prioritize declarative streams using the async pipe and Angular signals, avoiding manual subscriptions in components and utilizing lifecycle teardown hooks where explicit subscriptions are required."
+      },
+      {
+        q: "Can you optimize performance for slow Angular applications?",
+        a: "Yes. I audit change detection cycles, convert components to ChangeDetectionStrategy.OnPush, implement trackBy optimizations, and eliminate template method evaluations."
+      },
+      {
+        q: "Do you handle full-stack integration with Node.js backends?",
+        a: "Yes. I regularly integrate Angular frontends with Node.js, Express, and NestJS backends, designing typed REST API contracts and secure authentication flows."
+      },
+      {
+        q: "What are your consulting rates and how are payments structured?",
+        a: "Rates start from $30/hr as noted in the shared rate information, with fixed-price milestone quotes available after scoping. Invoicing is settled directly via bank transfer; no payments are processed on this site."
+      }
+    ]
+  },
+  "javascript-developer": {
+    skill: "JavaScript",
+    title: "Hire JavaScript Developer | Freelance, India & Remote",
+    description: "Hire a freelance JavaScript developer for event-loop debugging, async race conditions, and bundle optimization. 12+ years experience. Remote & India.",
+    h1: "Hire an Experienced Freelance JavaScript Developer",
+    intro: "I'm Ramkumar Khubchandani, a software engineer with 12+ years of industry experience. I diagnose and resolve complex JavaScript issues, untangle asynchronous concurrency bugs, optimize client bundle sizes, and write clean, resilient code across both browser and Node.js environments.",
+    whatIBuild: [
+      "Root-cause diagnosis and resolution for asynchronous race conditions, memory leaks, and event-loop lag",
+      "Frontend and backend JavaScript architecture built with modern ECMAScript standards and clean patterns",
+      "Bundle size reduction, tree-shaking optimization, and code-splitting across Webpack and Vite builds",
+      "Vanilla JavaScript utility engines, DOM widgets, and framework-independent micro-libraries",
+      "Automated unit and integration test suites using Jest and Vitest"
+    ],
+    projects: ["soraya","accessible"],
+    showTestimonial: false,
+    sections: [
+      {
+        heading: "Async Bugs: Race Conditions, Promises, and the Event Loop",
+        paragraphs: [
+          "Asynchronous execution lies at the heart of JavaScript, yet it remains one of the most persistent sources of production defects. Because JavaScript runs on a single-threaded event loop, developers often assume code executes deterministically, overlooking the complex interactions between the call stack, microtask queue (Promise callbacks and queueMicrotask), and macrotask queue (setTimeout, setInterval, and I/O events).",
+          "A common production failure is the asynchronous race condition in user interfaces. For instance, in a search-as-you-type input or dynamic tab navigation, a user triggers multiple consecutive network requests. If an earlier request takes longer to resolve than a later request, its delayed response can overwrite fresher data, displaying stale or incorrect information on screen. I eliminate these race conditions by implementing modern AbortController signals to cancel in-flight HTTP requests, or by maintaining request sequence counters that discard outdated responses.",
+          "I also resolve promise handling anti-patterns, such as accidental sequential loops using await inside array iterations that should be executed concurrently with Promise.all or Promise.allSettled. Furthermore, I identify and fix unhandled promise rejections and silent failure traps where try/catch blocks fail to catch errors thrown inside asynchronous callbacks or event handlers, restoring clean asynchronous flow."
+        ]
+      },
+      {
+        heading: "Debugging Real Production Issues",
+        paragraphs: [
+          "Production environments expose subtle edge cases that automated local unit tests rarely uncover: network packet drops, erratic user input sequences, memory bloat on low-memory mobile hardware, and timezone boundary bugs. Diagnosing these issues requires systematic forensic debugging rather than guesswork.",
+          "I specialize in tracking down elusive client-side and server-side memory leaks. In the browser, detached DOM tree nodes, lingering global event listeners, and uncleared timer intervals prevent the garbage collector from reclaiming memory, eventually causing client tabs to crash. Using browser memory heap snapshots and allocation timelines, I pinpoint retained object paths and decouple orphaned references.",
+          "On the backend with Node.js, I analyze heap dumps and CPU profiles to identify event-loop starvation caused by accidental synchronous blocking operations, JSON parsing of massive payloads, or regular expression catastrophic backtracking. I configure source maps and structured error monitoring to ensure minified production stack traces translate directly into actionable file locations and line numbers, preventing recurring outages."
+        ]
+      },
+      {
+        heading: "Performance and Bundle Size Optimization",
+        paragraphs: [
+          "JavaScript performance is not merely about execution speed; it is heavily governed by download, parse, and compile times on real-world mobile devices. Every additional 100 KB of third-party JavaScript degrades Largest Contentful Paint (LCP) and Interaction to Next Paint (INP) scores, directly hurting search rankings and conversion rates.",
+          "I conduct thorough bundle audits using Webpack and Vite bundle analyzers to uncover bloated dependencies, duplicate package versions, and dead code. I replace monolithic libraries with lightweight native alternatives, such as replacing bloated date-parsing packages with native Intl methods, and eliminating utility chains in favor of modern ECMAScript array methods.",
+          "Beyond tree-shaking, I implement strategic route-level and component-level code-splitting with dynamic import() statements. Non-critical scripts, such as modal dialogs, rich-text editors, and third-party analytics, are deferred until user interaction. This keeps initial entry chunks lean, accelerates main-thread execution, and ensures snappy 60fps interface interactions across low-power mobile devices."
+        ]
+      },
+      {
+        heading: "Vanilla JS vs Framework: Choosing the Right Tool",
+        paragraphs: [
+          "The modern web ecosystem often defaults to heavy single-page frameworks even for simple business applications where a lightweight vanilla JavaScript implementation would load ten times faster and require zero dependency maintenance. While frameworks like React, Vue, and Angular provide indispensable abstractions for complex dynamic dashboards, they introduce substantial runtime overhead and ongoing upgrade debt.",
+          "I help teams evaluate the pragmatic trade-offs between vanilla JavaScript and framework ecosystems. For landing pages, content marketing sites, customer checkout widgets, and embedded third-party scripts, vanilla JavaScript written with modern ES modules, Web Components, and native CSS styling delivers unmatched load speed and zero-framework longevity.",
+          "When writing vanilla JavaScript, I enforce disciplined software design patterns. I organize code into cohesive modules with clear encapsulation, utilize CustomEvent dispatching for decoupled component communication, and leverage native browser primitives like the HTML dialog element to deliver rich interactivity without external dependencies. This ensures that features remain resilient, performant, and future-proof."
+        ]
+      },
+      {
+        heading: "Typical Interview and Take-Home Traps",
+        paragraphs: [
+          "Technical interviews and take-home assignments frequently test core JavaScript fundamentals that trip up even developers with years of framework experience. These traps typically probe deeper understanding of the runtime: closure scope variables within asynchronous loops, lexical scoping rules of arrow functions versus regular function context binding, and the nuances of prototypal inheritance versus class syntax.",
+          "Other common evaluation pitfalls include loose equality type coercion quirks (such as differences between ==, ===, and Object.is), shallow versus deep object cloning edge cases with structuredClone, and event delegation mechanics. Candidates often struggle with event bubbling, event capturing phases, and knowing when event.stopPropagation() is harmful versus necessary.",
+          "When advising teams or structuring coding standards, I emphasize writing robust, production-grade code that handles edge cases cleanly: validating inputs, accounting for empty collections, gracefully handling network timeout exceptions, and writing clear, deterministic tests with Jest or Vitest rather than relying on brittle mock assumptions."
+        ]
+      },
+      {
+        heading: "When You Should NOT Hire Me",
+        paragraphs: [
+          "Do not hire me if your project centers on low-level WebAssembly compiler development, 3D WebGL shader programming, or browser engine internals; my focus is application-level full-stack web engineering.",
+          "Do not hire me if you require a full-time, in-office employee; I work exclusively as an independent remote contractor and technical consultant.",
+          "Do not hire me if you are seeking a rapid prototype built with copy-pasted snippets without regard for code quality, security validation, or automated testing."
+        ]
+      },
+      {
+        heading: "How We'd Start",
+        paragraphs: [
+          "We start with a concise 20-minute discussion or a written message detailing your technical challenges, production bug logs, or project goals.",
+          "I examine your code repository or minimal reproducible test case, providing a written assessment with clear diagnosis, remediation milestones, and transparent pricing.",
+          "Once approved, I implement solutions in small, documented pull requests accompanied by regression tests and clear technical explanations."
+        ]
+      }
+    ],
+    faq: [
+      {
+        q: "What environments and runtimes of JavaScript do you work with?",
+        a: "I work across all modern JavaScript runtimes, including modern browser environments and Node.js backend servers, using contemporary ECMAScript standards."
+      },
+      {
+        q: "How do you track down memory leaks and event-loop bottlenecks?",
+        a: "I use browser DevTools heap snapshots, allocation instrumentation, and Node.js CPU profilers to locate detached DOM nodes, uncleared listeners, and synchronous blocking loops."
+      },
+      {
+        q: "Can you help us reduce our JavaScript bundle size and improve page load speed?",
+        a: "Yes. I analyze bundle dependency graphs with Vite and Webpack visualizers, eliminate un-treeshaken libraries, configure dynamic code splitting, and replace heavy dependencies with native APIs."
+      },
+      {
+        q: "How do you fix asynchronous race conditions in user interfaces?",
+        a: "I implement AbortController to cancel obsolete in-flight fetch requests, introduce request sequence tokens, and ensure that asynchronous UI state mutations remain deterministic."
+      },
+      {
+        q: "Can you build features in vanilla JavaScript without external frameworks?",
+        a: "Yes. For landing pages, embeddable widgets, and performance-critical flows, I build zero-dependency vanilla JavaScript solutions using modern ES modules and native browser APIs."
+      },
+      {
+        q: "What are your freelance rates and payment terms?",
+        a: "My rate starts from $30/hr as detailed in the shared rate section, with fixed quotes provided for defined debugging or refactoring deliverables. Invoices are paid directly via bank wire; no payments are processed on this site."
+      }
+    ]
+  },
+  "mongodb-developer": {
+    skill: "MongoDB",
+    title: "Hire MongoDB Developer | Freelance, India & Remote",
+    description: "Hire a freelance MongoDB developer for schema design, aggregation pipelines, Atlas setups, and index tuning. 12+ years experience. Remote & India.",
+    h1: "Hire an Experienced Freelance MongoDB Developer",
+    intro: "I'm Ramkumar Khubchandani, a backend software engineer with 12+ years of industry experience. I design resilient MongoDB schemas, optimize slow aggregation pipelines, configure production clusters on MongoDB Atlas, and tune database performance for Node.js web applications.",
+    whatIBuild: [
+      "Production MongoDB schema architectures balancing embedding versus referencing for high-throughput workloads",
+      "Multi-stage aggregation pipelines for analytical reporting, faceted search, and complex data transformations",
+      "Query optimization, compound index creation, and execution plan profiling using explain('executionStats')",
+      "Serverless connection pooling, caching, and lifecycle management for Next.js and Node.js applications",
+      "Cluster configuration, automated backups, and role-based security policies on MongoDB Atlas"
+    ],
+    projects: ["soraya","kids"],
+    showTestimonial: false,
+    sections: [
+      {
+        heading: "Schema Design: Embed vs Reference",
+        paragraphs: [
+          "In document databases like MongoDB, schema design determines both runtime performance and operational scalability. Unlike relational databases that encourage strict normalization across separate tables, MongoDB requires modeling data around real-world application access patterns. The central architectural decision is choosing when to embed documents versus when to reference them across collections.",
+          "Embedding data inside a parent document delivers superior read performance because related entities are retrieved in a single disk I/O operation without application-level joins. Embedding is ideal for 1-to-1 relationships and bounded 1-to-few collections, such as user addresses or order line items that are updated atomically. However, embedding unbounded data sets—such as an open-ended comment thread or perpetual activity log—introduces the catastrophic 16 MB BSON document size limit trap, eventually causing write failures in production.",
+          "Referencing documents via ObjectIds is required for 1-to-many, 1-to-squillions, and many-to-many relationships, or when related records are frequently queried independently. I design schemas using Mongoose that balance both approaches, applying denormalized snapshots for frequently read immutable fields while maintaining clean references for evolving relationships. This hybrid approach keeps document sizes strictly bounded while optimizing everyday read throughput."
+        ]
+      },
+      {
+        heading: "Indexing and Reading explain() Execution Plans",
+        paragraphs: [
+          "An unindexed MongoDB collection is one of the quickest ways to bring down a production Node.js backend under high traffic. When queries lack appropriate indexes, MongoDB falls back to a full collection scan (COLLSCAN), inspecting every single document on disk, consuming excessive CPU, and saturating memory cache.",
+          "I diagnose query performance by running explain('executionStats') on slow operations. By analyzing the execution plan metrics, I examine the crucial ratio between totalKeysExamined, totalDocsExamined, and nReturned. In an optimal query, totalKeysExamined equals nReturned, and totalDocsExamined matches the returned count with zero extraneous documents read from storage.",
+          "I build compound indexes adhering to the Equality, Sort, Range (ESR) rule. Fields filtered by exact equality are placed first in the index key definition, followed by fields used for sorting, and concluding with range filters. I also implement partial indexes and TTL indexes to conserve RAM by indexing only active document subsets and automating background record expiration without cron overhead."
+        ]
+      },
+      {
+        heading: "Aggregation Pipelines for Data Transformation and Reporting",
+        paragraphs: [
+          "When business requirements demand complex data transformations, multi-collection lookups, or statistical reporting, standard CRUD find operations fall short. MongoDB aggregation pipelines process documents through a sequence of declarative stages, performing high-performance computation directly inside the database engine.",
+          "I construct efficient aggregation pipelines using stages such as $match, $project, $group, $lookup, $unwind, and $facet. Pipeline stage ordering is critical for performance: by placing selective $match and $sort stages at the very front of the pipeline, MongoDB utilizes collection indexes and dramatically reduces the document volume passed to memory-intensive downstream stages.",
+          "For e-commerce catalogs and analytical dashboards, I utilize $facet to calculate multi-category counts, price distributions, and paginated records in a single database round-trip. I replace chatty, multi-query application logic with atomic pipelines, reducing network latency between your Node.js server and database cluster while ensuring deterministic result sets and sub-second query responses."
+        ]
+      },
+      {
+        heading: "Atlas Basics: Clusters, Backups, and Monitoring",
+        paragraphs: [
+          "MongoDB Atlas is the industry-standard managed cloud database platform, but running it reliably in production requires careful configuration and continuous oversight. Proper tier selection, automated storage scaling, and regional cluster placement ensure that your database scales smoothly without unexpected budget overruns or sudden storage exhaustion.",
+          "I configure production Atlas clusters with replica set redundancy across multiple availability zones, ensuring automatic failover with zero manual intervention during hardware outages. I establish automated snapshot backup policies with point-in-time recovery (PITR) to protect critical business records against accidental data corruption or catastrophic operational mistakes.",
+          "Security and monitoring are configured systematically. I enforce strict IP access lists, VPC network peering where required, encrypted TLS connections, and database user accounts restricted by least-privilege role-based access control. In addition, I set up Atlas performance alerts for high CPU utilization, memory pressure, disk IOPS saturation, and slow query execution, ensuring complete visibility into database health."
+        ]
+      },
+      {
+        heading: "Connection Handling in Serverless Environments",
+        paragraphs: [
+          "Serverless hosting architectures such as Vercel and AWS Lambda pose unique challenges for MongoDB connection management. Traditional long-running Node.js servers maintain a single, persistent MongoClient connection pool throughout the lifetime of the process. In contrast, stateless serverless functions spin up and spin down dynamically in response to incoming HTTP traffic.",
+          "If a serverless endpoint opens a new database connection on every request without caching the client instance, high traffic spikes will quickly exhaust MongoDB's connection pool limits, causing subsequent requests to fail with connection timeout errors. In fact, outlinedev.com itself runs on MongoDB Atlas, utilizing cached global connection promises in Next.js Server Components and API routes to ensure connections are reused across warm function invocations.",
+          "I configure connection pool settings (such as maxPoolSize, minPoolSize, and serverSelectionTimeoutMS) specifically tailored for serverless environments. I implement retry logic for transient network disconnects and ensure that connections close gracefully during process termination, supporting high reliability and consistent uptime under volatile request loads."
+        ]
+      },
+      {
+        heading: "When You Should NOT Hire Me",
+        paragraphs: [
+          "Do not hire me if you are looking for an on-premise hardware DBA to configure physical bare-metal sharded clusters across private data centers; my focus is cloud-managed MongoDB Atlas and application-level schema engineering.",
+          "Do not hire me if you need an in-office full-time employee; I provide all consulting, database optimization, and development remotely as an independent contractor.",
+          "Do not hire me if you require a relational SQL specialist to build complex multi-table ACID transactions across legacy financial enterprise ERP systems."
+        ]
+      },
+      {
+        heading: "How We'd Start",
+        paragraphs: [
+          "We begin with a 20-minute discovery conversation or a written message detailing your current database architecture, slow query logs, or Atlas cluster setup.",
+          "I conduct an initial audit of your schema definitions and analyze slow queries using explain() plans, providing a written proposal with concrete milestones and transparent pricing.",
+          "Once approved, I apply index adjustments, schema refinements, or aggregation optimizations in documented stages, verifying query speed improvements with benchmark tests."
+        ]
+      }
+    ],
+    faq: [
+      {
+        q: "When should data be embedded versus referenced in MongoDB?",
+        a: "Embed data for 1-to-1 and bounded 1-to-few relationships where records are read and updated together. Reference data for 1-to-many, unbounded lists, or entities queried independently to avoid the 16 MB BSON document limit."
+      },
+      {
+        q: "How do you identify and fix slow MongoDB queries?",
+        a: "I analyze query execution with explain('executionStats') to identify unindexed collection scans, examine totalKeysExamined versus nReturned, and create compound indexes following the Equality, Sort, Range (ESR) rule."
+      },
+      {
+        q: "How do you handle MongoDB connections in serverless frameworks like Next.js?",
+        a: "I implement cached global connection promises to reuse established MongoClient pools across warm serverless invocations, tune pool sizes, and configure connection timeouts to prevent connection exhaustion."
+      },
+      {
+        q: "Can you help migrate our database to MongoDB Atlas or optimize an existing cluster?",
+        a: "Yes. I configure Atlas clusters, set up automated snapshot backups, configure IP access lists and role-based permissions, and optimize cluster tier resource allocation."
+      },
+      {
+        q: "Do you write MongoDB aggregations with Mongoose in Node.js?",
+        a: "Yes. I construct multi-stage aggregation pipelines using Mongoose and native drivers for analytical reporting, faceted searches, and complex data transformations."
+      },
+      {
+        q: "What are your freelance rates and payment terms?",
+        a: "Rates start from $30/hr as noted in the shared rate information, with fixed quotes provided for defined schema audit or optimization milestones. Invoices are settled via bank transfer; this site does not process payments."
+      }
+    ]
+  },
+  "html-css-developer": {
+    skill: "HTML/CSS",
+    title: "Hire HTML/CSS Developer | Freelance, India & Remote",
+    description: "Hire a freelance HTML/CSS developer for semantic accessible markup, responsive layouts, Core Web Vitals, and emails. 12+ years experience. Remote.",
+    h1: "Hire an Experienced Freelance HTML/CSS Developer",
+    intro: "I'm Ramkumar Khubchandani, a front-end software engineer with 12+ years of industry experience. I build clean, semantic, and accessible HTML/CSS interfaces that render flawlessly across devices, eliminate Core Web Vitals layout shifts, and provide exceptional user experiences.",
+    whatIBuild: [
+      "Semantic, accessible HTML markup compliant with WCAG guidelines and screen-reader standards",
+      "Responsive CSS layouts engineered with Flexbox, CSS Grid, and fluid typography without brittle hacks",
+      "Modular CSS architectures using Tailwind CSS, CSS Modules, and clean utility conventions",
+      "Core Web Vitals performance remediation targeting Cumulative Layout Shift (CLS) and rendering delays",
+      "Cross-client HTML email templates and high-converting marketing landing pages"
+    ],
+    projects: ["soraya","accessible"],
+    showTestimonial: false,
+    sections: [
+      {
+        heading: "Semantic and Accessible Markup",
+        paragraphs: [
+          "Semantic HTML forms the structural backbone of accessible, performant, and search-friendly web interfaces. Yet modern web development frequently suffers from excessive div-soup, where generic non-semantic elements are styled to mimic buttons, links, and modal dialogs. This practice strips away native keyboard accessibility, disrupts browser reading modes, and renders interfaces unusable for people relying on screen readers.",
+          "I build user interfaces using meaningful HTML elements such as main, header, nav, section, article, and aside. Interactive triggers are constructed with native button and anchor tags, which inherently support keyboard focus, sequential tab indexing, and Space and Enter key activation without brittle custom event listeners. Forms are built with explicit label associations, clear input types, and structured fieldsets.",
+          "Accessibility (a11y) is integrated directly into the markup rather than patched on later. I apply ARIA roles, states, and live regions judiciously only when native HTML semantics cannot convey complex state transitions. Every component is audited for screen-reader clarity, high-contrast readability, and strict keyboard navigation, ensuring full compliance with WCAG standards across all user journeys."
+        ]
+      },
+      {
+        heading: "Responsive Layout Without Hacks",
+        paragraphs: [
+          "Creating responsive web interfaces across thousands of screen dimensions requires fluid, modern CSS layout techniques rather than brittle pixel breakpoints and arbitrary JavaScript resize listeners. Early responsive design often relied on negative margins, float clears, and dozens of rigid media queries that broke as soon as content lengths shifted.",
+          "I engineer resilient responsive layouts using modern CSS Flexbox and CSS Grid. Using intrinsic layout techniques like repeat(auto-fit, minmax(...)) and clamp() for fluid typography, layouts adapt smoothly and proportionally to any viewport width from mobile screens to ultra-wide desktop monitors without horizontal scrollbars or clipped text.",
+          "Furthermore, I leverage modern CSS container queries to style components based on their immediate parent container width rather than the global viewport. This modular layout strategy ensures that cards, forms, and widgets can be placed anywhere across your application without breaking their internal layout integrity. Viewport adaptation remains clean, predictable, and maintainable across future design iterations."
+        ]
+      },
+      {
+        heading: "CSS Architecture: Maintainability and Organization",
+        paragraphs: [
+          "As web applications grow, unorganized stylesheets quickly devolve into specificity wars, where developers fight cascading overrides by stacking nested selectors and resorting to dangerous !important tags. This technical debt slows down development velocity, bloats file sizes, and makes styling changes unpredictable.",
+          "I establish scalable CSS architectures tailored to project requirements. When working with utility-first systems like Tailwind CSS, I ensure consistent spacing scales, typography hierarchies, and color tokens defined in central theme configurations. When working with CSS Modules, styles are strictly scoped to individual components, completely eliminating global namespace collisions and accidental visual regressions.",
+          "I structure design tokens using native CSS custom properties (variables) for theme management, making dark mode transitions seamless and performant. In addition, I configure build tooling to purge unused utility classes, eliminate dead CSS rules, and minimize stylesheet payload sizes delivered to the browser, ensuring rapid rendering across both desktop and mobile networks."
+        ]
+      },
+      {
+        heading: "Core Web Vitals Fixes: CLS and Rendering Performance",
+        paragraphs: [
+          "Google's Core Web Vitals directly impact organic search rankings and user satisfaction. Cumulative Layout Shift (CLS) is one of the most frustrating performance issues, occurring when elements unexpectedly shift on the screen while a page is loading, causing users to misclick buttons or lose their reading position.",
+          "I audit and resolve layout shifts by ensuring every image, video, and embedded iframe has explicit width and height attributes or CSS aspect-ratio properties defined. This allows the browser to reserve the exact layout space before visual media downloads finish. For late-loading web fonts, I configure font-display: swap along with font fallback metric adjustments, eliminating font layout shifts during font swap.",
+          "For rendering performance, I eliminate render-blocking stylesheets and inline critical styles required for above-the-fold content. When implementing animations, I restrict transitions strictly to GPU-accelerated CSS properties like transform and opacity, avoiding property changes like top, left, width, or margin that trigger expensive layout reflows and repaints. This work ensures green performance scores across Google Lighthouse audits."
+        ]
+      },
+      {
+        heading: "Email Templates and Landing-Page Work",
+        paragraphs: [
+          "HTML email development remains one of the most demanding sub-disciplines in front-end engineering due to obsolete, fractured rendering engines. Desktop versions of Microsoft Outlook still rely on the Microsoft Word rendering engine, while web clients like Gmail and Apple Mail impose strict inline styling limitations.",
+          "I build robust, cross-client HTML email templates using hybrid table-based structures, conditional MSO comments, and carefully inlined CSS styles. Every template is tested to render reliably across dark and light modes on mobile and desktop email clients without broken layouts, font fallbacks, or unreadable text. This helps ensure that marketing announcements, transactional receipts, and customer notifications display consistently.",
+          "For marketing landing pages, I translate Figma designs into pixel-perfect, high-converting web pages. I focus on clear visual hierarchy, accessible call-to-action buttons, responsive hero sections, and subtle interactive hover states that engage prospective customers while maintaining near-instant load speeds."
+        ]
+      },
+      {
+        heading: "When You Should NOT Hire Me",
+        paragraphs: [
+          "Do not hire me if you are seeking a creative graphic designer to design logos, illustrations, or marketing artwork from scratch; I write engineering-grade HTML and CSS based on provided designs or wireframes.",
+          "Do not hire me if you need an in-office employee for full-time on-site work; I provide all development and consulting services remotely.",
+          "Do not hire me if you want cheap automated page builders that output bloated, unmaintainable markup full of arbitrary inline hacks."
+        ]
+      },
+      {
+        heading: "How We'd Start",
+        paragraphs: [
+          "We start with a quick 20-minute introductory call or a written message with links to your Figma designs, current website URL, or email template specifications.",
+          "I review the assets, outline responsive layout considerations and accessibility criteria, and provide a clear written scope with milestones and pricing.",
+          "Once approved, I build the markup and styles iteratively, sharing responsive staging links for verification and delivering clean, well-documented code."
+        ]
+      }
+    ],
+    faq: [
+      {
+        q: "What CSS frameworks and styling tools do you work with?",
+        a: "I work primarily with Tailwind CSS, standard CSS Modules, modern native CSS with custom properties, and utility-first conventions, tailoring the approach to your codebase."
+      },
+      {
+        q: "How do you ensure web pages are accessible to screen readers?",
+        a: "I write semantic HTML elements, ensure complete keyboard navigation support, structure forms with explicit labels, and implement ARIA roles and attributes in compliance with WCAG standards."
+      },
+      {
+        q: "How do you diagnose and fix Cumulative Layout Shift (CLS)?",
+        a: "I set explicit dimensions or aspect-ratio on images and embeds, reserve layout space for dynamic content, and match font metrics using font-display and font fallback overrides to eliminate shifts."
+      },
+      {
+        q: "Can you build responsive HTML email templates that work in Outlook and Gmail?",
+        a: "Yes. I build hybrid table-based email templates with conditional MSO code and inline CSS, ensuring layouts render cleanly across Outlook, Gmail, Apple Mail, and mobile clients."
+      },
+      {
+        q: "Can you convert Figma designs into pixel-perfect responsive HTML and CSS?",
+        a: "Yes. I translate Figma and design files into fluid, responsive HTML and CSS layouts using Flexbox, CSS Grid, and container queries across mobile, tablet, and desktop viewports."
+      },
+      {
+        q: "What are your hourly rates and how does billing work?",
+        a: "Rates start from $30/hr as outlined in the shared terms, with fixed-price quotes provided for landing page or email deliverables. Payments are made directly via bank wire; no payments occur on this site."
+      }
+    ]
   }
 };
-

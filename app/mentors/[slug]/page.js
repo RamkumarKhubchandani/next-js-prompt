@@ -8,7 +8,7 @@ const REAL_RATING = {
     reviewCount: "16"
 };
 
-export const revalidate = 604800;
+export const revalidate = 2592000;
 
 // Generate static params for top combinations to boost SEO speed
 export async function generateStaticParams() {
@@ -32,6 +32,89 @@ export async function generateStaticParams() {
 function capitalize(s) {
     if (!s) return '';
     return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function buildGraphSchema({ slug, skill, location, suffix, prefix, skillContent }) {
+    const isHiring = prefix === 'hire' || prefix === 'freelance' || suffix === 'developers' || suffix === 'experts';
+    const isJobSupport = suffix === 'job-support' || suffix === 'project-support';
+    const isInterview = suffix === 'interview-help' || suffix === 'interview-prep' || suffix === 'mock-interviews';
+    const isOneToOne = prefix === 'one-to-one' || prefix === '1-on-1' || suffix === 'tutors' || suffix === 'tutor';
+
+    let titleStr = '';
+    if (isOneToOne) {
+        titleStr = `1-on-1 ${skill.name} Tutor & Mentorship in ${location.name}`;
+    } else if (isJobSupport) {
+        titleStr = `${skill.name} Job Support & Sprint Assistance in ${location.name}`;
+    } else if (isInterview) {
+        titleStr = `${skill.name} Interview Prep & Mock Interviews in ${location.name}`;
+    } else if (isHiring) {
+        titleStr = `Hire ${skill.name} Developers & Freelance Experts in ${location.name}`;
+    } else if (prefix) {
+        titleStr = `${capitalize(prefix.replace(/-/g, ' '))} ${skill.name} ${capitalize(suffix)} in ${location.name}`;
+    } else {
+        titleStr = `Best ${skill.name} Mentors & Tutors in ${location.name}`;
+    }
+
+    let description = '';
+    if (isHiring) {
+        description = `Hire vetted top 1% ${skill.name} developers and freelance consultants in ${location.name}. Fast matching, 1:1 sprint consulting, and guaranteed quality.`;
+    } else if (isJobSupport) {
+        description = `Get dedicated 1-on-1 ${skill.name} job support and on-the-job sprint assistance in ${location.name}. Daily standup guidance, bug troubleshooting, and code reviews.`;
+    } else if (isInterview) {
+        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and senior staff engineer feedback.`;
+    } else {
+        description = `Find expert 1-on-1 ${skill.name} tutors and mentors in ${location.name}. Get personalized coding sessions, live pair programming, and career fast-track guidance.`;
+    }
+
+    const mainSchema = {
+        '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
+        '@id': `https://www.outlinedev.com/mentors/${slug}#org`,
+        'name': titleStr,
+        'description': description,
+        'url': `https://www.outlinedev.com/mentors/${slug}`,
+        'image': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200',
+        'address': {
+            '@type': 'PostalAddress',
+            'addressCountry': location.country,
+            'addressLocality': location.name === 'Online' ? 'Global' : location.name
+        },
+        'aggregateRating': {
+            '@type': 'AggregateRating',
+            'ratingValue': REAL_RATING.ratingValue,
+            'reviewCount': REAL_RATING.reviewCount
+        },
+        'priceRange': '$$'
+    };
+
+    const faqSchema = {
+        '@type': 'FAQPage',
+        'mainEntity': [
+            {
+                '@type': 'Question',
+                'name': skillContent.faq.question,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': skillContent.faq.answer
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': `How does 1-on-1 ${skill.name} mentorship in ${location.name} work?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `You are paired directly with a vetted Senior ${skill.name} Engineer. You receive personalized live coding sessions, code reviews, debugging support, and job interview preparation tailored to your career goals.`
+                }
+            }
+        ]
+    };
+
+    return {
+        '@context': 'https://schema.org',
+        '@graph': [
+            mainSchema,
+            faqSchema
+        ]
+    };
 }
 
 export async function generateMetadata({ params }) {
@@ -80,58 +163,6 @@ export async function generateMetadata({ params }) {
         description = `Find expert 1-on-1 ${skill.name} tutors and mentors in ${location.name}. Get personalized coding sessions, live pair programming, and career fast-track guidance.`;
     }
 
-    // JSON-LD Schema (Professional Service / Educational Org / Course)
-    const mainSchema = {
-        '@type': isHiring ? 'ProfessionalService' : 'EducationalOrganization',
-        '@id': `https://www.outlinedev.com/mentors/${slug}#org`,
-        'name': titleStr,
-        'description': description,
-        'url': `https://www.outlinedev.com/mentors/${slug}`,
-        'image': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200',
-        'address': {
-            '@type': 'PostalAddress',
-            'addressCountry': location.country,
-            'addressLocality': location.name === 'Online' ? 'Global' : location.name
-        },
-        'aggregateRating': {
-            '@type': 'AggregateRating',
-            'ratingValue': REAL_RATING.ratingValue,
-            'reviewCount': REAL_RATING.reviewCount
-        },
-        'priceRange': '$$'
-    };
-
-    // FAQ Schema representing the dynamic interview Q&A
-    const faqSchema = {
-        '@type': 'FAQPage',
-        'mainEntity': [
-            {
-                '@type': 'Question',
-                'name': skillContent.faq.question,
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': skillContent.faq.answer
-                }
-            },
-            {
-                '@type': 'Question',
-                'name': `How does 1-on-1 ${skill.name} mentorship in ${location.name} work?`,
-                'acceptedAnswer': {
-                    '@type': 'Answer',
-                    'text': `You are paired directly with a vetted Senior ${skill.name} Engineer. You receive personalized live coding sessions, code reviews, debugging support, and job interview preparation tailored to your career goals.`
-                }
-            }
-        ]
-    };
-
-    const graphSchema = {
-        '@context': 'https://schema.org',
-        '@graph': [
-            mainSchema,
-            faqSchema
-        ]
-    };
-
     return {
         title,
         description,
@@ -167,9 +198,6 @@ export async function generateMetadata({ params }) {
         } : {
             index: false,
             follow: true,
-        },
-        other: {
-            'script:ld+json': JSON.stringify(graphSchema)
         }
     };
 }
@@ -182,13 +210,29 @@ export default function MentorSeoPage({ params }) {
         notFound();
     }
 
+    const skillContent = getSkillContent(data.skill.id);
+    const graphSchema = buildGraphSchema({
+        slug,
+        skill: data.skill,
+        location: data.location,
+        suffix: data.suffix,
+        prefix: data.prefix,
+        skillContent
+    });
+
     return (
-        <MentorshipLanding
-            skill={data.skill}
-            location={data.location}
-            suffix={data.suffix}
-            prefix={data.prefix}
-            currentSlug={slug}
-        />
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(graphSchema) }}
+            />
+            <MentorshipLanding
+                skill={data.skill}
+                location={data.location}
+                suffix={data.suffix}
+                prefix={data.prefix}
+                currentSlug={slug}
+            />
+        </>
     );
 }

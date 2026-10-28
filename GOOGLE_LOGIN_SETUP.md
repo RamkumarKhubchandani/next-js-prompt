@@ -64,15 +64,15 @@ GOOGLE_CLIENT_SECRET=your-client-secret-here
 Your complete `.env.local` should look like:
 
 ```env
-MONGODB_URI=mongodb+srv://ramkumarkhub:ram2411@cluster0.rqvvt.mongodb.net/
-NEXTAUTH_SECRET=a8b3d5e8f1a2c3b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/
+NEXTAUTH_SECRET=your-nextauth-secret-key-here
 NEXTAUTH_URL=http://localhost:3000
-EMAIL_USER="infojsprompt@gmail.com"
-EMAIL_PASSWORD="Ram@24111991"
-ADZUNA_APP_ID="6d6f5ebb"
-ADZUNA_APP_KEY="e817de4692539123eb7a16d84cd4d82f"
-GEMINI_API_KEY=AIzaSyDXuBqB5S4OMG8Ix9bjh8aoC06YT5eupro
-RESEND_API_KEY=re_F6WhAEbi_A2J9BGLZp2sCBxGNX66vRadX
+EMAIL_USER="your-email@example.com"
+EMAIL_PASSWORD="your-email-password"
+ADZUNA_APP_ID="your-adzuna-app-id"
+ADZUNA_APP_KEY="your-adzuna-app-key"
+GEMINI_API_KEY=your-gemini-api-key
+RESEND_API_KEY=your-resend-api-key
 GOOGLE_CLIENT_ID=your-actual-client-id
 GOOGLE_CLIENT_SECRET=your-actual-client-secret
 ```

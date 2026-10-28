@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../../lib/mongodb';
 import Job from '../../../models/Job';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../lib/auth";
+import { requireAdmin, adminOnly } from '../../../lib/requireAdmin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     try {
@@ -24,9 +23,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     try {
@@ -63,9 +62,9 @@ export async function POST(request) {
 }
 
 export async function DELETE(request) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     try {

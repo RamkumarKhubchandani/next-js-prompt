@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/lib/auth';
+import { requireAdmin, adminOnly } from '@/app/lib/requireAdmin';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_placeholder_for_build_safety');
 
 export async function POST(req) {
     try {
-        const session = await getServerSession(authOptions);
-
-        // Check if user is admin
-        if (!session || session.user.role !== 'admin') {
-            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+        const session = await requireAdmin();
+        if (!session) {
+            return adminOnly();
         }
 
         const { userId, userName, userEmail } = await req.json();
