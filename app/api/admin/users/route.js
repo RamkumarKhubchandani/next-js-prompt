@@ -1,17 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../../lib/mongodb';
 import User from '../../../models/User';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../lib/auth";
+import { requireAdmin, adminOnly } from '../../../lib/requireAdmin';
 import { isSubscriptionActive, isProPlan } from '../../../lib/subscription';
 
 export async function GET(request) {
-    const session = await getServerSession(authOptions);
-
-    // Security: Ensure only admins can access
-    // For now, we will allow 'user' role if email is admin@example.com (or you can manually set role: 'admin' in DB)
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     try {
@@ -48,9 +44,9 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     const { userId, action, planType } = await request.json();
@@ -97,9 +93,9 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
 
     const { searchParams } = new URL(request.url);
@@ -119,4 +115,3 @@ export async function DELETE(request) {
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }
 }
-

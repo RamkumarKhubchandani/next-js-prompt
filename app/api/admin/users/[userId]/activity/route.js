@@ -2,16 +2,15 @@ import { NextResponse } from 'next/server';
 import connectDB from '../../../../../lib/mongodb';
 import ActivityLog from '../../../../../models/ActivityLog';
 import User from '../../../../../models/User';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../../../lib/auth";
+import { requireAdmin, adminOnly } from '../../../../../lib/requireAdmin';
 
 export async function GET(request, { params }) {
-    const session = await getServerSession(authOptions);
-    const { userId } = await params;
-
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+    const session = await requireAdmin();
+    if (!session) {
+        return adminOnly();
     }
+
+    const { userId } = await params;
 
     try {
         await connectDB();

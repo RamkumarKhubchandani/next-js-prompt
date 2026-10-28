@@ -1,18 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/lib/auth';
+import { requireAdmin, adminOnly } from '@/app/lib/requireAdmin';
 import connectDB from '@/app/lib/mongodb';
 import UpgradeRequest from '@/app/models/UpgradeRequest';
 import User from '@/app/models/User';
 
 export async function POST(req, { params }) {
     try {
-        const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== 'admin') {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+        const session = await requireAdmin();
+        if (!session) {
+            return adminOnly();
         }
 
-        const { id } = params;
+        const { id } = await params;
         await connectDB();
 
         const request = await UpgradeRequest.findById(id);
