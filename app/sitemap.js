@@ -301,12 +301,37 @@ export default async function sitemap() {
     console.error("Error generating blog routes in sitemap:", error);
   }
 
+  // 8. Approved Expert Profile Routes (/experts/[slug]) - defensive try/catch
+  let expertRoutes = [];
+  try {
+    const dbConnect = (await import("./lib/mongodb")).default;
+    const MentorApplication = (await import("./models/MentorApplication")).default;
+    await dbConnect();
+    const approvedExperts = await MentorApplication.find({
+      status: "approved",
+      slug: { $exists: true, $ne: "" },
+    })
+      .select("slug updatedAt")
+      .lean();
+
+    expertRoutes = approvedExperts.map((exp) => ({
+      url: `${baseUrl}/experts/${exp.slug}`,
+      lastModified: exp.updatedAt ? new Date(exp.updatedAt) : currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Error generating expert routes in sitemap:", error);
+    expertRoutes = [];
+  }
+
   return [
     ...staticRoutes,
     ...utilityRoutes,
     ...officialEventRoutes,
     ...mentorRoutes,
     ...eventRoutes,
-    ...blogRoutes
+    ...blogRoutes,
+    ...expertRoutes,
   ];
 }

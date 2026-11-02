@@ -373,6 +373,20 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                                 <textarea name="description" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none h-24 transition-all resize-none" placeholder="I need help with..." />
                                             </div>
 
+                                            <div className="flex items-start gap-3 pt-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id="mentorship-consent"
+                                                    name="consent"
+                                                    required
+                                                    defaultChecked
+                                                    className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
+                                                />
+                                                <label htmlFor="mentorship-consent" className="text-xs text-gray-600 dark:text-gray-400">
+                                                    I agree OutlineDev may share my request with a matched expert.
+                                                </label>
+                                            </div>
+
                                             <div className="pt-4 flex items-center justify-between">
                                                 <button type="button" onClick={() => setStep(3)} className="text-gray-500 font-bold" disabled={isSubmitting}>Back</button>
                                                 <button type="submit" disabled={isSubmitting} className="px-8 py-4 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-primary/90 shadow-lg shadow-brand-primary/30 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed">

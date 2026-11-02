@@ -123,7 +123,7 @@ function StarRating({ count = 5 }) {
     );
 }
 
-export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug }) {
+export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug, matchedExpertsSection }) {
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
     const matchingHireSlug = HIRE_SLUG_MAP[skill.id];
@@ -241,6 +241,8 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                     </div>
                 </div>
             </section>
+
+            {matchedExpertsSection}
 
             {/* How It Works (AI Matching Process) */}
             <section className="py-24 bg-white dark:bg-[#080b14] relative overflow-hidden transition-colors duration-500">

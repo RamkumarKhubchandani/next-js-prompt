@@ -1,765 +1,1493 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Globe, DollarSign, Clock, Layout, Users, Send, Briefcase, MapPin, Phone, Mail, Linkedin, GraduationCap, Video, Search, X, Check, Camera, Trash2, Loader2, User, UploadCloud } from 'lucide-react';
-import { countryList } from '../components/countryList';
-import { SKILLS as SEO_SKILLS } from '../lib/seo-data';
-import Link from 'next/link';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 
-function StepIndicator({ currentStep, totalSteps }) {
-    return (
-        <div className="flex items-center justify-center gap-2 mb-8">
-            {[...Array(totalSteps)].map((_, i) => (
-                <div
-                    key={i}
-                    className={`h-2 rounded-full transition-all duration-300 ${i + 1 <= currentStep ? "w-8 bg-brand-primary" : "w-2 bg-gray-200 dark:bg-gray-700"
-                        }`}
-                />
-            ))}
-        </div>
-    );
+import React, { useState, useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  CheckCircle2,
+  AlertCircle,
+  UploadCloud,
+  Loader2,
+  Trash2,
+  EyeOff,
+  Eye,
+  Camera,
+  Globe,
+  Briefcase,
+  GraduationCap,
+  ExternalLink,
+  Plus,
+  X,
+  Clock,
+  ShieldCheck,
+  Check,
+  ArrowRight,
+  ArrowLeft,
+  Save,
+} from "lucide-react";
+import Link from "next/link";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
+import { SKILLS, LOCATIONS } from "../lib/seo-data";
+
+function countWords(str) {
+  if (!str) return 0;
+  return str.trim().split(/\s+/).filter(Boolean).length;
 }
 
 export default function BecomeMentorClient() {
-    const { data: session } = useSession();
-    const [step, setStep] = useState(1);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
-    const [photoError, setPhotoError] = useState('');
-    const [photoPreview, setPhotoPreview] = useState(null);
-    const [skillSearch, setSkillSearch] = useState('');
-    const [roleError, setRoleError] = useState('');
+  const { data: session, status: authStatus } = useSession();
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [applicationStatus, setApplicationStatus] = useState(null);
+  const [rejectionNote, setRejectionNote] = useState("");
+  const [hasPublished, setHasPublished] = useState(false);
+  const [skillSearch, setSkillSearch] = useState("");
 
-    // Form State
-    const [formData, setFormData] = useState({
-        roles: ['mentor', 'hire'],
-        phone: '',
-        country: '',
-        state: '',
-        city: '',
-        linkedin: '',
-        portfolio: '',
-        yearsExperience: '',
-        skills: [],
-        hourlyRate: '',
-        availability: '',
-        bio: '',
-        education: '',
-        videoIntro: '', // Optional URL
-        photoUrl: null
-    });
+  // Form State
+  const [formData, setFormData] = useState({
+    displayName: "",
+    photoUrl: "",
+    photoPublicId: "",
+    roles: ["mentor"],
+    draft: {
+      mentor: {
+        headline: "",
+        summary: "",
+        rate: 45,
+        topics: ["System Design", "Code Reviews", "Interview Prep"],
+        formats: ["1-on-1 Video Calls", "Async Code Reviews"],
+      },
+      hire: {
+        headline: "",
+        summary: "",
+        rate: 55,
+        availability: "Part-time (10-20 hrs/week)",
+        engagementTypes: ["Hourly Contractor", "Fixed-Price Projects"],
+      },
+      skillIds: [],
+      locationId: "online",
+      locationOther: { country: "", city: "" },
+      timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
+      yearsExperience: 4,
+      languages: ["English"],
+      links: { github: "", linkedin: "" },
+      projects: [],
+    },
+    consents: {
+      publicProfile: false,
+      publicPhoto: false,
+      realName: false,
+      terms: false,
+      mayInterview: false,
+      receiveLeads: false,
+    },
+  });
 
-    // Fetch existing application
-    useEffect(() => {
-        if (!session) return;
-
-        async function loadApp() {
-            try {
-                const res = await fetch('/api/mentor/apply');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.application) {
-                        setFormData(prev => ({
-                            ...prev,
-                            ...data.application,
-                            roles: data.application.roles && data.application.roles.length > 0
-                                ? data.application.roles
-                                : ['mentor', 'hire'],
-                            skills: data.application.skills || []
-                        }));
-                        if (data.application.status === 'pending') {
-                            setIsSuccess(true);
-                        }
-                    }
-                }
-            } catch (e) { console.error(e); }
-        }
-        loadApp();
-    }, [session]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handlePhotoUpload = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setPhotoError('');
-
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-        if (!allowedTypes.includes(file.type.toLowerCase())) {
-            setPhotoError('Invalid file format. Please choose a JPG, PNG, or WebP image.');
-            return;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-            setPhotoError('Image size exceeds 5MB. Please choose a smaller photo.');
-            return;
-        }
-
-        const localUrl = URL.createObjectURL(file);
-        setPhotoPreview(localUrl);
-        setIsUploadingPhoto(true);
-
-        try {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-
-            const res = await fetch('/api/mentor/upload-photo', {
-                method: 'POST',
-                body: uploadData
-            });
-            const data = await res.json();
-
-            if (res.ok && data.url) {
-                setFormData(prev => ({ ...prev, photoUrl: data.url }));
-                setPhotoError('');
-            } else {
-                setPhotoError(data.error || 'Upload failed. Please try again.');
-            }
-        } catch (err) {
-            console.error('Photo upload error:', err);
-            setPhotoError('Network error uploading photo. Please try again.');
-        } finally {
-            setIsUploadingPhoto(false);
-        }
-    };
-
-    const toggleRole = (role) => {
-        setRoleError('');
-        setFormData(prev => {
-            const roles = prev.roles.includes(role)
-                ? prev.roles.filter(r => r !== role)
-                : [...prev.roles, role];
-            return { ...prev, roles };
-        });
-    };
-
-    const toggleSkill = (skill) => {
-        setFormData(prev => {
-            const skills = prev.skills.includes(skill)
-                ? prev.skills.filter(s => s !== skill)
-                : [...prev.skills, skill];
-            return { ...prev, skills };
-        });
-    };
-
-    const handleStep1Next = () => {
-        if (!formData.roles || formData.roles.length === 0) {
-            setRoleError('Please select at least one role you are applying for.');
-            return;
-        }
-        if (!formData.phone || !formData.country || !formData.linkedin) {
-            alert('Please fill in your phone number, country, and LinkedIn profile.');
-            return;
-        }
-        setStep(2);
-    };
-
-    const filteredSkills = SEO_SKILLS.filter(s => {
-        const q = skillSearch.toLowerCase().trim();
-        if (!q) return true;
-        return s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.keywords?.some(k => k.toLowerCase().includes(q));
-    });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        try {
-            const res = await fetch('/api/mentor/apply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (res.ok) {
-                setIsSuccess(true);
-            } else {
-                const data = await res.json();
-                alert(data.error || "Something went wrong.");
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Submission failed. Please try again.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    if (isSuccess) {
-        return (
-            <div className="min-h-screen bg-light-50 dark:bg-[#050505] text-dark-900 dark:text-light-100 flex flex-col font-sans">
-                <Header />
-                <main className="flex-grow flex items-center justify-center p-4">
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className="max-w-md w-full bg-white dark:bg-dark-800 p-8 rounded-3xl border border-gray-200 dark:border-dark-700 text-center shadow-2xl relative overflow-hidden"
-                    >
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-primary to-purple-600" />
-                        <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle2 size={40} className="text-green-600 dark:text-green-400" />
-                        </div>
-                        <h2 className="text-3xl font-black mb-4 text-dark-900 dark:text-white">Application Received!</h2>
-                        <p className="text-gray-600 dark:text-gray-300 mb-6">
-                            Thank you for applying to join our mentor network. Our team will review your profile within 3-5 business days.
-                        </p>
-
-                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-dark-900 border border-gray-200 dark:border-white/10 mb-6 text-left space-y-2.5">
-                            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Have questions or want a quick update?</p>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <a
-                                    href="https://wa.me/918237320942?text=Hi%20Ram,%20I%20just%20submitted%20my%20mentor%20application%20on%20OutlineDev."
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5d] text-white font-bold text-xs shadow-sm transition-colors"
-                                >
-                                    <Phone size={14} />
-                                    <span>WhatsApp: +918237320942</span>
-                                </a>
-                                <a
-                                    href="mailto:hi@outlinedev.com"
-                                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-gray-200 dark:bg-dark-700 text-gray-900 dark:text-white font-semibold text-xs hover:bg-gray-300 dark:hover:bg-dark-600 transition-colors"
-                                >
-                                    <Mail size={14} className="text-brand-primary" />
-                                    <span>hi@outlinedev.com</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <button
-                                onClick={() => setIsSuccess(false)}
-                                className="block w-full py-3 bg-brand-primary text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity"
-                            >
-                                Edit Application
-                            </button>
-                            <Link href="/" className="block w-full py-3 bg-dark-900 dark:bg-white text-dark-900 dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity bg-opacity-10 dark:bg-opacity-10 border border-dark-900/10 dark:border-white/10">
-                                Return Home
-                            </Link>
-                        </div>
-                    </motion.div>
-                </main>
-                <Footer />
-            </div>
-        );
+  // Load existing application
+  useEffect(() => {
+    if (authStatus === "loading") return;
+    if (!session) {
+      setLoading(false);
+      return;
     }
 
-    return (
-        <div className="min-h-screen bg-light-50 dark:bg-[#050505] text-dark-900 dark:text-light-100 flex flex-col font-sans">
-            <Header />
+    async function fetchApp() {
+      try {
+        const res = await fetch("/api/mentor/apply");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.application) {
+            const app = data.application;
+            setApplicationStatus(app.status || "draft");
+            setRejectionNote(app.adminNotes || "");
+            setHasPublished(Boolean(app.published));
 
-            <main className="flex-grow pt-32 pb-20">
-                {/* HERO SECTION */}
-                <section className="relative px-4 sm:px-6 lg:px-8 mb-24 max-w-7xl mx-auto text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <span className="inline-block py-1 px-3 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-bold uppercase tracking-widest mb-6">
-                            Join Our Mentorship Network
-                        </span>
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8 text-dark-900 dark:text-white">
-                            Share Knowledge. <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-purple-600">Mentor Engineers.</span>
-                        </h1>
-                        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                            Connect with learners looking for direct guidance in React, Node.js, and System Design. Set your terms, teach directly, and help build the next generation of engineers.
-                        </p>
-                    </motion.div>
-                </section>
+            const draftData = app.draft || {};
+            setFormData({
+              displayName: app.displayName || session.user?.name || "",
+              photoUrl: app.photoUrl || session.user?.image || "",
+              photoPublicId: app.photoPublicId || "",
+              roles: Array.isArray(app.roles) && app.roles.length > 0 ? app.roles : ["mentor"],
+              draft: {
+                mentor: {
+                  headline: draftData.mentor?.headline || app.mentorHeadline || "",
+                  summary: draftData.mentor?.summary || app.mentorBio || app.bio || "",
+                  rate: draftData.mentor?.rate || app.hourlyRate || 45,
+                  topics: draftData.mentor?.topics?.length
+                    ? draftData.mentor.topics
+                    : ["System Design", "Code Reviews", "Interview Prep"],
+                  formats: draftData.mentor?.formats?.length
+                    ? draftData.mentor.formats
+                    : ["1-on-1 Video Calls", "Async Code Reviews"],
+                },
+                hire: {
+                  headline: draftData.hire?.headline || app.hireHeadline || "",
+                  summary: draftData.hire?.summary || app.hireBio || app.bio || "",
+                  rate: draftData.hire?.rate || app.hourlyRate || 55,
+                  availability: draftData.hire?.availability || app.availability || "Part-time (10-20 hrs/week)",
+                  engagementTypes: draftData.hire?.engagementTypes?.length
+                    ? draftData.hire.engagementTypes
+                    : ["Hourly Contractor", "Fixed-Price Projects"],
+                },
+                skillIds: draftData.skillIds?.length ? draftData.skillIds : app.skills || [],
+                locationId: draftData.locationId || "online",
+                locationOther: draftData.locationOther || { country: app.country || "", city: app.city || "" },
+                timezone: draftData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
+                yearsExperience: draftData.yearsExperience || app.yearsExperience || 3,
+                languages: draftData.languages?.length ? draftData.languages : ["English"],
+                links: {
+                  github: draftData.links?.github || app.github || "",
+                  linkedin: draftData.links?.linkedin || app.linkedin || "",
+                },
+                projects: Array.isArray(draftData.projects) ? draftData.projects : [],
+              },
+              consents: {
+                publicProfile: Boolean(app.consents?.publicProfile),
+                publicPhoto: Boolean(app.consents?.publicPhoto),
+                realName: Boolean(app.consents?.realName),
+                terms: Boolean(app.consents?.terms),
+                mayInterview: Boolean(app.consents?.mayInterview),
+                receiveLeads: Boolean(app.consents?.receiveLeads),
+              },
+            });
+          } else {
+            // New user defaults
+            setFormData((prev) => ({
+              ...prev,
+              displayName: session.user?.name || "",
+              photoUrl: session.user?.image || "",
+            }));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load application:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-                <section className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start">
+    fetchApp();
+  }, [session, authStatus]);
 
-                    {/* LEFT COLUMN: Benefits */}
-                    <div className="space-y-12">
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-3xl border border-gray-200 dark:border-dark-700 shadow-xl relative overflow-hidden group hover:border-brand-primary/50 transition-colors">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <Globe size={120} />
-                            </div>
-                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 text-blue-600 dark:text-blue-400">
-                                <Globe size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Global Reach</h3>
-                            <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                Connect with motivated learners seeking personalized 1-on-1 mentorship, code reviews, and career guidance.
-                            </p>
-                        </div>
+  // Handle Photo Upload via Cloudinary
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoError("");
 
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-3xl border border-gray-200 dark:border-dark-700 shadow-xl relative overflow-hidden group hover:border-green-500/50 transition-colors">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <DollarSign size={120} />
-                            </div>
-                            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 text-green-600 dark:text-green-400">
-                                <DollarSign size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Direct Terms & Payments</h3>
-                            <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                You arrange payment directly with the client or student — we don't take a cut, and we don't hold your money. We introduce the lead; terms are between you and them.
-                            </p>
-                        </div>
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+    if (!allowed.includes(file.type.toLowerCase())) {
+      setPhotoError("Please upload a JPG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError("Image size must be under 5MB.");
+      return;
+    }
 
-                        <div className="bg-white dark:bg-dark-800 p-8 rounded-3xl border border-gray-200 dark:border-dark-700 shadow-xl relative overflow-hidden group hover:border-purple-500/50 transition-colors">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <Layout size={120} />
-                            </div>
-                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 text-purple-600 dark:text-purple-400">
-                                <Users size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3 text-dark-900 dark:text-white">Focused Mentorship</h3>
-                            <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                Focus on hands-on pairing, code reviews, and system architecture walkthroughs using your preferred workflow and tools.
-                            </p>
-                        </div>
-                    </div>
+    setUploadingPhoto(true);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
 
-                    {/* RIGHT COLUMN: Application Form */}
-                    <div className="relative">
-                        {/* Decorative background blur */}
-                        <div className="absolute inset-0 bg-brand-primary/20 blur-[100px] rounded-full -z-10" />
+      const res = await fetch("/api/mentor/upload-photo", {
+        method: "POST",
+        body: uploadData,
+      });
+      const data = await res.json();
 
-                        <div className="bg-white/80 dark:bg-dark-900/80 backdrop-blur-xl p-8 md:p-10 rounded-[2.5rem] border border-gray-200 dark:border-white/10 shadow-2xl">
-                            <div className="text-center mb-8">
-                                <h2 className="text-3xl font-black text-dark-900 dark:text-white">Apply Now</h2>
-                                <p className="text-gray-500 dark:text-gray-400">Mentorship Application</p>
-                            </div>
+      if (res.ok && data.url) {
+        setFormData((prev) => ({
+          ...prev,
+          photoUrl: data.url,
+          photoPublicId: data.public_id || prev.photoPublicId,
+        }));
+      } else {
+        setPhotoError(data.error || "Failed to upload photo.");
+      }
+    } catch (err) {
+      setPhotoError("Network error while uploading photo.");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
-                            {!session ? (
-                                <div className="text-center py-12">
-                                    <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <Users size={32} className="text-gray-400" />
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-4 text-dark-900 dark:text-white">Create an Account to Apply</h3>
-                                    <div className="text-left text-gray-500 mb-8 space-y-2 bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10">
-                                        <p className="font-semibold text-dark-900 dark:text-white">How to apply:</p>
-                                        <ol className="list-decimal list-inside space-y-1 text-sm">
-                                            <li>Click the button below to <strong>Log In</strong> or <strong>Register</strong>.</li>
-                                            <li>Once logged in, return to this page (or check your Dashboard).</li>
-                                            <li>Fill out this form to submit your application.</li>
-                                        </ol>
-                                    </div>
-                                    <button
-                                        onClick={() => signIn(undefined, { callbackUrl: '/become-mentor' })}
-                                        className="w-full py-4 bg-brand-primary text-dark-900 font-bold text-lg rounded-xl hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(0,255,178,0.3)]"
-                                    >
-                                        Sign In / Register
-                                    </button>
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSubmit}>
-                                    <StepIndicator currentStep={step} totalSteps={3} />
+  // Toggle roles
+  const toggleRole = (role) => {
+    setFormError("");
+    setFormData((prev) => {
+      const exists = prev.roles.includes(role);
+      let newRoles;
+      if (exists) {
+        if (prev.roles.length === 1) return prev; // Must keep at least one
+        newRoles = prev.roles.filter((r) => r !== role);
+      } else {
+        newRoles = [...prev.roles, role];
+      }
+      return { ...prev, roles: newRoles };
+    });
+  };
 
-                                    <AnimatePresence mode="wait">
-                                        {/* STEP 1: PERSONAL INFO, PHOTO & ROLE SELECTION */}
-                                        {step === 1 && (
-                                            <motion.div
-                                                key="step1"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-6"
-                                            >
-                                                {/* Role Selection */}
-                                                <div>
-                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                                                        I am applying as: <span className="text-red-500">*</span>
-                                                    </label>
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => toggleRole('mentor')}
-                                                            className={`p-4 rounded-xl border text-left flex items-start gap-3 transition-all ${
-                                                                formData.roles.includes('mentor')
-                                                                    ? "border-brand-primary bg-brand-primary/10 text-dark-900 dark:text-white"
-                                                                    : "border-gray-200 dark:border-white/10 hover:border-gray-400 text-gray-700 dark:text-gray-300"
-                                                            }`}
-                                                        >
-                                                            <div className={`w-5 h-5 rounded flex items-center justify-center border mt-0.5 ${formData.roles.includes('mentor') ? 'bg-brand-primary border-brand-primary text-dark-900' : 'border-gray-400'}`}>
-                                                                {formData.roles.includes('mentor') && <Check size={14} />}
-                                                            </div>
-                                                            <div>
-                                                                <div className="font-bold text-sm">Mentor</div>
-                                                                <div className="text-xs text-gray-500 dark:text-gray-400">Teaching, coaching & 1-on-1 sessions</div>
-                                                            </div>
-                                                        </button>
+  // Toggle skills (max 8)
+  const toggleSkill = (skillId) => {
+    setFormError("");
+    setFormData((prev) => {
+      const current = prev.draft.skillIds;
+      if (current.includes(skillId)) {
+        return {
+          ...prev,
+          draft: { ...prev.draft, skillIds: current.filter((id) => id !== skillId) },
+        };
+      }
+      if (current.length >= 8) {
+        setFormError("You can choose a maximum of 8 primary skills.");
+        return prev;
+      }
+      return {
+        ...prev,
+        draft: { ...prev.draft, skillIds: [...current, skillId] },
+      };
+    });
+  };
 
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => toggleRole('hire')}
-                                                            className={`p-4 rounded-xl border text-left flex items-start gap-3 transition-all ${
-                                                                formData.roles.includes('hire')
-                                                                    ? "border-brand-primary bg-brand-primary/10 text-dark-900 dark:text-white"
-                                                                    : "border-gray-200 dark:border-white/10 hover:border-gray-400 text-gray-700 dark:text-gray-300"
-                                                            }`}
-                                                        >
-                                                            <div className={`w-5 h-5 rounded flex items-center justify-center border mt-0.5 ${formData.roles.includes('hire') ? 'bg-brand-primary border-brand-primary text-dark-900' : 'border-gray-400'}`}>
-                                                                {formData.roles.includes('hire') && <Check size={14} />}
-                                                            </div>
-                                                            <div>
-                                                                <div className="font-bold text-sm">Available for Hire</div>
-                                                                <div className="text-xs text-gray-500 dark:text-gray-400">Freelance, contract & project work</div>
-                                                            </div>
-                                                        </button>
-                                                    </div>
-                                                    {roleError && <p className="text-xs text-red-500 font-semibold mt-2">{roleError}</p>}
-                                                </div>
+  // Project management (max 3)
+  const addProject = () => {
+    if (formData.draft.projects.length >= 3) return;
+    setFormData((prev) => ({
+      ...prev,
+      draft: {
+        ...prev.draft,
+        projects: [...prev.draft.projects, { title: "", description: "", url: "" }],
+      },
+    }));
+  };
 
-                                                {/* Profile Photo Uploader */}
-                                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-dark-700 flex-shrink-0 flex items-center justify-center border-2 border-brand-primary/50">
-                                                            {(photoPreview || formData.photoUrl) ? (
-                                                                <img src={photoPreview || formData.photoUrl} alt="Mentor Avatar" className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <User size={28} className="text-gray-400" />
-                                                            )}
-                                                            {isUploadingPhoto && (
-                                                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                                                    <Loader2 size={20} className="animate-spin text-brand-primary" />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <label className="block text-sm font-bold text-gray-900 dark:text-white mb-0.5">
-                                                                Profile Photo
-                                                            </label>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                                                                Upload a clear headshot or avatar (JPG, PNG, WebP &bull; Max 5MB).
-                                                            </p>
-                                                            <div className="flex items-center gap-2">
-                                                                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary text-dark-900 text-xs font-bold rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
-                                                                    <UploadCloud size={14} />
-                                                                    {formData.photoUrl ? 'Change Photo' : 'Upload Photo'}
-                                                                    <input
-                                                                        type="file"
-                                                                        accept="image/jpeg,image/png,image/webp"
-                                                                        onChange={handlePhotoUpload}
-                                                                        className="hidden"
-                                                                        disabled={isUploadingPhoto}
-                                                                    />
-                                                                </label>
-                                                                {(formData.photoUrl || photoPreview) && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            setFormData(prev => ({ ...prev, photoUrl: null }));
-                                                                            setPhotoPreview(null);
-                                                                            setPhotoError('');
-                                                                        }}
-                                                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                                                    >
-                                                                        <Trash2 size={12} /> Remove
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {photoError && (
-                                                        <p className="text-xs text-red-500 font-semibold mt-2.5 pl-20">{photoError}</p>
-                                                    )}
-                                                </div>
+  const updateProject = (index, field, value) => {
+    setFormData((prev) => {
+      const list = [...prev.draft.projects];
+      list[index] = { ...list[index], [field]: value };
+      return {
+        ...prev,
+        draft: { ...prev.draft, projects: list },
+      };
+    });
+  };
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="col-span-2">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-                                                        <input
-                                                            type="text"
-                                                            value={session.user.name}
-                                                            disabled
-                                                            className="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-black/50 border border-gray-200 dark:border-white/10 text-gray-500 cursor-not-allowed"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                                                        <input
-                                                            type="tel"
-                                                            name="phone"
-                                                            required
-                                                            placeholder="+1 555-000-0000"
-                                                            value={formData.phone}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2 md:col-span-1">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Country</label>
-                                                        <select
-                                                            name="country"
-                                                            required
-                                                            value={formData.country}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        >
-                                                            <option value="">Select Country...</option>
-                                                            {countryList.map(c => (
-                                                                <option key={c.code} value={c.name}>{c.name}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                    <div className="col-span-2 md:col-span-1">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">State / Province</label>
-                                                        <input
-                                                            type="text"
-                                                            name="state"
-                                                            placeholder="e.g. California / Maharashtra"
-                                                            value={formData.state || ''}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-2">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">City</label>
-                                                        <input
-                                                            type="text"
-                                                            name="city"
-                                                            placeholder="e.g. San Francisco / Pune / London"
-                                                            value={formData.city || ''}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">LinkedIn Profile</label>
-                                                    <div className="relative">
-                                                        <Linkedin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <input
-                                                            type="url"
-                                                            name="linkedin"
-                                                            required
-                                                            placeholder="https://linkedin.com/in/..."
-                                                            value={formData.linkedin}
-                                                            onChange={handleInputChange}
-                                                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                </div>
+  const removeProject = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      draft: {
+        ...prev.draft,
+        projects: prev.draft.projects.filter((_, i) => i !== index),
+      },
+    }));
+  };
 
-                                                <button
-                                                    type="button"
-                                                    onClick={handleStep1Next}
-                                                    className="w-full py-4 mt-4 bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-                                                >
-                                                    Next Step <Layout size={18} />
-                                                </button>
-                                            </motion.div>
-                                        )}
+  // Step Validation
+  const validateStep1 = () => {
+    setFormError("");
+    if (!formData.displayName.trim()) {
+      setFormError("Please enter your real full name.");
+      return false;
+    }
+    if (!formData.photoUrl) {
+      setFormError("Please upload a real professional photo of yourself.");
+      return false;
+    }
+    if (formData.draft.skillIds.length === 0) {
+      setFormError("Please select at least 1 primary skill.");
+      return false;
+    }
+    if (formData.draft.locationId === "other") {
+      if (!formData.draft.locationOther.country.trim() || !formData.draft.locationOther.city.trim()) {
+        setFormError("Please enter both your Country and City.");
+        return false;
+      }
+    }
+    return true;
+  };
 
-                                        {/* STEP 2: PROFESSIONAL INFO & SEARCHABLE MULTI-SELECT SKILLS */}
-                                        {step === 2 && (
-                                            <motion.div
-                                                key="step2"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-6"
-                                            >
-                                                <div>
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                                                            Primary Expertise (Select multiple)
-                                                        </label>
-                                                        <span className="text-xs text-gray-500 font-medium">
-                                                            {formData.skills.length} selected
-                                                        </span>
-                                                    </div>
+  const validateStep2 = () => {
+    setFormError("");
+    if (formData.roles.includes("mentor")) {
+      const h = formData.draft.mentor.headline.trim();
+      if (!h) {
+        setFormError("Mentor Headline is required.");
+        return false;
+      }
+      if (h.length > 70) {
+        setFormError(`Mentor Headline cannot exceed 70 characters (currently ${h.length}).`);
+        return false;
+      }
+      if (/<[^>]*>/g.test(h)) {
+        setFormError("Mentor Headline must be plain text without HTML.");
+        return false;
+      }
+      if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
+        setFormError("Mentor Headline cannot contain website links or URLs.");
+        return false;
+      }
+      const words = countWords(formData.draft.mentor.summary);
+      if (words < 80 || words > 300) {
+        setFormError(`Mentor Summary must be between 80 and 300 words (currently ${words} words).`);
+        return false;
+      }
+    }
 
-                                                    {/* Selected removable tags */}
-                                                    {formData.skills.length > 0 && (
-                                                        <div className="flex flex-wrap gap-1.5 p-3 mb-3 bg-gray-50 dark:bg-black/30 rounded-xl border border-gray-200 dark:border-white/10 max-h-32 overflow-y-auto">
-                                                            {formData.skills.map(skill => (
-                                                                <span
-                                                                    key={skill}
-                                                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-brand-primary text-dark-900 font-bold rounded-lg text-xs"
-                                                                >
-                                                                    {skill}
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => toggleSkill(skill)}
-                                                                        className="hover:opacity-75 focus:outline-none"
-                                                                    >
-                                                                        <X size={12} />
-                                                                    </button>
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
+    if (formData.roles.includes("hire")) {
+      const h = formData.draft.hire.headline.trim();
+      if (!h) {
+        setFormError("Hire Headline is required.");
+        return false;
+      }
+      if (h.length > 70) {
+        setFormError(`Hire Headline cannot exceed 70 characters (currently ${h.length}).`);
+        return false;
+      }
+      if (/<[^>]*>/g.test(h)) {
+        setFormError("Hire Headline must be plain text without HTML.");
+        return false;
+      }
+      if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
+        setFormError("Hire Headline cannot contain website links or URLs.");
+        return false;
+      }
+      const words = countWords(formData.draft.hire.summary);
+      if (words < 80 || words > 300) {
+        setFormError(`Hire Summary must be between 80 and 300 words (currently ${words} words).`);
+        return false;
+      }
+    }
+    return true;
+  };
 
-                                                    {/* Search Input */}
-                                                    <div className="relative mb-3">
-                                                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                                        <input
-                                                            type="text"
-                                                            value={skillSearch}
-                                                            onChange={(e) => setSkillSearch(e.target.value)}
-                                                            placeholder="Filter skills (e.g. React, Next.js, Python, AWS, MFE)..."
-                                                            className="w-full pl-10 pr-8 py-2.5 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none text-sm transition-colors"
-                                                        />
-                                                        {skillSearch && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => setSkillSearch('')}
-                                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
-                                                            >
-                                                                <X size={14} />
-                                                            </button>
-                                                        )}
-                                                    </div>
+  const validateStep3 = () => {
+    setFormError("");
+    // Check projects
+    for (let i = 0; i < formData.draft.projects.length; i++) {
+      const p = formData.draft.projects[i];
+      if (!p.title.trim() || !p.description.trim()) {
+        setFormError(`Project #${i + 1} requires both a title and a one-line description.`);
+        return false;
+      }
+    }
+    // Check all 6 consents
+    const consents = formData.consents;
+    if (
+      !consents.publicProfile ||
+      !consents.publicPhoto ||
+      !consents.realName ||
+      !consents.terms ||
+      !consents.mayInterview ||
+      !consents.receiveLeads
+    ) {
+      setFormError("You must agree to all 6 declaration statements before submitting.");
+      return false;
+    }
+    return true;
+  };
 
-                                                    {/* Filterable Skill Grid */}
-                                                    <div className="max-h-48 overflow-y-auto p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/40 flex flex-wrap gap-1.5">
-                                                        {filteredSkills.length > 0 ? (
-                                                            filteredSkills.map(skill => {
-                                                                const isSelected = formData.skills.includes(skill.name);
-                                                                return (
-                                                                    <button
-                                                                        key={skill.id}
-                                                                        type="button"
-                                                                        onClick={() => toggleSkill(skill.name)}
-                                                                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                                                                            isSelected
-                                                                                ? "bg-brand-primary text-dark-900 border-brand-primary shadow-sm"
-                                                                                : "bg-transparent text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-primary/50"
-                                                                        }`}
-                                                                    >
-                                                                        {isSelected ? "✓ " : "+ "}
-                                                                        {skill.name}
-                                                                    </button>
-                                                                );
-                                                            })
-                                                        ) : (
-                                                            <p className="text-xs text-gray-400 p-2">No matching skills found for "{skillSearch}".</p>
-                                                        )}
-                                                    </div>
-                                                </div>
+  // Submit Application
+  const handleSaveOrSubmit = async (isDraftSave = false) => {
+    if (!isDraftSave) {
+      if (!validateStep1() || !validateStep2() || !validateStep3()) {
+        return;
+      }
+    }
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Years of Exp.</label>
-                                                        <input
-                                                            type="number"
-                                                            name="yearsExperience"
-                                                            required
-                                                            min="0"
-                                                            placeholder="e.g. 5"
-                                                            value={formData.yearsExperience}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Hourly Rate ($)</label>
-                                                        <input
-                                                            type="number"
-                                                            name="hourlyRate"
-                                                            required
-                                                            min="0"
-                                                            placeholder="e.g. 50"
-                                                            value={formData.hourlyRate}
-                                                            onChange={handleInputChange}
-                                                            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Education / Highest Degree</label>
-                                                    <div className="relative">
-                                                        <GraduationCap size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                        <input
-                                                            type="text"
-                                                            name="education"
-                                                            required
-                                                            placeholder="e.g. MS in Computer Science"
-                                                            value={formData.education}
-                                                            onChange={handleInputChange}
-                                                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors"
-                                                        />
-                                                    </div>
-                                                </div>
+    setSaving(true);
+    setFormError("");
+    setSuccessMessage("");
 
-                                                <div className="flex gap-3">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setStep(1)}
-                                                        className="flex-1 py-4 bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white font-bold rounded-xl hover:bg-gray-300 dark:hover:bg-white/20 transition-colors"
-                                                    >
-                                                        Back
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setStep(3)}
-                                                        className="flex-[2] py-4 bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity"
-                                                    >
-                                                        Next Step
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        )}
+    try {
+      const res = await fetch("/api/mentor/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          isDraftSave,
+        }),
+      });
 
-                                        {/* STEP 3: BIO & REVIEW */}
-                                        {step === 3 && (
-                                            <motion.div
-                                                key="step3"
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="space-y-6"
-                                            >
-                                                <div>
-                                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Mentor Bio</label>
-                                                    <textarea
-                                                        name="bio"
-                                                        required
-                                                        rows={4}
-                                                        placeholder="Introduce yourself to student. What is your teaching style? What have you built?"
-                                                        value={formData.bio}
-                                                        onChange={handleInputChange}
-                                                        className="w-full px-4 py-3 rounded-xl bg-white dark:bg-black/50 border border-gray-200 dark:border-white/10 focus:border-brand-primary outline-none transition-colors resize-none"
-                                                    />
-                                                </div>
+      const data = await res.json();
+      if (res.ok) {
+        setApplicationStatus(data.application?.status || (isDraftSave ? "draft" : "pending"));
+        setSuccessMessage(
+          isDraftSave
+            ? "Your draft has been saved successfully."
+            : "Your application has been submitted for review! OutlineDev admins will review your draft."
+        );
+      } else {
+        setFormError(data.error || "Failed to submit. Please review your fields.");
+      }
+    } catch (err) {
+      setFormError("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-                                                <div className="p-4 bg-brand-primary/10 rounded-xl border border-brand-primary/20">
-                                                    <h4 className="text-sm font-bold text-brand-primary mb-2 flex items-center gap-2">
-                                                        <Video size={16} /> Interview Process
-                                                    </h4>
-                                                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                                                        For most applicants, we schedule a short 30-minute video interview to verify your skills — strong profiles with clear project history may be approved without one.
-                                                    </p>
-                                                </div>
+  // Action: Hide profile
+  const handleHideProfile = async () => {
+    if (!confirm("Are you sure you want to hide your profile from public discovery?")) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/mentor/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "hide" }),
+      });
+      if (res.ok) {
+        setApplicationStatus("hidden");
+        setSuccessMessage("Your profile is now hidden from public listings.");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
-                                                <div className="flex gap-3">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setStep(2)}
-                                                        className="flex-1 py-4 bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white font-bold rounded-xl hover:bg-gray-300 dark:hover:bg-white/20 transition-colors"
-                                                    >
-                                                        Back
-                                                    </button>
-                                                    <button
-                                                        type="submit"
-                                                        disabled={isSubmitting}
-                                                        className="flex-[2] py-4 bg-gradient-to-r from-brand-primary to-green-500 text-dark-900 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-brand-primary/20"
-                                                    >
-                                                        {isSubmitting ? "Submitting..." : "Submit Application"} <Send size={18} />
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </form>
-                            )}
-                        </div>
-                    </div>
-                </section>
-            </main>
+  // Action: Unhide profile
+  const handleUnhideProfile = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/mentor/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "unhide" }),
+      });
+      if (res.ok) {
+        setApplicationStatus("approved");
+        setSuccessMessage("Your profile is now active and live!");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
-            <Footer />
-        </div>
+  // Action: Delete profile
+  const handleDeleteProfile = async () => {
+    const verified = confirm(
+      "Are you sure you want to completely delete your expert profile? This permanently removes your listing, photo, and review history."
     );
+    if (!verified) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/mentor/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete" }),
+      });
+      if (res.ok) {
+        alert("Your expert profile and photo have been deleted.");
+        window.location.reload();
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-between">
+        <Header />
+        <main className="max-w-xl mx-auto px-4 py-20 text-center">
+          <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <GraduationCap className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-bold mb-3">Join OutlineDev as an Expert</h1>
+          <p className="text-slate-400 mb-8">
+            Create ONE verified expert profile to offer 1-on-1 mentorship, take on high-paying contract work, or both.
+          </p>
+          <button
+            onClick={() => signIn("google")}
+            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition shadow-lg shadow-emerald-500/20"
+          >
+            Sign in with Google to Apply
+          </button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const filteredSkills = SKILLS.filter((s) => {
+    const q = skillSearch.toLowerCase().trim();
+    if (!q) return true;
+    return s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q);
+  });
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-emerald-500 selection:text-slate-950">
+      <Header />
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 w-full">
+        {/* Status Banner */}
+        {applicationStatus && applicationStatus !== "draft" && (
+          <div className="mb-8 p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 border-slate-800">
+            <div className="flex items-center gap-3">
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                  applicationStatus === "approved"
+                    ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                    : applicationStatus === "pending"
+                    ? "bg-amber-950 text-amber-300 border border-amber-800"
+                    : applicationStatus === "hidden"
+                    ? "bg-slate-800 text-slate-400 border border-slate-700"
+                    : "bg-red-950 text-red-300 border border-red-800"
+                }`}
+              >
+                Status: {applicationStatus}
+              </span>
+              <p className="text-xs text-slate-400">
+                {applicationStatus === "approved" &&
+                  "Your published profile is live. Changes you save to your draft will be reviewed by admin."}
+                {applicationStatus === "pending" &&
+                  "Your application is currently under admin review. We may reach out for an interview."}
+                {applicationStatus === "hidden" && "Your profile is hidden from public discovery."}
+                {applicationStatus === "rejected" && `Review note: ${rejectionNote || "Not approved at this time."}`}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {applicationStatus === "approved" && (
+                <button
+                  type="button"
+                  onClick={handleHideProfile}
+                  className="px-3 py-1.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition flex items-center gap-1.5"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                  <span>Hide my profile</span>
+                </button>
+              )}
+              {applicationStatus === "hidden" && (
+                <button
+                  type="button"
+                  onClick={handleUnhideProfile}
+                  className="px-3 py-1.5 text-xs text-emerald-300 hover:text-white bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 rounded-lg transition flex items-center gap-1.5"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>Make profile live</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleDeleteProfile}
+                className="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 rounded-lg transition flex items-center gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Request deletion</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">
+            Expert Profile Registration
+          </h1>
+          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+            One public profile. Mentor aspiring developers, get hired for client projects, or both.
+          </p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="flex items-center justify-center gap-3 mb-10">
+          {[
+            { num: 1, label: "Basics & Skills" },
+            { num: 2, label: "Roles & Offerings" },
+            { num: 3, label: "Projects & Consents" },
+          ].map((s) => (
+            <button
+              key={s.num}
+              type="button"
+              onClick={() => {
+                if (s.num === 1) setStep(1);
+                if (s.num === 2 && validateStep1()) setStep(2);
+                if (s.num === 3 && validateStep1() && validateStep2()) setStep(3);
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition ${
+                step === s.num
+                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  : step > s.num
+                  ? "bg-slate-900 text-slate-300 border border-slate-800"
+                  : "bg-slate-900/40 text-slate-500 border border-slate-800/60"
+              }`}
+            >
+              <span
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
+                  step === s.num ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-400"
+                }`}
+              >
+                {s.num}
+              </span>
+              <span>{s.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Error & Success Alerts */}
+        {formError && (
+          <div className="mb-6 p-4 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-sm flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            <span>{formError}</span>
+          </div>
+        )}
+        {successMessage && (
+          <div className="mb-6 p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-200 text-sm flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        {/* Form Container */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+          {/* STEP 1: BASICS */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-white">Step 1: Authentic Identity & Core Skills</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  OutlineDev values authenticity. We require your real name, a clear professional photo, and verified skills.
+                </p>
+              </div>
+
+              {/* Photo Upload */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  Real Professional Photo *
+                </label>
+                <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-950 rounded-xl border border-slate-800">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-800 border-2 border-emerald-500/30 shrink-0">
+                    {formData.photoUrl ? (
+                      <img
+                        src={formData.photoUrl}
+                        alt="Profile preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-600">
+                        <Camera className="w-8 h-8" />
+                      </div>
+                    )}
+                    {uploadingPhoto && (
+                      <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center">
+                        <Loader2 className="w-6 h-6 text-emerald-400 animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 text-center sm:text-left">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-lg text-xs font-semibold transition border border-emerald-500/30">
+                      <UploadCloud className="w-4 h-4" />
+                      <span>{formData.photoUrl ? "Replace Photo" : "Upload Photo"}</span>
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                        disabled={uploadingPhoto}
+                      />
+                    </label>
+                    <p className="text-[11px] text-slate-500 mt-2">
+                      JPG, PNG, or WebP. Max 5MB. Automatic face centering will be applied.
+                    </p>
+                    {photoError && <p className="text-xs text-red-400 mt-1">{photoError}</p>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Real Full Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  Real Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.displayName}
+                  onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                  placeholder="e.g., Alex Johnson"
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Location & Timezone Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Primary Location *
+                  </label>
+                  <select
+                    value={formData.draft.locationId}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: { ...formData.draft, locationId: e.target.value },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  >
+                    <option value="online">Online / Remote (Global)</option>
+                    {LOCATIONS.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name} ({loc.country})
+                      </option>
+                    ))}
+                    <option value="other">Other (Specify below)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Timezone
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.draft.timezone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: { ...formData.draft, timezone: e.target.value },
+                      })
+                    }
+                    placeholder="e.g., America/New_York or Asia/Kolkata"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Location Other Details */}
+              {formData.draft.locationId === "other" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800">
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">Country *</label>
+                    <input
+                      type="text"
+                      value={formData.draft.locationOther.country}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            locationOther: { ...formData.draft.locationOther, country: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="e.g., Canada"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-400 mb-1">City *</label>
+                    <input
+                      type="text"
+                      value={formData.draft.locationOther.city}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            locationOther: { ...formData.draft.locationOther, city: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="e.g., Toronto"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Experience & Languages */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Years of Professional Experience *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="40"
+                    value={formData.draft.yearsExperience}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: { ...formData.draft, yearsExperience: Number(e.target.value) },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    Languages Spoken (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.draft.languages.join(", ")}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: {
+                          ...formData.draft,
+                          languages: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                    placeholder="English, Spanish, Hindi"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              {/* Primary Skills Selection */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Core Technical Skills * (Max 8)
+                  </label>
+                  <span
+                    className={`text-xs font-bold px-2 py-0.5 rounded ${
+                      formData.draft.skillIds.length === 8
+                        ? "bg-amber-950 text-amber-300 border border-amber-800"
+                        : "bg-slate-800 text-slate-400"
+                    }`}
+                  >
+                    {formData.draft.skillIds.length} / 8 selected
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Filter skills (e.g. React, Next.js, Python, AWS)..."
+                  value={skillSearch}
+                  onChange={(e) => setSkillSearch(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white mb-3 focus:outline-none focus:border-emerald-500"
+                />
+                <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-xl border border-slate-800">
+                  {filteredSkills.map((s) => {
+                    const isSelected = formData.draft.skillIds.includes(s.id);
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => toggleSkill(s.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-emerald-500 text-slate-950 font-semibold"
+                            : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5" />}
+                        <span>{s.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (validateStep1()) setStep(2);
+                  }}
+                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition flex items-center gap-2"
+                >
+                  <span>Continue to Step 2</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: ROLES & OFFERINGS */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-white">Step 2: Role Profiles & Offerings</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Choose whether you want to act as a Mentor, a Hire developer, or both. Each role carries its own headline and summary.
+                </p>
+              </div>
+
+              {/* Role Selectors */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div
+                  onClick={() => toggleRole("mentor")}
+                  className={`p-4 rounded-xl border cursor-pointer transition ${
+                    formData.roles.includes("mentor")
+                      ? "bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
+                      : "bg-slate-950 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <GraduationCap
+                        className={`w-5 h-5 ${
+                          formData.roles.includes("mentor") ? "text-emerald-400" : "text-slate-400"
+                        }`}
+                      />
+                      <span className="font-bold text-white text-sm">Mentor Profile</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formData.roles.includes("mentor")}
+                      onChange={() => {}}
+                      className="w-4 h-4 text-emerald-500 rounded bg-slate-900 border-slate-700"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Host 1-on-1 coaching, conduct code reviews, mock interviews, and career mentoring.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => toggleRole("hire")}
+                  className={`p-4 rounded-xl border cursor-pointer transition ${
+                    formData.roles.includes("hire")
+                      ? "bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/20"
+                      : "bg-slate-950 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Briefcase
+                        className={`w-5 h-5 ${
+                          formData.roles.includes("hire") ? "text-cyan-400" : "text-slate-400"
+                        }`}
+                      />
+                      <span className="font-bold text-white text-sm">Hire Developer Profile</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={formData.roles.includes("hire")}
+                      onChange={() => {}}
+                      className="w-4 h-4 text-cyan-500 rounded bg-slate-900 border-slate-700"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Get booked for full-stack engineering contracts, feature delivery, and team augmentation.
+                  </p>
+                </div>
+              </div>
+
+              {/* MENTOR SECTION */}
+              {formData.roles.includes("mentor") && (
+                <div className="p-5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                      <GraduationCap className="w-4 h-4" />
+                      <span>Mentor Profile Details</span>
+                    </span>
+                    <span className="text-xs text-slate-400">Headline max 70 chars • Summary 80-300 words</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs text-slate-300 font-semibold">
+                        Mentor Headline * (Plain text, no URLs)
+                      </label>
+                      <span
+                        className={`text-[11px] ${
+                          formData.draft.mentor.headline.length > 70 ? "text-red-400" : "text-slate-500"
+                        }`}
+                      >
+                        {formData.draft.mentor.headline.length} / 70
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      maxLength={70}
+                      value={formData.draft.mentor.headline}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            mentor: { ...formData.draft.mentor, headline: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="e.g., Senior Full-Stack Engineer & React Systems Coach"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs text-slate-300 font-semibold">
+                        Mentorship Summary * (80 - 300 words)
+                      </label>
+                      <span
+                        className={`text-[11px] ${
+                          countWords(formData.draft.mentor.summary) < 80 ||
+                          countWords(formData.draft.mentor.summary) > 300
+                            ? "text-amber-400"
+                            : "text-emerald-400"
+                        }`}
+                      >
+                        {countWords(formData.draft.mentor.summary)} words
+                      </span>
+                    </div>
+                    <textarea
+                      rows={4}
+                      value={formData.draft.mentor.summary}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            mentor: { ...formData.draft.mentor, summary: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="Describe your teaching approach, background, how you guide learners through complex problems, and how 1-on-1 calls are conducted..."
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">Hourly Mentorship Rate ($/hr)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={formData.draft.mentor.rate}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              mentor: { ...formData.draft.mentor, rate: Number(e.target.value) },
+                            },
+                          })
+                        }
+                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">Mentorship Formats</label>
+                      <input
+                        type="text"
+                        value={formData.draft.mentor.formats.join(", ")}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              mentor: {
+                                ...formData.draft.mentor,
+                                formats: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                              },
+                            },
+                          })
+                        }
+                        placeholder="1-on-1 Calls, Code Reviews, Chat"
+                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* HIRE SECTION */}
+              {formData.roles.includes("hire") && (
+                <div className="p-5 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                      <Briefcase className="w-4 h-4" />
+                      <span>Hire Developer Details</span>
+                    </span>
+                    <span className="text-xs text-slate-400">Headline max 70 chars • Summary 80-300 words</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs text-slate-300 font-semibold">
+                        Hire Headline * (Plain text, no URLs)
+                      </label>
+                      <span
+                        className={`text-[11px] ${
+                          formData.draft.hire.headline.length > 70 ? "text-red-400" : "text-slate-500"
+                        }`}
+                      >
+                        {formData.draft.hire.headline.length} / 70
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      maxLength={70}
+                      value={formData.draft.hire.headline}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            hire: { ...formData.draft.hire, headline: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="e.g., Contract Full-Stack Engineer: Next.js & Cloud Architecture"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-cyan-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs text-slate-300 font-semibold">
+                        Hire Summary * (80 - 300 words)
+                      </label>
+                      <span
+                        className={`text-[11px] ${
+                          countWords(formData.draft.hire.summary) < 80 ||
+                          countWords(formData.draft.hire.summary) > 300
+                            ? "text-amber-400"
+                            : "text-cyan-400"
+                        }`}
+                      >
+                        {countWords(formData.draft.hire.summary)} words
+                      </span>
+                    </div>
+                    <textarea
+                      rows={4}
+                      value={formData.draft.hire.summary}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          draft: {
+                            ...formData.draft,
+                            hire: { ...formData.draft.hire, summary: e.target.value },
+                          },
+                        })
+                      }
+                      placeholder="Describe what client systems you build, performance and architecture standards, testing practices, and how you deliver software on time..."
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-cyan-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">Contract Rate ($/hr)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={formData.draft.hire.rate}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              hire: { ...formData.draft.hire, rate: Number(e.target.value) },
+                            },
+                          })
+                        }
+                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-300 mb-1">Availability</label>
+                      <select
+                        value={formData.draft.hire.availability}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              hire: { ...formData.draft.hire, availability: e.target.value },
+                            },
+                          })
+                        }
+                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-cyan-500"
+                      >
+                        <option value="Part-time (10-20 hrs/week)">Part-time (10-20 hrs/week)</option>
+                        <option value="Full-time (30-40 hrs/week)">Full-time (30-40 hrs/week)</option>
+                        <option value="Ad-hoc / Hourly Consultation">Ad-hoc / Hourly Consultation</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Step 1</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (validateStep2()) setStep(3);
+                  }}
+                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition flex items-center gap-2"
+                >
+                  <span>Continue to Step 3</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: PROJECTS, LINKS & CONSENTS */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div className="border-b border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-white">Step 3: Proof of Work & Declarations</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Add projects you've built, professional profiles, and mandatory platform consents.
+                </p>
+              </div>
+
+              {/* Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    GitHub Profile URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.draft.links.github}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: {
+                          ...formData.draft,
+                          links: { ...formData.draft.links, github: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder="https://github.com/yourusername"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    LinkedIn Profile URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.draft.links.linkedin}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        draft: {
+                          ...formData.draft,
+                          links: { ...formData.draft.links, linkedin: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder="https://linkedin.com/in/yourusername"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              {/* Projects (Max 3) */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Showcase Projects (Max 3)
+                  </label>
+                  {formData.draft.projects.length < 3 && (
+                    <button
+                      type="button"
+                      onClick={addProject}
+                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition flex items-center gap-1 border border-slate-700"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Project</span>
+                    </button>
+                  )}
+                </div>
+
+                {formData.draft.projects.length === 0 ? (
+                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
+                    No projects added yet. Click &quot;Add Project&quot; to showcase your code.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {formData.draft.projects.map((proj, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 relative"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => removeProject(idx)}
+                          className="absolute top-3 right-3 text-slate-500 hover:text-red-400 transition"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[11px] text-slate-400 mb-1">Project Title *</label>
+                            <input
+                              type="text"
+                              required
+                              value={proj.title}
+                              onChange={(e) => updateProject(idx, "title", e.target.value)}
+                              placeholder="e.g. Distributed Task Queue"
+                              className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] text-slate-400 mb-1">Project Link (Optional)</label>
+                            <input
+                              type="url"
+                              value={proj.url}
+                              onChange={(e) => updateProject(idx, "url", e.target.value)}
+                              placeholder="https://..."
+                              className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] text-slate-400 mb-1">
+                            One-Line Description *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={proj.description}
+                            onChange={(e) => updateProject(idx, "description", e.target.value)}
+                            placeholder="Built with Redis, Node.js, and Docker to process 50k background events/min"
+                            className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Mandatory Consents */}
+              <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                    Mandatory Consents & Declarations *
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mb-3">
+                  All 6 items are required to publish on OutlineDev.
+                </p>
+
+                {[
+                  {
+                    key: "publicProfile",
+                    text: "I consent to creating and publishing my expert profile on OutlineDev.",
+                  },
+                  {
+                    key: "publicPhoto",
+                    text: "I confirm this is my authentic photo and consent to its public display on OutlineDev.",
+                  },
+                  {
+                    key: "realName",
+                    text: "I confirm that I have provided my real legal/professional name and authentic credentials.",
+                  },
+                  {
+                    key: "terms",
+                    text: "I agree to OutlineDev's Expert Community Terms and Code of Conduct.",
+                  },
+                  {
+                    key: "mayInterview",
+                    text: "I understand OutlineDev may contact me for a short technical interview prior to approval.",
+                  },
+                  {
+                    key: "receiveLeads",
+                    text: "I consent to receiving client mentorship and contract leads routed through OutlineDev.",
+                  },
+                ].map((item) => (
+                  <label
+                    key={item.key}
+                    className="flex items-start gap-3 text-xs text-slate-300 cursor-pointer select-none p-2 rounded-lg hover:bg-slate-900 transition"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={Boolean(formData.consents[item.key])}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          consents: { ...formData.consents, [item.key]: e.target.checked },
+                        })
+                      }
+                      className="w-4 h-4 mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500"
+                    />
+                    <span>{item.text}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Mandatory Notice Before Submit */}
+              <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/60 text-amber-200 text-xs leading-relaxed">
+                <p className="font-semibold mb-1">Important Notice:</p>
+                <p>
+                  &quot;We may contact you for a short interview before approval. Approval is not guaranteed and listing does not guarantee leads.&quot;
+                </p>
+              </div>
+
+              {/* Controls */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Step 2</span>
+                </button>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => handleSaveOrSubmit(true)}
+                    className="flex-1 sm:flex-initial px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 border border-slate-700"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save Draft</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => handleSaveOrSubmit(false)}
+                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                  >
+                    {saving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Submit for Approval</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }

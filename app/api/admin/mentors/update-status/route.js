@@ -24,10 +24,27 @@ export async function POST(req) {
         application.status = status;
         application.reviewedBy = session.user.id;
         application.reviewedAt = new Date();
+
+        if (status === 'approved') {
+            application.published = application.draft;
+            application.approvedAt = new Date();
+        }
+
         await application.save();
 
-        // If Approved, Upgrade User Role
+        // If Approved, Upgrade User Role & revalidate matching cache tags
         if (status === 'approved') {
+            const approvedSkillIds = application.published?.skillIds || [];
+            for (const skillId of approvedSkillIds) {
+                try {
+                    const nextCache = await import('next/cache');
+                    if (nextCache && typeof nextCache.revalidateTag === 'function') {
+                        nextCache.revalidateTag(`experts:skill:${skillId}`);
+                    }
+                } catch (tagErr) {
+                    console.warn(`revalidateTag failed for experts:skill:${skillId}:`, tagErr?.message || tagErr);
+                }
+            }
             const user = await User.findById(application.userId);
             if (user) {
                 // We adding a specialized role or creating a Mentor Profile object

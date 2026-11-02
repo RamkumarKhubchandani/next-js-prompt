@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { MentorshipLanding } from '../../components/mentorship/MentorshipLanding';
+import MatchedExpertsSection from '../../components/experts/MatchedExpertsSection';
 import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 
@@ -232,6 +233,13 @@ export default function MentorSeoPage({ params }) {
                 suffix={data.suffix}
                 prefix={data.prefix}
                 currentSlug={slug}
+                matchedExpertsSection={
+                    <MatchedExpertsSection
+                        skillId={data.skill.id}
+                        locationId={data.location.id}
+                        intent="mentor"
+                    />
+                }
             />
         </>
     );

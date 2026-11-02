@@ -61,22 +61,6 @@ GOOGLE_CLIENT_ID=your-client-id-here
 GOOGLE_CLIENT_SECRET=your-client-secret-here
 ```
 
-Your complete `.env.local` should look like:
-
-```env
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/
-NEXTAUTH_SECRET=your-nextauth-secret-key-here
-NEXTAUTH_URL=http://localhost:3000
-EMAIL_USER="your-email@example.com"
-EMAIL_PASSWORD="your-email-password"
-ADZUNA_APP_ID="your-adzuna-app-id"
-ADZUNA_APP_KEY="your-adzuna-app-key"
-GEMINI_API_KEY=your-gemini-api-key
-RESEND_API_KEY=your-resend-api-key
-GOOGLE_CLIENT_ID=your-actual-client-id
-GOOGLE_CLIENT_SECRET=your-actual-client-secret
-```
-
 ### **Step 7: Restart Your Dev Server**
 ```bash
 # Stop the server (Ctrl+C)

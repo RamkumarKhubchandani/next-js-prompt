@@ -5,6 +5,7 @@ import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { HIRE_SHARED, HIRE_PAGES } from '@/app/lib/hire-data';
 import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
+import MatchedExpertsSection from '@/app/components/experts/MatchedExpertsSection';
 
 export const dynamicParams = false;
 export const revalidate = 604800;
@@ -341,6 +342,13 @@ export default async function HireDeveloperPage({ params }) {
                             })}
                     </div>
                 </section>
+
+                {/* Matched Experts (behind EXPERTS_MATCHING_ENABLED flag) */}
+                <MatchedExpertsSection
+                    skillId={slug.replace(/-developer$/, '')}
+                    locationId="online"
+                    intent="hire"
+                />
 
                 {/* Persistent Contact & Inquiry Section */}
                 <section id="inquiry-form" className="pt-12 scroll-mt-24">
