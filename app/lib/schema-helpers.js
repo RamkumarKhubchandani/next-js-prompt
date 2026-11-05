@@ -1,4 +1,15 @@
 /**
+ * Safe JSON-LD serializer.
+ * Replaces '<' with '\\u003c' in JSON.stringify output to prevent script tag injection (XSS).
+ * @param {any} data - JSON-serializable object
+ * @returns {string} Safe JSON-LD string
+ */
+export function safeJsonLd(data) {
+  if (data === undefined || data === null) return '';
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
+/**
  * Generates Course Schema for a specific track.
  * @param {object} course - The course model object
  * @returns {object} schema.org course JSON-LD

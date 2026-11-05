@@ -52,6 +52,10 @@ const MentorshipRequestSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    consentTimestamp: {
+      type: Date,
+      default: null,
+    },
     status: {
       type: String,
       enum: ['pending', 'sent', 'contacted', 'matched', 'completed', 'cancelled'],

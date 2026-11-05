@@ -6,13 +6,26 @@ import dbConnect from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 import HireInquiry from '@/app/models/HireInquiry';
 import MentorApplication from '@/app/models/MentorApplication';
-import User from '@/app/models/User';
 import nodemailer from 'nodemailer';
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 async function sendLeadEmailToExpert({ expertEmail, expertName, clientName, clientEmail, clientPhone, leadType, details, replyToEmail }) {
   const emailUser = process.env.EMAIL_USER;
   const emailPass = process.env.EMAIL_PASSWORD;
   const fromEmail = process.env.EMAIL_FROM || emailUser || 'no-reply@outlinedev.com';
+
+  if (!emailUser || !emailPass) {
+    throw new Error('Email credentials not configured');
+  }
 
   const subject = `🎯 New OutlineDev Lead: ${leadType === 'mentorship' ? '1-on-1 Mentorship' : 'Client Engineering Inquiry'} from ${clientName}`;
 
@@ -33,6 +46,13 @@ Reply to this email directly to reach ${clientName} (${clientEmail}).
 Best regards,
 OutlineDev Dispatch Team`;
 
+  const safeExpertName = escapeHtml(expertName);
+  const safeClientName = escapeHtml(clientName);
+  const safeClientEmail = escapeHtml(clientEmail);
+  const safeClientPhone = escapeHtml(clientPhone || 'Not provided');
+  const safeLeadType = escapeHtml(leadType === 'mentorship' ? '1-on-1 Mentorship' : 'Contract Engineering');
+  const safeDetails = escapeHtml(details);
+
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc; border-radius: 8px; color: #1e293b;">
       <div style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white;">
@@ -41,23 +61,23 @@ OutlineDev Dispatch Team`;
       </div>
 
       <div style="background: white; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #e2e8f0; border-top: none;">
-        <p>Hi <strong>${expertName}</strong>,</p>
+        <p>Hi <strong>${safeExpertName}</strong>,</p>
         <p>Our admin team has matched you to the following incoming client request:</p>
 
         <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 15px 0; font-size: 13px;">
-          <p style="margin: 4px 0;"><strong>Client Name:</strong> ${clientName}</p>
-          <p style="margin: 4px 0;"><strong>Client Email:</strong> <a href="mailto:${clientEmail}">${clientEmail}</a></p>
-          <p style="margin: 4px 0;"><strong>Client Phone:</strong> ${clientPhone || 'Not provided'}</p>
-          <p style="margin: 4px 0;"><strong>Inquiry Type:</strong> ${leadType === 'mentorship' ? '1-on-1 Mentorship' : 'Contract Engineering'}</p>
+          <p style="margin: 4px 0;"><strong>Client Name:</strong> ${safeClientName}</p>
+          <p style="margin: 4px 0;"><strong>Client Email:</strong> <a href="mailto:${safeClientEmail}">${safeClientEmail}</a></p>
+          <p style="margin: 4px 0;"><strong>Client Phone:</strong> ${safeClientPhone}</p>
+          <p style="margin: 4px 0;"><strong>Inquiry Type:</strong> ${safeLeadType}</p>
         </div>
 
         <div style="background: #ffffff; padding: 15px; border-left: 4px solid #10b981; border-radius: 4px; margin: 15px 0; font-size: 13px; white-space: pre-wrap;">
 <strong>Request Details:</strong>
-${details}
+${safeDetails}
         </div>
 
         <p style="font-size: 13px; color: #475569;">
-          <strong>Next Step:</strong> Simply hit <em>Reply</em> in your email client to reach the client directly at <strong>${clientEmail}</strong>.
+          <strong>Next Step:</strong> Simply hit <em>Reply</em> in your email client to reach the client directly at <strong>${safeClientEmail}</strong>.
         </p>
 
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
@@ -68,33 +88,22 @@ ${details}
     </div>
   `;
 
-  if (!emailUser || !emailPass) {
-    console.log(`[EMAIL NOTICE - No Mail Credentials Configured]`);
-    console.log(`From: ${fromEmail} | To (Expert): ${expertEmail} | Reply-To: ${replyToEmail}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Body: ${textBody}`);
-    return;
-  }
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: emailUser, pass: emailPass },
+  });
 
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: emailUser, pass: emailPass },
-    });
+  await transporter.sendMail({
+    from: `"OutlineDev Dispatch" <${fromEmail}>`,
+    to: expertEmail,
+    replyTo: replyToEmail,
+    subject,
+    text: textBody,
+    html: htmlBody,
+  });
 
-    await transporter.sendMail({
-      from: `"OutlineDev Dispatch" <${fromEmail}>`,
-      to: expertEmail,
-      replyTo: replyToEmail, // Reply goes to client!
-      subject,
-      text: textBody,
-      html: htmlBody,
-    });
-    console.log(`[LEAD DISPATCHED] Expert: ${expertEmail} | Client: ${clientEmail}`);
-  } catch (err) {
-    console.error(`[EMAIL ERROR] Failed to dispatch lead email to ${expertEmail}:`, err.message);
-    console.log(`Fallback Log - Lead for ${clientName} to ${expertEmail}`);
-  }
+  console.log(`[LEAD DISPATCHED] Email sent to expert.`);
+  return true;
 }
 
 export async function POST(req) {
@@ -145,9 +154,25 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid leadType. Must be "mentorship" or "hire".' }, { status: 400 });
     }
 
+    // Skip experts already assigned to this lead
+    const existingAssigned = new Set(
+      Array.isArray(lead.assignedExpertIds)
+        ? lead.assignedExpertIds.map((id) => id.toString())
+        : []
+    );
+
+    const eligibleExpertIds = expertIds.filter((id) => !existingAssigned.has(id.toString()));
+
+    if (eligibleExpertIds.length === 0) {
+      return NextResponse.json(
+        { error: 'All selected experts have already been assigned to this lead.' },
+        { status: 400 }
+      );
+    }
+
     // 2. Fetch and Validate Selected Experts (Must be approved & consented to receive leads)
     const experts = await MentorApplication.find({
-      _id: { $in: expertIds },
+      _id: { $in: eligibleExpertIds },
       status: 'approved',
       'consents.receiveLeads': { $ne: null },
     }).populate('userId', 'email name');
@@ -160,11 +185,16 @@ export async function POST(req) {
     }
 
     // 3. Dispatch Email to Each Expert (Never reveal expert email to client)
+    const sentExpertIds = [];
     for (const expert of experts) {
       const expertEmail = expert.userId?.email;
       const expertName = expert.displayName || expert.userId?.name || 'Developer';
 
-      if (expertEmail) {
+      if (!expertEmail) {
+        continue;
+      }
+
+      try {
         await sendLeadEmailToExpert({
           expertEmail,
           expertName,
@@ -175,18 +205,25 @@ export async function POST(req) {
           details: detailsText,
           replyToEmail: clientEmail, // Expert replies directly to client
         });
-      }
 
-      // Increment expert lead count
-      expert.assignedLeadsCount = (expert.assignedLeadsCount || 0) + 1;
-      await expert.save();
+        sentExpertIds.push(expert._id.toString());
+        expert.assignedLeadsCount = (expert.assignedLeadsCount || 0) + 1;
+        await expert.save();
+      } catch (err) {
+        console.error(`[LEAD DISPATCH ERROR] Failed to send email to expert: ${err.message}`);
+      }
+    }
+
+    // Do not set sentAt or status 'sent' unless the email actually went out
+    if (sentExpertIds.length === 0) {
+      return NextResponse.json(
+        { error: 'Failed to dispatch email to any selected expert. Lead status not updated.' },
+        { status: 500 }
+      );
     }
 
     // 4. Update Lead Record with assignedExpertIds and sentAt
-    const existingExpertIds = Array.isArray(lead.assignedExpertIds)
-      ? lead.assignedExpertIds.map((id) => id.toString())
-      : [];
-    const mergedExpertIds = Array.from(new Set([...existingExpertIds, ...experts.map((e) => e._id.toString())]));
+    const mergedExpertIds = Array.from(new Set([...existingAssigned, ...sentExpertIds]));
 
     lead.assignedExpertIds = mergedExpertIds;
     lead.sentAt = new Date();
@@ -195,7 +232,7 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      sentCount: experts.length,
+      sentCount: sentExpertIds.length,
       assignedExpertIds: mergedExpertIds,
       sentAt: lead.sentAt,
     });

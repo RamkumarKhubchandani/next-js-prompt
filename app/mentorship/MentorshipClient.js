@@ -102,7 +102,8 @@ export default function MentorshipClient({ prefill, isInModal }) {
                 goal: formData.goal,
                 stack: formData.stack,
                 otherStack: formData.otherStack,
-                urgency: formData.urgency
+                urgency: formData.urgency,
+                consent: formElement.consent?.checked || false
             };
 
             const response = await fetch('/api/mentorship/submit', {
@@ -379,7 +380,6 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                                     id="mentorship-consent"
                                                     name="consent"
                                                     required
-                                                    defaultChecked
                                                     className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
                                                 />
                                                 <label htmlFor="mentorship-consent" className="text-xs text-gray-600 dark:text-gray-400">

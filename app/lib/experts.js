@@ -2,16 +2,38 @@ import { SKILLS, LOCATIONS } from './seo-data.js';
 import MentorApplication from '../models/MentorApplication.js';
 import DEFAULT_EXPERT from './default-expert.js';
 
+export const HIRE_SLUG_TO_SKILL_ID = {
+  'full-stack': 'fullstack',
+  'nodejs': 'node',
+  'vuejs': 'vue',
+  'full-stack-developer': 'fullstack',
+  'nodejs-developer': 'node',
+  'vuejs-developer': 'vue',
+};
+
+export function hireSlugToSkillId(slug) {
+  if (!slug || typeof slug !== 'string') return '';
+  const clean = slug.trim();
+  if (HIRE_SLUG_TO_SKILL_ID[clean]) {
+    return HIRE_SLUG_TO_SKILL_ID[clean];
+  }
+  const stripped = clean.endsWith('-developer') ? clean.slice(0, -10) : clean;
+  if (HIRE_SLUG_TO_SKILL_ID[stripped]) {
+    return HIRE_SLUG_TO_SKILL_ID[stripped];
+  }
+  return stripped;
+}
+
 /**
  * Public profile field whitelist.
  * Explicitly protects private fields: email, phone, adminNotes, reviewedBy, consents, draft, photoPublicId.
- * Only returns data when doc has published content and status is 'approved'.
+ * Only returns data when doc has published content and status is not hidden or rejected.
  */
 export function toPublicProfile(doc) {
   if (!doc) return null;
   const plain = typeof doc.toObject === 'function' ? doc.toObject() : doc;
 
-  if (plain.status !== 'approved' || !plain.published) {
+  if (!plain.published || plain.status === 'hidden' || plain.status === 'rejected') {
     return null;
   }
 
@@ -142,7 +164,12 @@ export function hasHtmlTags(str) {
 }
 
 export function hasUrls(str) {
-  return /https?:\/\/|www\.|\.(?:com|org|net|io|dev|co|app|ai|me)\b/i.test(str || '');
+  if (!str) return false;
+  // Allow .NET and ASP.NET mentions in headlines without false-positive URL detection
+  const stripped = str
+    .replace(/\b(?:asp|vb)\.net\b/gi, '')
+    .replace(/(^|[^a-zA-Z0-9])\.net\b/gi, '$1');
+  return /https?:\/\/|www\.|\.(?:com|org|net|io|dev|co|app|ai|me)\b/i.test(stripped);
 }
 
 export function countWords(str) {
@@ -404,7 +431,8 @@ export async function getExpertsFor({ skillId, locationId, intent = 'mentor' }) 
       await dbConnect();
 
       const docs = await MentorApplication.find({
-        status: 'approved',
+        status: { $nin: ['hidden', 'rejected'] },
+        published: { $ne: null },
         roles: intent,
         'published.skillIds': skillId,
       }).lean();

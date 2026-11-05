@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import React from 'react';
 import JobSupportClient from './JobSupportClient';
 
@@ -78,7 +79,7 @@ export default function JobSupportPage() {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <JobSupportClient />
         </>

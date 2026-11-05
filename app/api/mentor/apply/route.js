@@ -11,6 +11,7 @@ import {
   validateLocation,
   validateProjects,
   validateConsents,
+  hasUrls,
   REQUIRED_CONSENTS,
 } from '@/app/lib/experts';
 
@@ -35,7 +36,7 @@ export async function POST(req) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     await dbConnect();
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
 
     const existingApp = await MentorApplication.findOne({ userId: session.user.id });
 
@@ -47,9 +48,15 @@ export async function POST(req) {
       return NextResponse.json({ success: true, status: 'hidden' });
     }
 
-    // Handle "Unhide" action (restore live approved profile)
+    // Handle "Unhide" action (restore live approved profile; refused if hiddenByAdmin)
     if (body.action === 'unhide') {
       if (!existingApp) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      if (existingApp.hiddenByAdmin) {
+        return NextResponse.json(
+          { error: 'Your profile was hidden by an administrator. Please contact OutlineDev support.' },
+          { status: 403 }
+        );
+      }
       if (existingApp.published) {
         existingApp.status = 'approved';
         await existingApp.save();
@@ -91,20 +98,91 @@ export async function POST(req) {
       isDraftSave,
     } = body;
 
+    // 1. Roles validation: must be a non-empty subset of ['mentor', 'hire']
+    const validRoleSet = new Set(['mentor', 'hire']);
+    if (
+      !Array.isArray(roles) ||
+      roles.length === 0 ||
+      roles.length > 2 ||
+      !roles.every((r) => validRoleSet.has(r))
+    ) {
+      return NextResponse.json(
+        { error: "Roles must be a non-empty subset of ['mentor', 'hire']." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Display Name validation: 2-60 chars, no < >, no URLs
+    const cleanName = displayName ? String(displayName).trim() : '';
+    if (cleanName.length < 2 || cleanName.length > 60) {
+      return NextResponse.json(
+        { error: 'Display name must be between 2 and 60 characters.' },
+        { status: 400 }
+      );
+    }
+    if (/[<>]/.test(cleanName)) {
+      return NextResponse.json(
+        { error: 'Display name cannot contain angle brackets (< or >).' },
+        { status: 400 }
+      );
+    }
+    if (hasUrls(cleanName)) {
+      return NextResponse.json(
+        { error: 'Display name cannot contain website URLs.' },
+        { status: 400 }
+      );
+    }
+
+    // 3. photoUrl validation: must start with https://res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const expectedCloudinaryPrefix = cloudName
+      ? `https://res.cloudinary.com/${cloudName}/`
+      : 'https://res.cloudinary.com/';
+    if (!photoUrl || typeof photoUrl !== 'string' || !photoUrl.startsWith(expectedCloudinaryPrefix)) {
+      return NextResponse.json(
+        { error: `Photo URL must start with ${expectedCloudinaryPrefix}` },
+        { status: 400 }
+      );
+    }
+
+    // 4. github, linkedin and project urls validation
+    function validateHttpsHost(urlStr, requiredHost, fieldName) {
+      if (!urlStr) return null;
+      try {
+        const u = new URL(urlStr);
+        if (u.protocol !== 'https:') {
+          return `${fieldName} must use HTTPS.`;
+        }
+        if (requiredHost) {
+          const host = u.hostname.toLowerCase();
+          if (host !== requiredHost && !host.endsWith('.' + requiredHost)) {
+            return `${fieldName} must be on ${requiredHost}.`;
+          }
+        }
+        return null;
+      } catch {
+        return `${fieldName} must be a valid URL.`;
+      }
+    }
+
+    const githubErr = validateHttpsHost(draft?.links?.github, 'github.com', 'GitHub URL');
+    if (githubErr) return NextResponse.json({ error: githubErr }, { status: 400 });
+
+    const linkedinErr = validateHttpsHost(draft?.links?.linkedin, 'linkedin.com', 'LinkedIn URL');
+    if (linkedinErr) return NextResponse.json({ error: linkedinErr }, { status: 400 });
+
+    if (Array.isArray(draft?.projects)) {
+      for (let i = 0; i < draft.projects.length; i++) {
+        const p = draft.projects[i];
+        if (p?.url) {
+          const projUrlErr = validateHttpsHost(p.url, null, `Project #${i + 1} URL`);
+          if (projUrlErr) return NextResponse.json({ error: projUrlErr }, { status: 400 });
+        }
+      }
+    }
+
     // Strict validation for full submission (when not just saving work-in-progress draft)
     if (!isDraftSave) {
-      if (!displayName || !displayName.trim()) {
-        return NextResponse.json({ error: 'Real full name is required.' }, { status: 400 });
-      }
-
-      if (!Array.isArray(roles) || roles.length === 0) {
-        return NextResponse.json({ error: 'Please choose at least one role (Mentor or Hire Developer).' }, { status: 400 });
-      }
-
-      if (!photoUrl) {
-        return NextResponse.json({ error: 'A professional profile photo is required.' }, { status: 400 });
-      }
-
       // Role specific headline and summary validation
       if (roles.includes('mentor')) {
         const headlineErr = validateHeadline(draft?.mentor?.headline);
@@ -133,20 +211,48 @@ export async function POST(req) {
       // Projects validation (max 3)
       const projErr = validateProjects(draft?.projects);
       if (projErr) return NextResponse.json({ error: projErr }, { status: 400 });
+    }
 
-      // Consents validation: all 6 required to submit
-      const consentErr = validateConsents(consents);
+    // 5. Merge consents instead of overwriting; never wipe existing consent timestamps
+    const existingConsents = existingApp?.consents
+      ? typeof existingApp.consents.toObject === 'function'
+        ? existingApp.consents.toObject()
+        : existingApp.consents
+      : {};
+    const updatedConsents = { ...existingConsents };
+    const now = new Date();
+    if (consents && typeof consents === 'object') {
+      for (const key of REQUIRED_CONSENTS) {
+        if (consents[key]) {
+          updatedConsents[key] = updatedConsents[key] || now;
+        }
+      }
+    }
+
+    if (!isDraftSave) {
+      const consentErr = validateConsents(updatedConsents);
       if (consentErr) return NextResponse.json({ error: consentErr }, { status: 400 });
     }
 
-    // Build timestamped consents object
-    const now = new Date();
-    const updatedConsents = {};
-    for (const key of REQUIRED_CONSENTS) {
-      if (consents && consents[key]) {
-        updatedConsents[key] = existingApp?.consents?.[key] || now;
-      }
-    }
+    // 6. Cap array lengths and string lengths
+    const cleanTopics = Array.isArray(draft?.mentor?.topics)
+      ? draft.mentor.topics.slice(0, 10).map((t) => String(t || '').trim().slice(0, 60)).filter(Boolean)
+      : [];
+    const cleanFormats = Array.isArray(draft?.mentor?.formats)
+      ? draft.mentor.formats.slice(0, 5).map((f) => String(f || '').trim().slice(0, 60)).filter(Boolean)
+      : [];
+    const cleanLanguages = Array.isArray(draft?.languages) && draft.languages.length > 0
+      ? draft.languages.slice(0, 10).map((l) => String(l || '').trim().slice(0, 40)).filter(Boolean)
+      : ['English'];
+    const cleanEngagementTypes = Array.isArray(draft?.hire?.engagementTypes)
+      ? draft.hire.engagementTypes.slice(0, 5).map((e) => String(e || '').trim().slice(0, 60)).filter(Boolean)
+      : [];
+    const cleanAvailability = String(draft?.hire?.availability || 'Part-time (10-20 hrs/week)').trim().slice(0, 100);
+    const cleanTimezone = String(draft?.timezone || 'UTC').trim().slice(0, 60);
+    const cleanLocationOther = {
+      country: String(draft?.locationOther?.country || '').trim().slice(0, 60),
+      city: String(draft?.locationOther?.city || '').trim().slice(0, 60),
+    };
 
     // Sanitize draft payload
     const cleanDraft = {
@@ -154,25 +260,22 @@ export async function POST(req) {
         headline: draft?.mentor?.headline ? String(draft.mentor.headline).trim() : '',
         summary: draft?.mentor?.summary ? String(draft.mentor.summary).trim() : '',
         rate: Number(draft?.mentor?.rate) || 0,
-        topics: Array.isArray(draft?.mentor?.topics) ? draft.mentor.topics : [],
-        formats: Array.isArray(draft?.mentor?.formats) ? draft.mentor.formats : [],
+        topics: cleanTopics,
+        formats: cleanFormats,
       },
       hire: {
         headline: draft?.hire?.headline ? String(draft.hire.headline).trim() : '',
         summary: draft?.hire?.summary ? String(draft.hire.summary).trim() : '',
         rate: Number(draft?.hire?.rate) || 0,
-        availability: draft?.hire?.availability || 'Part-time (10-20 hrs/week)',
-        engagementTypes: Array.isArray(draft?.hire?.engagementTypes) ? draft.hire.engagementTypes : [],
+        availability: cleanAvailability,
+        engagementTypes: cleanEngagementTypes,
       },
       skillIds: Array.isArray(draft?.skillIds) ? draft.skillIds : [],
       locationId: draft?.locationId || 'online',
-      locationOther: {
-        country: draft?.locationOther?.country ? String(draft.locationOther.country).trim() : '',
-        city: draft?.locationOther?.city ? String(draft.locationOther.city).trim() : '',
-      },
-      timezone: draft?.timezone || 'UTC',
+      locationOther: cleanLocationOther,
+      timezone: cleanTimezone,
       yearsExperience: Number(draft?.yearsExperience) || 0,
-      languages: Array.isArray(draft?.languages) && draft.languages.length > 0 ? draft.languages : ['English'],
+      languages: cleanLanguages,
       links: {
         github: draft?.links?.github ? String(draft.links.github).trim() : '',
         linkedin: draft?.links?.linkedin ? String(draft.links.linkedin).trim() : '',
@@ -193,10 +296,10 @@ export async function POST(req) {
 
     const updateDoc = {
       $set: {
-        displayName: displayName ? String(displayName).trim() : existingApp?.displayName || 'Developer',
+        displayName: cleanName,
         ...(photoUrl && { photoUrl }),
         ...(photoPublicId && { photoPublicId }),
-        roles: Array.isArray(roles) && roles.length > 0 ? roles : ['mentor'],
+        roles,
         draft: cleanDraft,
         consents: updatedConsents,
         status: newStatus,
@@ -258,6 +361,6 @@ export async function DELETE(req) {
     return NextResponse.json({ success: true, message: 'Profile deleted successfully.' });
   } catch (error) {
     console.error('Delete Application Error:', error);
-    return NextResponse.json({ error: 'Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Server Error' }, { status: 500 });
   }
 }

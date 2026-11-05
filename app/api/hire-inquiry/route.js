@@ -149,39 +149,39 @@ export async function POST(req) {
       </div>
     `;
 
-    // 6. Send email notification
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
-        from: `OutlineDev Inquiries <${fromEmail}>`,
-        to: recipient,
-        reply_to: email,
-        subject: `💼 New Project Inquiry from ${name} (${targetRole})`,
-        html: htmlContent,
-      });
-    } else if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      });
+    // 6. Send email notification (wrapped in try/catch so email failure never fails inquiry response)
+    try {
+      if (process.env.RESEND_API_KEY) {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const resendFrom = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+        await resend.emails.send({
+          from: `OutlineDev Inquiries <${resendFrom}>`,
+          to: recipient,
+          reply_to: email,
+          subject: `💼 New Project Inquiry from ${safeName} (${safeRole})`,
+          html: htmlContent,
+        });
+      } else if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
 
-      await transporter.sendMail({
-        from: `"OutlineDev Inquiries" <${fromEmail}>`,
-        to: recipient,
-        replyTo: email,
-        subject: `💼 New Project Inquiry from ${name} (${targetRole})`,
-        html: htmlContent,
-      });
-    } else {
-      console.log('ℹ️ [Hire Inquiry Received - Logged to DB & Console]:', {
-        name,
-        email,
-        targetRole,
-        budget,
-      });
+        await transporter.sendMail({
+          from: `"OutlineDev Inquiries" <${fromEmail}>`,
+          to: recipient,
+          replyTo: email,
+          subject: `💼 New Project Inquiry from ${safeName} (${safeRole})`,
+          html: htmlContent,
+        });
+      } else {
+        console.log('ℹ️ [Hire Inquiry Received - Logged to DB]: Record ID', savedInquiry._id);
+      }
+    } catch (emailError) {
+      console.error('Email dispatch error (inquiry saved to DB successfully):', emailError.message);
     }
 
     return NextResponse.json({ success: true, message: 'Inquiry sent successfully', inquiryId: savedInquiry._id }, { status: 200 });

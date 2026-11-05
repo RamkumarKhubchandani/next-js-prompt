@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import { notFound } from 'next/navigation';
 import { MentorshipLanding } from '../../components/mentorship/MentorshipLanding';
 import MatchedExpertsSection from '../../components/experts/MatchedExpertsSection';
@@ -225,7 +226,7 @@ export default function MentorSeoPage({ params }) {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(graphSchema) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(graphSchema) }}
             />
             <MentorshipLanding
                 skill={data.skill}

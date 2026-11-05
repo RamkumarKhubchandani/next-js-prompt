@@ -13,8 +13,11 @@ import {
   validateConsents,
   REQUIRED_CONSENTS,
   rankExperts,
+  hireSlugToSkillId,
+  hasUrls,
 } from '../app/lib/experts.js';
 import { DEFAULT_EXPERT } from '../app/lib/default-expert.js';
+import { safeJsonLd } from '../app/lib/schema-helpers.js';
 
 describe('1. Slug Generation', () => {
   test('generates basic slug in firstname-lastname format', () => {
@@ -55,6 +58,12 @@ describe('2. Validation Rules', () => {
       assert.strictEqual(err, null);
     });
 
+    test('passes for technical headlines with .NET and ASP.NET', () => {
+      assert.strictEqual(validateHeadline('Senior .NET Core Developer & Tech Lead'), null);
+      assert.strictEqual(validateHeadline('Staff ASP.NET Core Engineer'), null);
+      assert.strictEqual(validateHeadline('.NET Backend Architect (10+ Yrs Exp)'), null);
+    });
+
     test('fails if empty or whitespace', () => {
       assert.match(validateHeadline('   '), /Headline cannot be empty/);
       assert.match(validateHeadline(''), /Headline is required/);
@@ -74,6 +83,7 @@ describe('2. Validation Rules', () => {
     test('fails if containing URLs or domains', () => {
       assert.match(validateHeadline('Hire me at https://example.com'), /cannot contain website URLs/);
       assert.match(validateHeadline('Visit outlinedev.com for more'), /cannot contain website URLs/);
+      assert.match(validateHeadline('Portfolio: mywork.net for samples'), /cannot contain website URLs/);
     });
   });
 
@@ -204,7 +214,7 @@ describe('2. Validation Rules', () => {
   });
 });
 
-describe('3. toPublicProfile Protection (Zero Private Field Leaks)', () => {
+describe('3. toPublicProfile Protection & Visibility (Zero Private Field Leaks)', () => {
   const dummyDoc = {
     _id: '507f1f77bcf86cd799439011',
     userId: '507f1f77bcf86cd799439012',
@@ -261,15 +271,24 @@ describe('3. toPublicProfile Protection (Zero Private Field Leaks)', () => {
     },
   };
 
-  test('returns null if status is not "approved"', () => {
-    assert.strictEqual(toPublicProfile({ ...dummyDoc, status: 'pending' }), null);
-    assert.strictEqual(toPublicProfile({ ...dummyDoc, status: 'draft' }), null);
+  test('returns null if status is "hidden" or "rejected"', () => {
     assert.strictEqual(toPublicProfile({ ...dummyDoc, status: 'rejected' }), null);
     assert.strictEqual(toPublicProfile({ ...dummyDoc, status: 'hidden' }), null);
   });
 
+  test('keeps live profile online when published exists even if status is "pending" or "draft"', () => {
+    const pendingLive = toPublicProfile({ ...dummyDoc, status: 'pending' });
+    assert.ok(pendingLive);
+    assert.strictEqual(pendingLive.displayName, 'Alice Smith');
+
+    const draftLive = toPublicProfile({ ...dummyDoc, status: 'draft' });
+    assert.ok(draftLive);
+    assert.strictEqual(draftLive.displayName, 'Alice Smith');
+  });
+
   test('returns null if published data is missing', () => {
     assert.strictEqual(toPublicProfile({ ...dummyDoc, published: null }), null);
+    assert.strictEqual(toPublicProfile({ ...dummyDoc, published: null, status: 'pending' }), null);
   });
 
   test('never leaks private fields on approved profile', () => {
@@ -432,5 +451,34 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
     // hireOnly is excluded from mentor intent, so only default expert is returned
     assert.strictEqual(results.some((r) => r.slug === 'hire-only-dev'), false);
     assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+  });
+});
+
+describe('5. Hire Slug to Skill Mapping', () => {
+  test('maps known hire page slugs to canonical skill IDs using shared lookup', () => {
+    assert.strictEqual(hireSlugToSkillId('full-stack'), 'fullstack');
+    assert.strictEqual(hireSlugToSkillId('nodejs'), 'node');
+    assert.strictEqual(hireSlugToSkillId('vuejs'), 'vue');
+    assert.strictEqual(hireSlugToSkillId('full-stack-developer'), 'fullstack');
+    assert.strictEqual(hireSlugToSkillId('nodejs-developer'), 'node');
+    assert.strictEqual(hireSlugToSkillId('vuejs-developer'), 'vue');
+  });
+
+  test('passes through unmapped skills as-is', () => {
+    assert.strictEqual(hireSlugToSkillId('react'), 'react');
+    assert.strictEqual(hireSlugToSkillId('typescript'), 'typescript');
+    assert.strictEqual(hireSlugToSkillId('react-developer'), 'react');
+  });
+});
+
+describe('6. Safe JSON-LD Serialization', () => {
+  test('escapes < characters to \\u003c to prevent script injection', () => {
+    const dangerous = {
+      name: 'John <script>alert("xss")</script>',
+      bio: '</script><script>alert(1)</script>',
+    };
+    const serialized = safeJsonLd(dangerous);
+    assert.strictEqual(serialized.includes('<'), false);
+    assert.strictEqual(serialized.includes('\\u003c'), true);
   });
 });

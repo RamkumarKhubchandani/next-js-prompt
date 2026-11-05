@@ -1,8 +1,7 @@
 import React from 'react';
 import connectDB from '../../lib/mongodb';
 import QuizResult from '../../models/QuizResult';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../lib/auth';
+import { requireAdmin } from '@/app/lib/requireAdmin';
 import Link from 'next/link';
 
 async function getQuizResults() {
@@ -12,8 +11,8 @@ async function getQuizResults() {
 }
 
 export default async function QuizResultsPage() {
-    const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'admin' && session.user.email !== 'admin@example.com')) {
+    const session = await requireAdmin();
+    if (!session) {
         return (
             <div className="min-h-screen pt-24 px-6 bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
                 <div className="max-w-4xl mx-auto">

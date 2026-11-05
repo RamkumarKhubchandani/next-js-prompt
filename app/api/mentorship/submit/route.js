@@ -32,6 +32,7 @@ export async function POST(request) {
             stack: Array.isArray(stack) ? stack : [],
             otherStack: (otherStack || '').trim(),
             urgency: urgency || 'Flexible',
+            consentTimestamp: new Date(),
             status: 'pending'
         });
 

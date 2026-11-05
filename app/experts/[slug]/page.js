@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import { notFound } from "next/navigation";
 import dbConnect from "@/app/lib/mongodb";
 import MentorApplication from "@/app/models/MentorApplication";
@@ -28,7 +29,11 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
     await dbConnect();
-    const doc = await MentorApplication.findOne({ slug, status: "approved" }).lean();
+    const doc = await MentorApplication.findOne({
+      slug,
+      status: { $nin: ["hidden", "rejected"] },
+      published: { $ne: null },
+    }).lean();
     const profile = toPublicProfile(doc);
 
     if (!profile) {
@@ -87,7 +92,11 @@ export default async function ExpertProfilePage({ params }) {
   const { slug } = await params;
 
   await dbConnect();
-  const doc = await MentorApplication.findOne({ slug, status: "approved" }).lean();
+  const doc = await MentorApplication.findOne({
+    slug,
+    status: { $nin: ["hidden", "rejected"] },
+    published: { $ne: null },
+  }).lean();
 
   if (!doc) {
     notFound();
@@ -122,7 +131,7 @@ export default async function ExpertProfilePage({ params }) {
       {/* Inject Person Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <Header />

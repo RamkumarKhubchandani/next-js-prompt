@@ -136,6 +136,10 @@ const mentorApplicationSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    hiddenByAdmin: {
+      type: Boolean,
+      default: false,
+    },
     adminNotes: {
       type: String,
       default: '',

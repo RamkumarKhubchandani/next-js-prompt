@@ -308,7 +308,8 @@ export default async function sitemap() {
     const MentorApplication = (await import("./models/MentorApplication")).default;
     await dbConnect();
     const approvedExperts = await MentorApplication.find({
-      status: "approved",
+      status: { $nin: ["hidden", "rejected"] },
+      published: { $ne: null },
       slug: { $exists: true, $ne: "" },
     })
       .select("slug updatedAt")

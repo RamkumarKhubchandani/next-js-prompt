@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -6,6 +7,7 @@ import { Footer } from '@/app/components/Footer';
 import { HIRE_SHARED, HIRE_PAGES } from '@/app/lib/hire-data';
 import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
 import MatchedExpertsSection from '@/app/components/experts/MatchedExpertsSection';
+import { hireSlugToSkillId } from '@/app/lib/experts';
 
 export const dynamicParams = false;
 export const revalidate = 604800;
@@ -97,7 +99,7 @@ export default async function HireDeveloperPage({ params }) {
         <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-brand-primary selection:text-slate-950">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <Header />
 
@@ -345,7 +347,7 @@ export default async function HireDeveloperPage({ params }) {
 
                 {/* Matched Experts (behind EXPERTS_MATCHING_ENABLED flag) */}
                 <MatchedExpertsSection
-                    skillId={slug.replace(/-developer$/, '')}
+                    skillId={hireSlugToSkillId(slug)}
                     locationId="online"
                     intent="hire"
                 />

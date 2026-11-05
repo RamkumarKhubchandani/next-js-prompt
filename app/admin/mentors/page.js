@@ -282,7 +282,7 @@ export default function AdminMentorsPage() {
                       <button
                         type="button"
                         disabled={isBusy}
-                        onClick={() => handleAction(app._id, "setInterviewed")}
+                        onClick={() => handleAction(app._id, "markInterviewed")}
                         className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border ${
                           app.interviewedAt
                             ? "bg-emerald-950/50 text-emerald-300 border-emerald-800 hover:bg-emerald-900/60"
