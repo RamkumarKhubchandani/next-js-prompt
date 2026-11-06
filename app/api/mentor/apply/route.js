@@ -11,6 +11,8 @@ import {
   validateLocation,
   validateProjects,
   validateConsents,
+  validateApplyRoles,
+  validateApplyPhotoUrl,
   hasUrls,
   REQUIRED_CONSENTS,
 } from '@/app/lib/experts';
@@ -98,51 +100,39 @@ export async function POST(req) {
       isDraftSave,
     } = body;
 
-    // 1. Roles validation: must be a non-empty subset of ['mentor', 'hire']
-    const validRoleSet = new Set(['mentor', 'hire']);
-    if (
-      !Array.isArray(roles) ||
-      roles.length === 0 ||
-      roles.length > 2 ||
-      !roles.every((r) => validRoleSet.has(r))
-    ) {
-      return NextResponse.json(
-        { error: "Roles must be a non-empty subset of ['mentor', 'hire']." },
-        { status: 400 }
-      );
+    // 1. Roles validation: when isDraftSave is true, skip roles-required check (still validate any value that is present)
+    const rolesErr = validateApplyRoles(roles, Boolean(isDraftSave));
+    if (rolesErr) {
+      return NextResponse.json({ error: rolesErr }, { status: 400 });
     }
 
     // 2. Display Name validation: 2-60 chars, no < >, no URLs
     const cleanName = displayName ? String(displayName).trim() : '';
-    if (cleanName.length < 2 || cleanName.length > 60) {
-      return NextResponse.json(
-        { error: 'Display name must be between 2 and 60 characters.' },
-        { status: 400 }
-      );
-    }
-    if (/[<>]/.test(cleanName)) {
-      return NextResponse.json(
-        { error: 'Display name cannot contain angle brackets (< or >).' },
-        { status: 400 }
-      );
-    }
-    if (hasUrls(cleanName)) {
-      return NextResponse.json(
-        { error: 'Display name cannot contain website URLs.' },
-        { status: 400 }
-      );
+    if (!isDraftSave || cleanName) {
+      if (cleanName.length < 2 || cleanName.length > 60) {
+        return NextResponse.json(
+          { error: 'Display name must be between 2 and 60 characters.' },
+          { status: 400 }
+        );
+      }
+      if (/[<>]/.test(cleanName)) {
+        return NextResponse.json(
+          { error: 'Display name cannot contain angle brackets (< or >).' },
+          { status: 400 }
+        );
+      }
+      if (hasUrls(cleanName)) {
+        return NextResponse.json(
+          { error: 'Display name cannot contain website URLs.' },
+          { status: 400 }
+        );
+      }
     }
 
-    // 3. photoUrl validation: must start with https://res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const expectedCloudinaryPrefix = cloudName
-      ? `https://res.cloudinary.com/${cloudName}/`
-      : 'https://res.cloudinary.com/';
-    if (!photoUrl || typeof photoUrl !== 'string' || !photoUrl.startsWith(expectedCloudinaryPrefix)) {
-      return NextResponse.json(
-        { error: `Photo URL must start with ${expectedCloudinaryPrefix}` },
-        { status: 400 }
-      );
+    // 3. photoUrl validation: when isDraftSave is true, skip photoUrl check (still validate any value that is present)
+    const photoErr = validateApplyPhotoUrl(photoUrl, Boolean(isDraftSave));
+    if (photoErr) {
+      return NextResponse.json({ error: photoErr }, { status: 400 });
     }
 
     // 4. github, linkedin and project urls validation
@@ -256,6 +246,9 @@ export async function POST(req) {
 
     // Sanitize draft payload
     const cleanDraft = {
+      displayName: cleanName || existingApp?.draft?.displayName || existingApp?.displayName || '',
+      photoUrl: photoUrl ? String(photoUrl).trim() : (existingApp?.draft?.photoUrl || existingApp?.photoUrl || ''),
+      roles: Array.isArray(roles) && roles.length > 0 ? roles : (existingApp?.draft?.roles || existingApp?.roles || []),
       mentor: {
         headline: draft?.mentor?.headline ? String(draft.mentor.headline).trim() : '',
         summary: draft?.mentor?.summary ? String(draft.mentor.summary).trim() : '',
@@ -296,10 +289,10 @@ export async function POST(req) {
 
     const updateDoc = {
       $set: {
-        displayName: cleanName,
+        ...(cleanName && { displayName: cleanName }),
         ...(photoUrl && { photoUrl }),
         ...(photoPublicId && { photoPublicId }),
-        roles,
+        ...(Array.isArray(roles) && roles.length > 0 && { roles }),
         draft: cleanDraft,
         consents: updatedConsents,
         status: newStatus,

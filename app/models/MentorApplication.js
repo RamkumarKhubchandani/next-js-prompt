@@ -33,6 +33,9 @@ const hireContentSchema = new mongoose.Schema(
 
 const profileContentSchema = new mongoose.Schema(
   {
+    displayName: { type: String, default: '' },
+    photoUrl: { type: String, default: '' },
+    roles: { type: [String], default: [] },
     mentor: { type: mentorContentSchema, default: () => ({}) },
     hire: { type: hireContentSchema, default: () => ({}) },
     skillIds: { type: [String], default: [] },

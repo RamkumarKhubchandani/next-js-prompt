@@ -307,6 +307,127 @@ export function validateConsents(consents) {
 }
 
 /**
+ * Validates whether an application is eligible for admin approval.
+ * Requirements:
+ * - application.status must be 'pending'
+ * - draft (or application) must have displayName
+ * - draft (or application) must have photoUrl
+ * - at least one role must have a headline and summary
+ */
+export function validateApprovableApplication(application) {
+  if (!application) {
+    return 'Application is required.';
+  }
+
+  if (application.status !== 'pending') {
+    return 'Only pending applications can be approved.';
+  }
+
+  const draft = application.draft;
+  if (!draft) {
+    return 'Application draft is required.';
+  }
+
+  const displayName = (draft.displayName || application.displayName || '').trim();
+  if (!displayName) {
+    return 'Application draft requires a displayName.';
+  }
+
+  const photoUrl = (draft.photoUrl || application.photoUrl || '').trim();
+  if (!photoUrl) {
+    return 'Application draft requires a photoUrl.';
+  }
+
+  const roles = Array.isArray(draft.roles) && draft.roles.length > 0
+    ? draft.roles
+    : Array.isArray(application.roles) && application.roles.length > 0
+      ? application.roles
+      : ['mentor', 'hire'];
+
+  const hasMentor =
+    roles.includes('mentor') &&
+    Boolean(draft.mentor?.headline?.trim()) &&
+    Boolean(draft.mentor?.summary?.trim());
+
+  const hasHire =
+    roles.includes('hire') &&
+    Boolean(draft.hire?.headline?.trim()) &&
+    Boolean(draft.hire?.summary?.trim());
+
+  if (!hasMentor && !hasHire) {
+    return 'Application draft must have at least one role with a headline and summary.';
+  }
+
+  return null;
+}
+
+/**
+ * Validates roles during mentor/apply.
+ * When isDraftSave is true, skip roles-required check (still validate any value that is present).
+ */
+export function validateApplyRoles(roles, isDraftSave = false) {
+  const validRoleSet = new Set(['mentor', 'hire']);
+  if (!isDraftSave) {
+    if (
+      !Array.isArray(roles) ||
+      roles.length === 0 ||
+      roles.length > 2 ||
+      !roles.every((r) => validRoleSet.has(r))
+    ) {
+      return "Roles must be a non-empty subset of ['mentor', 'hire'].";
+    }
+    return null;
+  }
+
+  // isDraftSave is true: skip required check, validate if present
+  if (roles !== undefined && roles !== null) {
+    if (!Array.isArray(roles) || roles.length > 2 || !roles.every((r) => validRoleSet.has(r))) {
+      return "Roles must be a subset of ['mentor', 'hire'].";
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Validates photoUrl during mentor/apply.
+ * When isDraftSave is true, skip photoUrl required check (still validate any value that is present).
+ */
+export function validateApplyPhotoUrl(photoUrl, isDraftSave = false, cloudName = null) {
+  const cName = cloudName || process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const expectedPrefix = cName ? `https://res.cloudinary.com/${cName}/` : 'https://res.cloudinary.com/';
+
+  if (!isDraftSave) {
+    if (!photoUrl || typeof photoUrl !== 'string' || !photoUrl.startsWith(expectedPrefix)) {
+      return `Photo URL must start with ${expectedPrefix}`;
+    }
+    return null;
+  }
+
+  // isDraftSave is true: skip required check, validate if present
+  if (photoUrl) {
+    if (typeof photoUrl !== 'string' || !photoUrl.startsWith(expectedPrefix)) {
+      return `Photo URL must start with ${expectedPrefix}`;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * HTML-escape helper to prevent XSS in email templates and HTML renderings.
+ */
+export function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
  * Deterministically ranks candidates according to the 4 matching priority rules:
  * (1) same skill + same city
  * (2) same skill + same country

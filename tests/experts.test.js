@@ -11,6 +11,10 @@ import {
   validateLocation,
   validateProjects,
   validateConsents,
+  validateApprovableApplication,
+  validateApplyRoles,
+  validateApplyPhotoUrl,
+  escapeHtml,
   REQUIRED_CONSENTS,
   rankExperts,
   hireSlugToSkillId,
@@ -480,5 +484,173 @@ describe('6. Safe JSON-LD Serialization', () => {
     const serialized = safeJsonLd(dangerous);
     assert.strictEqual(serialized.includes('<'), false);
     assert.strictEqual(serialized.includes('\\u003c'), true);
+  });
+});
+
+describe('7. Admin Approval Eligibility (validateApprovableApplication)', () => {
+  const validApp = () => ({
+    status: 'pending',
+    displayName: 'Jane Doe',
+    photoUrl: 'https://res.cloudinary.com/testcloud/image/upload/v1234/avatar.jpg',
+    draft: {
+      displayName: 'Jane Doe',
+      photoUrl: 'https://res.cloudinary.com/testcloud/image/upload/v1234/avatar.jpg',
+      roles: ['mentor'],
+      mentor: {
+        headline: 'Senior Full Stack Mentor',
+        summary: 'Experienced mentor with a decade of expertise building web apps.',
+      },
+    },
+  });
+
+  test('passes for valid pending application with displayName, photoUrl, and role headline+summary', () => {
+    assert.strictEqual(validateApprovableApplication(validApp()), null);
+  });
+
+  test('fails if application is missing or null', () => {
+    assert.strictEqual(validateApprovableApplication(null), 'Application is required.');
+  });
+
+  test('fails if status is not "pending" (e.g. draft, approved, rejected)', () => {
+    const app = validApp();
+    app.status = 'draft';
+    assert.strictEqual(validateApprovableApplication(app), 'Only pending applications can be approved.');
+
+    app.status = 'approved';
+    assert.strictEqual(validateApprovableApplication(app), 'Only pending applications can be approved.');
+
+    app.status = 'rejected';
+    assert.strictEqual(validateApprovableApplication(app), 'Only pending applications can be approved.');
+  });
+
+  test('fails if draft is missing', () => {
+    const app = validApp();
+    delete app.draft;
+    assert.strictEqual(validateApprovableApplication(app), 'Application draft is required.');
+  });
+
+  test('fails if displayName is missing in draft and application', () => {
+    const app = validApp();
+    delete app.displayName;
+    delete app.draft.displayName;
+    assert.strictEqual(validateApprovableApplication(app), 'Application draft requires a displayName.');
+  });
+
+  test('fails if photoUrl is missing in draft and application', () => {
+    const app = validApp();
+    delete app.photoUrl;
+    delete app.draft.photoUrl;
+    assert.strictEqual(validateApprovableApplication(app), 'Application draft requires a photoUrl.');
+  });
+
+  test('fails if draft has neither mentor nor hire role with headline and summary', () => {
+    const app = validApp();
+    app.draft.mentor.headline = '';
+    assert.strictEqual(
+      validateApprovableApplication(app),
+      'Application draft must have at least one role with a headline and summary.'
+    );
+  });
+
+  test('passes if hire role has headline and summary instead of mentor', () => {
+    const app = {
+      status: 'pending',
+      draft: {
+        displayName: 'Alex Smith',
+        photoUrl: 'https://res.cloudinary.com/testcloud/avatar.jpg',
+        roles: ['hire'],
+        hire: {
+          headline: 'Senior Contract Backend Engineer',
+          summary: 'Experienced Node.js and distributed systems architect ready to build.',
+        },
+      },
+    };
+    assert.strictEqual(validateApprovableApplication(app), null);
+  });
+});
+
+describe('8. Mentor Application Draft vs Submit Validation (validateApplyRoles & validateApplyPhotoUrl)', () => {
+  describe('validateApplyRoles', () => {
+    test('when isDraftSave is true: skips required check but validates present values', () => {
+      // Skips required check:
+      assert.strictEqual(validateApplyRoles(undefined, true), null);
+      assert.strictEqual(validateApplyRoles(null, true), null);
+      assert.strictEqual(validateApplyRoles([], true), null);
+
+      // Validates when present:
+      assert.strictEqual(validateApplyRoles(['mentor'], true), null);
+      assert.strictEqual(validateApplyRoles(['hire'], true), null);
+      assert.strictEqual(validateApplyRoles(['mentor', 'hire'], true), null);
+
+      // Rejects invalid roles when present:
+      assert.strictEqual(validateApplyRoles(['admin'], true), "Roles must be a subset of ['mentor', 'hire'].");
+      assert.strictEqual(
+        validateApplyRoles(['mentor', 'hire', 'extra'], true),
+        "Roles must be a subset of ['mentor', 'hire']."
+      );
+      assert.strictEqual(validateApplyRoles('not-an-array', true), "Roles must be a subset of ['mentor', 'hire'].");
+    });
+
+    test('when isDraftSave is false: enforces non-empty subset of mentor and hire', () => {
+      assert.strictEqual(validateApplyRoles(undefined, false), "Roles must be a non-empty subset of ['mentor', 'hire'].");
+      assert.strictEqual(validateApplyRoles(null, false), "Roles must be a non-empty subset of ['mentor', 'hire'].");
+      assert.strictEqual(validateApplyRoles([], false), "Roles must be a non-empty subset of ['mentor', 'hire'].");
+      assert.strictEqual(validateApplyRoles(['admin'], false), "Roles must be a non-empty subset of ['mentor', 'hire'].");
+
+      assert.strictEqual(validateApplyRoles(['mentor'], false), null);
+      assert.strictEqual(validateApplyRoles(['hire'], false), null);
+      assert.strictEqual(validateApplyRoles(['mentor', 'hire'], false), null);
+    });
+  });
+
+  describe('validateApplyPhotoUrl', () => {
+    const cloudName = 'testcloud';
+    const validCloudinaryUrl = 'https://res.cloudinary.com/testcloud/image/upload/v12345/pic.jpg';
+    const invalidUrl = 'https://example.com/avatar.jpg';
+
+    test('when isDraftSave is true: skips required check but validates present values', () => {
+      // Skips required check:
+      assert.strictEqual(validateApplyPhotoUrl('', true, cloudName), null);
+      assert.strictEqual(validateApplyPhotoUrl(undefined, true, cloudName), null);
+      assert.strictEqual(validateApplyPhotoUrl(null, true, cloudName), null);
+
+      // Validates when present:
+      assert.strictEqual(validateApplyPhotoUrl(validCloudinaryUrl, true, cloudName), null);
+      assert.strictEqual(
+        validateApplyPhotoUrl(invalidUrl, true, cloudName),
+        'Photo URL must start with https://res.cloudinary.com/testcloud/'
+      );
+    });
+
+    test('when isDraftSave is false: enforces required Cloudinary photoUrl', () => {
+      assert.strictEqual(
+        validateApplyPhotoUrl('', false, cloudName),
+        'Photo URL must start with https://res.cloudinary.com/testcloud/'
+      );
+      assert.strictEqual(
+        validateApplyPhotoUrl(undefined, false, cloudName),
+        'Photo URL must start with https://res.cloudinary.com/testcloud/'
+      );
+      assert.strictEqual(
+        validateApplyPhotoUrl(invalidUrl, false, cloudName),
+        'Photo URL must start with https://res.cloudinary.com/testcloud/'
+      );
+      assert.strictEqual(validateApplyPhotoUrl(validCloudinaryUrl, false, cloudName), null);
+    });
+  });
+});
+
+describe('9. HTML Escaping for Email Notifications (escapeHtml)', () => {
+  test('escapes HTML special characters (&, <, >, ", \')', () => {
+    assert.strictEqual(
+      escapeHtml('Jane <Doe> & "Associates"\'s Note'),
+      'Jane &lt;Doe&gt; &amp; &quot;Associates&quot;&#039;s Note'
+    );
+  });
+
+  test('returns empty string for falsy values', () => {
+    assert.strictEqual(escapeHtml(''), '');
+    assert.strictEqual(escapeHtml(null), '');
+    assert.strictEqual(escapeHtml(undefined), '');
   });
 });

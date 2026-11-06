@@ -4,7 +4,7 @@ import { authOptions } from '@/app/lib/auth';
 import { requireAdmin, adminOnly } from '@/app/lib/requireAdmin';
 import dbConnect from '@/app/lib/mongodb';
 import MentorApplication from '@/app/models/MentorApplication';
-import { generateUniqueSlug } from '@/app/lib/experts';
+import { generateUniqueSlug, validateApprovableApplication, escapeHtml } from '@/app/lib/experts';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
@@ -86,7 +86,17 @@ export async function POST(req) {
     const applicantName = application.displayName || application.userId?.name || 'Developer';
 
     if (action === 'approve') {
+      const approvableErr = validateApprovableApplication(application);
+      if (approvableErr) {
+        return NextResponse.json({ error: approvableErr }, { status: 400 });
+      }
+
       application.published = application.draft;
+      if (application.draft?.displayName) application.displayName = application.draft.displayName;
+      if (application.draft?.photoUrl) application.photoUrl = application.draft.photoUrl;
+      if (Array.isArray(application.draft?.roles) && application.draft.roles.length > 0) {
+        application.roles = application.draft.roles;
+      }
       application.approvedAt = new Date();
       application.status = 'approved';
       application.hiddenByAdmin = false;
@@ -113,16 +123,18 @@ export async function POST(req) {
       }
 
       if (applicantEmail) {
+        const safeApplicantName = escapeHtml(applicantName);
+        const profileUrl = `https://www.outlinedev.com/experts/${application.slug}`;
         await sendApplicantNotification({
           to: applicantEmail,
           subject: '🎉 Your OutlineDev Expert Profile is Approved!',
-          text: `Hi ${applicantName},\n\nCongratulations! Your expert profile on OutlineDev has been approved.\n\nYour profile slug: ${application.slug}\n\nBest regards,\nThe OutlineDev Team`,
+          text: `Hi ${applicantName},\n\nCongratulations! Your expert profile on OutlineDev has been approved.\n\nYour profile slug: ${application.slug}\n\nView your profile: ${profileUrl}\n\nBest regards,\nThe OutlineDev Team`,
           html: `
             <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; padding: 20px;">
-              <h2 style="color: #059669;">Congratulations, ${applicantName}! 🎉</h2>
+              <h2 style="color: #059669;">Congratulations, ${safeApplicantName}! 🎉</h2>
               <p>Your expert profile on <strong>OutlineDev</strong> has been approved by our review team.</p>
               <p>Your unique profile slug has been assigned: <code>${application.slug}</code></p>
-              <p>Your published profile is now live at <a href="https://outlinedev.com/experts/${application.slug}">outlinedev.com/experts/${application.slug}</a>.</p>
+              <p>Your published profile is now live at <a href="${profileUrl}">www.outlinedev.com/experts/${application.slug}</a>.</p>
               <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
               <p style="font-size: 12px; color: #64748b;">OutlineDev Mentorship & Engineering Network</p>
             </div>
@@ -143,6 +155,8 @@ export async function POST(req) {
       await application.save();
 
       if (applicantEmail) {
+        const safeApplicantName = escapeHtml(applicantName);
+        const safeNote = escapeHtml(note);
         await sendApplicantNotification({
           to: applicantEmail,
           subject: 'Update on your OutlineDev Expert Application',
@@ -150,12 +164,12 @@ export async function POST(req) {
           html: `
             <div style="font-family: sans-serif; color: #1e293b; max-width: 600px; padding: 20px;">
               <h2 style="color: #334155;">Application Status Update</h2>
-              <p>Hi ${applicantName},</p>
+              <p>Hi ${safeApplicantName},</p>
               <p>Thank you for your interest in joining OutlineDev. After reviewing your application, we are unable to approve your listing at this time.</p>
               ${
                 note
                   ? `<div style="background: #f1f5f9; padding: 12px 16px; border-left: 4px solid #94a3b8; margin: 16px 0;">
-                      <strong>Review Note:</strong> ${note}
+                      <strong>Review Note:</strong> ${safeNote}
                      </div>`
                   : ''
               }
