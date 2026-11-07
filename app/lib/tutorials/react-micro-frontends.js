@@ -1,5 +1,6 @@
 export const reactMicroFrontends = {
     slug: "react-micro-frontends",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     title: "The Rise of Micro-Frontends with Module Federation 2.0 and React",
     description: "Monoliths are dying. Learn how to architect enterprise-scale React applications using Module Federation 2.0. Share components across versions, deploy independently, and scale infinitely.",
     thumbnail: "/images/tutorials/micro-frontends-thumb.png",

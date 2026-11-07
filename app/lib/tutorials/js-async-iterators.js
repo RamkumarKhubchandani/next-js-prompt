@@ -2,6 +2,7 @@ export const jsAsyncIterators = {
     title: "Beyond Promises: Async Iterators & Generators",
     description: "Promises are great for one-off tasks. But what about streams of events? Learn how to listen to WebSocket feeds or process large files using `for await...of` loops.",
     slug: "js-async-iterators",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Streaming Architect",

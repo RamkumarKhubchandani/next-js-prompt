@@ -1,5 +1,6 @@
 export const aiOrchestrators = {
    slug: "ai-orchestrators",
+   publishedAt: "2025-12-30T19:12:27+05:30",
    title: "Why 2026 is the Year React Developers Must Become 'AI-Orchestrators'",
    description: "The era of just 'writing components' is over. AI is the new runtime. Learn how to transition from a UI developer to an AI Orchestrator, building Generative UIs that adapt in real-time.",
    thumbnail: "/images/tutorials/ai-orchestrators-thumb.png",

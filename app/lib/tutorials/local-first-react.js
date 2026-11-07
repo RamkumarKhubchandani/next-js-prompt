@@ -2,6 +2,7 @@ export const localFirstReact = {
     title: "Local-First React: The Death of the Loading Spinner 💀",
     description: "Your app should work in a tunnel. Discover the 'Local-First' architecture using Replicache, PGLite, and CRDTs to build instant, offline-capable applications.",
     slug: "local-first-react",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Offline Systems Engineer",
     createdAt: new Date().toISOString(),

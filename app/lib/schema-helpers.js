@@ -1,4 +1,15 @@
 /**
+ * Safe JSON-LD serializer.
+ * Replaces '<' with '\\u003c' in JSON.stringify output to prevent script tag injection (XSS).
+ * @param {any} data - JSON-serializable object
+ * @returns {string} Safe JSON-LD string
+ */
+export function safeJsonLd(data) {
+  if (data === undefined || data === null) return '';
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
+/**
  * Generates Course Schema for a specific track.
  * @param {object} course - The course model object
  * @returns {object} schema.org course JSON-LD
@@ -38,7 +49,8 @@ export function getCourseSchema(course) {
  */
 export function getBlogPostingSchema(tutorial) {
   if (!tutorial) return null;
-  const publishDate = tutorial.createdAt || new Date().toISOString();
+  const publishDate = tutorial.publishedAt || tutorial.createdAt || new Date().toISOString();
+  const modifiedDate = tutorial.updatedAt || publishDate;
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -50,7 +62,7 @@ export function getBlogPostingSchema(tutorial) {
     "description": tutorial.description,
     "image": tutorial.image || "https://images.unsplash.com/photo-1618401471353-b98aedd07871?q=80&w=1200",
     "datePublished": publishDate,
-    "dateModified": publishDate,
+    "dateModified": modifiedDate,
     "author": {
       "@type": "Person",
       "name": tutorial.author || "Ramkumar Khubchandani",

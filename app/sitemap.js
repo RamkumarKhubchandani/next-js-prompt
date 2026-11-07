@@ -153,6 +153,10 @@ export default async function sitemap() {
     { url: "/hire/vuejs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/react-native-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/redux-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/angular-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/javascript-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/mongodb-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/html-css-developer", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => {
     let lastModified = STATIC_PAGES_LAST_MODIFIED;
     if (route.url === "/") {
@@ -297,12 +301,38 @@ export default async function sitemap() {
     console.error("Error generating blog routes in sitemap:", error);
   }
 
+  // 8. Approved Expert Profile Routes (/experts/[slug]) - defensive try/catch
+  let expertRoutes = [];
+  try {
+    const dbConnect = (await import("./lib/mongodb")).default;
+    const MentorApplication = (await import("./models/MentorApplication")).default;
+    await dbConnect();
+    const approvedExperts = await MentorApplication.find({
+      status: { $nin: ["hidden", "rejected"] },
+      published: { $ne: null },
+      slug: { $exists: true, $ne: "" },
+    })
+      .select("slug updatedAt")
+      .lean();
+
+    expertRoutes = approvedExperts.map((exp) => ({
+      url: `${baseUrl}/experts/${exp.slug}`,
+      lastModified: exp.updatedAt ? new Date(exp.updatedAt) : currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Error generating expert routes in sitemap:", error);
+    expertRoutes = [];
+  }
+
   return [
     ...staticRoutes,
     ...utilityRoutes,
     ...officialEventRoutes,
     ...mentorRoutes,
     ...eventRoutes,
-    ...blogRoutes
+    ...blogRoutes,
+    ...expertRoutes,
   ];
 }

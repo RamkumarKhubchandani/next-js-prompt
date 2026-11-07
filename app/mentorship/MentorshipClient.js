@@ -102,7 +102,8 @@ export default function MentorshipClient({ prefill, isInModal }) {
                 goal: formData.goal,
                 stack: formData.stack,
                 otherStack: formData.otherStack,
-                urgency: formData.urgency
+                urgency: formData.urgency,
+                consent: formElement.consent?.checked || false
             };
 
             const response = await fetch('/api/mentorship/submit', {
@@ -371,6 +372,19 @@ export default function MentorshipClient({ prefill, isInModal }) {
                                             <div>
                                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Brief Description</label>
                                                 <textarea name="description" className="w-full p-4 rounded-xl border border-gray-200 dark:border-dark-600 bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary outline-none h-24 transition-all resize-none" placeholder="I need help with..." />
+                                            </div>
+
+                                            <div className="flex items-start gap-3 pt-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id="mentorship-consent"
+                                                    name="consent"
+                                                    required
+                                                    className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
+                                                />
+                                                <label htmlFor="mentorship-consent" className="text-xs text-gray-600 dark:text-gray-400">
+                                                    I agree OutlineDev may share my request with a matched expert.
+                                                </label>
                                             </div>
 
                                             <div className="pt-4 flex items-center justify-between">

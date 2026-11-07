@@ -2,6 +2,7 @@ export const temporalApiJs = {
     title: "Temporal API: Why You'll Finally Delete moment.js and date-fns",
     description: "The JavaScript Date object has been broken for 25 years. The Temporal API fixes time zones, parsing, and arithmetic natively. Learn how to handle dates without external libraries.",
     slug: "temporal-api-js",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "TC39 Observer",

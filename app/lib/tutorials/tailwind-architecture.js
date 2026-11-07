@@ -2,6 +2,7 @@ export const tailwindArchitecture = {
     title: "Tailwind CSS: Utility Architecture 🎨",
     description: "It's not just inline styles. It's a constraint-based design system engine. Master JIT, CVA, and reusable architecture.",
     slug: "tailwind-architecture",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Adam Wathan",
     createdAt: new Date().toISOString(),

@@ -2,6 +2,7 @@ export const zustandStateManagement = {
     title: "Zustand: The Definitive Guide to Scalable State Management (2026) 🐻",
     description: "The most comprehensive guide to Zustand on the web. From replacing Redux to building enterprise-grade store architectures with Slices, Middleware, and TypeScript.",
     slug: "zustand-state-management",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Senior Frontend Architect",
     createdAt: new Date().toISOString(),

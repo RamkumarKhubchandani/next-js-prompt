@@ -2,6 +2,7 @@ export const nodeBunDenoShowdown = {
     title: "Node.js vs. Bun vs. Deno: The Final Performance Showdown (2026)",
     description: "The runtime wars are over. Or are they? We benchmarked Node 23, Bun 1.5, and Deno 2.1 on real-world workloads. The results will surprise you.",
     slug: "node-bun-deno-showdown",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Performance Architect",

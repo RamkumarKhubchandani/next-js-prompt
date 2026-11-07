@@ -2,6 +2,7 @@ export const angularHydrationMastery = {
     title: "Angular Hydration: Achieving 100/100 Lighthouse Scores",
     description: "Angular was known for being 'heavy'. In 2026, it's a speed demon. Learn about Partial Hydration, Event Replay, and how to make your apps interactive instantly.",
     slug: "angular-hydration-mastery",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Performance Expert",

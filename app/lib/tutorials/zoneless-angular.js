@@ -2,6 +2,7 @@ export const zonelessAngular = {
   title: "Zoneless Angular: Why zone.js is Finally Optional in 2026",
   description: "Angular has shed its heaviest weight. Discover how Zoneless Angular works, why it makes your apps blazing fast, and how to migrate your existing projects to this new era of fine-grained reactivity.",
   slug: "zoneless-angular",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   category: "Angular",
   type: "static",
   author: "Angular Core Contributor",

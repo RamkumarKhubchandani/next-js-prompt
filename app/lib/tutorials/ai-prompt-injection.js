@@ -2,6 +2,7 @@ export const aiPromptInjection = {
     title: "Prompt Injection: The SQL Injection of AI",
     description: "Your AI app is vulnerable. Learn how attackers use 'Ignore previous instructions' to steal data, and how to build LLM Firewalls to stop them.",
     slug: "ai-prompt-injection",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "Security Researcher",

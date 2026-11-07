@@ -2,6 +2,7 @@ export const signalStoreMastery = {
   title: "Signal-Store Mastery: Is NgRx Dead in the Age of Signals?",
   description: "NgRx was the king of Angular state management. But Signals and the new Signal Store offer a lighter, less boilerplate-heavy alternative. A controversial look at the future of state.",
   slug: "signal-store-mastery",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   category: "Angular",
   type: "static",
   author: "Angular GDE",

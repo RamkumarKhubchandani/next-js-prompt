@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/auth';
+import { requireAdmin, adminOnly } from '../../../lib/requireAdmin';
 import connectDB from '../../../lib/mongodb';
 import Post from '../../../models/Post';
 
@@ -8,13 +9,13 @@ export async function DELETE(request) {
     const session = await getServerSession(authOptions);
 
     if (!session) {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Optional: Add a check to ensure only a specific admin can do this
-    // if (session.user.email !== 'your-super-admin-email@example.com') {
-    //     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    // }
+    const adminSession = await requireAdmin(session);
+    if (!adminSession) {
+        return adminOnly();
+    }
 
     try {
         await connectDB();

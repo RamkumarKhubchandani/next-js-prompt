@@ -219,7 +219,7 @@ export default function HireInquiryForm({ skill = 'React', bookingUrl = '' }) {
                             className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary"
                         />
                         <label htmlFor="consent" className="text-xs text-slate-600 dark:text-slate-400">
-                            I agree to be contacted about my inquiry.
+                            I agree OutlineDev may share my request with a matched expert.
                         </label>
                     </div>
 

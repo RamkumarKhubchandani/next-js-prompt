@@ -2,6 +2,7 @@ export const angularDeferMastery = {
     title: "Mastering @defer: Angular's Instant Load Magic",
     description: "Lazy loading routes is old school. Learn how to lazy load *blocks of template* using the new @defer syntax. Prioritize critical UI and delay heavy components automatically.",
     slug: "angular-defer-mastery",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Angular GDE",

@@ -2,6 +2,7 @@ export const aiDesignSystemsConsistency = {
     title: "Design Systems with AI: How to Keep Component Libraries Consistent When Using AI Design Tools",
     description: "An architectural guide on establishing machine-readable design systems, semantic tokens, and verification parameters to maintain component consistency in the AI age.",
     slug: "ai-design-systems-component-library-consistency",
+    publishedAt: "2026-08-17T10:25:09+05:30",
     category: "Design Systems",
     type: "static",
     author: "Senior UI Engineer",

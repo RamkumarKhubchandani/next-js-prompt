@@ -2,6 +2,7 @@ export const jsConstIsKing = {
     title: "The Death of var and the Retirement of let",
     description: "Stop mutating variables. Learn why Senior Engineers default to 'const' for 99% of declarations and how Immutability leads to fewer bugs.",
     slug: "js-const-is-king",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Clean Code Advocate",

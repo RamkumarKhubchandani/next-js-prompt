@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from './Providers';
@@ -92,15 +93,7 @@ export default function RootLayout({ children }) {
         "@type": "WebSite",
         "name": "OutlineDev",
         "alternateName": "OutlineDev",
-        "url": "https://www.outlinedev.com",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://www.outlinedev.com/search?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
+        "url": "https://www.outlinedev.com"
       },
       // 2. Organization Schema (Enhanced for Logo & Knowledge Panel)
       {
@@ -239,7 +232,7 @@ export default function RootLayout({ children }) {
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>

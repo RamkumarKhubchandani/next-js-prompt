@@ -2,6 +2,7 @@ export const aiSdkIntegration = {
     title: "Vercel AI SDK: Text is Dead 🤖",
     description: "Don't just stream text. Stream React Components. Learn how to build 'Generative UI' where the LLM paints your interface with React Server Components.",
     slug: "ai-sdk-integration",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Jared Palmer",
     createdAt: new Date().toISOString(),

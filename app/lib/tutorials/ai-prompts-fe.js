@@ -2,6 +2,7 @@ export const aiPromptsFe = {
     title: "AI Prompts Every Frontend Developer Should Know 🤖",
     description: "Iterating with AI can yield messy, insecure code if prompted incorrectly. A masterclass in transitioning from simple 'Junior' prompts to strict, structured 'Pro' prompts for production-ready frontend code.",
     slug: "ai-prompts-every-frontend-developer-should-know",
+    publishedAt: "2026-07-25T17:55:26+05:30",
     type: "static",
     author: "Full Stack Lead",
     createdAt: new Date().toISOString(),

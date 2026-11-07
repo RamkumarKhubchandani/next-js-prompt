@@ -42,6 +42,26 @@ const HIRE_SERVICES = [
     title: 'Redux Developer',
     href: '/hire/redux-developer',
     description: 'Predictable state architectures using Redux Toolkit (RTK), RTK Query caching, and legacy Redux refactoring.'
+  },
+  {
+    title: 'Angular Developer',
+    href: '/hire/angular-developer',
+    description: 'Enterprise dashboards with RxJS state, standalone component migrations, signals reactivity, and OnPush tuning.'
+  },
+  {
+    title: 'JavaScript Developer',
+    href: '/hire/javascript-developer',
+    description: 'Deep event-loop debugging, asynchronous race condition fixes, memory leak isolation, and bundle optimization.'
+  },
+  {
+    title: 'MongoDB Developer',
+    href: '/hire/mongodb-developer',
+    description: 'Schema modeling, explain() execution tuning, multi-stage aggregation pipelines, and Atlas serverless pooling.'
+  },
+  {
+    title: 'HTML/CSS Developer',
+    href: '/hire/html-css-developer',
+    description: 'Semantic accessible markup, fluid responsive layouts without hacks, Core Web Vitals remediation, and HTML emails.'
   }
 ];
 

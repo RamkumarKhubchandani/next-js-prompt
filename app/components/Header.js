@@ -37,6 +37,7 @@ export function Header({ showNav = true }) {
     const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [hasOpenedMobile, setHasOpenedMobile] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [navLoading, setNavLoading] = useState(false);
     const [navTarget, setNavTarget] = useState(null);
@@ -118,7 +119,7 @@ export function Header({ showNav = true }) {
                 : "bg-light-100/70 dark:bg-dark-800/60 border-dark-700/10 dark:border-dark-700/40"
         )}>
             {/* Sitewide Top Promo Banner */}
-            <StickyPromoBanner />
+            {mounted && <StickyPromoBanner />}
 
             {/* Route-loading indicator (helps users understand navigation is happening) */}
             <AnimatePresence>
@@ -354,7 +355,10 @@ export function Header({ showNav = true }) {
                         <div className="xl:hidden ml-2">
                             <button
                                 type="button"
-                                onClick={() => setMobileMenuOpen(true)}
+                                onClick={() => {
+                                    setHasOpenedMobile(true);
+                                    setMobileMenuOpen(true);
+                                }}
                                 className="inline-flex items-center justify-center rounded-md p-2.5 text-dark-900 dark:text-light-200 hover:bg-dark-800/10 dark:hover:bg-dark-800 transition-colors"
                             >
                                 <Menu className="h-6 w-6" />
@@ -368,7 +372,7 @@ export function Header({ showNav = true }) {
             {/* Mobile menu */}
             {/* Mobile menu - Portalled to body to avoid z-index/transform clipping */}
             {
-                mounted && createPortal(
+                mounted && hasOpenedMobile && createPortal(
                     <AnimatePresence>
                         {mobileMenuOpen && (
                             <motion.div

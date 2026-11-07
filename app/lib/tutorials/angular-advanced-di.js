@@ -2,6 +2,7 @@ export const angularAdvancedDi = {
     title: "Angular DI: Advanced Patterns for Seniors",
     description: "Dependency Injection is more than just constructor(private http: HttpClient). Learn how to use InjectionTokens, Multi-Providers, and Factory Providers to build plugin architectures.",
     slug: "angular-advanced-di",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Angular Architect",

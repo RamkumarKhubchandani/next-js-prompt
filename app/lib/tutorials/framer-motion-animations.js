@@ -2,6 +2,7 @@ export const framerMotionAnimations = {
     title: "Framer Motion: Physics Is The New CSS 🌀",
     description: "Stop using durations. Start using Springs. This guide shows you how to make your UI feel alive using the laws of physics.",
     slug: "framer-motion-animations",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Matt Perry",
     createdAt: new Date().toISOString(),

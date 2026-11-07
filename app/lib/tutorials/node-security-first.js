@@ -2,6 +2,7 @@ export const nodeSecurityFirst = {
     title: "Zero-Trust Node.js: Securing the Runtime",
     description: "By default, Node.js allows everything: network access, file system reads, process spawning. Learn how to use the new Permission Model to lock down your production apps.",
     slug: "node-security-first",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Security Engineer",
