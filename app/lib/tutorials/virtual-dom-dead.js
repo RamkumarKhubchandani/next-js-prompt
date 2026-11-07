@@ -1,5 +1,6 @@
 export const virtualDomDead = {
     slug: "virtual-dom-dead",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     title: "Is the Virtual DOM Dead? Understanding the 2026 React Architecture",
     description: "The VDOM made React famous. Now, the Compiler is making it invisible. A bold, insider look at the transition from 'runtime' library to 'compiled' framework.",
     thumbnail: "/images/tutorials/vdom-dead-thumb.png",

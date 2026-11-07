@@ -2,6 +2,7 @@ export const masteringUseHook = {
     title: "Mastering the use() Hook: One API to Rule Them All 🔗",
     description: "The age of 'Hook Hell' is over. React 19 introduced use(). It handles Context, Promises, and makes hydration mismatches a thing of the past. A comprehensive masterclass on the future of React Async.",
     slug: "mastering-use-hook",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "React Core Team",
     createdAt: new Date().toISOString(),

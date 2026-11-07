@@ -2,6 +2,7 @@ export const angularSsrNitro = {
     title: "Server-Side Rendering (SSR) 2.0: The Angular + Nitro Revolution",
     description: "Next.js used to own the SSR game. Not anymore. Angular's integration with the Nitro engine brings streaming, edge deployment, and blinding speed to the ecosystem.",
     slug: "angular-ssr-nitro",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Fullstack Angular Dev",

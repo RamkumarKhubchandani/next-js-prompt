@@ -2,6 +2,7 @@ export const varVsLetVsConstJs = {
     title: "var vs let vs const: Scopes, Hoisting, and the Global Window Relationship",
     description: "An easy-to-understand developer's guide explaining the differences between var, let, and const in JavaScript, highlighting global window object assignments and hoisting.",
     slug: "var-vs-let-vs-const-javascript",
+    publishedAt: "2026-08-17T10:18:41+05:30",
     category: "JavaScript",
     type: "static",
     author: "Ramkumar Khubchandani",

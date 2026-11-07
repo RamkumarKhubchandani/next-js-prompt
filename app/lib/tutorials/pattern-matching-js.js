@@ -2,6 +2,7 @@ export const patternMatchingJs = {
     title: "Pattern Matching in JS: Goodbye switch, Hello Clean Code",
     description: "Discover the most anticipated JavaScript feature that revolutionizes control flow. Learn how Pattern Matching replaces complex switch statements and nested transitions with elegant, readable logic.",
     slug: "pattern-matching-js",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Senior JS Architect",

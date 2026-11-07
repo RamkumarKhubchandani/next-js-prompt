@@ -2,6 +2,7 @@ export const typescriptPerformance = {
     title: "TypeScript 6.0: The Performance Engine of Modern React 🛡️",
     description: "TypeScript isn't just for safety anymore. In 2026, it's the secret sauce that makes the React Compiler tree-shake faster and optimize better. A guide to writing 'Compiler-Optimized' TypeScript.",
     slug: "typescript-performance",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Compiler Engineer",
     createdAt: new Date().toISOString(),

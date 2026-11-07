@@ -2,6 +2,7 @@ export const aiAgentsReact = {
     title: "Building Autonomous Agents with React 🤖",
     description: "The next generation of apps aren't just UIs—they are Agentic Workflows. Learn to build standard ReAct Agents, integrate Tool Calling with Zod, manage Long-Term Memory (RAG), and handle Streaming UI.",
     slug: "ai-agents-react",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "AI Systems Architect",

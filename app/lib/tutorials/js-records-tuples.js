@@ -2,6 +2,7 @@ export const jsRecordsTuples = {
     title: "JavaScript Records & Tuples: Immutable Data is Finally Native",
     description: "Deep equality by default. No more 'reference vs value' bugs. Learn how Records and Tuples (#[], #{}) will revolutionize how we manage state in 2026.",
     slug: "js-records-tuples",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Core Platform Engineer",

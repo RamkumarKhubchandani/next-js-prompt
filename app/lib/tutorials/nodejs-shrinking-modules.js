@@ -2,6 +2,7 @@ export const nodejsShrinkingModules = {
     title: "The Shrinking node_modules: Why You Need Fewer Packages in 2026",
     description: "The 'heaviest object in the universe' is getting lighter. Node.js now natively supports many features we used to install npm packages for. Learn how to build lean, zero-dependency APIs.",
     slug: "nodejs-shrinking-modules",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Backend Lead",

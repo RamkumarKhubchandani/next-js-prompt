@@ -2,6 +2,7 @@ export const jsSharedMemory = {
     title: "Typed Arrays & Shared Memory: Ultra-Fast JavaScript",
     description: "JavaScript is single-threaded, but memory doesn't have to be. Learn how to use SharedArrayBuffer and Atomics to build multi-threaded apps that rival Rust performance.",
     slug: "js-shared-memory",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Performance Engineer",

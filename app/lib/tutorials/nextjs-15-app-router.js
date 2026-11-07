@@ -2,6 +2,7 @@ export const nextjsAppRouter = {
     title: "Next.js 15: The Framework Architecture Guide 🏗️",
     description: "The App Router isn't just a router; it's a full-stack mental model. Master Async Request APIs, the Caching Reset (no-store), Server Actions validation, and Parallel Routes.",
     slug: "nextjs-15-app-router",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Vercel Architect",
     createdAt: new Date().toISOString(),

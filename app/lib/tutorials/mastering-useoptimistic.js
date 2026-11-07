@@ -1,5 +1,6 @@
 export const masteringUseOptimistic = {
   slug: "mastering-useoptimistic",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   title: "Mastering useOptimistic: Creating 'Lag-Free' UX for Global Applications",
   description: "Users hate loading spinners. Optimistic UI is the mark of a high-quality app. Learn how to use React 19's useOptimistic hook to make your detailed interactions instantaneous.",
   thumbnail: "/images/tutorials/optimistic-thumb.png",

@@ -2,6 +2,7 @@ export const aiSelfHealing = {
     title: "Self-Healing Code: Auto-Fixing Pipelines",
     description: "Why just report an error? Learn how to build a CI/CD pipeline that detects failure, feeds the stack trace to an Agent, and commits a fix automatically.",
     slug: "ai-self-healing-code",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "DevOps Engineer",

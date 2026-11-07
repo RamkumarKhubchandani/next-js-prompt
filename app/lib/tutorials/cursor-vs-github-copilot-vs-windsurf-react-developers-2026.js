@@ -2,6 +2,7 @@ export const cursorVsCopilotVsWindsurfReact = {
     title: "Cursor vs GitHub Copilot vs Windsurf: Which AI Coding Tool Is Actually Best for React Developers in 2026",
     description: "A senior frontend engineer's raw, head-to-head comparison of Cursor, GitHub Copilot, and Windsurf in a production React codebase. Model pickers, agents, and refactoring performance.",
     slug: "cursor-vs-github-copilot-vs-windsurf-react-developers-2026",
+    publishedAt: "2026-08-14T12:57:23+05:30",
     category: "React",
     type: "static",
     author: "Senior Frontend Engineer",

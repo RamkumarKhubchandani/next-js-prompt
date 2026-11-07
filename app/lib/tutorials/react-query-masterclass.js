@@ -2,6 +2,7 @@ export const reactQueryMasterclass = {
     title: "React Query: Server State Solved 🛡️",
     description: "It's not just a data fetching library. It's an async state manager. Master caching, optimistic updates, and infinite scrolling to build rock-solid apps.",
     slug: "react-query-masterclass",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Tanner Linsley",
     createdAt: new Date().toISOString(),

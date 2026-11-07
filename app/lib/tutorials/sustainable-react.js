@@ -2,6 +2,7 @@ export const sustainableReact = {
     title: "Sustainable React: The Green Code Revolution of 2026 🌿",
     description: "In 2026, efficiency is survival. A definitive 5,000-word guide on writing 'Green Code' that reduces carbon footprints, optimizes CPU cycles, and aligns with the new era of Digital Sustainability.",
     slug: "sustainable-react",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Eco-Engineering Lead",
     createdAt: new Date().toISOString(),

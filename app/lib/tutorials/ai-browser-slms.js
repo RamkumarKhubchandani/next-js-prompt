@@ -2,6 +2,7 @@ export const aiBrowserSlms = {
     title: "Small Language Models (SLMs): Running AI in the Browser",
     description: "Cloud GPUs are expensive and slow. Learn how to run Phi-3 and Gemma directly in your user's browser using WebGPU. 100% Private. 0% Cost.",
     slug: "ai-browser-slms",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "Edge AI Engineer",

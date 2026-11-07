@@ -22,6 +22,8 @@ import {
 } from '../app/lib/experts.js';
 import { DEFAULT_EXPERT } from '../app/lib/default-expert.js';
 import { safeJsonLd } from '../app/lib/schema-helpers.js';
+import { buildBlogSitemapXml, KNOWN_INTERVIEW_HUBS } from '../app/lib/blog-sitemap.js';
+import { SKILL_GUIDES, getSkillGuide } from '../app/lib/skill-guides.js';
 
 describe('1. Slug Generation', () => {
   test('generates basic slug in firstname-lastname format', () => {
@@ -652,5 +654,116 @@ describe('9. HTML Escaping for Email Notifications (escapeHtml)', () => {
     assert.strictEqual(escapeHtml(''), '');
     assert.strictEqual(escapeHtml(null), '');
     assert.strictEqual(escapeHtml(undefined), '');
+  });
+});
+
+describe('10. Blog Content Sitemap (buildBlogSitemapXml)', () => {
+  const mockTutorials = [
+    {
+      slug: 'react-compiler-guide',
+      title: 'React Compiler Guide',
+      publishedAt: '2026-01-15T10:00:00.000Z',
+      updatedAt: '2026-03-01T12:00:00.000Z',
+    },
+    {
+      slug: 'mastering-signals',
+      title: 'Mastering Signals',
+      publishedAt: '2025-11-20T08:30:00.000Z',
+    },
+    {
+      slug: 'undated-tutorial',
+      title: 'Undated Tutorial',
+    },
+  ];
+
+  test('generates valid XML sitemap with urlset declaration and /blogs index', () => {
+    const xml = buildBlogSitemapXml({ tutorials: mockTutorials });
+    assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+    assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
+    assert.ok(xml.includes('<loc>https://www.outlinedev.com/blogs</loc>'));
+    assert.ok(xml.endsWith('</urlset>'));
+  });
+
+  test('includes blog posts with lastmod set to updatedAt || publishedAt (never current date)', () => {
+    const xml = buildBlogSitemapXml({ tutorials: mockTutorials });
+
+    // react-compiler-guide has both updatedAt and publishedAt -> updatedAt takes precedence
+    assert.ok(xml.includes('<loc>https://www.outlinedev.com/blogs/react-compiler-guide</loc>'));
+    assert.ok(xml.includes('<lastmod>2026-03-01T12:00:00.000Z</lastmod>'));
+
+    // mastering-signals has only publishedAt -> uses publishedAt
+    assert.ok(xml.includes('<loc>https://www.outlinedev.com/blogs/mastering-signals</loc>'));
+    assert.ok(xml.includes('<lastmod>2025-11-20T08:30:00.000Z</lastmod>'));
+
+    // Verify it never uses today's date for posts that don't have it
+    const todayYmd = new Date().toISOString().slice(0, 10);
+    // Neither mock post date is today
+    assert.ok(!xml.includes(`<lastmod>${todayYmd}`));
+  });
+
+  test('omits lastmod when neither updatedAt nor publishedAt is present', () => {
+    const xml = buildBlogSitemapXml({ tutorials: mockTutorials });
+    // Match the block for undated-tutorial
+    const undatedBlock = xml.split('<loc>https://www.outlinedev.com/blogs/undated-tutorial</loc>')[1].split('</url>')[0];
+    assert.ok(!undatedBlock.includes('<lastmod>'), 'undated tutorial must not have a lastmod element');
+  });
+
+  test('includes all required /interview hubs', () => {
+    const xml = buildBlogSitemapXml({ tutorials: [] });
+    const expectedHubs = [
+      'https://www.outlinedev.com/interview',
+      'https://www.outlinedev.com/interview/react',
+      'https://www.outlinedev.com/interview/angular',
+      'https://www.outlinedev.com/interview/javascript',
+      'https://www.outlinedev.com/interview/typescript',
+      'https://www.outlinedev.com/interview/html-css',
+      'https://www.outlinedev.com/interview/zustand',
+    ];
+
+    for (const hubUrl of expectedHubs) {
+      assert.ok(xml.includes(`<loc>${hubUrl}</loc>`), `Sitemap must contain interview hub ${hubUrl}`);
+    }
+  });
+
+  test('escapes special characters in URLs', () => {
+    const xml = buildBlogSitemapXml({
+      tutorials: [{ slug: 'c++-guide&tricks' }],
+      interviewHubs: [],
+    });
+    assert.ok(xml.includes('<loc>https://www.outlinedev.com/blogs/c++-guide&amp;tricks</loc>'));
+  });
+});
+
+describe('11. Skill Guides Map Lookup (SKILL_GUIDES & getSkillGuide)', () => {
+  test('exports SKILL_GUIDES mapping containing skill:suffix entries', () => {
+    assert.ok(typeof SKILL_GUIDES === 'object' && SKILL_GUIDES !== null);
+    assert.ok(Object.keys(SKILL_GUIDES).length > 0);
+  });
+
+  test('returns matching post slug for mapped skill and suffix', () => {
+    const reactGuide = getSkillGuide('react', 'interview-prep');
+    assert.strictEqual(reactGuide, 'frontend-interview-prep-2026-ai-copilot-era');
+
+    const angularGuide = getSkillGuide('angular', 'mentors');
+    assert.strictEqual(angularGuide, 'zoneless-angular');
+
+    const nextjsGuide = getSkillGuide({ id: 'nextjs' }, 'mentors');
+    assert.strictEqual(nextjsGuide, 'nextjs-15-app-router');
+  });
+
+  test('returns null for unmapped skill or suffix', () => {
+    assert.strictEqual(getSkillGuide('unknown-skill', 'interview-prep'), null);
+    assert.strictEqual(getSkillGuide('react', 'non-existent-suffix'), null);
+    assert.strictEqual(getSkillGuide(null, 'interview-prep'), null);
+    assert.strictEqual(getSkillGuide('react', null), null);
+    assert.strictEqual(getSkillGuide('', ''), null);
+  });
+
+  test('all mapped slugs in SKILL_GUIDES are valid slugs without spaces or protocols', () => {
+    for (const [key, slug] of Object.entries(SKILL_GUIDES)) {
+      assert.ok(typeof slug === 'string' && slug.length > 0, `Slug for ${key} should be a non-empty string`);
+      assert.ok(!slug.includes(' '), `Slug for ${key} should not contain spaces: ${slug}`);
+      assert.ok(!slug.startsWith('http'), `Slug for ${key} should be a relative slug, not a URL: ${slug}`);
+    }
   });
 });

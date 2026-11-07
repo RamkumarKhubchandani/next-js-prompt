@@ -2,6 +2,7 @@ export const javascriptPipelineOperator = {
     title: "JavaScript Pipeline Operator (|>): The 2026 Deep Dive 🌊",
     description: "Nest no more. The definitive guide to the most requested JS feature of the decade. From Hack-style syntax to Async Pipelines, Error Monads, and architectural patterns.",
     slug: "javascript-pipeline-operator",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "TC39 Observer",

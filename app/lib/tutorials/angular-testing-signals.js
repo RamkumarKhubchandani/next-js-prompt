@@ -2,6 +2,7 @@ export const angularTestingSignals = {
     title: "Testing Signals: Fast Unit Tests in 2026",
     description: "Jasmine and Karma are slow. Learn how to test Angular Signals using modern Jest/Vitest patterns. No more quirky `fixture.detectChanges()` spam.",
     slug: "angular-testing-signals",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Test Engineer",

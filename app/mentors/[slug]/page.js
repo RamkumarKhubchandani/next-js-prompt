@@ -4,6 +4,7 @@ import { MentorshipLanding } from '../../components/mentorship/MentorshipLanding
 import MatchedExpertsSection from '../../components/experts/MatchedExpertsSection';
 import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
+import { getSkillGuide } from '../../lib/skill-guides';
 
 const REAL_RATING = {
     ratingValue: "4.9",
@@ -213,6 +214,7 @@ export default function MentorSeoPage({ params }) {
     }
 
     const skillContent = getSkillContent(data.skill.id);
+    const freeGuideSlug = getSkillGuide(data.skill.id, data.suffix);
     const graphSchema = buildGraphSchema({
         slug,
         skill: data.skill,
@@ -234,6 +236,7 @@ export default function MentorSeoPage({ params }) {
                 suffix={data.suffix}
                 prefix={data.prefix}
                 currentSlug={slug}
+                freeGuideSlug={freeGuideSlug}
                 matchedExpertsSection={
                     <MatchedExpertsSection
                         skillId={data.skill.id}

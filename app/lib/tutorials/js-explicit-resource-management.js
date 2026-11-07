@@ -2,6 +2,7 @@ export const jsExplicitResourceManagement = {
     title: "Explicit Resource Management: The 'using' Keyword",
     description: "Memory leaks are so 2024. Learn how the new 'using' keyword automates cleanup for Database connections, File handles, and WebSockets.",
     slug: "js-explicit-resource-management",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Systems Engineer",

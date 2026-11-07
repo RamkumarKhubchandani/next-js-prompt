@@ -2,6 +2,7 @@ export const angularMaterial3 = {
     title: "Angular Material 3: Theming with Tokens",
     description: "SCSS variables are out. CSS Custom Properties are in. Learn how Angular Material 3 uses Design Tokens to enable dynamic runtime theming and Dark Mode.",
     slug: "angular-material-3",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "UI Engineer",

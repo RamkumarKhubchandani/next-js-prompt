@@ -2,6 +2,7 @@ export const aiInteroperability = {
     title: "AI-to-AI Interoperability: The Agent Protocol",
     description: "The next API is English. Learn how to build standardized interfaces so your Agent can negotiate with Stripe's Agent, authorize payments, and handle disputes without human intervention.",
     slug: "ai-interoperability",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "Protocol Engineer",

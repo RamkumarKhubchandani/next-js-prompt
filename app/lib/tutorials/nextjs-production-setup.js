@@ -2,6 +2,7 @@ export const nextjs15ProductionSetup = {
     title: "Next.js 15 Production-Ready Setup: The Ultimate 2026 Developer Checklist 🚀",
     description: "Bypass default configurations. Master the ultimate corporate-grade setup checklist for Next.js 15, React 19, TypeScript, Biome, and Tailwind CSS v4.",
     slug: "nextjs-15-production-setup-guide",
+    publishedAt: "2026-08-14T12:37:31+05:30",
     category: "Next.js",
     type: "static",
     author: "Frontend Architect",

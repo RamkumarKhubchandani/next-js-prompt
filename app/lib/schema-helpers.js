@@ -49,7 +49,8 @@ export function getCourseSchema(course) {
  */
 export function getBlogPostingSchema(tutorial) {
   if (!tutorial) return null;
-  const publishDate = tutorial.createdAt || new Date().toISOString();
+  const publishDate = tutorial.publishedAt || tutorial.createdAt || new Date().toISOString();
+  const modifiedDate = tutorial.updatedAt || publishDate;
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -61,7 +62,7 @@ export function getBlogPostingSchema(tutorial) {
     "description": tutorial.description,
     "image": tutorial.image || "https://images.unsplash.com/photo-1618401471353-b98aedd07871?q=80&w=1200",
     "datePublished": publishDate,
-    "dateModified": publishDate,
+    "dateModified": modifiedDate,
     "author": {
       "@type": "Person",
       "name": tutorial.author || "Ramkumar Khubchandani",

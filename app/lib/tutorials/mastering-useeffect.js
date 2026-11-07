@@ -1,5 +1,6 @@
 export const masteringUseEffect = {
     slug: "mastering-useeffect",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     title: "React useEffect: The Definitive Guide for 2026 🧠",
     description: "Forget 'Lifecycles'. Thinking that way is why your app loops infinitely. Learn the Synchronization mental model, how to fix race conditions, AbortController patterns, and why you should almost never use useEffect in React 19.",
     thumbnail: "/images/tutorials/useeffect-thumb.png",

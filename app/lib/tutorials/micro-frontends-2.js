@@ -2,6 +2,7 @@ export const microFrontends2 = {
     title: "Micro-Frontends 2.0: Scaling React Teams in 2026 🧩",
     description: "The old Micro-Frontend mess is over. Module Federation 2.0 + React Compiler is the new 'Enterprise Standard'. Learn to ship faster without the bloat of iframe-based architectures.",
     slug: "micro-frontends-2",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Platform Engineer",
     createdAt: new Date().toISOString(),

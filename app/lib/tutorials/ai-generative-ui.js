@@ -2,6 +2,7 @@ export const aiGenerativeUi = {
     title: "Generative UI: Interfaces that Design Themselves",
     description: "Static dashboards are dead. Learn how to use Vercel AI SDK to stream React Components directly from an LLM, creating bespoke interfaces for every user interaction.",
     slug: "ai-generative-ui",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "UX Engineer",

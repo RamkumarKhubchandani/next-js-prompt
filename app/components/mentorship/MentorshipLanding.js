@@ -123,7 +123,7 @@ function StarRating({ count = 5 }) {
     );
 }
 
-export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug, matchedExpertsSection }) {
+export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug, matchedExpertsSection, freeGuideSlug = null }) {
     const skillContent = getSkillContent(skill.id);
     const locationContent = getLocationContent(location.id, location.name);
     const matchingHireSlug = HIRE_SLUG_MAP[skill.id];
@@ -197,6 +197,15 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <MessageSquare size={18} className="text-[#25D366]" />
                                     <span>Chat on WhatsApp</span>
                                 </a>
+                                {freeGuideSlug && (
+                                    <Link
+                                        href={`/blogs/${freeGuideSlug}`}
+                                        className="px-6 py-4 rounded-xl font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 border border-slate-200 dark:border-white/10 transition-all flex items-center gap-2"
+                                    >
+                                        <span>Free guide</span>
+                                        <ArrowRight size={18} className="text-brand-primary" />
+                                    </Link>
+                                )}
                             </div>
 
                             {((prefix === 'hire' || prefix === 'freelance') && matchingHireSlug) && (

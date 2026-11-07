@@ -2,6 +2,7 @@ export const typescriptAdvancedPatterns = {
     title: "TypeScript: The Defensive Guide (2026) 🛡️",
     description: "Move beyond `any`. Master the Turing Checklist of TypeScript: Discriminated Unions for state machines, Template Literals for DSLs, Conditional Types for utility libraries, and Branded Types for domain modeling.",
     slug: "typescript-advanced-patterns",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Senior TypeScript Architect",
     createdAt: new Date().toISOString(),

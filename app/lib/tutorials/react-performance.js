@@ -2,6 +2,7 @@ export const reactPerformance = {
     title: "React Performance: The 60 FPS Manifesto (2026) 🏎️",
     description: "Your users judge you by your latency. Master the Fiber Architecture, Concurrency, and Frame Budgeting. Stop guessing with \`useMemo\` and start measuring with the Profiler.",
     slug: "react-performance",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "React Core Team Observer",
     createdAt: new Date().toISOString(),

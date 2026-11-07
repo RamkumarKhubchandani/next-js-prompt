@@ -2,6 +2,7 @@ export const v0VsLovableVsBolt = {
     title: "v0 vs Lovable vs Bolt: Comparing AI UI Generators for Shipping Production-Ready Frontend Components",
     description: "An in-depth, code-level comparison of Vercel's v0, Lovable, and Bolt.new for building and shipping production-ready React and Next.js applications.",
     slug: "v0-vs-lovable-vs-bolt-ai-ui-generator-comparison",
+    publishedAt: "2026-08-17T10:14:21+05:30",
     category: "Web Development",
     type: "static",
     author: "Senior UI Architect",

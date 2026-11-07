@@ -2,6 +2,7 @@ export const nodeWorkerThreads = {
     title: "Node.js Worker Threads: Multithreading is Easy Now",
     description: "Node.js is single-threaded, but your app doesn't have to be. Learn how to use Worker Threads to perform heavy computations without blocking the Event Loop.",
     slug: "node-worker-threads",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Systems Engineer",

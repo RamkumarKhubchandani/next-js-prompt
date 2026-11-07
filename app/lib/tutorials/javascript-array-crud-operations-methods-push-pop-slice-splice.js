@@ -2,6 +2,7 @@ export const jsArrayCrudOperations = {
     title: "JavaScript Array CRUD Operations and Methods: A Practical Guide to Push, Pop, Shift, Unshift, Slice, and Splice",
     description: "Learn how to perform complete CRUD (Create, Read, Update, Delete) operations on JavaScript arrays, featuring examples of push, pop, shift, unshift, slice, splice, and interactive homework challenges.",
     slug: "javascript-array-crud-operations-methods-push-pop-slice-splice",
+    publishedAt: "2026-08-17T10:18:41+05:30",
     category: "JavaScript",
     type: "static",
     author: "Ramkumar Khubchandani",

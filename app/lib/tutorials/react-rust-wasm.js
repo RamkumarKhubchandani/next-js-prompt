@@ -2,6 +2,7 @@ export const reactRustWasm = {
     title: "React + Rust (Wasm): Bringing Desktop Performance to the Browser in 2026 🦀",
     description: "JavaScript is the glue. Rust is the muscle. Learn how to crush Core Web Vitals and process heavy workloads by bridging React 19 with WebAssembly.",
     slug: "react-rust-wasm",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Senior Principal Engineer",
     createdAt: new Date().toISOString(),

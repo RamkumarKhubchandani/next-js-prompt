@@ -35,6 +35,7 @@ export const HIRE_SHARED = {
 
 export const HIRE_PAGES = {
   "react-developer": {
+    relatedPosts: ["mastering-useeffect","react-server-components","react-performance"],
     skill: "React",
     title: "Hire React Developer | Freelance, India & Remote",
     description: "Hire an experienced React developer for booking sites, dashboards and accessible web apps. 12+ years in the industry. Start with a 20-minute call.",
@@ -83,6 +84,7 @@ export const HIRE_PAGES = {
     ]
   },
   "nextjs-developer": {
+    relatedPosts: ["nextjs-15-app-router","nextjs-production-setup","partial-prerendering"],
     skill: "Next.js",
     title: "Hire Next.js Developer | Freelance, India & Remote",
     description: "Hire a Next.js developer to build fast, search-friendly websites and web apps. 12+ years of industry experience. Start with a 20-minute call.",
@@ -131,6 +133,7 @@ export const HIRE_PAGES = {
     ]
   },
   "full-stack-developer": {
+    relatedPosts: ["mern-stack-roadmap-2026","react-compiler-vs-usememo-usecallback-2026"],
     skill: "Full Stack",
     title: "Hire a Full Stack Developer | React, Node.js, MongoDB",
     description: "Hire a full stack developer for end-to-end web projects: interface, server and database. React, Next.js, Node.js, MongoDB. 12+ years of experience.",
@@ -179,6 +182,7 @@ export const HIRE_PAGES = {
     ]
   },
   "typescript-developer": {
+    relatedPosts: ["typescript-advanced-patterns","typescript-performance"],
     skill: "TypeScript",
     title: "Hire a TypeScript Developer | React, Next.js, Node",
     description: "Hire a TypeScript developer for maintainable React, Next.js and Node.js projects. 12+ years of industry experience. Start with a 20-minute call.",
@@ -227,6 +231,7 @@ export const HIRE_PAGES = {
     ]
   },
   "nodejs-developer": {
+    relatedPosts: ["node-bun-deno-showdown","node-security-first","node-worker-threads"],
     skill: "Node.js",
     title: "Hire Node.js Developer | Freelance, India & Remote",
     description: "Hire a freelance Node.js developer for API development, consulting, and dedicated support. 12+ years experience. Available for India & remote teams.",
@@ -310,6 +315,7 @@ export const HIRE_PAGES = {
     ]
   },
   "vuejs-developer": {
+    relatedPosts: ["frontend-interview-prep-2026-ai-copilot-era"],
     skill: "Vue.js",
     title: "Hire Vue.js Developer | Freelance, India & Remote",
     description: "Hire a freelance Vue.js developer and consultant for Vue 3, Pinia, and Nuxt apps. 12+ years industry experience. Available for India & remote clients.",
@@ -392,6 +398,7 @@ export const HIRE_PAGES = {
     ]
   },
   "react-native-developer": {
+    relatedPosts: ["mastering-useeffect","react-performance"],
     skill: "React Native",
     title: "Hire React Native Developer | Freelance, India & Remote",
     description: "Hire a freelance React Native developer for iOS & Android apps, Expo, and consulting. 12+ years industry experience. Available for India & remote teams.",
@@ -474,6 +481,7 @@ export const HIRE_PAGES = {
     ]
   },
   "redux-developer": {
+    relatedPosts: ["zustand-state-management","signal-store-mastery"],
     skill: "Redux",
     title: "Hire Redux Developer | Freelance, India & Remote",
     description: "Hire a freelance Redux developer for Redux Toolkit, RTK Query, and state architecture. 12+ years industry experience. Available for India & remote teams.",
@@ -556,6 +564,7 @@ export const HIRE_PAGES = {
     ]
   },
   "angular-developer": {
+    relatedPosts: ["zoneless-angular","signal-store-mastery","angular-hydration-mastery"],
     skill: "Angular",
     title: "Hire Angular Developer | Freelance, India & Remote",
     description: "Hire a freelance Angular developer for standalone components, signals, RxJS state, and performance tuning. 12+ years experience. Remote & India.",
@@ -664,6 +673,7 @@ export const HIRE_PAGES = {
     ]
   },
   "javascript-developer": {
+    relatedPosts: ["var-vs-let-vs-const-javascript","javascript-array-crud-operations-methods-push-pop-slice-splice"],
     skill: "JavaScript",
     title: "Hire JavaScript Developer | Freelance, India & Remote",
     description: "Hire a freelance JavaScript developer for event-loop debugging, async race conditions, and bundle optimization. 12+ years experience. Remote & India.",
@@ -764,6 +774,7 @@ export const HIRE_PAGES = {
     ]
   },
   "mongodb-developer": {
+    relatedPosts: ["mern-stack-roadmap-2026","node-security-first"],
     skill: "MongoDB",
     title: "Hire MongoDB Developer | Freelance, India & Remote",
     description: "Hire a freelance MongoDB developer for schema design, aggregation pipelines, Atlas setups, and index tuning. 12+ years experience. Remote & India.",
@@ -864,6 +875,7 @@ export const HIRE_PAGES = {
     ]
   },
   "html-css-developer": {
+    relatedPosts: ["css-css3-complete-step-by-step-guide-beginners-to-advanced","tailwind-architecture"],
     skill: "HTML/CSS",
     title: "Hire HTML/CSS Developer | Freelance, India & Remote",
     description: "Hire a freelance HTML/CSS developer for semantic accessible markup, responsive layouts, Core Web Vitals, and emails. 12+ years experience. Remote.",
