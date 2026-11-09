@@ -200,6 +200,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                 {freeGuideSlug && (
                                     <Link
                                         href={`/blogs/${freeGuideSlug}`}
+                                        prefetch={false}
                                         className="px-6 py-4 rounded-xl font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 border border-slate-200 dark:border-white/10 transition-all flex items-center gap-2"
                                     >
                                         <span>Free guide</span>
@@ -465,6 +466,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={item.id}
                                         href={`/mentors/one-to-one-${item.id}-tutors-in-${location.id}`}
+                                        prefetch={false}
                                         className={`mesh-badge ${item.id === skill.id ? 'mesh-badge-active' : ''}`}
                                     >
                                         1:1 {item.name} in {location.name}
@@ -486,6 +488,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={hub.id}
                                         href={`/mentors/one-to-one-${skill.id}-tutors-in-${hub.id}`}
+                                        prefetch={false}
                                         className={`mesh-badge ${hub.id === location.id ? 'mesh-badge-hub-active' : ''}`}
                                     >
                                         {skill.name} in {hub.name}
@@ -507,6 +510,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                                     <Link
                                         key={idx}
                                         href={v.href}
+                                        prefetch={false}
                                         className="group mesh-format-card"
                                     >
                                         <div>

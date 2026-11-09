@@ -289,6 +289,7 @@ export default async function ExpertProfilePage({ params }) {
                   </div>
                   <Link
                     href={`/mentorship?mentor=${encodeURIComponent(profile.slug)}`}
+                    prefetch={false}
                     className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-md shadow-emerald-500/20"
                   >
                     Book Mentorship
@@ -385,6 +386,7 @@ export default async function ExpertProfilePage({ params }) {
                   </div>
                   <Link
                     href={`/services?expert=${encodeURIComponent(profile.slug)}`}
+                    prefetch={false}
                     className="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-md shadow-cyan-500/20"
                   >
                     Inquire to Hire

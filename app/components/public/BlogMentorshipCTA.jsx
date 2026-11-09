@@ -73,6 +73,7 @@ export function BlogSidebarCTA({ tutorialTitle, tags = [], relatedPosts = [], pr
                 {primaryCta?.href && primaryCta?.label && (
                     <Link
                         href={primaryCta.href}
+                        prefetch={false}
                         className="w-full py-2.5 px-3 rounded-xl bg-brand-primary text-slate-950 font-black text-xs hover:bg-emerald-400 transition-all shadow-md flex items-center justify-center gap-1.5 text-center group"
                     >
                         <span>{primaryCta.label}</span>
@@ -117,6 +118,7 @@ export function BlogSidebarCTA({ tutorialTitle, tags = [], relatedPosts = [], pr
                             <Link
                                 key={slug}
                                 href={`/blogs/${slug}`}
+                                prefetch={false}
                                 className="block text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-brand-primary transition-colors line-clamp-1"
                             >
                                 → {slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
@@ -219,6 +221,7 @@ export function BlogBottomCTA({ tutorialTitle, tags = [], relatedPosts = [], pri
                     {primaryCta?.href && primaryCta?.label && (
                         <Link
                             href={primaryCta.href}
+                            prefetch={false}
                             className="py-4 px-8 rounded-2xl bg-brand-primary text-dark-950 font-black text-sm hover:bg-emerald-400 transition-all shadow-xl hover:shadow-brand-primary/20 flex items-center gap-2"
                         >
                             <span>{primaryCta.label}</span>
@@ -265,6 +268,7 @@ export function BlogBottomCTA({ tutorialTitle, tags = [], relatedPosts = [], pri
                                 <Link
                                     key={slug}
                                     href={`/blogs/${slug}`}
+                                    prefetch={false}
                                     className="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-primary/40 transition-all block group"
                                 >
                                     <div className="text-xs font-bold text-white group-hover:text-brand-primary transition-colors line-clamp-2">
