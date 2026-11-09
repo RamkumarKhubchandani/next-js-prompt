@@ -293,7 +293,7 @@ export default async function sitemap() {
     const tutorials = await getAllTutorials();
     blogRoutes = tutorials.map((t) => ({
       url: `${baseUrl}/blogs/${t.slug}`,
-      lastModified: currentDate,
+      lastModified: t.updatedAt || t.publishedAt,
       changeFrequency: "weekly",
       priority: 0.8,
     }));

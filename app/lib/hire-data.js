@@ -84,7 +84,7 @@ export const HIRE_PAGES = {
     ]
   },
   "nextjs-developer": {
-    relatedPosts: ["nextjs-15-app-router","nextjs-production-setup","partial-prerendering"],
+    relatedPosts: ["nextjs-15-app-router","nextjs-15-production-setup-guide","partial-prerendering"],
     skill: "Next.js",
     title: "Hire Next.js Developer | Freelance, India & Remote",
     description: "Hire a Next.js developer to build fast, search-friendly websites and web apps. 12+ years of industry experience. Start with a 20-minute call.",

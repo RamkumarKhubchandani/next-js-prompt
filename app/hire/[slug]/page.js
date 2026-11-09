@@ -8,6 +8,7 @@ import { HIRE_SHARED, HIRE_PAGES } from '@/app/lib/hire-data';
 import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
 import MatchedExpertsSection from '@/app/components/experts/MatchedExpertsSection';
 import { hireSlugToSkillId } from '@/app/lib/experts';
+import { getAllTutorials } from '@/app/lib/tutorials';
 
 export const dynamicParams = false;
 export const revalidate = 604800;
@@ -49,6 +50,21 @@ export default async function HireDeveloperPage({ params }) {
     }
 
     const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
+
+    const hasRelatedPosts = Array.isArray(page.relatedPosts) && page.relatedPosts.length > 0;
+    const tutorialsMap = new Map();
+    if (hasRelatedPosts) {
+        try {
+            const tutorials = await getAllTutorials();
+            for (const t of tutorials) {
+                if (t && t.slug) {
+                    tutorialsMap.set(t.slug, t);
+                }
+            }
+        } catch (err) {
+            console.error('Error loading tutorials for related guides in hire page:', err);
+        }
+    }
 
     // Service & BreadcrumbList JSON-LD Schema (no ratings, no reviews, no worksFor)
     const jsonLd = {
@@ -316,17 +332,19 @@ export default async function HireDeveloperPage({ params }) {
                 </section>
 
                 {/* Related guides (renders ONLY when relatedPosts is non-empty) */}
-                {Array.isArray(page.relatedPosts) && page.relatedPosts.length > 0 && (
+                {hasRelatedPosts && (
                     <section className="py-12 border-b border-slate-200 dark:border-slate-800">
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
                             Related Guides
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {page.relatedPosts.map((postSlug) => {
-                                const formattedTitle = postSlug
+                                const post = tutorialsMap.get(postSlug);
+                                const title = post?.title || postSlug
                                     .split('-')
                                     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
                                     .join(' ');
+                                const description = post?.description || `Read our deep-dive technical guide on ${page.skill} architecture and best practices.`;
                                 return (
                                     <Link
                                         key={postSlug}
@@ -335,10 +353,10 @@ export default async function HireDeveloperPage({ params }) {
                                         className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-primary/60 dark:hover:border-brand-primary/60 transition-all block group"
                                     >
                                         <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-brand-primary transition-colors line-clamp-2">
-                                            {formattedTitle}
+                                            {title}
                                         </h3>
                                         <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
-                                            Read our deep-dive technical guide on {page.skill} architecture and best practices.
+                                            {description}
                                         </p>
                                     </Link>
                                 );

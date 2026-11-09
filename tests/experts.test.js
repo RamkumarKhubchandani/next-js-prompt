@@ -744,6 +744,9 @@ describe('11. Skill Guides Map Lookup (SKILL_GUIDES & getSkillGuide)', () => {
     const reactGuide = getSkillGuide('react', 'interview-prep');
     assert.strictEqual(reactGuide, 'frontend-interview-prep-2026-ai-copilot-era');
 
+    const svelteHelpGuide = getSkillGuide('svelte', 'interview-help');
+    assert.strictEqual(svelteHelpGuide, 'svelte-5-interview-questions');
+
     const angularGuide = getSkillGuide('angular', 'mentors');
     assert.strictEqual(angularGuide, 'zoneless-angular');
 

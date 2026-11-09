@@ -15,23 +15,27 @@ export const SKILL_GUIDES = {
   // Next.js
   'nextjs:mentors': 'nextjs-15-app-router',
   'nextjs:tutors': 'nextjs-15-app-router',
-  'nextjs:developers': 'nextjs-production-setup',
-  'nextjs:job-support': 'nextjs-production-setup',
+  'nextjs:developers': 'nextjs-15-production-setup-guide',
+  'nextjs:job-support': 'nextjs-15-production-setup-guide',
 
   // TypeScript
   'typescript:mentors': 'typescript-advanced-patterns',
   'typescript:tutors': 'typescript-advanced-patterns',
   'typescript:interview-prep': 'typescript-performance',
+  'typescript:interview-help': 'typescript-performance',
   'typescript:developers': 'typescript-strict-mode-migration-guide-legacy-javascript',
 
   // JavaScript
   'javascript:mentors': 'var-vs-let-vs-const-javascript',
   'javascript:tutors': 'var-vs-let-vs-const-javascript',
   'javascript:interview-prep': 'javascript-array-crud-operations-methods-push-pop-slice-splice',
+  'javascript:interview-help': 'javascript-array-crud-operations-methods-push-pop-slice-splice',
 
   // Angular
   'angular:mentors': 'zoneless-angular',
   'angular:tutors': 'zoneless-angular',
+  'angular:interview-prep': 'zoneless-angular',
+  'angular:interview-help': 'zoneless-angular',
   'angular:job-support': 'signal-store-mastery',
 
   // Zustand / State
@@ -51,6 +55,7 @@ export const SKILL_GUIDES = {
   'svelte:mentors': 'svelte-5-interview-questions',
   'svelte:tutors': 'svelte-5-interview-questions',
   'svelte:interview-prep': 'svelte-5-interview-questions',
+  'svelte:interview-help': 'svelte-5-interview-questions',
   'svelte:mock-interviews': 'svelte-5-interview-questions',
 
   // Full Stack
