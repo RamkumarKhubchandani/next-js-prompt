@@ -52,10 +52,10 @@ export function Footer() {
           <div className="flex flex-col gap-6">
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Expertise</h3>
             <ul className="space-y-4">
-              <li><Link href="/mentors/react-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Mentors</Link></li>
-              <li><Link href="/mentors/node-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Experts</Link></li>
-              <li><Link href="/mentors/playwright-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Playwright Helpers</Link></li>
-              <li><Link href="/mentors/aws-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">AWS Consultants</Link></li>
+              <li><Link href="/mentors/react-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Mentors</Link></li>
+              <li><Link href="/mentors/node-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Experts</Link></li>
+              <li><Link href="/mentors/playwright-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Playwright Helpers</Link></li>
+              <li><Link href="/mentors/aws-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">AWS Consultants</Link></li>
             </ul>
           </div>
 
@@ -111,7 +111,7 @@ export function Footer() {
                   { name: "AI Front End", href: "/mentors/aifrontend-mentors-in-online" },
                   { name: "HTML & CSS Layouts", href: "/mentors/html-mentors-in-online" }
                 ].map(item => (
-                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                  <Link key={item.name} href={item.href} prefetch={false} className="text-gray-500 hover:text-brand-primary transition-colors">
                     {item.name}
                   </Link>
                 ))}
@@ -139,7 +139,7 @@ export function Footer() {
                   { name: "Dublin", href: "/mentors/react-mentors-in-dublin" },
                   { name: "Tokyo", href: "/mentors/react-mentors-in-tokyo" }
                 ].map(item => (
-                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                  <Link key={item.name} href={item.href} prefetch={false} className="text-gray-500 hover:text-brand-primary transition-colors">
                     Tutors in {item.name}
                   </Link>
                 ))}
