@@ -17,6 +17,8 @@ export const SKILL_GUIDES = {
   'nextjs:tutors': 'nextjs-15-app-router',
   'nextjs:developers': 'nextjs-15-production-setup-guide',
   'nextjs:job-support': 'nextjs-15-production-setup-guide',
+  'nextjs:freelancers': 'nextjs-15-client-website-tutorial-for-freelancers',
+  'nextjs:project-support': 'nextjs-15-client-website-tutorial-for-freelancers',
 
   // TypeScript
   'typescript:mentors': 'typescript-advanced-patterns',
@@ -27,9 +29,13 @@ export const SKILL_GUIDES = {
 
   // JavaScript
   'javascript:mentors': 'var-vs-let-vs-const-javascript',
-  'javascript:tutors': 'var-vs-let-vs-const-javascript',
+  'javascript:tutors': 'private-javascript-tutor-guide',
+  'javascript:tutor': 'private-javascript-tutor-guide',
   'javascript:interview-prep': 'javascript-array-crud-operations-methods-push-pop-slice-splice',
   'javascript:interview-help': 'javascript-array-crud-operations-methods-push-pop-slice-splice',
+  'javascript:developers': 'how-to-hire-a-javascript-developer',
+  'javascript:developer': 'how-to-hire-a-javascript-developer',
+  'javascript:freelancers': 'how-to-hire-a-javascript-developer',
 
   // Angular
   'angular:mentors': 'zoneless-angular',
@@ -37,6 +43,10 @@ export const SKILL_GUIDES = {
   'angular:interview-prep': 'zoneless-angular',
   'angular:interview-help': 'zoneless-angular',
   'angular:job-support': 'signal-store-mastery',
+  'angular:developers': 'angular-client-dashboard-tutorial-for-freelancers',
+  'angular:developer': 'angular-client-dashboard-tutorial-for-freelancers',
+  'angular:freelancers': 'angular-client-dashboard-tutorial-for-freelancers',
+  'angular:project-support': 'angular-client-dashboard-tutorial-for-freelancers',
 
   // Zustand / State
   'zustand:mentors': 'zustand-state-management',
@@ -50,6 +60,18 @@ export const SKILL_GUIDES = {
   'node:mentors': 'node-security-first',
   'node:tutors': 'node-security-first',
   'node:job-support': 'node-bun-deno-showdown',
+  'node:developers': 'nodejs-developer-vs-freelancer-vs-agency',
+  'node:developer': 'nodejs-developer-vs-freelancer-vs-agency',
+  'node:freelancers': 'nodejs-developer-vs-freelancer-vs-agency',
+
+  // Vue
+  'vue:developers': 'how-to-hire-a-vuejs-consultant',
+  'vue:developer': 'how-to-hire-a-vuejs-consultant',
+  'vue:consultants': 'how-to-hire-a-vuejs-consultant',
+  'vue:consultant': 'how-to-hire-a-vuejs-consultant',
+  'vue:mentors': 'how-to-hire-a-vuejs-consultant',
+  'vue:freelancers': 'vue-3-client-project-tutorial-for-freelancers',
+  'vue:project-support': 'vue-3-client-project-tutorial-for-freelancers',
 
   // Svelte
   'svelte:mentors': 'svelte-5-interview-questions',

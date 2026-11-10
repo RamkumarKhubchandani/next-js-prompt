@@ -84,7 +84,7 @@ export const HIRE_PAGES = {
     ]
   },
   "nextjs-developer": {
-    relatedPosts: ["nextjs-15-app-router","nextjs-15-production-setup-guide","partial-prerendering"],
+    relatedPosts: ["nextjs-15-app-router","nextjs-15-production-setup-guide","nextjs-15-client-website-tutorial-for-freelancers"],
     skill: "Next.js",
     title: "Hire Next.js Developer | Freelance, India & Remote",
     description: "Hire a Next.js developer to build fast, search-friendly websites and web apps. 12+ years of industry experience. Start with a 20-minute call.",
@@ -231,7 +231,7 @@ export const HIRE_PAGES = {
     ]
   },
   "nodejs-developer": {
-    relatedPosts: ["node-bun-deno-showdown","node-security-first","node-worker-threads"],
+    relatedPosts: ["node-bun-deno-showdown","node-security-first","node-worker-threads","nodejs-developer-vs-freelancer-vs-agency"],
     skill: "Node.js",
     title: "Hire Node.js Developer | Freelance, India & Remote",
     description: "Hire a freelance Node.js developer for API development, consulting, and dedicated support. 12+ years experience. Available for India & remote teams.",
@@ -315,7 +315,7 @@ export const HIRE_PAGES = {
     ]
   },
   "vuejs-developer": {
-    relatedPosts: ["frontend-interview-prep-2026-ai-copilot-era"],
+    relatedPosts: ["frontend-interview-prep-2026-ai-copilot-era","how-to-hire-a-vuejs-consultant","vue-3-client-project-tutorial-for-freelancers"],
     skill: "Vue.js",
     title: "Hire Vue.js Developer | Freelance, India & Remote",
     description: "Hire a freelance Vue.js developer and consultant for Vue 3, Pinia, and Nuxt apps. 12+ years industry experience. Available for India & remote clients.",
@@ -564,7 +564,7 @@ export const HIRE_PAGES = {
     ]
   },
   "angular-developer": {
-    relatedPosts: ["zoneless-angular","signal-store-mastery","angular-hydration-mastery"],
+    relatedPosts: ["zoneless-angular","signal-store-mastery","angular-client-dashboard-tutorial-for-freelancers"],
     skill: "Angular",
     title: "Hire Angular Developer | Freelance, India & Remote",
     description: "Hire a freelance Angular developer for standalone components, signals, RxJS state, and performance tuning. 12+ years experience. Remote & India.",
@@ -673,7 +673,7 @@ export const HIRE_PAGES = {
     ]
   },
   "javascript-developer": {
-    relatedPosts: ["var-vs-let-vs-const-javascript","javascript-array-crud-operations-methods-push-pop-slice-splice"],
+    relatedPosts: ["var-vs-let-vs-const-javascript","javascript-array-crud-operations-methods-push-pop-slice-splice","how-to-hire-a-javascript-developer","private-javascript-tutor-guide"],
     skill: "JavaScript",
     title: "Hire JavaScript Developer | Freelance, India & Remote",
     description: "Hire a freelance JavaScript developer for event-loop debugging, async race conditions, and bundle optimization. 12+ years experience. Remote & India.",

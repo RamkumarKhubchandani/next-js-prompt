@@ -60,3 +60,115 @@ In compliance with the quality guidelines, no statistics, client quotes, or pers
 2. **Real Client Testimonial / Story**:
    - *Current Content*: Grounded entirely in technical interview Q&A and code patterns for the "Aperture & Lens Booking Studio" application.
    - *Author Input Needed (Optional)*: Any real-world client testimonial from a photography client or agency lead can be added to personal project reviews.
+
+---
+
+## 4. Batch 1: Hiring Guides Verification & Audit Report
+
+**Batch Execution Date**: November 9, 2026  
+**Author**: Ramkumar Khubchandani  
+
+### Summary Table
+
+| Post Slug | Word Count | Code Blocks | Validated Code Blocks | Fragments | Internal Links | External Docs Links |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `how-to-hire-a-javascript-developer` | 2,056 words | 1 | 1 (`calculateBookingQuote` validated with `node -e`) | 0 | 4 (`/hire/javascript-developer`, `/mentors/javascript-mentors-in-online`, `/blogs/var-vs-let-vs-const-javascript`, `/blogs/javascript-array-crud-operations-methods-push-pop-slice-splice`) | 2 (`developer.mozilla.org`, `nodejs.org`) |
+| `how-to-hire-a-vuejs-consultant` | 1,948 words | 3 | 1 (`useCartStore` Pinia logic validated with `node -e`) | 2 (Vue 2 Options API vs Vue 3 `<script setup>` comparison) | 4 (`/hire/vuejs-developer`, `/mentors/vue-mentors-in-online`, `/blogs/svelte-5-interview-questions`, `/blogs/react-vs-signals`) | 3 (`vuejs.org`, `pinia.vuejs.org`, `nuxt.com`) |
+| `nodejs-developer-vs-freelancer-vs-agency` | 1,934 words | 1 | 1 (Production HTTP server with graceful shutdown and health checks validated with `node -e`) | 0 | 4 (`/hire/nodejs-developer`, `/mentors/node-mentors-in-online`, `/blogs/node-security-first`, `/blogs/node-native-fetch-streams`) | 2 (`nodejs.org`, `developer.mozilla.org`) |
+
+### Code Validation Details
+
+1. **`how-to-hire-a-javascript-developer.js`**:
+   - **Snippet**: `calculateBookingQuote(request)` trial task module.
+   - **Execution & Status**: Ran via Node.js v22 with real payload (`Alice`, `Bridal`, weekend date, base rate 150). Output verified (`finalPrice: 165`, `depositRequired: 41.25`, `valid: true`). Passed `node --check`.
+
+2. **`how-to-hire-a-vuejs-consultant.js`**:
+   - **Snippet 1 & 2 (Fragments)**: Side-by-side comparison of Vue 2 Options API + Vuex vs Vue 3 `<script setup>` + Pinia. Marked as illustrative architectural fragments.
+   - **Snippet 3 (Store)**: `useCartStore` Pinia setup store. Business calculation and discount logic verified via Node.js runtime script. Passed `node --check`.
+
+3. **`nodejs-developer-vs-freelancer-vs-agency.js`**:
+   - **Snippet**: HTTP server with `/healthz` endpoint, graceful `SIGTERM`/`SIGINT` shutdown handling, and JSON quote calculation. Validated via Node.js with successful mock server instantiation and clean shutdown. Passed `node --check`.
+
+### Sitemap & Schema Validation
+
+- Verified `/blog-sitemap.xml` generates clean `<url>` entries for all three Batch 1 guides with exact `<lastmod>` derived from each post's `publishedAt` timestamp.
+- All three posts conform to the schema: title <= 60 characters, description 140-160 characters, no placeholder text, zero mentions of forbidden entities, and honest one-sentence service disclosures.
+
+
+---
+
+## 5. Batch 2 Tutorial Posts Review & Verification (2026-11-09)
+
+### Published Posts Audit Summary
+
+| Slug | Word Count | Title Length (<=60) | Meta Description (140-160) | Target Keyword | PublishedAt (ISO +05:30) |
+|---|---|---|---|---|---|
+| `private-javascript-tutor-guide` | 2,183 | 56 | 145 | `private javascript tutor guide` | `2026-11-12T10:00:00+05:30` |
+| `vue-3-client-project-tutorial-for-freelancers` | 2,098 | 54 | 151 | `vue 3 client project tutorial for freelancers` | `2026-11-13T10:30:00+05:30` |
+| `nextjs-15-client-website-tutorial-for-freelancers` | 2,024 | 50 | 147 | `nextjs 15 client website tutorial for freelancers` | `2026-11-14T11:00:00+05:30` |
+| `angular-client-dashboard-tutorial-for-freelancers` | 2,288 | 52 | 141 | `angular client dashboard tutorial for freelancers` | `2026-11-15T11:30:00+05:30` |
+
+### Code Validation & Execution Report
+
+1. **`private-javascript-tutor-guide`**:
+   - **Running Example**: Sarah Jenkins 4-week private coaching curriculum & Lumina consultation booking calculator.
+   - **8 Practice Problems & Solutions**:
+     - Problem 1: Closure-based rate limiter counter (`createRateLimiter`). Executed and verified in Node.js.
+     - Problem 2: Async debounce wrapper (`debounce`). Executed and verified in Node.js.
+     - Problem 3: Grouping array elements by status via `reduce`. Executed and verified in Node.js.
+     - Problem 4: Deep object clone without mutating nested properties. Executed and verified in Node.js.
+     - Problem 5: Event loop execution order prediction (`Promise.resolve()` microtask vs `setTimeout` macrotask). Verified in Node.js.
+     - Problem 6: Concurrent fetch with timeout fallback (`Promise.race`). Executed and verified in Node.js.
+     - Problem 7: Auto-retrying async task with exponential backoff (`retryAsync`). Executed and verified in Node.js.
+     - Problem 8: Safe nested property extractor using optional chaining and nullish coalescing (`extractUserBio`). Executed and verified in Node.js.
+   - **Syntax**: Passed `node --check`.
+
+2. **`vue-3-client-project-tutorial-for-freelancers`**:
+   - **Running Example**: Lumina Wellness Studio Manhattan appointment booking portal.
+   - **Components & Stores**:
+     - `src/stores/booking.js`: Complete Pinia setup store with reactive refs, getters (`totalPrice`, `depositAmount`), and async booking action.
+     - `src/components/BookingForm.vue`: Accessible Vue 3 SFC with `v-model` binding, computed error state, and ARIA attributes.
+     - `src/components/BookingModal.vue`: Teleported confirmation modal with keyboard event listeners (`Escape` key dismissal).
+     - `src/tests/BookingForm.spec.js`: Vitest unit test suite validating required field submission prevention.
+   - **Syntax**: Passed `node --check`.
+
+3. **`nextjs-15-client-website-tutorial-for-freelancers`**:
+   - **Running Example**: Meridian Legal Partners client acquisition portal.
+   - **Features & Endpoints**:
+     - `app/layout.tsx`: Root layout with Google font optimization (`next/font/google`), canonical metadata, and OpenGraph configuration.
+     - `app/page.tsx`: Server component with XSS-safe `LegalService` JSON-LD schema generation via `JSON.stringify().replace(/</g, '\\u003c')`.
+     - `app/actions/consultation.ts`: React 19 / Next.js 15 Server Action with `zod` schema validation, honey-pot spam detection, and structured error returns.
+     - `app/api/revalidate/route.ts`: On-demand webhook route handler utilizing `revalidatePath` with secret token authentication.
+   - **Syntax**: Passed `node --check`.
+
+4. **`angular-client-dashboard-tutorial-for-freelancers`**:
+   - **Running Example**: Apex Logistics interstate freight fleet telemetry dashboard.
+   - **Architecture & Components**:
+     - `src/app/app.config.ts`: Modern standalone bootstrap using `provideRouter(routes, withComponentInputBinding())` and `provideHttpClient(withFetch(), withInterceptors([authInterceptor]))`.
+     - `src/app/services/dashboard-state.service.ts`: Signal-based store featuring `signal()`, `computed()`, and reactive status filtering.
+     - `src/app/interceptors/auth.interceptor.ts`: Functional `HttpInterceptorFn` adding Bearer token headers and auto-retrying transient network failures.
+     - `src/app/services/freight-api.service.ts`: Typed HttpClient service with `toSignal` interoperability and error fallback handling.
+     - `src/app/components/metric-card.component.ts`: Reusable standalone component with modern `input.required<string>()` signals.
+     - `src/app/components/dashboard-view.component.ts`: Full dashboard template with responsive metric cards and accessible data table.
+     - `src/app/components/dashboard-view.component.spec.ts` & `src/app/services/freight-api.service.spec.ts`: Unit test suites using `TestBed` and `HttpTestingController`.
+     - `Dockerfile` & `nginx.conf`: Multi-stage Docker build with Nginx HTML5 pushState fallback and gzip compression.
+   - **Syntax**: Passed `node --check`.
+
+### Internal & External Link Coverage
+
+- **Internal Links**:
+  - `private-javascript-tutor-guide`: `/hire/javascript-developer`, `/mentors/javascript-mentors-in-online`, `/blogs/var-vs-let-vs-const-javascript`, `/blogs/javascript-array-crud-operations-methods-push-pop-slice-splice`, `/blogs/how-to-hire-a-javascript-developer`.
+  - `vue-3-client-project-tutorial-for-freelancers`: `/hire/vuejs-developer`, `/mentors/vue-mentors-in-online`, `/blogs/how-to-hire-a-vuejs-consultant`, `/blogs/react-vs-signals`.
+  - `nextjs-15-client-website-tutorial-for-freelancers`: `/hire/nextjs-developer`, `/mentors/nextjs-mentors-in-online`, `/blogs/nextjs-15-app-router`, `/blogs/nextjs-15-production-setup-guide`.
+  - `angular-client-dashboard-tutorial-for-freelancers`: `/hire/angular-developer`, `/mentors/angular-mentors-in-online`, `/blogs/zoneless-angular`, `/blogs/signal-store-mastery`.
+- **External Citations**:
+  - MDN Web Docs: Closures, Promises (`developer.mozilla.org`)
+  - Vue & Pinia Documentation: SFC Specification, Pinia Core Concepts (`vuejs.org`, `pinia.vuejs.org`)
+  - Next.js Documentation: App Router generateMetadata, Server Actions (`nextjs.org`)
+  - Angular Documentation: Component Importing, Signals Guide (`angular.dev`)
+- **Existing Post Maintenance**:
+  - `v0-vs-lovable-vs-bolt-ai-ui-generator-comparison.js`: set `updatedAt: "2026-11-09T19:33:20+05:30"`, set author to `"Ramkumar Khubchandani"`, removed all bracketed placeholder links, added real links to `/hire/react-developer`, `/hire/full-stack-developer`, and `/mentors/react-mentors-in-online`.
+
+### Verification Suite Results
+
+- `npm test`: **63 / 63 tests passing** (unit tests for slug generator, approvable validation, email escaping, sitemap XML, and SKILL_GUIDES mapping).

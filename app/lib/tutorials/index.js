@@ -79,8 +79,22 @@ import { aiDesignSystemsConsistency } from './ai-design-systems-component-librar
 import { frontendInterviewPrep2026 } from './frontend-interview-prep-2026-ai-copilot-era';
 import { cssCss3StepByStepGuide } from './css-css3-complete-step-by-step-guide-beginners-to-advanced';
 import { svelte5InterviewQuestions } from './svelte-5-interview-questions';
+import { howToHireAJavaScriptDeveloper } from './how-to-hire-a-javascript-developer';
+import { howToHireAVueJsConsultant } from './how-to-hire-a-vuejs-consultant';
+import { nodejsDeveloperVsFreelancerVsAgency } from './nodejs-developer-vs-freelancer-vs-agency';
+import { privateJavaScriptTutorGuide } from './private-javascript-tutor-guide';
+import { vue3ClientProjectTutorialForFreelancers } from './vue-3-client-project-tutorial-for-freelancers';
+import { nextjs15ClientWebsiteTutorialForFreelancers } from './nextjs-15-client-website-tutorial-for-freelancers';
+import { angularClientDashboardTutorialForFreelancers } from './angular-client-dashboard-tutorial-for-freelancers';
 
 const STATIC_TUTORIALS = [
+  privateJavaScriptTutorGuide,
+  vue3ClientProjectTutorialForFreelancers,
+  nextjs15ClientWebsiteTutorialForFreelancers,
+  angularClientDashboardTutorialForFreelancers,
+  howToHireAJavaScriptDeveloper,
+  howToHireAVueJsConsultant,
+  nodejsDeveloperVsFreelancerVsAgency,
   svelte5InterviewQuestions,
   cssCss3StepByStepGuide,
   frontendInterviewPrep2026,
