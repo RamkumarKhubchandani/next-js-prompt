@@ -2,10 +2,10 @@ export const angularClientDashboardTutorialForFreelancers = {
     title: "Angular Client Dashboard Tutorial for Freelance Devs",
     description: "Build a client reporting dashboard in modern Angular using standalone components, signals, typed HTTP services, lazy routing, and unit tests.",
     slug: "angular-client-dashboard-tutorial-for-freelancers",
-    publishedAt: "2026-11-15T11:30:00+05:30",
+    publishedAt: "2026-11-10T11:30:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-15T11:30:00+05:30",
+    createdAt: "2026-11-10T11:30:00+05:30",
     readTime: "22 min read",
     difficulty: "Advanced",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2560&auto=format&fit=crop",
@@ -45,7 +45,7 @@ export const angularClientDashboardTutorialForFreelancers = {
                 Angular Client Dashboard Tutorial: Modern Signals & Standalone Components
             </h1>
             <p class="text-base text-red-900 dark:text-red-200 font-light leading-relaxed">
-                Modern Angular has completely evolved. The legacy era of bloated NgModules, complex RxJS subscription leaks, and heavy boilerplate has been replaced by lightweight Standalone Components, fine-grained Signals, functional router guards, and lightning-fast Vite/esbuild builds. For freelance engineers, Angular is an exceptionally lucrative niche: corporate clients gladly pay premium rates for reliable, typed internal dashboards that can scale safely. In this end-to-end tutorial, we will build <strong>Apex Logistics Analytics</strong>, a client reporting dashboard built with modern Angular, Signals, and typed HTTP services. Explore our <a href="/hire/angular-developer" class="text-red-700 dark:text-red-400 font-semibold hover:underline">freelance Angular developers</a> and 1-on-1 <a href="/mentors/angular-mentors-in-online" class="text-red-700 dark:text-red-400 font-semibold hover:underline">online Angular mentors</a>.
+                Modern Angular has completely evolved. The legacy era of bloated NgModules, complex RxJS subscription leaks, and heavy boilerplate has been replaced by lightweight Standalone Components, fine-grained Signals, functional router guards, and lightning-fast Vite/esbuild builds. For freelance engineers, Angular is an exceptionally lucrative niche: corporate clients gladly pay premium rates for reliable, typed internal dashboards that can scale safely. In this end-to-end tutorial, we will build <strong>Apex Logistics Analytics</strong> (fictional example for illustration), a client reporting dashboard built with modern Angular, Signals, and typed HTTP services. Explore our <a href="/hire/angular-developer" class="text-red-700 dark:text-red-400 font-semibold hover:underline">freelance Angular developers</a> and 1-on-1 <a href="/mentors/angular-mentors-in-online" class="text-red-700 dark:text-red-400 font-semibold hover:underline">online Angular mentors</a>.
             </p>
         </header>
 
@@ -60,7 +60,7 @@ export const angularClientDashboardTutorialForFreelancers = {
                 </p>
 
                 <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm my-4">
-                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Client Brief: Apex Logistics Freight Dashboard</h3>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Client Brief: Apex Logistics Freight Dashboard (fictional example for illustration)</h3>
                     <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3">
                         The client operates an interstate freight logistics company. They need an internal reporting portal where depot dispatchers track shipment volume, filter transit routes by status (On Time, Delayed, In Transit), calculate daily fuel surcharge averages, and export compliance reports.
                     </p>

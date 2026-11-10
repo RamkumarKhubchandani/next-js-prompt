@@ -2,10 +2,10 @@ export const nodejsDeveloperVsFreelancerVsAgency = {
     title: "Node.js Developer vs Freelancer vs Agency: Hiring Guide",
     description: "Compare hiring an in-house Node.js developer, freelance contractor, or agency. Decision framework covering cost drivers, velocity, and bus factors.",
     slug: "nodejs-developer-vs-freelancer-vs-agency",
-    publishedAt: "2026-11-11T11:00:00+05:30",
+    publishedAt: "2026-11-10T10:30:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-11T11:00:00+05:30",
+    createdAt: "2026-11-10T10:30:00+05:30",
     readTime: "14 min read",
     difficulty: "Intermediate",
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2560&auto=format&fit=crop",
@@ -113,7 +113,7 @@ export const nodejsDeveloperVsFreelancerVsAgency = {
                         When evaluating budgets, non-technical buyers often look only at hourly rates or base salary figures while ignoring hidden lifecycle costs:
                     </p>
                     <ul class="list-disc pl-5 space-y-2 text-xs md:text-sm text-slate-700 dark:text-slate-300">
-                        <li><strong>In-House Full-Time:</strong> Base salary is only 70% of the true cost. Benefits, health insurance, state payroll taxes, recruitment fees (often 15%–20% of first-year salary), hardware provisioning, and paid leave inflate annual expenditure significantly. If your engineering roadmap slows down after 6 months, you still carry full monthly payroll obligations.</li>
+                        <li><strong>In-House Full-Time:</strong> Base salary represents only a portion of the true cost. Benefits packages, healthcare insurance, statutory payroll taxes, recruiter search placement fees, dedicated workstation provisioning, and paid leave inflate annual expenditure significantly beyond the gross base pay. If your engineering roadmap slows down after a major release cycle, you still carry full monthly payroll obligations.</li>
                         <li><strong>Specialized Freelance Contractor:</strong> You pay exclusively for active production hours or agreed milestone deliverables. There are zero benefits liabilities, severance risks, or idle overhead during quiet product cycles. The primary cost driver is scope discipline: poorly defined briefs lead to scope creep and change orders.</li>
                         <li><strong>Development Agency:</strong> Agencies bill a blended multiplier covering project managers, QA engineers, business development staff, and office overhead. While you get multi-disciplinary coverage, you are paying for organizational hierarchy. If your backend needs 20 hours of focused database tuning, paying for an entire agency project squad is financially inefficient.</li>
                     </ul>

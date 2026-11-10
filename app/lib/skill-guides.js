@@ -69,7 +69,6 @@ export const SKILL_GUIDES = {
   'vue:developer': 'how-to-hire-a-vuejs-consultant',
   'vue:consultants': 'how-to-hire-a-vuejs-consultant',
   'vue:consultant': 'how-to-hire-a-vuejs-consultant',
-  'vue:mentors': 'how-to-hire-a-vuejs-consultant',
   'vue:freelancers': 'vue-3-client-project-tutorial-for-freelancers',
   'vue:project-support': 'vue-3-client-project-tutorial-for-freelancers',
 

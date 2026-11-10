@@ -2,10 +2,10 @@ export const nextjs15ClientWebsiteTutorialForFreelancers = {
     title: "Next.js 15 Client Website Tutorial for Freelancers",
     description: "Build a high-performance service website with Next.js 15 App Router: metadata API, JSON-LD, server action forms, revalidation, and Core Web Vitals.",
     slug: "nextjs-15-client-website-tutorial-for-freelancers",
-    publishedAt: "2026-11-14T11:00:00+05:30",
+    publishedAt: "2026-11-10T11:15:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-14T11:00:00+05:30",
+    createdAt: "2026-11-10T11:15:00+05:30",
     readTime: "17 min read",
     difficulty: "Intermediate to Advanced",
     image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=2560&auto=format&fit=crop",
@@ -60,7 +60,7 @@ export const nextjs15ClientWebsiteTutorialForFreelancers = {
                 </p>
 
                 <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm my-4">
-                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Example Client Scenario: Meridian Legal Advisory</h3>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Example Client Scenario: Meridian Legal Advisory (fictional example for illustration)</h3>
                     <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3">
                         The client runs a corporate legal consultancy in London. They require a marketing and intake site featuring practice area landing pages, lawyer bios, a free consultation intake form, and instant SEO metadata generation across 15 practice specialties.
                     </p>
@@ -138,7 +138,7 @@ export const nextjs15ClientWebsiteTutorialForFreelancers = {
             </h2>
             <div class="space-y-4 text-sm md:text-base leading-relaxed text-gray-700 dark:text-gray-300">
                 <p>
-                    Local business clients rely heavily on Google search discovery. Next.js 15 provides first-class support for the <a href="https://nextjs.org/docs/app/api-reference/functions/generate-metadata" target="_blank" rel="noopener noreferrer" class="text-cyan-600 dark:text-cyan-400 font-semibold underline">Metadata API</a>. To ensure structured data never breaks your build or creates XSS vulnerabilities, always escape raw JSON strings using safe serialization:
+                    Local business clients rely heavily on Google search discovery. Next.js 15 provides first-class support for the <a href="https://nextjs.org/docs/app/api-reference/functions/generate-metadata" target="_blank" rel="noopener noreferrer" class="text-cyan-600 dark:text-cyan-400 font-semibold underline">Metadata API</a>. To ensure structured data never breaks your build or creates XSS vulnerabilities, always escape raw JSON strings using safe serialization. When implementing structured data, only mark up reviews that are real and visible on the page, avoiding synthetic aggregate rating schemas on static marketing pages.
                 </p>
 
                 <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto text-xs font-mono my-3 border border-slate-800 leading-relaxed"><code class="language-javascript">// app/practice-areas/[slug]/page.js - SEO Metadata & Schema
@@ -148,16 +148,12 @@ const PRACTICE_AREAS = {
   'corporate-governance': {
     title: 'Corporate Governance & Compliance Advisory',
     description: 'Expert corporate governance and legal compliance advisory for UK enterprise businesses and growing startups.',
-    practiceCity: 'London',
-    rating: '4.9',
-    reviewCount: '28'
+    practiceCity: 'London'
   },
   'mergers-acquisitions': {
     title: 'Mergers & Acquisitions Legal Advisory',
     description: 'Specialized M&A transaction support, due diligence audits, and contract negotiation for mid-market acquisitions.',
-    practiceCity: 'London',
-    rating: '5.0',
-    reviewCount: '19'
+    practiceCity: 'London'
   }
 };
 
@@ -201,22 +197,17 @@ export default async function PracticeAreaPage({ params }) {
       '@type': 'PostalAddress',
       addressLocality: area.practiceCity,
       addressCountry: 'GB'
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: area.rating,
-      reviewCount: area.reviewCount
     }
   };
 
   return (
-    &lt;main class="max-w-4xl mx-auto px-4 py-12"&gt;
+    &lt;main className="max-w-4xl mx-auto px-4 py-12"&gt;
       &lt;script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredSchema) }}
       /&gt;
-      &lt;h1 class="text-3xl font-black text-slate-900 dark:text-white"&gt;{{ area.title }}&lt;/h1&gt;
-      &lt;p class="mt-4 text-base text-slate-600 dark:text-slate-300 leading-relaxed"&gt;{{ area.description }}&lt;/p&gt;
+      &lt;h1 className="text-3xl font-black text-slate-900 dark:text-white"&gt;{area.title}&lt;/h1&gt;
+      &lt;p className="mt-4 text-base text-slate-600 dark:text-slate-300 leading-relaxed"&gt;{area.description}&lt;/p&gt;
     &lt;/main&gt;
   );
 }</code></pre>
@@ -309,45 +300,45 @@ export function ConsultationForm() {
 
   if (state.success) {
     return (
-      &lt;div class="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 text-center space-y-2"&gt;
-        &lt;h3 class="text-lg font-bold text-emerald-800 dark:text-emerald-300"&gt;Inquiry Received&lt;/h3&gt;
-        &lt;p class="text-xs md:text-sm text-slate-600 dark:text-slate-400"&gt;Reference ID: &lt;strong class="font-mono text-emerald-700 dark:text-emerald-400"&gt;{state.submissionId}&lt;/strong&gt;&lt;/p&gt;
-        &lt;p class="text-xs md:text-sm text-slate-600 dark:text-slate-400"&gt;{state.message}&lt;/p&gt;
+      &lt;div className="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 text-center space-y-2"&gt;
+        &lt;h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-300"&gt;Inquiry Received&lt;/h3&gt;
+        &lt;p className="text-xs md:text-sm text-slate-600 dark:text-slate-400"&gt;Reference ID: &lt;strong className="font-mono text-emerald-700 dark:text-emerald-400"&gt;{state.submissionId}&lt;/strong&gt;&lt;/p&gt;
+        &lt;p className="text-xs md:text-sm text-slate-600 dark:text-slate-400"&gt;{state.message}&lt;/p&gt;
       &lt;/div&gt;
     );
   }
 
   return (
-    &lt;form action={formAction} class="space-y-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"&gt;
+    &lt;form action={formAction} className="space-y-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"&gt;
       &lt;div&gt;
-        &lt;label for="fullName" class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Full Name&lt;/label&gt;
-        &lt;input id="fullName" name="fullName" type="text" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="Johnathan Davis" /&gt;
-        {state.errors?.fullName && &lt;p class="text-xs text-rose-600 mt-1"&gt;{state.errors.fullName}&lt;/p&gt;}
+        &lt;label htmlFor="fullName" className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Full Name&lt;/label&gt;
+        &lt;input id="fullName" name="fullName" type="text" className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="Johnathan Davis" /&gt;
+        {state.errors?.fullName && &lt;p className="text-xs text-rose-600 mt-1"&gt;{state.errors.fullName}&lt;/p&gt;}
       &lt;/div&gt;
 
       &lt;div&gt;
-        &lt;label for="email" class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Corporate Email&lt;/label&gt;
-        &lt;input id="email" name="email" type="email" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="j.davis@company.example" /&gt;
-        {state.errors?.email && &lt;p class="text-xs text-rose-600 mt-1"&gt;{state.errors.email}&lt;/p&gt;}
+        &lt;label htmlFor="email" className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Corporate Email&lt;/label&gt;
+        &lt;input id="email" name="email" type="email" className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="j.davis@company.example" /&gt;
+        {state.errors?.email && &lt;p className="text-xs text-rose-600 mt-1"&gt;{state.errors.email}&lt;/p&gt;}
       &lt;/div&gt;
 
       &lt;div&gt;
-        &lt;label for="practiceArea" class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Practice Specialty&lt;/label&gt;
-        &lt;select id="practiceArea" name="practiceArea" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm"&gt;
+        &lt;label htmlFor="practiceArea" className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Practice Specialty&lt;/label&gt;
+        &lt;select id="practiceArea" name="practiceArea" className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm"&gt;
           &lt;option value=""&gt;Select specialty...&lt;/option&gt;
           &lt;option value="corporate-governance"&gt;Corporate Governance&lt;/option&gt;
           &lt;option value="mergers-acquisitions"&gt;Mergers & Acquisitions&lt;/option&gt;
         &lt;/select&gt;
-        {state.errors?.practiceArea && &lt;p class="text-xs text-rose-600 mt-1"&gt;{state.errors.practiceArea}&lt;/p&gt;}
+        {state.errors?.practiceArea && &lt;p className="text-xs text-rose-600 mt-1"&gt;{state.errors.practiceArea}&lt;/p&gt;}
       &lt;/div&gt;
 
       &lt;div&gt;
-        &lt;label for="summary" class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Brief Summary of Inquiry&lt;/label&gt;
-        &lt;textarea id="summary" name="summary" rows="3" class="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="Describe your advisory requirements..." /&gt;
-        {state.errors?.summary && &lt;p class="text-xs text-rose-600 mt-1"&gt;{state.errors.summary}&lt;/p&gt;}
+        &lt;label htmlFor="summary" className="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1"&gt;Brief Summary of Inquiry&lt;/label&gt;
+        &lt;textarea id="summary" name="summary" rows="3" className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-700 text-sm" placeholder="Describe your advisory requirements..." /&gt;
+        {state.errors?.summary && &lt;p className="text-xs text-rose-600 mt-1"&gt;{state.errors.summary}&lt;/p&gt;}
       &lt;/div&gt;
 
-      &lt;button type="submit" disabled={isPending} class="w-full py-3 px-6 rounded-xl bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-400 text-white font-bold text-sm shadow-md transition-colors"&gt;
+      &lt;button type="submit" disabled={isPending} className="w-full py-3 px-6 rounded-xl bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-400 text-white font-bold text-sm shadow-md transition-colors"&gt;
         {isPending ? 'Sending Inquiry...' : 'Submit Confidential Inquiry'}
       &lt;/button&gt;
     &lt;/form&gt;

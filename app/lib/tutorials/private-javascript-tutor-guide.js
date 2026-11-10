@@ -2,10 +2,10 @@ export const privateJavaScriptTutorGuide = {
     title: "Private JavaScript Tutor Guide: Maximize Every 1:1 Class",
     description: "Learn how to get the most from a private JavaScript tutor with this 4-week study plan, 8 practice problems with solutions, and vetting checklist.",
     slug: "private-javascript-tutor-guide",
-    publishedAt: "2026-11-12T10:00:00+05:30",
+    publishedAt: "2026-11-10T10:45:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-12T10:00:00+05:30",
+    createdAt: "2026-11-10T10:45:00+05:30",
     readTime: "16 min read",
     difficulty: "Beginner to Intermediate",
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2560&auto=format&fit=crop",
@@ -409,7 +409,7 @@ retryAsync(flakyNetworkCall, 4, 50).then(res => console.log('Retry success:', re
                 <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
                     <h3 class="text-base font-bold text-gray-900 dark:text-white">Problem 8: Safe Property Extraction with Fallback Defaults</h3>
                     <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">
-                        <strong>Task:</strong> Build a pure helper <code>extractUserBio()</code> that safely navigates deeply nested customer profile objects using optional chaining and nullish coalescing to avoid <code>TypeError: Cannot read properties of undefined</code>.
+                        <strong>Task:</strong> Build a pure helper <code>extractUserBio()</code> that safely navigates deeply nested customer profile objects using optional chaining and nullish coalescing to avoid <code>TypeError: Cannot read properties of undefined</code>. <em>(Note: Sarah Jenkins is a fictional example for illustration.)</em>
                     </p>
                     <pre class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto text-xs font-mono border border-slate-800 leading-relaxed"><code class="language-javascript">function extractUserBio(payload) {
   if (!payload || typeof payload !== 'object') {

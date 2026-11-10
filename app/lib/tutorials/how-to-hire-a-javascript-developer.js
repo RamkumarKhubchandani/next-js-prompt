@@ -2,10 +2,10 @@ export const howToHireAJavaScriptDeveloper = {
     title: "How to Hire a JavaScript Developer: Non-Technical Guide",
     description: "Learn how to hire a JavaScript developer with this non-technical checklist: scoping briefs, vetting skills, 10 interview questions, and trial tasks.",
     slug: "how-to-hire-a-javascript-developer",
-    publishedAt: "2026-11-09T09:30:00+05:30",
+    publishedAt: "2026-11-10T10:00:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-09T09:30:00+05:30",
+    createdAt: "2026-11-10T10:00:00+05:30",
     readTime: "12 min read",
     difficulty: "Intermediate",
     image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2560&auto=format&fit=crop",
@@ -26,7 +26,7 @@ export const howToHireAJavaScriptDeveloper = {
     relatedPosts: [
         "var-vs-let-vs-const-javascript",
         "javascript-array-crud-operations-methods-push-pop-slice-splice",
-        "svelte-5-interview-questions"
+        "nodejs-developer-vs-freelancer-vs-agency"
     ],
     toc: [
         { id: "frontend-node-fullstack", label: "01. What Kind of JavaScript Developer Do You Need?" },

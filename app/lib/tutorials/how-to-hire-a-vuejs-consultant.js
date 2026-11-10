@@ -2,10 +2,10 @@ export const howToHireAVueJsConsultant = {
     title: "How to Hire a Vue.js Consultant: Audit & Migration Guide",
     description: "Hire the right Vue.js consultant for Vue 3 migrations, Pinia architecture, and codebase audits. Includes 8 screening questions and risk mitigation.",
     slug: "how-to-hire-a-vuejs-consultant",
-    publishedAt: "2026-11-10T10:00:00+05:30",
+    publishedAt: "2026-11-10T10:15:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-10T10:00:00+05:30",
+    createdAt: "2026-11-10T10:15:00+05:30",
     readTime: "13 min read",
     difficulty: "Advanced",
     image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2560&auto=format&fit=crop",
@@ -24,7 +24,7 @@ export const howToHireAVueJsConsultant = {
         href: "/hire/vuejs-developer"
     },
     relatedPosts: [
-        "svelte-5-interview-questions",
+        "vue-3-client-project-tutorial-for-freelancers",
         "react-vs-signals",
         "mastering-useeffect"
     ],
@@ -215,7 +215,7 @@ export const howToHireAVueJsConsultant = {
 
                     <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
                         <h4 class="font-bold text-gray-900 dark:text-white">Q8: How do fine-grained signals compare to Vue 3 reactivity?</h4>
-                        <p class="mt-1 text-xs md:text-sm text-emerald-800 dark:text-emerald-300"><strong>Good Answer:</strong> "Vue 3's reactivity is already a fine-grained dependency-tracking signal system underneath. For an architectural comparison across frameworks, review our analyses of <a href="/blogs/svelte-5-interview-questions" class="underline font-semibold">Svelte 5 runes</a> and <a href="/blogs/react-vs-signals" class="underline font-semibold">React versus signals</a>."</p>
+                        <p class="mt-1 text-xs md:text-sm text-emerald-800 dark:text-emerald-300"><strong>Good Answer:</strong> "Vue 3's reactivity is already a fine-grained dependency-tracking signal system underneath. For an architectural comparison across frameworks, review our practical tutorial on <a href="/blogs/vue-3-client-project-tutorial-for-freelancers" class="underline font-semibold">building client apps with Vue 3 and Pinia</a> and our breakdown of <a href="/blogs/react-vs-signals" class="underline font-semibold">React versus signals</a>."</p>
                     </div>
                 </div>
             </div>

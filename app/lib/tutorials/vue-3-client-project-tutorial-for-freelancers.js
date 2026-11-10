@@ -2,10 +2,10 @@ export const vue3ClientProjectTutorialForFreelancers = {
     title: "Vue 3 Client Project Tutorial for Freelance Developers",
     description: "Build an end-to-end client appointment booking app in Vue 3, Vite, and Pinia with form validation, accessibility, scoping briefs, and client handovers.",
     slug: "vue-3-client-project-tutorial-for-freelancers",
-    publishedAt: "2026-11-13T10:30:00+05:30",
+    publishedAt: "2026-11-10T11:00:00+05:30",
     type: "static",
     author: "Ramkumar Khubchandani",
-    createdAt: "2026-11-13T10:30:00+05:30",
+    createdAt: "2026-11-10T11:00:00+05:30",
     readTime: "18 min read",
     difficulty: "Intermediate to Advanced",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2560&auto=format&fit=crop",
@@ -25,7 +25,7 @@ export const vue3ClientProjectTutorialForFreelancers = {
     },
     relatedPosts: [
         "how-to-hire-a-vuejs-consultant",
-        "svelte-5-interview-questions",
+        "frontend-interview-prep-2026-ai-copilot-era",
         "react-vs-signals"
     ],
     toc: [
@@ -45,7 +45,7 @@ export const vue3ClientProjectTutorialForFreelancers = {
                 Vue 3 Client Project Tutorial: Build and Hand Over a Production Booking App
             </h1>
             <p class="text-base text-emerald-900 dark:text-emerald-200 font-light leading-relaxed">
-                As a freelance developer, building client websites is only half the battle. Delivering a project that earns repeat business and five-star reviews requires disciplined scoping, modular Single File Components (SFCs), reactive state management with Pinia, strict WCAG accessibility standards, and a turnkey client handover runbook. In this complete end-to-end tutorial, we will build <strong>Lumina Wellness Studio</strong>, a production appointment request and consultation booking application built with Vue 3, Vite, and Pinia. Explore our <a href="/hire/vuejs-developer" class="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline">freelance Vue.js consultants</a> and 1-on-1 <a href="/mentors/vue-mentors-in-online" class="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline">online Vue.js mentors</a>.
+                As a freelance developer, building client websites is only half the battle. Delivering a project that earns repeat business and five-star reviews requires disciplined scoping, modular Single File Components (SFCs), reactive state management with Pinia, strict WCAG accessibility standards, and a turnkey client handover runbook. In this complete end-to-end tutorial, we will build <strong>Lumina Wellness Studio</strong> (fictional example for illustration), a production appointment request and consultation booking application built with Vue 3, Vite, and Pinia. Explore our <a href="/hire/vuejs-developer" class="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline">freelance Vue.js consultants</a> and 1-on-1 <a href="/mentors/vue-mentors-in-online" class="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline">online Vue.js mentors</a>.
             </p>
         </header>
 
@@ -60,7 +60,7 @@ export const vue3ClientProjectTutorialForFreelancers = {
                 </p>
 
                 <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm my-4">
-                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">The Client Brief: Lumina Wellness Studio</h3>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">The Client Brief: Lumina Wellness Studio (fictional example for illustration)</h3>
                     <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3">
                         The client runs an upscale wellness and physical therapy studio in Manhattan. They need a fast, mobile-friendly appointment booking portal where patients choose treatment packages, select appointment slots, calculate deposits, and receive instant confirmation without waiting on phone calls.
                     </p>
