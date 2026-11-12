@@ -9,6 +9,7 @@ import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
 import MatchedExpertsSection from '@/app/components/experts/MatchedExpertsSection';
 import { hireSlugToSkillId } from '@/app/lib/experts';
 import { getAllTutorials } from '@/app/lib/tutorials';
+import ProofStrip from '@/app/components/public/ProofStrip';
 
 export const dynamicParams = false;
 export const revalidate = 604800;
@@ -177,7 +178,21 @@ export default async function HireDeveloperPage({ params }) {
                             </>
                         )}
                     </div>
+
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <span>Last updated: November 12, 2026</span>
+                        <span>•</span>
+                        <span>
+                            Curated by{' '}
+                            <Link href="/about" className="font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary underline">
+                                Ramkumar Khubchandani, Founder of OutlineDev
+                            </Link>
+                        </span>
+                    </div>
                 </header>
+
+                {/* Proof Strip (Social Proof & Reviews) */}
+                <ProofStrip skillId={hireSlugToSkillId(slug)} />
 
                 {/* What I Build */}
                 <section className="py-12 border-b border-slate-200 dark:border-slate-800">

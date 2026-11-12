@@ -21,6 +21,9 @@ import {
 import MentorshipModalTrigger from './MentorshipModalTrigger';
 import ReviewMarquee from './ReviewMarquee';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
+import { REAL_REVIEWS, GOOGLE_RATING } from '../../lib/reviews';
+import ProofStrip from '../public/ProofStrip';
+import GoogleRatingLine from '../public/GoogleRatingLine';
 
 const MentorshipClient = dynamic(() => import('../../mentorship/MentorshipClient'), {
     ssr: false,
@@ -31,18 +34,6 @@ const MentorshipClient = dynamic(() => import('../../mentorship/MentorshipClient
         </div>
     )
 });
-
-// REAL GOOGLE REVIEWS DATA (Avatars generated dynamically via ui-avatars)
-const REAL_REVIEWS = [
-  { name: "Khanak Tyagi", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Khanak+Tyagi&background=random&color=fff", text: "Today's session was very knowledgeable and I experienced and learn new thing very clearly thankyou sir ☺️", stars: 5 },
-  { name: "Nitin Jangra", role: "React Developer", company: "", img: "https://ui-avatars.com/api/?name=Nitin+Jangra&background=random&color=fff", text: "Ramkumar Sir provided exceptionally detailed and precise instruction for the React AI course. He presented the material in a way that made it feel straightforward, and his teaching experience clearly reflected current best practices in coding.", stars: 5 },
-  { name: "Komal Sharma", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Komal+Sharma&background=random&color=fff", text: "Today's session was truly amazing and full of valuable knowledge and insightful points. I learned so many new things today, and every point was really informative and helpful.", stars: 5 },
-  { name: "Rankita Sulya", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Rankita+Sulya&background=random&color=fff", text: "The session was really informative and easy to understand. I learned many new HTML concepts and improved my basics. It was a great learning experience!", stars: 5 },
-  { name: "Smitesh Solanki", role: "Frontend Developer", company: "", img: "https://ui-avatars.com/api/?name=Smitesh+Solanki&background=random&color=fff", text: "Its very informative and perfect website, I got good help and one to one support for JavaScript and React. The Group training of React and Angular was amazing.", stars: 5 },
-  { name: "Shweta Rajput", role: "Student", company: "", img: "https://ui-avatars.com/api/?name=Shweta+Rajput&background=random&color=fff", text: "This website is really good.. have gained a lot of knowledge from here whether it be React, JS and so on and the mentors are very supportive and helpful.", stars: 5 },
-  { name: "Riya Shelar", role: "Web Developer", company: "", img: "https://ui-avatars.com/api/?name=Riya+Shelar&background=random&color=fff", text: "The one-on-one mentorship was an incredible learning experience and had a significant impact on both my technical skills and my confidence as a developer. I was able to develop a strong foundation in JavaScript, CSS, React, and Chakra UI.", stars: 5 },
-  { name: "Nitesh More", role: "Developer", company: "", img: "https://ui-avatars.com/api/?name=Nitesh+More&background=random&color=fff", text: "Thank you for your invaluable guidance, support, and mentorship throughout my learning journey. Your encouragement and knowledge sharing have helped me grow significantly in React JS, Angular, and AI.", stars: 5 }
-];
 
 // TOP TECH SKILLS FOR CROSS-LINKING
 const POPULAR_INTERLINK_SKILLS = [
@@ -140,7 +131,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
         { label: `1:1 ${skill.name} Teachers`, href: `/mentors/one-to-one-${skill.id}-teachers-in-${location.id}`, desc: "Dedicated 1-on-1 teaching sessions" },
         { label: `${skill.name} Job Support`, href: `/mentors/${skill.id}-job-support-in-${location.id}`, desc: "Sprint assistance & debugging" },
         { label: `${skill.name} Interview Prep`, href: `/mentors/${skill.id}-interview-help-in-${location.id}`, desc: "Mock interviews & system design" },
-        { label: `Hire ${skill.name} Developers`, href: `/mentors/hire-${skill.id}-developers-in-${location.id}`, desc: "Vetted top 1% contract engineers" },
+        { label: `Hire ${skill.name} Developers`, href: `/mentors/hire-${skill.id}-developers-in-${location.id}`, desc: "1-on-1 sessions led by Ramkumar Khubchandani, 12+ years of industry experience" },
         { label: `Freelance ${skill.name} Experts`, href: `/mentors/freelance-${skill.id}-experts-in-${location.id}`, desc: "On-demand architecture consulting" },
         { label: `${skill.name} Mentors & Coaches`, href: `/mentors/${skill.id}-mentors-in-${location.id}`, desc: "Long-term career roadmap" },
     ];
@@ -252,6 +243,11 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                 </div>
             </section>
 
+            {/* Proof Strip (Social Proof & Google Rating) */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <ProofStrip skillId={skill.id} />
+            </div>
+
             {matchedExpertsSection}
 
             {/* How It Works (AI Matching Process) */}
@@ -271,7 +267,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                             </span>
                         </h2>
                         <p className="mt-4 text-base md:text-lg text-slate-600 dark:text-gray-400 max-w-2xl mx-auto">
-                            No endless browsing or unverified freelancers. Our platform pairs you directly with engineers who work with your exact tech stack.
+                            No endless browsing. Our platform pairs you directly with engineers who work with your exact tech stack.
                         </p>
                     </div>
 
@@ -315,13 +311,13 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                         <div className="max-w-2xl">
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-xs font-bold uppercase mb-3">
                                 <Trophy size={14} />
-                                Rigorously Vetted Engineers
+                                1-on-1 Industry Mentorship
                             </div>
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-                                Top 1% Senior Technical Mentors
+                                1-on-1 sessions led by Ramkumar Khubchandani, 12+ years of industry experience
                             </h3>
                             <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
-                                Every mentor undergoes a multi-step code review and live technical screening to ensure you receive world-class guidance on modern architecture, security, and best practices.
+                                Live code reviews and hands-on projects in every session to ensure you receive practical guidance on modern architecture, security, and best practices.
                             </p>
                         </div>
                         <MentorshipModalTrigger
@@ -338,7 +334,10 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
             <section className="py-20 bg-slate-100/60 dark:bg-dark-850 overflow-hidden border-y border-slate-200 dark:border-dark-800 transition-colors duration-500">
                 <div className="max-w-7xl mx-auto px-4 mb-10 text-center">
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white">Wall of Love</h2>
-                    <p className="text-sm text-slate-500 dark:text-gray-400 mt-2">Loved by hundreds of engineers worldwide</p>
+                    <p className="text-sm text-slate-500 dark:text-gray-400 mt-2">Real reviews from our Google profile</p>
+                    <div className="mt-4 flex justify-center">
+                        <GoogleRatingLine />
+                    </div>
                 </div>
 
                 {/* Row 1 */}
@@ -372,7 +371,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                 {/* Direct Google Review Link */}
                 <div className="mt-10 text-center">
                     <a
-                        href="https://g.page/r/CY3XmUbJHFMmEBM/review"
+                        href={GOOGLE_RATING.profileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-white dark:bg-dark-800 text-slate-800 dark:text-white border border-slate-200 dark:border-dark-700 hover:border-brand-primary hover:text-brand-primary shadow-sm transition-all"
@@ -529,6 +528,13 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
                     </div>
                 </div>
             </section>
+
+            <div className="py-6 px-4 text-center border-t border-slate-200 dark:border-dark-800 text-xs text-slate-500 dark:text-gray-400">
+                Last updated: November 12, 2026 • Curated by{" "}
+                <Link href="/about" className="font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary underline">
+                    Ramkumar Khubchandani, Founder of OutlineDev
+                </Link>
+            </div>
 
             <Footer />
         </div>

@@ -75,6 +75,7 @@ export function Footer() {
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">About Us</Link></li>
+              <li><Link href="/reviews" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Reviews</Link></li>
               <li><Link href="/career" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ OutlineDev</Link></li>
               <li><Link href="/blogs" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Contact Support</Link></li>

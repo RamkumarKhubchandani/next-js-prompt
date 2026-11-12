@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Target, Users, Globe, Award, Briefcase, Code } from 'lucide-react';
 import Link from 'next/link';
 import { Header } from '../components/Header';
+import { safeJsonLd } from '../lib/schema-helpers';
 
 export const metadata = {
     title: 'About Us | OutlineDev',
@@ -12,9 +13,25 @@ export const metadata = {
     }
 };
 
+const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ramkumar Khubchandani",
+    "jobTitle": "Founder & Principal Software Engineer",
+    "url": "https://www.outlinedev.com/about",
+    "sameAs": [
+        "https://www.linkedin.com/in/ramkumar-khubchandani/",
+        "https://github.com/ramkumarkhub"
+    ]
+};
+
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#050510] relative overflow-hidden text-slate-900 dark:text-slate-100">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(personSchema) }}
+            />
             <Header />
 
             {/* Background Ambience */}

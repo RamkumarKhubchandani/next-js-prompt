@@ -138,6 +138,7 @@ export default async function sitemap() {
     { url: "/become-mentor", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
     { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/reviews", changeFrequency: "weekly", priority: 0.8 },
     { url: "/ai-quiz", changeFrequency: "weekly", priority: 0.8 },
     { url: "/career", changeFrequency: "weekly", priority: 0.8 },
     { url: "/code-review", changeFrequency: "weekly", priority: 0.8 },
@@ -161,6 +162,8 @@ export default async function sitemap() {
     let lastModified = STATIC_PAGES_LAST_MODIFIED;
     if (route.url === "/") {
       lastModified = HOME_LAST_MODIFIED;
+    } else if (route.url === "/reviews") {
+      lastModified = "2026-11-12";
     } else if (route.url.startsWith("/hire/")) {
       lastModified = HIRE_PAGES_LAST_MODIFIED;
     }

@@ -6,11 +6,6 @@ import { parseSeoSlug, SKILLS, LOCATIONS, SUFFIXES } from '../../lib/seo-data';
 import { getSkillContent, getLocationContent } from '../../lib/seo-content';
 import { getSkillGuide } from '../../lib/skill-guides';
 
-const REAL_RATING = {
-    ratingValue: "4.9",
-    reviewCount: "16"
-};
-
 export const revalidate = 2592000;
 
 // Generate static params for top combinations to boost SEO speed
@@ -60,11 +55,11 @@ function buildGraphSchema({ slug, skill, location, suffix, prefix, skillContent 
 
     let description = '';
     if (isHiring) {
-        description = `Hire vetted top 1% ${skill.name} developers and freelance consultants in ${location.name}. Fast matching, 1:1 sprint consulting, and guaranteed quality.`;
+        description = `Hire ${skill.name} developers and freelance consultants in ${location.name}. 1-on-1 sessions led by Ramkumar Khubchandani, 12+ years of industry experience. Fast matching, 1:1 sprint consulting, and Live code reviews and hands-on projects in every session.`;
     } else if (isJobSupport) {
         description = `Get dedicated 1-on-1 ${skill.name} job support and on-the-job sprint assistance in ${location.name}. Daily standup guidance, bug troubleshooting, and code reviews.`;
     } else if (isInterview) {
-        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and senior staff engineer feedback.`;
+        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and experienced engineer mentors feedback.`;
     } else {
         description = `Find expert 1-on-1 ${skill.name} tutors and mentors in ${location.name}. Get personalized coding sessions, live pair programming, and career fast-track guidance.`;
     }
@@ -80,13 +75,7 @@ function buildGraphSchema({ slug, skill, location, suffix, prefix, skillContent 
             '@type': 'PostalAddress',
             'addressCountry': location.country,
             'addressLocality': location.name === 'Online' ? 'Global' : location.name
-        },
-        'aggregateRating': {
-            '@type': 'AggregateRating',
-            'ratingValue': REAL_RATING.ratingValue,
-            'reviewCount': REAL_RATING.reviewCount
-        },
-        'priceRange': '$$'
+        }
     };
 
     const faqSchema = {
@@ -105,7 +94,7 @@ function buildGraphSchema({ slug, skill, location, suffix, prefix, skillContent 
                 'name': `How does 1-on-1 ${skill.name} mentorship in ${location.name} work?`,
                 'acceptedAnswer': {
                     '@type': 'Answer',
-                    'text': `You are paired directly with a vetted Senior ${skill.name} Engineer. You receive personalized live coding sessions, code reviews, debugging support, and job interview preparation tailored to your career goals.`
+                    'text': `You are paired directly with an experienced ${skill.name} engineer. 1-on-1 sessions led by Ramkumar Khubchandani, 12+ years of industry experience, featuring live coding sessions, code reviews, debugging support, and job interview preparation tailored to your career goals.`
                 }
             }
         ]
@@ -157,11 +146,11 @@ export async function generateMetadata({ params }) {
     // Dynamic Description Logic covering both singular & plural intents
     let description = '';
     if (isHiring) {
-        description = `Hire vetted top 1% ${skill.name} developers and freelance consultants in ${location.name}. Fast matching, 1:1 sprint consulting, and guaranteed quality.`;
+        description = `Hire ${skill.name} developers and freelance consultants in ${location.name}. 1-on-1 sessions led by Ramkumar Khubchandani, 12+ years of industry experience. Fast matching, 1:1 sprint consulting, and Live code reviews and hands-on projects in every session.`;
     } else if (isJobSupport) {
         description = `Get dedicated 1-on-1 ${skill.name} job support and on-the-job sprint assistance in ${location.name}. Daily standup guidance, bug troubleshooting, and code reviews.`;
     } else if (isInterview) {
-        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and senior staff engineer feedback.`;
+        description = `Crack your next ${skill.name} tech interview in ${location.name}. 1-on-1 mock interviews, system design whiteboarding, and experienced engineer mentors feedback.`;
     } else {
         description = `Find expert 1-on-1 ${skill.name} tutors and mentors in ${location.name}. Get personalized coding sessions, live pair programming, and career fast-track guidance.`;
     }

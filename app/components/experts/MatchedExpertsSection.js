@@ -33,7 +33,7 @@ export default async function MatchedExpertsSection({
   const sectionSubtitle =
     subtitle ||
     (intent === 'mentor'
-      ? 'Connect directly with vetted senior engineers for personalized 1:1 sessions.'
+      ? 'Connect directly with experienced engineer mentors for personalized 1:1 sessions.'
       : 'Hire experienced contract specialists ready to collaborate on your technical roadmap.');
 
   return (
