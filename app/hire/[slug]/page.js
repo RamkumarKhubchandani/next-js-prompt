@@ -80,6 +80,7 @@ export default async function HireDeveloperPage({ params }) {
                 "provider": {
                     "@type": "Person",
                     "name": HIRE_SHARED.name,
+                    "jobTitle": "Principal Engineer",
                     "sameAs": [
                         "https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"
                     ]
@@ -185,7 +186,7 @@ export default async function HireDeveloperPage({ params }) {
                         <span>
                             Curated by{' '}
                             <Link href="/about" className="font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary underline">
-                                Ramkumar Khubchandani, Founder of OutlineDev
+                                Ramkumar Khubchandani, Principal Engineer
                             </Link>
                         </span>
                     </div>

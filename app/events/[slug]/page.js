@@ -105,11 +105,6 @@ export default async function Page({ params }) {
             "name": "OutlineDev Mentorship",
             "sameAs": "https://www.outlinedev.com"
         },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": displayEvent.rating || "4.9",
-            "reviewCount": (displayEvent.reviewCount || "500").replace('+', '')
-        },
         "offers": {
             "@type": "Offer",
             "price": "0",

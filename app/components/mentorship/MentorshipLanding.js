@@ -532,7 +532,7 @@ export function MentorshipLanding({ skill, location, suffix, prefix, currentSlug
             <div className="py-6 px-4 text-center border-t border-slate-200 dark:border-dark-800 text-xs text-slate-500 dark:text-gray-400">
                 Last updated: November 12, 2026 • Curated by{" "}
                 <Link href="/about" className="font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary underline">
-                    Ramkumar Khubchandani, Founder of OutlineDev
+                    Ramkumar Khubchandani, Principal Engineer
                 </Link>
             </div>
 

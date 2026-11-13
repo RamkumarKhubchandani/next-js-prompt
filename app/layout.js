@@ -115,9 +115,8 @@ export default function RootLayout({ children }) {
           "width": 1200,
           "height": 630
         },
-        "description": "OutlineDev is the world's premier free coding mentorship platform. We provide 1-on-1 expert guidance, career roadmaps, and comprehensive courses in React, Angular, Node.js, Python, Vue, Agentic AI and System Design.",
+        "description": "OutlineDev is a free coding mentorship platform. We provide 1-on-1 expert guidance, career roadmaps, and comprehensive courses in React, Angular, Node.js, Python, Vue, Agentic AI and System Design.",
         "slogan": "Outline Your Path to Senior Engineer",
-        "foundingDate": "2024",
         "sameAs": [
           "https://www.linkedin.com/company/outlinedev",
           "https://www.instagram.com/outlinedev.io/"
@@ -130,44 +129,6 @@ export default function RootLayout({ children }) {
           "areaServed": "Worldwide",
           "availableLanguage": ["English", "Hindi"]
         },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "bestRating": "5",
-          "worstRating": "1",
-          "ratingCount": "16",
-          "reviewCount": "16"
-        },
-        "review": [
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Nitin Jangra" },
-            "datePublished": "2026-09-11",
-            "reviewBody": "Ramkumar Sir provided exceptionally detailed and precise instruction for the React AI course. He presented the material in a way that made it feel straightforward, and his teaching experience clearly reflected current best practices in coding.",
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Riya Shelar" },
-            "datePublished": "2026-06-19",
-            "reviewBody": "The one-on-one mentorship was an incredible learning experience and had a significant impact on both my technical skills and my confidence as a developer. I was able to develop a strong foundation in JavaScript, CSS, React, and Chakra UI.",
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Nitesh More" },
-            "datePublished": "2026-06-19",
-            "reviewBody": "Thank you for your invaluable guidance, support, and mentorship throughout my learning journey. Your encouragement and knowledge sharing have helped me grow significantly in React JS, Angular, and Artificial Intelligence (AI).",
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
-          },
-          {
-            "@type": "Review",
-            "author": { "@type": "Person", "name": "Smitesh Solanki" },
-            "datePublished": "2026-08-14",
-            "reviewBody": "Its very informative and perfect website, I got good help and one to one support for JavaScript and React. The Group training of React and Angular was amazing.",
-            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
-          }
-        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -219,8 +180,8 @@ export default function RootLayout({ children }) {
       {
         "@type": "Person",
         "name": "Ramkumar Khubchandani",
-        "jobTitle": "Lead Mentor",
-        "description": "Ramkumar Khubchandani is a software engineer with 12+ years of industry experience, currently working at Emtec, a global IT consultancy. He specializes in frontend and full-stack development — including HTML, React, Node.js, and MongoDB — with a focus on AI-integrated frontend engineering. He provides 1-on-1 mentorship to developers worldwide through OutlineDev.",
+        "jobTitle": "Principal Engineer",
+        "description": "Ramkumar Khubchandani is a software engineer with 12+ years of industry experience. He specializes in frontend and full-stack development — including HTML, React, Node.js, and MongoDB — with a focus on AI-integrated frontend engineering. He provides 1-on-1 mentorship to developers worldwide through OutlineDev.",
         "knowsAbout": ["HTML", "React", "Full Stack Development", "Node.js", "MongoDB", "AI Frontend Development"],
         "sameAs": ["https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"]
       }

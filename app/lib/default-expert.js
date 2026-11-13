@@ -43,7 +43,7 @@ export const DEFAULT_EXPERT = {
   languages: ['English', 'Hindi', 'Gujarati'],
   links: {
     github: 'https://github.com/ramkumarkhub',
-    linkedin: 'https://www.linkedin.com/in/ramkumar-khubchandani/',
+    linkedin: 'https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/',
   },
   projects: [
     {

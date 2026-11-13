@@ -17,10 +17,10 @@ const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Ramkumar Khubchandani",
-    "jobTitle": "Founder & Principal Software Engineer",
+    "jobTitle": "Principal Engineer",
     "url": "https://www.outlinedev.com/about",
     "sameAs": [
-        "https://www.linkedin.com/in/ramkumar-khubchandani/",
+        "https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/",
         "https://github.com/ramkumarkhub"
     ]
 };
