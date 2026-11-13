@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import React from 'react';
 import MentorshipClient from './MentorshipClient';
 
@@ -58,7 +59,7 @@ export default function MentorshipPage() {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <MentorshipClient />
         </>

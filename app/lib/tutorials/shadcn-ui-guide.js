@@ -2,6 +2,7 @@ export const shadcnGuide = {
     title: "shadcn/ui: The New Standard 🧱",
     description: "It is NOT a component library. It is a collection of re-usable components that you can copy and paste into your apps. Own your code, own your design system.",
     slug: "shadcn-ui-guide",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "shadcn",
     createdAt: new Date().toISOString(),

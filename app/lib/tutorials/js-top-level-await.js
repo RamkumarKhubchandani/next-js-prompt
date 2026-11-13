@@ -2,6 +2,7 @@ export const jsTopLevelAwait = {
     title: "Top-Level Await: Removing the Wrapper",
     description: "The 'async function main()' wrapper is officially legacy code. Learn how Top-Level Await simplifies module loading, database connections, and dynamic imports.",
     slug: "js-top-level-await",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Frontend Architect",

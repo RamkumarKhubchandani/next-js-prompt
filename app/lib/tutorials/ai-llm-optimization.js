@@ -2,6 +2,7 @@ export const aiLlmOptimization = {
     title: "LLM Cost Engineering: Saving 90% on Tokens",
     description: "Prompt Engineering is 2023. The new skill is Token Optimization. Learn caching, quantization, and JSON schema compaction to scale AI features without bankruptcy.",
     slug: "ai-llm-optimization",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "AI Systems Architect",

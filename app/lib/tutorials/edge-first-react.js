@@ -2,6 +2,7 @@ export const edgeFirstReact = {
     title: "Edge-First React: Architecting for Zero Latency ⚡",
     description: "The Origin Server is dead. In 2026, your database, auth, and rendering logic live on the Edge. A definitive guide to architecting globally replicated React apps on Cloudflare Workers and Vercel Edge.",
     slug: "edge-first-react",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Cloud Architect",
     createdAt: new Date().toISOString(),

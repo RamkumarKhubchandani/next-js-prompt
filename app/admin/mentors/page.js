@@ -1,176 +1,626 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { Check, X, Clock, Linkedin } from 'lucide-react';
-import Link from 'next/link';
-import { Header } from '../../components/Header';
-import { Footer } from '../../components/Footer';
 
-export default function MentorAdmin() {
-    const { data: session } = useSession();
-    const [applications, setApplications] = useState([]);
-    const [loading, setLoading] = useState(true);
+import React, { useState, useEffect } from "react";
+import {
+  Check,
+  X,
+  Eye,
+  EyeOff,
+  UserCheck,
+  Briefcase,
+  GraduationCap,
+  Calendar,
+  DollarSign,
+  MapPin,
+  ExternalLink,
+  Mail,
+  ShieldCheck,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
+import Link from "next/link";
+import { SKILLS, LOCATIONS } from "@/app/lib/seo-data";
 
-    useEffect(() => {
+function countWords(str) {
+  if (!str) return 0;
+  return str.trim().split(/\s+/).filter(Boolean).length;
+}
+
+export default function AdminMentorsPage() {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("pending"); // Default to pending as requested
+  const [expandedId, setExpandedId] = useState(null);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
+  const [rejectModalApp, setRejectModalApp] = useState(null);
+  const [rejectNote, setRejectNote] = useState("");
+
+  useEffect(() => {
+    fetchApplications();
+  }, [filter]);
+
+  const fetchApplications = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/mentors/list?status=${filter}`);
+      const data = await res.json();
+      if (res.ok) {
+        setApplications(data.applications || []);
+      } else {
+        console.error(data.error);
+        setApplications([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch applications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAction = async (id, action, extra = {}) => {
+    setActionLoadingId(id);
+    try {
+      const res = await fetch("/api/admin/mentors/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action, ...extra }),
+      });
+      const data = await res.json();
+      if (res.ok) {
         fetchApplications();
-    }, []);
-
-    const fetchApplications = async () => {
-        try {
-            const res = await fetch('/api/admin/mentors/list');
-            if (res.ok) {
-                const data = await res.json();
-                setApplications(data.applications || []);
-            }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
+        if (action === "reject") {
+          setRejectModalApp(null);
+          setRejectNote("");
         }
-    };
+      } else {
+        alert(data.error || "Action failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error performing action");
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
-    const handleUpdateStatus = async (id, status) => {
-        try {
-            const res = await fetch('/api/admin/mentors/update-status', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, status })
-            });
-            if (res.ok) {
-                fetchApplications(); // Refresh
-            }
-        } catch (err) {
-            alert("Failed to update status");
-        }
-    };
+  const resolveSkillName = (id) => {
+    const s = SKILLS.find((sk) => sk.id === id);
+    return s ? s.name : id;
+  };
 
-    if (loading) return <div className="p-10 text-center">Loading...</div>;
+  const resolveLocationName = (id, other) => {
+    if (id === "other") {
+      return `${other?.city || "City"}, ${other?.country || "Country"}`;
+    }
+    const l = LOCATIONS.find((loc) => loc.id === id);
+    return l ? `${l.name} (${l.country})` : id || "Online";
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
-            <Header />
-            <div className="max-w-7xl mx-auto px-4 py-24">
-                <h1 className="text-3xl font-bold mb-8 dark:text-white">Mentor Applications</h1>
-
-                <div className="grid gap-6">
-                    {applications.map(app => (
-                        <div key={app._id} className="bg-white dark:bg-dark-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-dark-700">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="flex items-start gap-4">
-                                    {app.photoUrl ? (
-                                        <img
-                                            src={app.photoUrl}
-                                            alt={app.userId?.name || 'Applicant'}
-                                            className="w-14 h-14 rounded-full object-cover border-2 border-brand-primary/60 shrink-0"
-                                        />
-                                    ) : (
-                                        <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-dark-700 flex items-center justify-center font-bold text-gray-500 shrink-0">
-                                            {app.userId?.name ? app.userId.name.slice(0, 2).toUpperCase() : 'ME'}
-                                        </div>
-                                    )}
-                                    <div>
-                                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                                            <h3 className="text-xl font-bold dark:text-white">
-                                                {app.userId?.name || 'Unknown User'}
-                                            </h3>
-                                            {app.roles?.includes('mentor') && (
-                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                                                    🎓 Mentor
-                                                </span>
-                                            )}
-                                            {app.roles?.includes('hire') && (
-                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-                                                    💼 Freelance / Hire
-                                                </span>
-                                            )}
-                                            {(!app.roles || app.roles.length === 0) && (
-                                                <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                                    🎓 Mentor
-                                                </span>
-                                            )}
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${app.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                    'bg-red-100 text-red-800'
-                                                }`}>
-                                                {app.status.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-gray-500">{app.userId?.email}</p>
-                                    </div>
-                                </div>
-                                <div className="text-right text-sm text-gray-500">
-                                    <p>{new Date(app.createdAt).toLocaleDateString()}</p>
-                                    <p className="font-medium text-gray-700 dark:text-gray-300">
-                                        {[app.city, app.state, app.country].filter(Boolean).join(', ') || 'Global'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="grid md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <p className="text-sm font-bold text-gray-500 uppercase mb-1">Expertise</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {app.skills?.map(skill => (
-                                            <span key={skill} className="px-2 py-1 bg-gray-100 dark:bg-dark-700 rounded text-xs font-medium dark:text-gray-300">
-                                                {skill}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-500 uppercase mb-1">Details</p>
-                                    <p className="text-sm dark:text-gray-300">Exp: {app.yearsExperience} years</p>
-                                    <p className="text-sm dark:text-gray-300">Rate: ${app.hourlyRate}/hr</p>
-                                    {app.linkedin && (
-                                        <a href={app.linkedin} target="_blank" className="text-sm text-brand-primary flex items-center gap-1 mt-1 hover:underline">
-                                            <Linkedin size={14} /> LinkedIn Profile
-                                        </a>
-                                    )}
-                                    {app.phone && (
-                                        <p className="text-sm dark:text-gray-300 flex items-center gap-1 mt-1">
-                                            <span className="font-bold text-xs text-gray-500 uppercase">WhatsApp:</span> {app.phone}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="mb-6">
-                                <p className="text-sm font-bold text-gray-500 uppercase mb-1">Bio</p>
-                                <p className="text-sm dark:text-gray-300 bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-100 dark:border-dark-700">
-                                    {app.bio}
-                                </p>
-                            </div>
-
-                            {app.status === 'pending' && (
-                                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-dark-700">
-                                    <button
-                                        onClick={() => handleUpdateStatus(app._id, 'rejected')}
-                                        className="px-4 py-2 bg-red-50 text-red-600 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center gap-2"
-                                    >
-                                        <X size={16} /> Reject
-                                    </button>
-                                    <button
-                                        onClick={() => handleUpdateStatus(app._id, 'approved')}
-                                        className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors flex items-center gap-2"
-                                    >
-                                        <Check size={16} /> Approve & Onboard
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                    {applications.length === 0 && (
-                        <div className="text-center py-20 bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-dark-700">
-                            <div className="w-16 h-16 bg-gray-100 dark:bg-dark-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Clock size={32} className="text-gray-400" />
-                            </div>
-                            <h3 className="text-lg font-bold dark:text-white">No Pending Applications</h3>
-                            <p className="text-gray-500">Wait for new mentors to apply.</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-            <Footer />
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-10 font-sans">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">
+              Expert Applications & Approvals
+            </h1>
+            <p className="text-slate-400 text-sm mt-1">
+              Review expert profiles, compare proposed Draft vs Published live content, and grant verified status.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/leads"
+              className="px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <span>Manage Leads & Dispatch</span>
+            </Link>
+            <Link
+              href="/admin"
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold transition"
+            >
+              ← Back to Admin Hub
+            </Link>
+          </div>
         </div>
-    );
+
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap gap-2 mb-8 border-b border-slate-800 pb-4">
+          {[
+            { id: "pending", label: "Pending Review" },
+            { id: "all", label: "All Applicants" },
+            { id: "approved", label: "Approved (Live)" },
+            { id: "rejected", label: "Rejected" },
+            { id: "hidden", label: "Hidden" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setFilter(tab.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition ${
+                filter === tab.id
+                  ? "bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20"
+                  : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* List of Applications */}
+        {loading ? (
+          <div className="py-20 flex justify-center">
+            <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+          </div>
+        ) : applications.length === 0 ? (
+          <div className="py-16 text-center bg-slate-900/50 rounded-2xl border border-slate-800 p-8">
+            <GraduationCap className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+            <h3 className="text-base font-semibold text-slate-300">No applications in this category</h3>
+            <p className="text-xs text-slate-500 mt-1">
+              {filter === "pending"
+                ? "All submitted mentor and hire applications have been reviewed."
+                : "No expert profile records found for the selected filter."}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {applications.map((app) => {
+              const isExpanded = expandedId === app._id;
+              const isBusy = actionLoadingId === app._id;
+              const draft = app.draft || {};
+              const pub = app.published;
+
+              return (
+                <div
+                  key={app._id}
+                  className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg transition hover:border-slate-700"
+                >
+                  {/* Card Top Row */}
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {/* Photo */}
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden bg-slate-800 border-2 border-emerald-500/30 shrink-0">
+                        {app.photoUrl ? (
+                          <img
+                            src={app.photoUrl}
+                            alt={app.displayName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-500">
+                            <GraduationCap className="w-6 h-6" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-white">
+                            {app.displayName || app.userId?.name || "Developer"}
+                          </h3>
+                          {app.slug && (
+                            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">
+                              /{app.slug}
+                            </span>
+                          )}
+                          {app.interviewedAt && (
+                            <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                              <span>Interviewed by OutlineDev</span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-3">
+                          <span>{app.userId?.email || "No email"}</span>
+                          {app.phone && <span>• Phone: {app.phone}</span>}
+                          <span>
+                            • Applied: {new Date(app.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {(app.roles || ["mentor"]).map((r) => (
+                            <span
+                              key={r}
+                              className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${
+                                r === "mentor"
+                                  ? "bg-emerald-950/80 text-emerald-300 border border-emerald-800/40"
+                                  : "bg-cyan-950/80 text-cyan-300 border border-cyan-800/40"
+                              }`}
+                            >
+                              {r === "mentor" ? "Mentor" : "Hire Developer"}
+                            </span>
+                          ))}
+                          <span
+                            className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${
+                              app.status === "approved"
+                                ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                                : app.status === "pending"
+                                ? "bg-amber-950 text-amber-300 border border-amber-800"
+                                : app.status === "hidden"
+                                ? "bg-slate-800 text-slate-400 border border-slate-700"
+                                : "bg-red-950 text-red-300 border border-red-800"
+                            }`}
+                          >
+                            Status: {app.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Controls */}
+                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                      {/* Approve Button */}
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => handleAction(app._id, "approve")}
+                        className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-500/10"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>{app.status === "approved" ? "Re-Approve Draft" : "Approve Profile"}</span>
+                      </button>
+
+                      {/* Reject Button */}
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => {
+                          setRejectModalApp(app);
+                          setRejectNote(app.adminNotes || "");
+                        }}
+                        className="px-3 py-1.5 bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/40 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Reject</span>
+                      </button>
+
+                      {/* Set Interviewed Button */}
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => handleAction(app._id, "markInterviewed")}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border ${
+                          app.interviewedAt
+                            ? "bg-emerald-950/50 text-emerald-300 border-emerald-800 hover:bg-emerald-900/60"
+                            : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                        }`}
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>{app.interviewedAt ? "Interviewed ✓" : "Mark Interviewed"}</span>
+                      </button>
+
+                      {/* Hide / Unhide Button */}
+                      {app.status === "hidden" ? (
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => handleAction(app._id, "unhide")}
+                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Unhide</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => handleAction(app._id, "hide")}
+                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                        >
+                          <EyeOff className="w-3.5 h-3.5" />
+                          <span>Hide</span>
+                        </button>
+                      )}
+
+                      {/* Toggle Details Accordion */}
+                      <button
+                        type="button"
+                        onClick={() => setExpandedId(isExpanded ? null : app._id)}
+                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-slate-700"
+                      >
+                        <span>{isExpanded ? "Hide Comparison" : "Compare Draft vs Live"}</span>
+                        {isExpanded ? (
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* DETAILS COMPARISON (DRAFT VS PUBLISHED) */}
+                  {isExpanded && (
+                    <div className="mt-6 pt-6 border-t border-slate-800">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* LEFT: PROPOSED DRAFT */}
+                        <div className="p-5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                              <span>Proposed Draft (Submitted by User)</span>
+                            </span>
+                            <span className="text-[11px] text-slate-400">
+                              Updated: {new Date(app.updatedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          {/* Mentor Draft */}
+                          {(app.roles || []).includes("mentor") && (
+                            <div className="p-3.5 rounded-lg bg-slate-900/60 border border-emerald-500/20 space-y-2">
+                              <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+                                Mentor Profile
+                              </span>
+                              <div>
+                                <span className="text-[11px] text-slate-400 font-semibold block">Headline:</span>
+                                <p className="text-xs text-white font-medium">
+                                  {draft.mentor?.headline || app.mentorHeadline || "Not specified"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-[11px] text-slate-400 font-semibold block">
+                                  Summary ({countWords(draft.mentor?.summary || app.mentorBio || app.bio)} words):
+                                </span>
+                                <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                                  {draft.mentor?.summary || app.mentorBio || app.bio || "No summary"}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
+                                <span>Rate: ${draft.mentor?.rate || app.hourlyRate || 0}/hr</span>
+                                <span>Formats: {(draft.mentor?.formats || []).join(", ") || "Calls, Reviews"}</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Hire Draft */}
+                          {(app.roles || []).includes("hire") && (
+                            <div className="p-3.5 rounded-lg bg-slate-900/60 border border-cyan-500/20 space-y-2">
+                              <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">
+                                Hire Developer Profile
+                              </span>
+                              <div>
+                                <span className="text-[11px] text-slate-400 font-semibold block">Headline:</span>
+                                <p className="text-xs text-white font-medium">
+                                  {draft.hire?.headline || app.hireHeadline || "Not specified"}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-[11px] text-slate-400 font-semibold block">
+                                  Summary ({countWords(draft.hire?.summary || app.hireBio || app.bio)} words):
+                                </span>
+                                <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                                  {draft.hire?.summary || app.hireBio || app.bio || "No summary"}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
+                                <span>Rate: ${draft.hire?.rate || app.hourlyRate || 0}/hr</span>
+                                <span>Availability: {draft.hire?.availability || app.availability || "Flexible"}</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Common Draft Meta */}
+                          <div className="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800">
+                            <div>
+                              <span className="text-slate-500 font-semibold">Skills: </span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {(draft.skillIds?.length ? draft.skillIds : app.skills || []).map((sId) => (
+                                  <span
+                                    key={sId}
+                                    className="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 text-[11px]"
+                                  >
+                                    {resolveSkillName(sId)}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-4 pt-1 text-slate-400">
+                              <span>
+                                Location: {resolveLocationName(draft.locationId, draft.locationOther)}
+                              </span>
+                              <span>Timezone: {draft.timezone || "UTC"}</span>
+                              <span>Experience: {draft.yearsExperience || app.yearsExperience || 0} years</span>
+                            </div>
+                            <div className="flex flex-wrap gap-4 pt-1">
+                              {draft.links?.github && (
+                                <a
+                                  href={draft.links.github}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-emerald-400 hover:underline flex items-center gap-1"
+                                >
+                                  <span>GitHub</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                              {draft.links?.linkedin && (
+                                <a
+                                  href={draft.links.linkedin}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-emerald-400 hover:underline flex items-center gap-1"
+                                >
+                                  <span>LinkedIn</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                            </div>
+                            {/* Showcase Projects */}
+                            {draft.projects?.length > 0 && (
+                              <div className="pt-2">
+                                <span className="text-slate-500 font-semibold block mb-1">
+                                  Showcase Projects ({draft.projects.length}):
+                                </span>
+                                <div className="space-y-1.5">
+                                  {draft.projects.map((p, pIdx) => (
+                                    <div
+                                      key={pIdx}
+                                      className="p-2 rounded bg-slate-900 border border-slate-800 text-xs"
+                                    >
+                                      <div className="font-semibold text-white flex items-center justify-between">
+                                        <span>{p.title}</span>
+                                        {p.url && (
+                                          <a
+                                            href={p.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-emerald-400 hover:underline text-[11px] flex items-center gap-1"
+                                          >
+                                            <span>Link</span>
+                                            <ExternalLink className="w-2.5 h-2.5" />
+                                          </a>
+                                        )}
+                                      </div>
+                                      <p className="text-slate-400 text-[11px] mt-0.5">{p.description}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* RIGHT: CURRENT LIVE PUBLISHED CONTENT */}
+                        <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                              <span>Currently Live (Published in Production)</span>
+                            </span>
+                            <span className="text-[11px] text-slate-500">
+                              {app.approvedAt ? `Approved: ${new Date(app.approvedAt).toLocaleDateString()}` : "Not yet approved"}
+                            </span>
+                          </div>
+
+                          {!pub ? (
+                            <div className="py-12 text-center text-slate-500 text-xs italic">
+                              No published version currently live in production. Approving will publish the proposed draft.
+                            </div>
+                          ) : (
+                            <>
+                              {pub.mentor?.headline && (
+                                <div className="p-3.5 rounded-lg bg-slate-900/60 border border-slate-800 space-y-2">
+                                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+                                    Live Mentor Profile
+                                  </span>
+                                  <div>
+                                    <span className="text-[11px] text-slate-500 font-semibold block">Headline:</span>
+                                    <p className="text-xs text-white font-medium">{pub.mentor.headline}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-[11px] text-slate-500 font-semibold block">Summary:</span>
+                                    <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed line-clamp-4">
+                                      {pub.mentor.summary}
+                                    </p>
+                                  </div>
+                                  <div className="text-xs text-slate-400">Rate: ${pub.mentor.rate}/hr</div>
+                                </div>
+                              )}
+
+                              {pub.hire?.headline && (
+                                <div className="p-3.5 rounded-lg bg-slate-900/60 border border-slate-800 space-y-2">
+                                  <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">
+                                    Live Hire Developer Profile
+                                  </span>
+                                  <div>
+                                    <span className="text-[11px] text-slate-500 font-semibold block">Headline:</span>
+                                    <p className="text-xs text-white font-medium">{pub.hire.headline}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-[11px] text-slate-500 font-semibold block">Summary:</span>
+                                    <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed line-clamp-4">
+                                      {pub.hire.summary}
+                                    </p>
+                                  </div>
+                                  <div className="text-xs text-slate-400">
+                                    Rate: ${pub.hire.rate}/hr • {pub.hire.availability}
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="space-y-2 text-xs text-slate-400 pt-2 border-t border-slate-800">
+                                <div>
+                                  <span className="text-slate-500 font-semibold">Live Skills: </span>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {(pub.skillIds || []).map((sId) => (
+                                      <span
+                                        key={sId}
+                                        className="px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 text-[11px]"
+                                      >
+                                        {resolveSkillName(sId)}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="pt-1">
+                                  Location: {resolveLocationName(pub.locationId, pub.locationOther)} • Timezone: {pub.timezone}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Rejection Modal with Note */}
+        {rejectModalApp && (
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-red-400" />
+                  <span>Reject Application: {rejectModalApp.displayName}</span>
+                </h3>
+                <button
+                  onClick={() => setRejectModalApp(null)}
+                  className="text-slate-500 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-400">
+                Please provide a constructive note explaining why the application is not approved at this time. This reason will be emailed to the applicant.
+              </p>
+
+              <textarea
+                rows={4}
+                required
+                value={rejectNote}
+                onChange={(e) => setRejectNote(e.target.value)}
+                placeholder="e.g., Please provide a higher resolution profile photo and expand on your specific Next.js project architecture in the summary..."
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-red-500 focus:outline-none"
+              />
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setRejectModalApp(null)}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleAction(rejectModalApp._id, "reject", { note: rejectNote })
+                  }
+                  className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/20"
+                >
+                  Confirm Rejection & Email Applicant
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

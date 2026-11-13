@@ -3,8 +3,7 @@ import Link from "next/link";
 import connectDB from "../../../lib/mongodb";
 import User from "../../../models/User";
 import QuizResult from "../../../models/QuizResult";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../lib/auth";
+import { requireAdmin } from "@/app/lib/requireAdmin";
 import { ArrowLeft, ExternalLink, Trophy, Flame, BookOpen } from "lucide-react";
 
 async function getUserAndResults(userId) {
@@ -24,8 +23,8 @@ async function getUserAndResults(userId) {
 }
 
 export default async function AdminUserDetailPage({ params }) {
-  const session = await getServerSession(authOptions);
-  if (!session || (session.user.role !== "admin" && session.user.email !== "admin@example.com")) {
+  const session = await requireAdmin();
+  if (!session) {
     return (
       <div className="min-h-screen pt-24 px-6 bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100">
         <div className="max-w-5xl mx-auto">

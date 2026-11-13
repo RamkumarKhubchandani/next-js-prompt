@@ -12,9 +12,12 @@ import { BlogSidebarCTA, BlogBottomCTA } from '../../components/public/BlogMento
 
 // Update Metadata logic
 export async function generateMetadata({ params }) {
-    const { slug } = params;
+    const { slug } = await params;
     const tutorial = await getTutorialBySlug(slug);
     if (!tutorial) return { title: 'Not Found' };
+
+    const publishedTime = tutorial.publishedAt || tutorial.createdAt;
+    const modifiedTime = tutorial.updatedAt;
 
     return {
         title: tutorial.title,
@@ -24,12 +27,13 @@ export async function generateMetadata({ params }) {
             title: tutorial.title,
             description: tutorial.description,
             type: 'article',
-            publishedTime: tutorial.createdAt,
+            publishedTime,
+            ...(modifiedTime && { modifiedTime }),
             authors: [tutorial.author],
             tags: tutorial.tags,
             images: [
                 {
-                    url: `https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop`,
+                    url: tutorial.image || `https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop`,
                     width: 1200,
                     height: 630,
                     alt: tutorial.title,
@@ -48,7 +52,7 @@ export async function generateMetadata({ params }) {
     };
 }
 
-export const revalidate = 86400;
+export const revalidate = 2592000;
 
 // Update Static Params Logic
 export async function generateStaticParams() {
@@ -153,7 +157,7 @@ export default async function TutorialPage({ params }) {
                             </div>
                             <span className="text-slate-900 dark:text-white font-bold tracking-tight">{tutorial.author}</span>
                         </div>
-                        <span className="flex items-center gap-2"><Calendar className="w-5 h-5 text-brand-primary" /> {tutorial.formattedDate}</span>
+                        <span className="flex items-center gap-2"><Calendar className="w-5 h-5 text-brand-primary" /> {tutorial.updatedAt ? `Updated ${tutorial.formattedDate}` : tutorial.formattedDate}</span>
                         <span className="flex items-center gap-2"><Clock className="w-5 h-5 text-brand-primary" /> {tutorial.readTime}</span>
                     </div>
                 </header>
@@ -212,13 +216,13 @@ export default async function TutorialPage({ params }) {
                             </div>
                         )}
                         {/* Bottom Mentorship & Job Support CTA Hero */}
-                        <BlogBottomCTA tutorialTitle={tutorial.title} tags={tutorial.tags} />
+                        <BlogBottomCTA tutorialTitle={tutorial.title} tags={tutorial.tags} relatedPosts={tutorial.relatedPosts} primaryCta={tutorial.primaryCta} />
                     </article>
 
                     <aside className="hidden lg:block relative">
                         <div className="sticky top-28 space-y-6">
                             {/* High-Converting 1:1 Mentorship & Job Support Card */}
-                            <BlogSidebarCTA tutorialTitle={tutorial.title} tags={tutorial.tags} />
+                            <BlogSidebarCTA tutorialTitle={tutorial.title} tags={tutorial.tags} relatedPosts={tutorial.relatedPosts} primaryCta={tutorial.primaryCta} />
 
                             <div className="bg-white/80 dark:bg-dark-900/60 backdrop-blur-xl rounded-2xl p-6 border border-slate-200 dark:border-white/5 shadow-xl">
                                 <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2">

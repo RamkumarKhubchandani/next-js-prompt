@@ -75,3 +75,4 @@ User-agent: DotBot
 Disallow: /
 
 Sitemap: https://www.outlinedev.com/sitemap.xml
+Sitemap: https://www.outlinedev.com/blog-sitemap.xml

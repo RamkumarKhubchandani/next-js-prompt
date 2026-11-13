@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import { eventsData } from '../../lib/eventsData';
 import EventDetailPage from './ClientPage';
 import { notFound } from 'next/navigation';
@@ -104,11 +105,6 @@ export default async function Page({ params }) {
             "name": "OutlineDev Mentorship",
             "sameAs": "https://www.outlinedev.com"
         },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": displayEvent.rating || "4.9",
-            "reviewCount": (displayEvent.reviewCount || "500").replace('+', '')
-        },
         "offers": {
             "@type": "Offer",
             "price": "0",
@@ -152,11 +148,11 @@ export default async function Page({ params }) {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(eventSchema) }}
             />
             <EventDetailPage initialEvent={displayEvent} />
         </>

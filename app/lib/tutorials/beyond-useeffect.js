@@ -1,5 +1,6 @@
 export const beyondUseEffect = {
   slug: "beyond-useeffect",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   title: "Beyond useEffect: Solving the 'Dependency Hell' with useEffectEvent",
   description: "Every React developer has struggled with dependency arrays. Discover the 'Holy Grail' hook that finally separates reactive code from non-reactive logic. No more lying to the linter.",
   thumbnail: "/images/tutorials/beyond-useeffect-thumb.png",

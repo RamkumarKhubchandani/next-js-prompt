@@ -195,3 +195,83 @@ textarea:-webkit-autofill:active {
   background-color: #ffffff !important;
   color: #0f172a !important;
 }
+
+/* ==========================================================================
+   Mentorship Landing & SEO Mesh Shared Utility Classes
+   ========================================================================== */
+.mesh-badge {
+  @apply text-xs px-3 py-2 rounded-xl border transition-all font-medium bg-slate-50 dark:bg-dark-900/80 text-slate-700 dark:text-gray-300 border-slate-200 dark:border-dark-700 hover:border-brand-primary/50 hover:text-brand-primary;
+}
+.mesh-badge-active {
+  @apply bg-brand-primary/15 text-brand-primary border-brand-primary/40 font-bold;
+}
+.mesh-badge-hub-active {
+  @apply bg-blue-500/15 text-blue-500 border-blue-500/40 font-bold;
+}
+.mesh-format-card {
+  @apply flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-dark-900/80 border border-slate-200 dark:border-dark-700 hover:border-purple-500/50 transition-all;
+}
+.mesh-format-title {
+  @apply text-xs font-bold text-slate-900 dark:text-white group-hover:text-purple-400 transition-colors block;
+}
+.mesh-format-desc {
+  @apply text-[11px] text-slate-500 dark:text-gray-400;
+}
+.mesh-format-arrow {
+  @apply text-slate-400 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2 text-sm font-bold;
+}
+
+/* Review Cards & Marquee */
+.review-card {
+  @apply min-w-[400px] bg-white dark:bg-dark-900 p-6 rounded-2xl border border-slate-200 dark:border-dark-700 shadow-lg hover:border-teal-500/50 dark:hover:border-brand-primary/50 transition-colors;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
+.hover\:pause:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+.mesh-card {
+  @apply bg-white dark:bg-dark-800 rounded-2xl p-6 border border-slate-200 dark:border-dark-700 shadow-lg;
+}
+.mesh-header {
+  @apply flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100 dark:border-dark-700 text-slate-900 dark:text-white;
+}
+.review-text {
+  @apply text-slate-700 dark:text-gray-300 mb-6 italic text-sm leading-relaxed;
+}
+.review-meta {
+  @apply flex items-center gap-3;
+}
+.review-avatar {
+  @apply w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-white/10;
+}
+.review-name {
+  @apply text-slate-900 dark:text-white font-bold text-sm;
+}
+.review-role {
+  @apply text-xs text-slate-500 dark:text-gray-500;
+}
+.faq-item {
+  @apply bg-white dark:bg-dark-800 rounded-2xl border border-slate-200 dark:border-dark-700 open:border-brand-primary/50 transition-colors shadow-sm;
+}
+.faq-summary {
+  @apply p-6 cursor-pointer font-bold text-slate-900 dark:text-white flex items-center justify-between;
+}
+.faq-body {
+  @apply px-6 pb-6 text-slate-600 dark:text-gray-400 leading-relaxed;
+}
+.step-card {
+  @apply relative bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 p-8 rounded-3xl hover:-translate-y-2 transition-all duration-300 shadow-lg;
+}
+.seo-card {
+  @apply bg-white dark:bg-dark-800 p-8 rounded-2xl shadow-lg border border-slate-200 dark:border-dark-700 hover:-translate-y-1 transition-transform;
+}

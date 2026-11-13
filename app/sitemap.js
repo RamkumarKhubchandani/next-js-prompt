@@ -138,6 +138,7 @@ export default async function sitemap() {
     { url: "/become-mentor", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
     { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/reviews", changeFrequency: "weekly", priority: 0.8 },
     { url: "/ai-quiz", changeFrequency: "weekly", priority: 0.8 },
     { url: "/career", changeFrequency: "weekly", priority: 0.8 },
     { url: "/code-review", changeFrequency: "weekly", priority: 0.8 },
@@ -153,10 +154,16 @@ export default async function sitemap() {
     { url: "/hire/vuejs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/react-native-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/redux-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/angular-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/javascript-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/mongodb-developer", changeFrequency: "weekly", priority: 0.8 },
+    { url: "/hire/html-css-developer", changeFrequency: "weekly", priority: 0.8 },
   ].map((route) => {
     let lastModified = STATIC_PAGES_LAST_MODIFIED;
     if (route.url === "/") {
       lastModified = HOME_LAST_MODIFIED;
+    } else if (route.url === "/reviews") {
+      lastModified = "2026-11-12";
     } else if (route.url.startsWith("/hire/")) {
       lastModified = HIRE_PAGES_LAST_MODIFIED;
     }
@@ -289,12 +296,37 @@ export default async function sitemap() {
     const tutorials = await getAllTutorials();
     blogRoutes = tutorials.map((t) => ({
       url: `${baseUrl}/blogs/${t.slug}`,
-      lastModified: currentDate,
+      lastModified: t.updatedAt || t.publishedAt,
       changeFrequency: "weekly",
       priority: 0.8,
     }));
   } catch (error) {
     console.error("Error generating blog routes in sitemap:", error);
+  }
+
+  // 8. Approved Expert Profile Routes (/experts/[slug]) - defensive try/catch
+  let expertRoutes = [];
+  try {
+    const dbConnect = (await import("./lib/mongodb")).default;
+    const MentorApplication = (await import("./models/MentorApplication")).default;
+    await dbConnect();
+    const approvedExperts = await MentorApplication.find({
+      status: { $nin: ["hidden", "rejected"] },
+      published: { $ne: null },
+      slug: { $exists: true, $ne: "" },
+    })
+      .select("slug updatedAt")
+      .lean();
+
+    expertRoutes = approvedExperts.map((exp) => ({
+      url: `${baseUrl}/experts/${exp.slug}`,
+      lastModified: exp.updatedAt ? new Date(exp.updatedAt) : currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Error generating expert routes in sitemap:", error);
+    expertRoutes = [];
   }
 
   return [
@@ -303,6 +335,7 @@ export default async function sitemap() {
     ...officialEventRoutes,
     ...mentorRoutes,
     ...eventRoutes,
-    ...blogRoutes
+    ...blogRoutes,
+    ...expertRoutes,
   ];
 }

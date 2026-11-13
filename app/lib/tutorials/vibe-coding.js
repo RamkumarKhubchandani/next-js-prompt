@@ -2,6 +2,7 @@ export const vibeCoding = {
     title: "Vibe Coding vs. Engineering: A Survival Guide 🧠",
     description: "'Vibe Coding' (using AI to code by prompts) is fun, but true Architecture is how you stay employed. A definitive guide to being a 'System Architect' who commands the AI, instead of being replaced by it.",
     slug: "vibe-coding",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Principal Architect",
     createdAt: new Date().toISOString(),

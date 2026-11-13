@@ -1,5 +1,6 @@
 export const partialPrerendering = {
     slug: "partial-prerendering",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     title: "Partial Pre-rendering (PPR): The Secret to 0ms LCP in Modern React Apps",
     description: "Web performance is still king. Partial Pre-rendering (PPR) allows a single page to be both static (the shell) and dynamic (the data) simultaneously. Learn the secret to 0ms LCP.",
     thumbnail: "/images/tutorials/ppr-thumb.png",

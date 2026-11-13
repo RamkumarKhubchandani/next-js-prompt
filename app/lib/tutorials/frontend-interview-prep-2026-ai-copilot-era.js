@@ -2,6 +2,7 @@ export const frontendInterviewPrep2026 = {
     title: "Frontend Interview Prep in 2026: What Companies Actually Ask Now That Candidates Use AI Copilots",
     description: "An insider engineering perspective on how frontend technical interviews have evolved in 2026, highlighting code validation, event loop mechanics, and system design.",
     slug: "frontend-interview-prep-2026-ai-copilot-era",
+    publishedAt: "2026-08-17T10:25:09+05:30",
     category: "Careers",
     type: "static",
     author: "Senior Frontend Lead",

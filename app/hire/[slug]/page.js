@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -5,6 +6,10 @@ import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { HIRE_SHARED, HIRE_PAGES } from '@/app/lib/hire-data';
 import HireInquiryForm from '@/app/components/hire/HireInquiryForm';
+import MatchedExpertsSection from '@/app/components/experts/MatchedExpertsSection';
+import { hireSlugToSkillId } from '@/app/lib/experts';
+import { getAllTutorials } from '@/app/lib/tutorials';
+import ProofStrip from '@/app/components/public/ProofStrip';
 
 export const dynamicParams = false;
 export const revalidate = 604800;
@@ -47,6 +52,21 @@ export default async function HireDeveloperPage({ params }) {
 
     const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
 
+    const hasRelatedPosts = Array.isArray(page.relatedPosts) && page.relatedPosts.length > 0;
+    const tutorialsMap = new Map();
+    if (hasRelatedPosts) {
+        try {
+            const tutorials = await getAllTutorials();
+            for (const t of tutorials) {
+                if (t && t.slug) {
+                    tutorialsMap.set(t.slug, t);
+                }
+            }
+        } catch (err) {
+            console.error('Error loading tutorials for related guides in hire page:', err);
+        }
+    }
+
     // Service & BreadcrumbList JSON-LD Schema (no ratings, no reviews, no worksFor)
     const jsonLd = {
         "@context": "https://schema.org",
@@ -60,6 +80,7 @@ export default async function HireDeveloperPage({ params }) {
                 "provider": {
                     "@type": "Person",
                     "name": HIRE_SHARED.name,
+                    "jobTitle": "Principal Engineer",
                     "sameAs": [
                         "https://www.linkedin.com/in/ramkumar-khubchandani-b7097a81/"
                     ]
@@ -96,7 +117,7 @@ export default async function HireDeveloperPage({ params }) {
         <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-brand-primary selection:text-slate-950">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <Header />
 
@@ -158,7 +179,21 @@ export default async function HireDeveloperPage({ params }) {
                             </>
                         )}
                     </div>
+
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <span>Last updated: November 12, 2026</span>
+                        <span>•</span>
+                        <span>
+                            Curated by{' '}
+                            <Link href="/about" className="font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary underline">
+                                Ramkumar Khubchandani, Principal Engineer
+                            </Link>
+                        </span>
+                    </div>
                 </header>
+
+                {/* Proof Strip (Social Proof & Reviews) */}
+                <ProofStrip skillId={hireSlugToSkillId(slug)} />
 
                 {/* What I Build */}
                 <section className="py-12 border-b border-slate-200 dark:border-slate-800">
@@ -312,6 +347,40 @@ export default async function HireDeveloperPage({ params }) {
                     </div>
                 </section>
 
+                {/* Related guides (renders ONLY when relatedPosts is non-empty) */}
+                {hasRelatedPosts && (
+                    <section className="py-12 border-b border-slate-200 dark:border-slate-800">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                            Related Guides
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {page.relatedPosts.map((postSlug) => {
+                                const post = tutorialsMap.get(postSlug);
+                                const title = post?.title || postSlug
+                                    .split('-')
+                                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                                    .join(' ');
+                                const description = post?.description || `Read our deep-dive technical guide on ${page.skill} architecture and best practices.`;
+                                return (
+                                    <Link
+                                        key={postSlug}
+                                        href={`/blogs/${postSlug}`}
+                                        prefetch={false}
+                                        className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-primary/60 dark:hover:border-brand-primary/60 transition-all block group"
+                                    >
+                                        <h3 className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-brand-primary transition-colors line-clamp-2">
+                                            {title}
+                                        </h3>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                                            {description}
+                                        </p>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
                 {/* Related hire pages */}
                 <section className="py-12 border-b border-slate-200 dark:border-slate-800">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
@@ -341,6 +410,13 @@ export default async function HireDeveloperPage({ params }) {
                             })}
                     </div>
                 </section>
+
+                {/* Matched Experts (behind EXPERTS_MATCHING_ENABLED flag) */}
+                <MatchedExpertsSection
+                    skillId={hireSlugToSkillId(slug)}
+                    locationId="online"
+                    intent="hire"
+                />
 
                 {/* Persistent Contact & Inquiry Section */}
                 <section id="inquiry-form" className="pt-12 scroll-mt-24">

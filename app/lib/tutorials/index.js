@@ -78,8 +78,24 @@ import { jsArrayCrudOperations } from './javascript-array-crud-operations-method
 import { aiDesignSystemsConsistency } from './ai-design-systems-component-library-consistency';
 import { frontendInterviewPrep2026 } from './frontend-interview-prep-2026-ai-copilot-era';
 import { cssCss3StepByStepGuide } from './css-css3-complete-step-by-step-guide-beginners-to-advanced';
+import { svelte5InterviewQuestions } from './svelte-5-interview-questions';
+import { howToHireAJavaScriptDeveloper } from './how-to-hire-a-javascript-developer';
+import { howToHireAVueJsConsultant } from './how-to-hire-a-vuejs-consultant';
+import { nodejsDeveloperVsFreelancerVsAgency } from './nodejs-developer-vs-freelancer-vs-agency';
+import { privateJavaScriptTutorGuide } from './private-javascript-tutor-guide';
+import { vue3ClientProjectTutorialForFreelancers } from './vue-3-client-project-tutorial-for-freelancers';
+import { nextjs15ClientWebsiteTutorialForFreelancers } from './nextjs-15-client-website-tutorial-for-freelancers';
+import { angularClientDashboardTutorialForFreelancers } from './angular-client-dashboard-tutorial-for-freelancers';
 
 const STATIC_TUTORIALS = [
+  privateJavaScriptTutorGuide,
+  vue3ClientProjectTutorialForFreelancers,
+  nextjs15ClientWebsiteTutorialForFreelancers,
+  angularClientDashboardTutorialForFreelancers,
+  howToHireAJavaScriptDeveloper,
+  howToHireAVueJsConsultant,
+  nodejsDeveloperVsFreelancerVsAgency,
+  svelte5InterviewQuestions,
   cssCss3StepByStepGuide,
   frontendInterviewPrep2026,
   aiDesignSystemsConsistency,
@@ -160,7 +176,8 @@ const STATIC_TUTORIALS = [
 /**
  * URL Friendly Date Formatter
  */
-function formatDate(date) {
+export function formatDate(date) {
+  if (!date) return '';
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -188,7 +205,9 @@ export async function getAllTutorials() {
         difficulty: doc.difficulty || 'Intermediate',
         readTime: doc.readTime || '5 min read',
         createdAt: doc.createdAt.toISOString(),
-        formattedDate: formatDate(doc.createdAt),
+        updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : doc.createdAt.toISOString(),
+        publishedAt: doc.createdAt.toISOString(),
+        formattedDate: formatDate(doc.updatedAt || doc.createdAt),
         type: 'dynamic', // It comes from DB
         isPremium: false, // Default text blogs are free
         author: doc.author,
@@ -203,15 +222,22 @@ export async function getAllTutorials() {
   }
 
   // 2. Format Static
-  const staticTutorials = STATIC_TUTORIALS.map(t => ({
-    ...t,
-    _id: `static-${t.slug}`,
-    createdAt: new Date().toISOString(),
-    formattedDate: 'Featured Guide',
-    type: 'static',
-    isPremium: false,
-    image: t.image || null, // Pass image through for static files too
-  }));
+  const staticTutorials = STATIC_TUTORIALS.map(t => {
+    const pubDate = t.publishedAt || null;
+    const updDate = t.updatedAt || null;
+    const dateToFormat = updDate || pubDate;
+    return {
+      ...t,
+      _id: `static-${t.slug}`,
+      createdAt: pubDate,
+      publishedAt: pubDate,
+      updatedAt: updDate,
+      formattedDate: dateToFormat ? formatDate(dateToFormat) : 'Featured Guide',
+      type: 'static',
+      isPremium: false,
+      image: t.image || null, // Pass image through for static files too
+    };
+  });
 
   // 3. Merge
   return [...staticTutorials, ...dynamicTutorials];
@@ -221,11 +247,17 @@ export async function getTutorialBySlug(slug) {
   // 1. Check Static First (Fastest)
   const staticTutorial = STATIC_TUTORIALS.find(t => t.slug === slug);
   if (staticTutorial) {
+    const pubDate = staticTutorial.publishedAt || null;
+    const updDate = staticTutorial.updatedAt || null;
+    const dateToFormat = updDate || pubDate;
     return {
       ...staticTutorial,
       _id: `static-${staticTutorial.slug}`,
       type: 'static',
-      formattedDate: 'Featured Guide',
+      createdAt: pubDate,
+      publishedAt: pubDate,
+      updatedAt: updDate,
+      formattedDate: dateToFormat ? formatDate(dateToFormat) : 'Featured Guide',
       image: staticTutorial.image || null
     };
   }
@@ -245,7 +277,9 @@ export async function getTutorialBySlug(slug) {
       readTime: doc.readTime,
       content: doc.content, // HTML String
       createdAt: doc.createdAt.toISOString(),
-      formattedDate: formatDate(doc.createdAt),
+      updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : doc.createdAt.toISOString(),
+      publishedAt: doc.createdAt.toISOString(),
+      formattedDate: formatDate(doc.updatedAt || doc.createdAt),
       type: 'dynamic',
       author: doc.author,
       thumbnail: doc.thumbnail || null,

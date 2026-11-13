@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import React from 'react';
 import ServicesClient from './ServicesClient';
 
@@ -78,7 +79,7 @@ export default function ServicesPage() {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
             />
             <ServicesClient />
         </>

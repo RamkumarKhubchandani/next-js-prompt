@@ -2,6 +2,7 @@ export const nodeNativeSqlite = {
     title: "Native SQLite in Node.js: Do You Even Need a Database Server?",
     description: "Postgres is great, but do you need that Docker container? Node.js 22+ now has a built-in SQLite driver. Learn why 'Local-First' backends are the future for microservices.",
     slug: "node-native-sqlite",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Backend Architect",

@@ -2,6 +2,7 @@ export const wasmJsPerformance = {
     title: "WebAssembly + JS: Running Photoshop-Level Apps in the Browser",
     description: "WebAssembly isn't just for C++ devs anymore. Learn how to offload heavy calculations to Rust/Wasm while keeping your UI in React. A practical guide to high-performance hybrid apps.",
     slug: "wasm-js-performance",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "JavaScript",
     type: "static",
     author: "Systems Engineer",

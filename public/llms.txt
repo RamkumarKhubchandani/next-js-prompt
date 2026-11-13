@@ -1,31 +1,28 @@
 # OutlineDev
 
-> OutlineDev is a free coding mentorship and bootcamp platform that helps developers master JavaScript, React, Angular, Node.js, Full Stack development, and System Design through 1-on-1 expert guidance and AI-powered learning.
+> OutlineDev connects software engineers, career switchers, and businesses with practitioner mentorship, contract software development, and technical interview preparation.
 
-OutlineDev provides structured learning paths, expert mentorship sessions, mock interviews, resume reviews, and global certifications. The platform is 100% free and serves developers across India and worldwide.
+Rated 5.0 on Google (24 reviews). Sessions are 1-on-1, practical, and led by experienced software engineers.
 
 ## Key Offerings
 
-- [JavaScript Bootcamp](https://outlinedev.com/path/javascript): Comprehensive JavaScript curriculum from fundamentals to advanced patterns including async/await, closures, and ES2024+.
-- [React Masterclass](https://outlinedev.com/path/react): Complete React training covering hooks, performance optimisation, server components, and Next.js 15 App Router.
-- [Angular Complete Guide](https://outlinedev.com/path/angular): Full Angular curriculum including signals, SSR with Nitro, standalone components, and micro-frontends.
-- [Node.js Backend](https://outlinedev.com/path/nodejs): Node.js, Express, REST APIs, streaming, worker threads, and native SQLite.
-- [System Design](https://outlinedev.com/system-design): Scalable architecture, database design, caching, load balancing and FAANG-level interview preparation.
-- [AI Assessment](https://outlinedev.com/ai-quiz): AI-powered skill assessment quiz to benchmark your current coding level.
-- [1:1 Mentorship](https://outlinedev.com/mentorship): Book live 1-on-1 sessions with senior engineers for code reviews, debugging, and career guidance.
-- [Become a Mentor](https://outlinedev.com/become-mentor): Apply to become a mentor and share your expertise.
-- [Tech Blog & Tutorials](https://outlinedev.com/blogs): In-depth tutorials on React, Angular, Node.js, AI tools, Playwright, and modern web development.
+- [1-on-1 Mentorship](https://www.outlinedev.com/mentorship): Personalized 1-on-1 sessions for React, Next.js, Node.js, TypeScript, system design, and AI-integrated frontend engineering.
+- [IT Job Support](https://www.outlinedev.com/job-support): Confidential on-the-job sprint assistance, live debugging, and code reviews for active engineering projects.
+- [Interview Preparation Hubs](https://www.outlinedev.com/interview): In-depth technical interview guides and mock interviews across [React](https://www.outlinedev.com/interview/react), [JavaScript](https://www.outlinedev.com/interview/javascript), [TypeScript](https://www.outlinedev.com/interview/typescript), [Angular](https://www.outlinedev.com/interview/angular), and [HTML/CSS](https://www.outlinedev.com/interview/html-css).
+- [Hire Developers & Freelance Consultants](https://www.outlinedev.com/hire/full-stack-developer): Contract and freelance software development for web applications, APIs, and client dashboards. Specialized hire pages include [React Developer](https://www.outlinedev.com/hire/react-developer), [Next.js Developer](https://www.outlinedev.com/hire/nextjs-developer), [Node.js Developer](https://www.outlinedev.com/hire/nodejs-developer), [TypeScript Developer](https://www.outlinedev.com/hire/typescript-developer), [Vue.js Developer](https://www.outlinedev.com/hire/vuejs-developer), and [Full Stack Developer](https://www.outlinedev.com/hire/full-stack-developer).
+- [Reviews & Feedback](https://www.outlinedev.com/reviews): Authentic student and client feedback, verbatim Google reviews, and student feedback videos.
+- [Technical Blog & Tutorials](https://www.outlinedev.com/blogs): In-depth, practical guides for Next.js 15, React 19, Vue 3, Angular, Node.js architecture, and AI UI generators.
 
 ## About OutlineDev
 
-- **Founded**: 2024
-- **Mission**: Make high-quality engineering mentorship accessible to everyone, worldwide.
-- **Target Audience**: Students, junior developers, mid-level engineers seeking to level up to senior roles.
-- **Headquarters**: India (serves globally)
+- **Principal Engineer**: Ramkumar Khubchandani (12+ years of industry experience)
+- **Target Audience**: Working software engineers, students, career switchers, and business owners looking for expert development and mentorship.
+- **Rating**: 5.0 on Google (24 reviews)
 - **Contact**: hi@outlinedev.com | +91-8237320942
+- **Website**: https://www.outlinedev.com
 - **LinkedIn**: https://www.linkedin.com/company/outlinedev
-- **Instagram**: https://www.instagram.com/outlinedev.io/
 
-## Sitemap
+## Sitemaps
 
-- https://outlinedev.com/sitemap.xml
+- Primary Sitemap: https://www.outlinedev.com/sitemap.xml
+- Blog & Interview Sitemap: https://www.outlinedev.com/blog-sitemap.xml

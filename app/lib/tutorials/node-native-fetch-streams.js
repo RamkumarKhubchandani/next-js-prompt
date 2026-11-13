@@ -2,6 +2,7 @@ export const nodeNativeFetchStreams = {
     title: "Node.js Native Fetch & Web Streams: Goodbye Axios",
     description: "Axios and node-fetch are obsolete. Node.js now has full Web Standards support. Learn how to build efficient, streaming data pipelines using zero external dependencies.",
     slug: "node-native-fetch-streams",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Node.js",
     type: "static",
     author: "Backend Lead",

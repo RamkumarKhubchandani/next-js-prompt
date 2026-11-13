@@ -2,6 +2,7 @@ export const aiMultimodalRag = {
     title: "Multimodal RAG: Searching Images with Text",
     description: "Text-only search is obsolete. Learn how Multimodal Embeddings (CLIP, GPT-4o) allow users to search your database of images, charts, and diagrams using natural language.",
     slug: "ai-multimodal-rag",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "AI Research Engineer",

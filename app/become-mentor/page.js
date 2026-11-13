@@ -1,3 +1,4 @@
+import { safeJsonLd } from '@/app/lib/schema-helpers';
 import BecomeMentorClient from './BecomeMentorClient';
 
 export const metadata = {
@@ -48,7 +49,7 @@ export default function BecomeMentorPage() {
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jobSchema) }}
+                dangerouslySetInnerHTML={{ __html: safeJsonLd(jobSchema) }}
             />
             <BecomeMentorClient />
         </>

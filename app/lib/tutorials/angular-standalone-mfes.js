@@ -2,6 +2,7 @@ export const angularStandaloneMfes = {
     title: "Architecting Micro-Frontends with Angular Standalone Components",
     description: "NgModules are gone. Learn how to architect a scalable Module Federation setup using pure Standalone Components. The enterprise pattern for 2026.",
     slug: "angular-standalone-mfes",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Enterprise Architect",

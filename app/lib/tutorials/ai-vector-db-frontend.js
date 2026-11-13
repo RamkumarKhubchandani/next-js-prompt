@@ -2,6 +2,7 @@ export const aiVectorDbFrontend = {
     title: "Vector Databases for Frontend: Building Memory",
     description: "Why call the backend for search? Learn how to run a full Vector Database (Orama, Voy) directly in the user's browser for instant, offline-capable semantic search.",
     slug: "ai-vector-db-frontend",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "AI Engineering",
     type: "static",
     author: "Frontend Architect",

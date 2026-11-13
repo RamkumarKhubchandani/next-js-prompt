@@ -39,6 +39,7 @@ export default function MentorsIndexPage() {
                                 <Link
                                     key={skill.id}
                                     href={`/mentors/${skill.id}-mentors-in-remote`}
+                                    prefetch={false}
                                     className="p-3 rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 hover:border-brand-primary transition-colors text-sm font-medium"
                                 >
                                     {skill.name}
@@ -60,6 +61,7 @@ export default function MentorsIndexPage() {
                                 <Link
                                     key={loc.id}
                                     href={`/mentors/javascript-mentors-in-${loc.id}`}
+                                    prefetch={false}
                                     className="p-3 rounded-xl bg-white dark:bg-dark-800 border border-gray-200 dark:border-dark-700 hover:border-brand-primary transition-colors text-sm font-medium"
                                 >
                                     {loc.name}
@@ -78,6 +80,7 @@ export default function MentorsIndexPage() {
                                 <Link
                                     key={`${skill.id}-${loc.id}`}
                                     href={`/mentors/${skill.id}-mentors-in-${loc.id}`}
+                                    prefetch={false}
                                     className="text-sm text-gray-500 hover:text-brand-primary hover:underline"
                                 >
                                     {skill.name} Mentors in {loc.name}

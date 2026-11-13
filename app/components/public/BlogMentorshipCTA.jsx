@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Star, Zap, ShieldCheck, MessageCircle, Calendar, ArrowRight, CheckCircle2, UserCheck, Sparkles, Terminal } from 'lucide-react';
 
-export function BlogSidebarCTA({ tutorialTitle, tags = [] }) {
+export function BlogSidebarCTA({ tutorialTitle, tags = [], relatedPosts = [], primaryCta = null }) {
     const techName = tags?.[0] || 'Modern Web Tech';
     const waMessage = encodeURIComponent(
         `Hi Ramkumar, I was reading your guide on "${tutorialTitle || 'Web Development'}" on OutlineDev and would love to discuss 1-on-1 mentorship / urgent project job support for ${techName}.`
@@ -70,6 +70,17 @@ export function BlogSidebarCTA({ tutorialTitle, tags = [] }) {
 
             {/* CTA Buttons */}
             <div className="space-y-2">
+                {primaryCta?.href && primaryCta?.label && (
+                    <Link
+                        href={primaryCta.href}
+                        prefetch={false}
+                        className="w-full py-2.5 px-3 rounded-xl bg-brand-primary text-slate-950 font-black text-xs hover:bg-emerald-400 transition-all shadow-md flex items-center justify-center gap-1.5 text-center group"
+                    >
+                        <span>{primaryCta.label}</span>
+                        <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                )}
+
                 <button
                     onClick={handleOpenBooking}
                     className="w-full py-2.5 px-3 rounded-xl bg-dark-900 dark:bg-white text-white dark:text-dark-900 font-bold text-xs hover:opacity-95 transition-all shadow-md flex items-center justify-center gap-1.5 text-center group cursor-pointer"
@@ -97,11 +108,30 @@ export function BlogSidebarCTA({ tutorialTitle, tags = [] }) {
                     View Workshops →
                 </Link>
             </div>
+
+            {/* Optional Related Guides */}
+            {Array.isArray(relatedPosts) && relatedPosts.length > 0 && (
+                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-white/5">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Related Guides</span>
+                    <div className="space-y-1.5">
+                        {relatedPosts.map(slug => (
+                            <Link
+                                key={slug}
+                                href={`/blogs/${slug}`}
+                                prefetch={false}
+                                className="block text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-brand-primary transition-colors line-clamp-1"
+                            >
+                                → {slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
-export function BlogBottomCTA({ tutorialTitle, tags = [] }) {
+export function BlogBottomCTA({ tutorialTitle, tags = [], relatedPosts = [], primaryCta = null }) {
     const techName = tags?.[0] || 'Full Stack & Modern Web';
     const waMessage = encodeURIComponent(
         `Hi Ramkumar, I finished reading "${tutorialTitle || 'the guide'}" on OutlineDev. I am looking for 1:1 mentorship / IT job support for ${techName}. Let me know how we can connect.`
@@ -188,6 +218,17 @@ export function BlogBottomCTA({ tutorialTitle, tags = [] }) {
 
                 {/* Bottom Action Row */}
                 <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-white/10">
+                    {primaryCta?.href && primaryCta?.label && (
+                        <Link
+                            href={primaryCta.href}
+                            prefetch={false}
+                            className="py-4 px-8 rounded-2xl bg-brand-primary text-dark-950 font-black text-sm hover:bg-emerald-400 transition-all shadow-xl hover:shadow-brand-primary/20 flex items-center gap-2"
+                        >
+                            <span>{primaryCta.label}</span>
+                            <ArrowRight size={18} />
+                        </Link>
+                    )}
+
                     <button
                         onClick={handleOpenBooking}
                         className="py-4 px-8 rounded-2xl bg-brand-primary text-dark-950 font-black text-sm hover:bg-brand-primary/90 transition-all shadow-xl hover:shadow-brand-primary/20 flex items-center gap-2 cursor-pointer"
@@ -214,6 +255,34 @@ export function BlogBottomCTA({ tutorialTitle, tags = [] }) {
                         <ArrowRight size={16} />
                     </Link>
                 </div>
+
+                {/* Optional Related Guides in BlogBottomCTA */}
+                {Array.isArray(relatedPosts) && relatedPosts.length > 0 && (
+                    <div className="mt-10 pt-8 border-t border-white/10">
+                        <h3 className="text-sm font-black uppercase tracking-widest text-brand-primary mb-4 flex items-center gap-2">
+                            <Sparkles size={14} />
+                            <span>Related Guides</span>
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            {relatedPosts.map((slug) => (
+                                <Link
+                                    key={slug}
+                                    href={`/blogs/${slug}`}
+                                    prefetch={false}
+                                    className="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-primary/40 transition-all block group"
+                                >
+                                    <div className="text-xs font-bold text-white group-hover:text-brand-primary transition-colors line-clamp-2">
+                                        {slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                    </div>
+                                    <div className="mt-2 text-[11px] text-slate-400 flex items-center gap-1 font-medium">
+                                        <span>Read guide</span>
+                                        <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );

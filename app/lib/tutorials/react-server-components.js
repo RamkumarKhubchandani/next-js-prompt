@@ -2,6 +2,7 @@ export const reactServerComponents = {
     title: "React Server Components: The Definitive Guide for 2026 🤯",
     description: "The complete textbook on React's biggest paradigm shift. Mastering the Server/Client Boundary, Zero-Bundle Architecture, Server Actions, Streaming, and the 'Hole in the Donut' pattern.",
     slug: "react-server-components",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     type: "static",
     author: "Senior React Architect",
     createdAt: new Date().toISOString(),

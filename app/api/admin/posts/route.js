@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../../lib/auth';
+import { requireAdmin, adminOnly } from '../../../lib/requireAdmin';
 import connectDB from '../../../lib/mongodb';
 import Post from '../../../models/Post';
 import User from '../../../models/User';
@@ -14,13 +16,15 @@ const generateSlug = (title) => {
 
 
 export async function POST(request) {
-    const session = await getServerSession({
-        req: request,
-        secret: process.env.NEXTAUTH_SECRET,
-    });
+    const session = await getServerSession(authOptions);
 
     if (!session) {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const adminSession = await requireAdmin(session);
+    if (!adminSession) {
+        return adminOnly();
     }
 
     try {

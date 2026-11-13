@@ -2,6 +2,7 @@ export const cssCss3StepByStepGuide = {
     title: "CSS & CSS3: The Complete Step-by-Step Guide for Frontend Developers (Beginner to Advanced)",
     description: "A structured, complete guide to CSS and modern CSS3. Master selectors, the box model, Flexbox, CSS Grid, 3D transforms, keyframe animations, responsive design, custom properties, modern layout helpers (clamp, calc, :has), and real-world coding challenges.",
     slug: "css-css3-complete-step-by-step-guide-beginners-to-advanced",
+    publishedAt: "2026-09-11T11:46:27+05:30",
     category: "CSS",
     type: "static",
     author: "Ramkumar Khubchandani",

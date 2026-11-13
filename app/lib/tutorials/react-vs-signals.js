@@ -1,5 +1,6 @@
 export const reactVsSignals = {
     slug: "react-vs-signals",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     title: "React vs. Signals: Did React 19 Finally Close the Gap?",
     description: "The 'Signals' debate (Solid, Preact, Vue) has been huge. Learn how React's new compiler mimics fine-grained reactivity without changing the API, and see who wins the performance war.",
     thumbnail: "/images/tutorials/signals-thumb.png",

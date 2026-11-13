@@ -1,5 +1,6 @@
 export const deathOfUseMemo = {
   slug: "death-of-usememo",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   title: "The Death of useMemo: Why the React Compiler Changed Everything in 2026",
   description: "Stop manually memoizing. The React Compiler (React Forget) is here, and it's rewriting the rules of performance. Discover how to write cleaner, faster React code without the hook overhead.",
   thumbnail: "/images/tutorials/death-of-usememo-thumb.png",

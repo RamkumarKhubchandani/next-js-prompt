@@ -41,6 +41,10 @@ export function Footer() {
               <li><Link href="/hire/vuejs-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Vue.js Developer</Link></li>
               <li><Link href="/hire/react-native-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Native Developer</Link></li>
               <li><Link href="/hire/redux-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Redux Developer</Link></li>
+              <li><Link href="/hire/angular-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Angular Developer</Link></li>
+              <li><Link href="/hire/javascript-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">JavaScript Developer</Link></li>
+              <li><Link href="/hire/mongodb-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">MongoDB Developer</Link></li>
+              <li><Link href="/hire/html-css-developer" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">HTML/CSS Developer</Link></li>
             </ul>
           </div>
 
@@ -48,10 +52,10 @@ export function Footer() {
           <div className="flex flex-col gap-6">
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Expertise</h3>
             <ul className="space-y-4">
-              <li><Link href="/mentors/react-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Mentors</Link></li>
-              <li><Link href="/mentors/node-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Experts</Link></li>
-              <li><Link href="/mentors/playwright-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Playwright Helpers</Link></li>
-              <li><Link href="/mentors/aws-mentors-in-online" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">AWS Consultants</Link></li>
+              <li><Link href="/mentors/react-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">React Mentors</Link></li>
+              <li><Link href="/mentors/node-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Node.js Experts</Link></li>
+              <li><Link href="/mentors/playwright-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Playwright Helpers</Link></li>
+              <li><Link href="/mentors/aws-mentors-in-online" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">AWS Consultants</Link></li>
             </ul>
           </div>
 
@@ -71,6 +75,7 @@ export function Footer() {
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Company</h3>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">About Us</Link></li>
+              <li><Link href="/reviews" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Reviews</Link></li>
               <li><Link href="/career" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Careers @ OutlineDev</Link></li>
               <li><Link href="/blogs" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Tech Blog</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Contact Support</Link></li>
@@ -107,7 +112,7 @@ export function Footer() {
                   { name: "AI Front End", href: "/mentors/aifrontend-mentors-in-online" },
                   { name: "HTML & CSS Layouts", href: "/mentors/html-mentors-in-online" }
                 ].map(item => (
-                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                  <Link key={item.name} href={item.href} prefetch={false} className="text-gray-500 hover:text-brand-primary transition-colors">
                     {item.name}
                   </Link>
                 ))}
@@ -135,7 +140,7 @@ export function Footer() {
                   { name: "Dublin", href: "/mentors/react-mentors-in-dublin" },
                   { name: "Tokyo", href: "/mentors/react-mentors-in-tokyo" }
                 ].map(item => (
-                  <Link key={item.name} href={item.href} className="text-gray-500 hover:text-brand-primary transition-colors">
+                  <Link key={item.name} href={item.href} prefetch={false} className="text-gray-500 hover:text-brand-primary transition-colors">
                     Tutors in {item.name}
                   </Link>
                 ))}

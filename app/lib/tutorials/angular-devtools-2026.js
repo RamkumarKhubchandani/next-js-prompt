@@ -2,6 +2,7 @@ export const angularDevtools2026 = {
     title: "Angular DevTools: Visualizing Performance",
     description: "Don't guess why your app is slow. Use the new Angular DevTools Profiler to visualize Change Detection cycles, identify unnecessary re-renders, and debug Injection graphs.",
     slug: "angular-devtools-2026",
+    publishedAt: "2025-12-30T19:12:27+05:30",
     category: "Angular",
     type: "static",
     author: "Performance Engineer",

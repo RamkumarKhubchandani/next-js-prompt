@@ -1,5 +1,6 @@
 export const activityComponent = {
   slug: "activity-component",
+  publishedAt: "2025-12-30T19:12:27+05:30",
   title: "The <Activity /> Component: How to Build OS-Level Multitasking in React",
   description: "Imagine switching tabs without losing your scroll position or input state. React's new <Activity> component (formerly Offscreen) brings OS-level multitasking to the web.",
   thumbnail: "/images/tutorials/activity-component-thumb.png",

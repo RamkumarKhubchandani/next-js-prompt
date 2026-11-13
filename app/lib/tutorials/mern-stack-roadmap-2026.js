@@ -2,6 +2,7 @@ export const mernStackRoadmap = {
     title: "MERN Stack Roadmap 2026: The Ultimate Guide 🚀",
     description: "The complete, production-grade roadmap to mastering MongoDB, Express, React, and Node.js in 2026. Transition from basic tutorials to professional full stack systems.",
     slug: "mern-stack-roadmap-2026",
+    publishedAt: "2026-07-25T17:55:26+05:30",
     type: "static",
     author: "OutlineDev Mentors",
     createdAt: "2026-07-25T17:40:00+05:30",

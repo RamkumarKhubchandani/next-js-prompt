@@ -2,6 +2,7 @@ export const tsStrictModeMigrationGuide = {
     title: "TypeScript Strict Mode in 2026: A Step-by-Step Migration Guide for Legacy JavaScript Codebases",
     description: "A comprehensive, step-by-step engineering guide to migrating legacy JavaScript codebases to TypeScript strict mode incrementally in 2026.",
     slug: "typescript-strict-mode-migration-guide-legacy-javascript",
+    publishedAt: "2026-08-17T10:10:02+05:30",
     category: "TypeScript",
     type: "static",
     author: "Principal Engineer",

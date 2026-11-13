@@ -2,6 +2,7 @@ export const reactCompilerVsManualMemo = {
     title: "React Compiler vs Manual Memoization: Do You Still Need useMemo and useCallback in 2026",
     description: "An in-depth analysis of the React Compiler's static analysis engine, internal caching slots, mutation bailouts, and the remaining edge cases for manual hooks in 2026.",
     slug: "react-compiler-vs-usememo-usecallback-2026",
+    publishedAt: "2026-08-17T10:05:21+05:30",
     category: "React",
     type: "static",
     author: "Senior Frontend Engineer",
