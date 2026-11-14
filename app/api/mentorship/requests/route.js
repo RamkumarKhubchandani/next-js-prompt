@@ -4,6 +4,7 @@ import { authOptions } from '@/app/lib/auth';
 import connectDB from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 import OneToOneCall from '@/models/OneToOneCall';
+import HireInquiry from '@/models/HireInquiry';
 
 export async function GET(request) {
     try {
@@ -15,10 +16,11 @@ export async function GET(request) {
 
         await connectDB();
 
-        // Fetch requests from both MentorshipRequest and OneToOneCall (Book Free Session / 15-min calls)
-        const [mentorshipRequests, callRequests] = await Promise.all([
+        // Fetch requests from MentorshipRequest, OneToOneCall (Book Free Session / 15-min calls), and HireInquiry
+        const [mentorshipRequests, callRequests, hireInquiries] = await Promise.all([
             MentorshipRequest.find({}).sort({ createdAt: -1 }).limit(100).lean(),
-            OneToOneCall.find({}).sort({ createdAt: -1 }).limit(100).lean()
+            OneToOneCall.find({}).sort({ createdAt: -1 }).limit(100).lean(),
+            HireInquiry.find({}).sort({ createdAt: -1 }).limit(100).lean()
         ]);
 
         const normalizedCalls = (callRequests || []).map(call => {
@@ -68,8 +70,55 @@ export async function GET(request) {
             requestType: 'Mentorship'
         }));
 
-        // Merge both and sort newest first
-        const allRequests = [...normalizedMentorship, ...normalizedCalls].sort(
+        const normalizedHire = (hireInquiries || []).map(hire => {
+            const roleName = hire.roleSlug
+                ? hire.roleSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+                : 'Project / Developer';
+
+            const goal = `Hire: ${roleName}${hire.company ? ` (${hire.company})` : ''}`;
+            const urgency = hire.startDate ? `Start: ${hire.startDate}` : 'Flexible timeline';
+            const budget = hire.budget || 'Flexible';
+            const stack = hire.roleSlug ? [hire.roleSlug] : ['Client Project'];
+
+            const statusMap = {
+                pending: 'pending',
+                sent: 'contacted',
+                contacted: 'contacted',
+                matched: 'matched',
+                closed: 'completed',
+                completed: 'completed',
+                cancelled: 'cancelled'
+            };
+            const mappedStatus = statusMap[hire.status] || hire.status || 'pending';
+
+            const descriptionParts = [
+                hire.company ? `Company: ${hire.company}` : '',
+                hire.message,
+                hire.sourceUrl ? `Source: ${hire.sourceUrl}` : ''
+            ].filter(Boolean);
+
+            return {
+                _id: String(hire._id),
+                name: hire.name || 'Anonymous Client',
+                email: hire.email,
+                phone: String(hire.phone || ''),
+                budget,
+                goal,
+                urgency,
+                stack,
+                description: descriptionParts.join(' | '),
+                status: mappedStatus,
+                rawStatus: hire.status,
+                company: hire.company || '',
+                roleSlug: hire.roleSlug || '',
+                sourceUrl: hire.sourceUrl || '',
+                requestType: 'Hire Inquiry',
+                createdAt: hire.createdAt
+            };
+        });
+
+        // Merge all and sort newest first
+        const allRequests = [...normalizedMentorship, ...normalizedCalls, ...normalizedHire].sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
 
@@ -113,6 +162,15 @@ export async function PATCH(request) {
             updated = await OneToOneCall.findByIdAndUpdate(
                 id,
                 { status: callStatus },
+                { new: true }
+            );
+        }
+
+        // If not found in OneToOneCall, update HireInquiry
+        if (!updated) {
+            updated = await HireInquiry.findByIdAndUpdate(
+                id,
+                { status },
                 { new: true }
             );
         }
