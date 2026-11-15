@@ -415,8 +415,104 @@ export function validateApplyPhotoUrl(photoUrl, isDraftSave = false, cloudName =
 }
 
 /**
- * HTML-escape helper to prevent XSS in email templates and HTML renderings.
+ * Expert application & leads helpers.
  */
+/**
+ * Validates WhatsApp number.
+ * Format: E.164-like: optional +, 8-15 digits.
+ * When isDraftSave is true, skip required check (still validate if present).
+ */
+export function validateWhatsApp(value, isDraftSave = false) {
+  const trimmed = value ? String(value).trim() : '';
+  if (!trimmed) {
+    if (isDraftSave) return null;
+    return 'Enter a valid WhatsApp number with country code.';
+  }
+  const normalized = trimmed.replace(/[\s\-()]/g, '');
+  if (!/^\+?[0-9]{8,15}$/.test(normalized)) {
+    return 'Enter a valid WhatsApp number with country code (8-15 digits).';
+  }
+  return null;
+}
+
+/**
+ * Parses and validates years of professional experience.
+ * Strips non-digits, max 2 digits. Valid range 0-40.
+ */
+export function parseYearsExperience(value, isDraftSave = false) {
+  if (value === '' || value === null || value === undefined) {
+    if (isDraftSave) return { valid: true, value: 0, error: null };
+    return { valid: false, value: 0, error: 'Enter your years of experience (0-40).' };
+  }
+  const cleanStr = String(value).replace(/\D/g, '').slice(0, 2);
+  if (!cleanStr) {
+    if (isDraftSave) return { valid: true, value: 0, error: null };
+    return { valid: false, value: 0, error: 'Enter your years of experience (0-40).' };
+  }
+  const num = parseInt(cleanStr, 10);
+  if (isNaN(num) || num < 0 || num > 40) {
+    return { valid: false, value: num, error: 'Years of experience must be between 0 and 40.' };
+  }
+  return { valid: true, value: num, error: null };
+}
+
+/**
+ * Maps server-side error path/field to client form field keys.
+ */
+export function mapServerErrorToField(field) {
+  if (!field) return null;
+  const normalized = String(field).trim();
+  if (normalized.includes('mentor.headline')) return 'mentor.headline';
+  if (normalized.includes('mentor.summary')) return 'mentor.summary';
+  if (normalized.includes('hire.headline')) return 'hire.headline';
+  if (normalized.includes('hire.summary')) return 'hire.summary';
+  if (normalized.includes('skill')) return 'skillIds';
+  if (normalized.includes('location')) return 'locationId';
+  if (normalized.includes('yearsExperience')) return 'yearsExperience';
+  if (normalized.includes('photo')) return 'photoUrl';
+  if (normalized.includes('displayName') || normalized.includes('name')) return 'displayName';
+  if (normalized.includes('whatsapp')) return 'whatsapp';
+  if (normalized.includes('role')) return 'roles';
+  if (normalized.includes('project')) return 'projects';
+  if (normalized.includes('consent')) return 'consents';
+  return normalized;
+}
+
+export const ALLOWED_REQUEST_STATUSES = [
+  'pending',
+  'contacted',
+  'matched',
+  'completed',
+  'cancelled',
+  'sent',
+  'closed',
+];
+
+export function isValidObjectId(id) {
+  if (!id) return false;
+  return /^[0-9a-fA-F]{24}$/.test(String(id));
+}
+
+export function evaluateAdminAccess(session, adminEmailsEnv = process.env.ADMIN_EMAILS) {
+  if (!session || !session.user) {
+    return { status: 401, error: 'Unauthorized', authorized: false };
+  }
+  if (session.user.role === 'admin') {
+    return { status: 200, error: null, authorized: true };
+  }
+  const userEmail = (session.user.email || '').trim().toLowerCase();
+  if (userEmail && adminEmailsEnv) {
+    const adminEmails = adminEmailsEnv
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    if (adminEmails.includes(userEmail)) {
+      return { status: 200, error: null, authorized: true };
+    }
+  }
+  return { status: 403, error: 'Forbidden', authorized: false };
+}
+
 export function escapeHtml(str) {
   if (!str) return '';
   return String(str)

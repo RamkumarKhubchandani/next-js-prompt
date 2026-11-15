@@ -13,9 +13,61 @@ import {
   validateConsents,
   validateApplyRoles,
   validateApplyPhotoUrl,
+  validateWhatsApp,
+  parseYearsExperience,
+  escapeHtml,
   hasUrls,
   REQUIRED_CONSENTS,
 } from '@/app/lib/experts';
+import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
+
+async function sendApplicantNotification({ to, subject, html, text }) {
+  const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'no-reply@outlinedev.com';
+
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      let resendFrom = 'onboarding@resend.dev';
+      if (process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes('@gmail.com') && !process.env.EMAIL_FROM.includes('@example.com')) {
+        resendFrom = process.env.EMAIL_FROM;
+      }
+      await resend.emails.send({
+        from: `OutlineDev <${resendFrom}>`,
+        to,
+        subject,
+        html,
+        text,
+      });
+      return;
+    } catch (err) {
+      console.warn('Resend notification error:', err.message);
+    }
+  }
+
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASSWORD;
+  if (emailUser && emailPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass },
+      });
+      await transporter.sendMail({
+        from: `"OutlineDev" <${fromEmail}>`,
+        to,
+        subject,
+        html,
+        text,
+      });
+      return;
+    } catch (err) {
+      console.warn('Nodemailer notification error:', err.message);
+    }
+  }
+
+  console.log(`[EMAIL NOTIFICATION] To: ${to} | Subject: ${subject}`);
+}
 
 export async function GET(req) {
   try {
@@ -92,6 +144,7 @@ export async function POST(req) {
     // Whitelist and sanitize submitted data
     const {
       displayName,
+      whatsapp,
       photoUrl,
       photoPublicId,
       roles,
@@ -100,10 +153,10 @@ export async function POST(req) {
       isDraftSave,
     } = body;
 
-    // 1. Roles validation: when isDraftSave is true, skip roles-required check (still validate any value that is present)
+    // 1. Roles validation
     const rolesErr = validateApplyRoles(roles, Boolean(isDraftSave));
     if (rolesErr) {
-      return NextResponse.json({ error: rolesErr }, { status: 400 });
+      return NextResponse.json({ error: rolesErr, field: 'roles' }, { status: 400 });
     }
 
     // 2. Display Name validation: 2-60 chars, no < >, no URLs
@@ -111,31 +164,38 @@ export async function POST(req) {
     if (!isDraftSave || cleanName) {
       if (cleanName.length < 2 || cleanName.length > 60) {
         return NextResponse.json(
-          { error: 'Display name must be between 2 and 60 characters.' },
+          { error: 'Display name must be between 2 and 60 characters.', field: 'displayName' },
           { status: 400 }
         );
       }
       if (/[<>]/.test(cleanName)) {
         return NextResponse.json(
-          { error: 'Display name cannot contain angle brackets (< or >).' },
+          { error: 'Display name cannot contain angle brackets (< or >).', field: 'displayName' },
           { status: 400 }
         );
       }
       if (hasUrls(cleanName)) {
         return NextResponse.json(
-          { error: 'Display name cannot contain website URLs.' },
+          { error: 'Display name cannot contain website URLs.', field: 'displayName' },
           { status: 400 }
         );
       }
     }
 
-    // 3. photoUrl validation: when isDraftSave is true, skip photoUrl check (still validate any value that is present)
-    const photoErr = validateApplyPhotoUrl(photoUrl, Boolean(isDraftSave));
-    if (photoErr) {
-      return NextResponse.json({ error: photoErr }, { status: 400 });
+    // 3. WhatsApp validation: optional +, 8-15 digits. Not required for draft saves.
+    const cleanWhatsapp = whatsapp ? String(whatsapp).trim() : '';
+    const whatsappErr = validateWhatsApp(cleanWhatsapp, Boolean(isDraftSave));
+    if (whatsappErr) {
+      return NextResponse.json({ error: whatsappErr, field: 'whatsapp' }, { status: 400 });
     }
 
-    // 4. github, linkedin and project urls validation
+    // 4. photoUrl validation
+    const photoErr = validateApplyPhotoUrl(photoUrl, Boolean(isDraftSave));
+    if (photoErr) {
+      return NextResponse.json({ error: photoErr, field: 'photoUrl' }, { status: 400 });
+    }
+
+    // 5. github, linkedin and project urls validation
     function validateHttpsHost(urlStr, requiredHost, fieldName) {
       if (!urlStr) return null;
       try {
@@ -156,17 +216,17 @@ export async function POST(req) {
     }
 
     const githubErr = validateHttpsHost(draft?.links?.github, 'github.com', 'GitHub URL');
-    if (githubErr) return NextResponse.json({ error: githubErr }, { status: 400 });
+    if (githubErr) return NextResponse.json({ error: githubErr, field: 'draft.links.github' }, { status: 400 });
 
     const linkedinErr = validateHttpsHost(draft?.links?.linkedin, 'linkedin.com', 'LinkedIn URL');
-    if (linkedinErr) return NextResponse.json({ error: linkedinErr }, { status: 400 });
+    if (linkedinErr) return NextResponse.json({ error: linkedinErr, field: 'draft.links.linkedin' }, { status: 400 });
 
     if (Array.isArray(draft?.projects)) {
       for (let i = 0; i < draft.projects.length; i++) {
         const p = draft.projects[i];
         if (p?.url) {
           const projUrlErr = validateHttpsHost(p.url, null, `Project #${i + 1} URL`);
-          if (projUrlErr) return NextResponse.json({ error: projUrlErr }, { status: 400 });
+          if (projUrlErr) return NextResponse.json({ error: projUrlErr, field: 'projects' }, { status: 400 });
         }
       }
     }
@@ -176,34 +236,40 @@ export async function POST(req) {
       // Role specific headline and summary validation
       if (roles.includes('mentor')) {
         const headlineErr = validateHeadline(draft?.mentor?.headline);
-        if (headlineErr) return NextResponse.json({ error: `Mentor Headline: ${headlineErr}` }, { status: 400 });
+        if (headlineErr) return NextResponse.json({ error: `Mentor Headline: ${headlineErr}`, field: 'mentor.headline' }, { status: 400 });
 
         const summaryErr = validateSummary(draft?.mentor?.summary, 'Mentor');
-        if (summaryErr) return NextResponse.json({ error: summaryErr }, { status: 400 });
+        if (summaryErr) return NextResponse.json({ error: summaryErr, field: 'mentor.summary' }, { status: 400 });
       }
 
       if (roles.includes('hire')) {
         const headlineErr = validateHeadline(draft?.hire?.headline);
-        if (headlineErr) return NextResponse.json({ error: `Hire Headline: ${headlineErr}` }, { status: 400 });
+        if (headlineErr) return NextResponse.json({ error: `Hire Headline: ${headlineErr}`, field: 'hire.headline' }, { status: 400 });
 
         const summaryErr = validateSummary(draft?.hire?.summary, 'Hire Developer');
-        if (summaryErr) return NextResponse.json({ error: summaryErr }, { status: 400 });
+        if (summaryErr) return NextResponse.json({ error: summaryErr, field: 'hire.summary' }, { status: 400 });
       }
 
       // Skills validation (max 8, must exist in SKILLS)
       const skillsErr = validateSkillIds(draft?.skillIds);
-      if (skillsErr) return NextResponse.json({ error: skillsErr }, { status: 400 });
+      if (skillsErr) return NextResponse.json({ error: skillsErr, field: 'skillIds' }, { status: 400 });
 
       // Location validation
       const locErr = validateLocation(draft?.locationId, draft?.locationOther);
-      if (locErr) return NextResponse.json({ error: locErr }, { status: 400 });
+      if (locErr) return NextResponse.json({ error: locErr, field: 'locationId' }, { status: 400 });
+
+      // Years of experience validation (0-40)
+      const yrsParsed = parseYearsExperience(draft?.yearsExperience, false);
+      if (!yrsParsed.valid) {
+        return NextResponse.json({ error: yrsParsed.error, field: 'yearsExperience' }, { status: 400 });
+      }
 
       // Projects validation (max 3)
       const projErr = validateProjects(draft?.projects);
-      if (projErr) return NextResponse.json({ error: projErr }, { status: 400 });
+      if (projErr) return NextResponse.json({ error: projErr, field: 'projects' }, { status: 400 });
     }
 
-    // 5. Merge consents instead of overwriting; never wipe existing consent timestamps
+    // Merge consents instead of overwriting; never wipe existing consent timestamps
     const existingConsents = existingApp?.consents
       ? typeof existingApp.consents.toObject === 'function'
         ? existingApp.consents.toObject()
@@ -221,10 +287,10 @@ export async function POST(req) {
 
     if (!isDraftSave) {
       const consentErr = validateConsents(updatedConsents);
-      if (consentErr) return NextResponse.json({ error: consentErr }, { status: 400 });
+      if (consentErr) return NextResponse.json({ error: consentErr, field: 'consents' }, { status: 400 });
     }
 
-    // 6. Cap array lengths and string lengths
+    // Cap array lengths and string lengths
     const cleanTopics = Array.isArray(draft?.mentor?.topics)
       ? draft.mentor.topics.slice(0, 10).map((t) => String(t || '').trim().slice(0, 60)).filter(Boolean)
       : [];
@@ -267,7 +333,7 @@ export async function POST(req) {
       locationId: draft?.locationId || 'online',
       locationOther: cleanLocationOther,
       timezone: cleanTimezone,
-      yearsExperience: Number(draft?.yearsExperience) || 0,
+      yearsExperience: draft?.yearsExperience !== undefined && draft?.yearsExperience !== '' ? (Number(draft?.yearsExperience) || 0) : 0,
       languages: cleanLanguages,
       links: {
         github: draft?.links?.github ? String(draft.links.github).trim() : '',
@@ -292,6 +358,7 @@ export async function POST(req) {
         ...(cleanName && { displayName: cleanName }),
         ...(photoUrl && { photoUrl }),
         ...(photoPublicId && { photoPublicId }),
+        ...(cleanWhatsapp !== undefined && { whatsapp: cleanWhatsapp }),
         ...(Array.isArray(roles) && roles.length > 0 && { roles }),
         draft: cleanDraft,
         consents: updatedConsents,
@@ -320,6 +387,30 @@ export async function POST(req) {
       updateDoc,
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
+
+    // On a new submission (status: pending, not drafts), email the owner
+    if (!isDraftSave) {
+      try {
+        const adminTo = process.env.ADMIN_EMAIL || process.env.HIRE_INQUIRY_TO || 'hi@outlinedev.com';
+        const safeName = escapeHtml(cleanName || 'Developer');
+        await sendApplicantNotification({
+          to: adminTo,
+          subject: `New expert application from ${cleanName || 'Developer'}`,
+          text: `A new expert application has been submitted by ${cleanName || 'Developer'}.\n\nReview application: https://www.outlinedev.com/admin/mentors`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; color: #1e293b;">
+              <h2 style="color: #059669;">New Expert Application 🎯</h2>
+              <p>A new expert application has been submitted by <strong>${safeName}</strong> on OutlineDev.</p>
+              <p><a href="https://www.outlinedev.com/admin/mentors" style="display: inline-block; padding: 10px 18px; background-color: #059669; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">Review in Admin Mentors</a></p>
+              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #64748b;">OutlineDev Notification System</p>
+            </div>
+          `,
+        });
+      } catch (emailErr) {
+        console.warn('Failed to send admin notification email:', emailErr.message);
+      }
+    }
 
     return NextResponse.json({ success: true, application });
   } catch (error) {

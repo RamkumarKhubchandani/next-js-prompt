@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo";
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2, GraduationCap } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2, GraduationCap, ShieldCheck } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSession, signOut } from "next-auth/react";
@@ -45,6 +45,22 @@ export function Header({ showNav = true }) {
     const [connectConfig, setConnectConfig] = useState({ headline: '', subhead: '', defaultNotes: '', ctaLabel: '' });
     const menuRef = useRef(null);
     const [mounted, setMounted] = useState(false);
+    const [hasMentorApplication, setHasMentorApplication] = useState(false);
+
+    useEffect(() => {
+        if (session?.user) {
+            fetch('/api/mentor/apply')
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data?.application) {
+                        setHasMentorApplication(true);
+                    }
+                })
+                .catch(() => {});
+        } else {
+            setHasMentorApplication(false);
+        }
+    }, [session?.user]);
 
     useEffect(() => {
         setMounted(true);
@@ -319,6 +335,20 @@ export function Header({ showNav = true }) {
                                                         <GraduationCap size={16} className="mr-3 text-purple-400" />
                                                         Become Mentor
                                                     </Link>
+                                                    {hasMentorApplication && (
+                                                        <Link
+                                                            href="/expert-dashboard"
+                                                            onClick={() => {
+                                                                setUserMenuOpen(false);
+                                                                startNavigate("/expert-dashboard");
+                                                            }}
+                                                            className="flex items-center px-4 py-3 text-sm text-emerald-400 hover:bg-dark-700 hover:text-emerald-300 transition-colors font-medium"
+                                                        >
+                                                            <ShieldCheck size={16} className="mr-3 text-emerald-400" />
+                                                            Expert Dashboard
+                                                        </Link>
+                                                    )}
+                                                    
                                                     <Link
                                                         href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
                                                         onClick={() => setUserMenuOpen(false)}
@@ -507,6 +537,19 @@ export function Header({ showNav = true }) {
                                                                     <Loader2 size={18} className="ml-auto animate-spin text-light-300" />
                                                                 )}
                                                             </Link>
+                                                            {hasMentorApplication && (
+                                                                <Link
+                                                                    href="/expert-dashboard"
+                                                                    onClick={() => {
+                                                                        setMobileMenuOpen(false);
+                                                                        startNavigate("/expert-dashboard");
+                                                                    }}
+                                                                    className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-emerald-400 hover:bg-dark-800 hover:text-emerald-300"
+                                                                >
+                                                                    <ShieldCheck size={20} className="mr-3 text-emerald-400" />
+                                                                    Expert Dashboard
+                                                                </Link>
+                                                            )}
                                                             <Link
                                                                 href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
                                                                 onClick={() => setMobileMenuOpen(false)}

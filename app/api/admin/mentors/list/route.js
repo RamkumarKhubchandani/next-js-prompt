@@ -21,11 +21,28 @@ export async function GET(req) {
 
     const filter = status && status !== 'all' ? { status } : {};
 
-    const applications = await MentorApplication.find(filter)
-      .populate('userId', 'name email username image')
-      .sort({ createdAt: -1 });
+    const [applications, counts] = await Promise.all([
+      MentorApplication.find(filter)
+        .populate('userId', 'name email username image')
+        .sort({ createdAt: -1 }),
+      Promise.all([
+        MentorApplication.countDocuments({ status: 'pending' }),
+        MentorApplication.countDocuments({ status: 'draft' }),
+        MentorApplication.countDocuments({ status: 'approved' }),
+        MentorApplication.countDocuments({ status: 'rejected' }),
+        MentorApplication.countDocuments({ status: 'hidden' }),
+        MentorApplication.countDocuments({}),
+      ]).then(([pending, draft, approved, rejected, hidden, all]) => ({
+        pending,
+        draft,
+        approved,
+        rejected,
+        hidden,
+        all,
+      })),
+    ]);
 
-    return NextResponse.json({ applications });
+    return NextResponse.json({ applications, counts });
   } catch (error) {
     console.error('Fetch Applications Error:', error);
     return NextResponse.json({ error: 'Server Error' }, { status: 500 });
