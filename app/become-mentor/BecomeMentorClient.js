@@ -24,11 +24,14 @@ import {
   ArrowRight,
   ArrowLeft,
   Save,
+  Lock,
+  Phone,
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { SKILLS, LOCATIONS } from "../lib/seo-data";
+import { validateWhatsApp, parseYearsExperience, mapServerErrorToField } from "../lib/experts";
 
 function countWords(str) {
   if (!str) return 0;
@@ -42,7 +45,8 @@ export default function BecomeMentorClient() {
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState("");
-  const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [stepSummaryError, setStepSummaryError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [applicationStatus, setApplicationStatus] = useState(null);
   const [rejectionNote, setRejectionNote] = useState("");
@@ -52,6 +56,7 @@ export default function BecomeMentorClient() {
   // Form State
   const [formData, setFormData] = useState({
     displayName: "",
+    whatsapp: "",
     photoUrl: "",
     photoPublicId: "",
     roles: ["mentor"],
@@ -74,7 +79,7 @@ export default function BecomeMentorClient() {
       locationId: "online",
       locationOther: { country: "", city: "" },
       timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
-      yearsExperience: 4,
+      yearsExperience: "", // Default value is empty string (not 0 or 4)
       languages: ["English"],
       links: { github: "", linkedin: "" },
       projects: [],
@@ -88,6 +93,56 @@ export default function BecomeMentorClient() {
       receiveLeads: false,
     },
   });
+
+  // Step field key groupings for error dots and step jumping
+  const step1FieldKeys = [
+    "displayName",
+    "whatsapp",
+    "photoUrl",
+    "roles",
+    "skillIds",
+    "locationId",
+    "locationOther",
+    "yearsExperience",
+    "draft.links.github",
+    "draft.links.linkedin",
+  ];
+  const step2FieldKeys = ["mentor.headline", "mentor.summary", "hire.headline", "hire.summary"];
+  const step3FieldKeys = ["projects", "consents"];
+
+  const stepHasErrors = (stepNum) => {
+    const activeKeys = Object.keys(fieldErrors).filter((k) => Boolean(fieldErrors[k]));
+    if (stepNum === 1) return activeKeys.some((k) => step1FieldKeys.includes(k) || k.startsWith("draft.links"));
+    if (stepNum === 2) return activeKeys.some((k) => step2FieldKeys.includes(k));
+    if (stepNum === 3) return activeKeys.some((k) => step3FieldKeys.includes(k) || k.startsWith("projects"));
+    return false;
+  };
+
+  const scrollToFirstError = (errors) => {
+    const keys = Object.keys(errors);
+    if (keys.length === 0) return;
+    const firstKey = keys[0];
+    const elementId = `field-${firstKey.replace(/\./g, "-")}`;
+    setTimeout(() => {
+      const el = document.getElementById(elementId) || document.querySelector(`[data-field="${firstKey}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (typeof el.focus === "function") {
+          el.focus();
+        }
+      }
+    }, 60);
+  };
+
+  const clearFieldError = (fieldName) => {
+    if (fieldErrors[fieldName]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[fieldName];
+        return next;
+      });
+    }
+  };
 
   // Load existing application
   useEffect(() => {
@@ -109,8 +164,16 @@ export default function BecomeMentorClient() {
             setHasPublished(Boolean(app.published));
 
             const draftData = app.draft || {};
+            const loadedYears =
+              draftData.yearsExperience !== undefined && draftData.yearsExperience !== null
+                ? String(draftData.yearsExperience)
+                : app.yearsExperience !== undefined && app.yearsExperience !== null
+                ? String(app.yearsExperience)
+                : "";
+
             setFormData({
               displayName: app.displayName || session.user?.name || "",
+              whatsapp: app.whatsapp || "",
               photoUrl: app.photoUrl || session.user?.image || "",
               photoPublicId: app.photoPublicId || "",
               roles: Array.isArray(app.roles) && app.roles.length > 0 ? app.roles : ["mentor"],
@@ -139,7 +202,7 @@ export default function BecomeMentorClient() {
                 locationId: draftData.locationId || "online",
                 locationOther: draftData.locationOther || { country: app.country || "", city: app.city || "" },
                 timezone: draftData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
-                yearsExperience: draftData.yearsExperience || app.yearsExperience || 3,
+                yearsExperience: loadedYears,
                 languages: draftData.languages?.length ? draftData.languages : ["English"],
                 links: {
                   github: draftData.links?.github || app.github || "",
@@ -180,6 +243,7 @@ export default function BecomeMentorClient() {
     const file = e.target.files?.[0];
     if (!file) return;
     setPhotoError("");
+    clearFieldError("photoUrl");
 
     const allowed = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     if (!allowed.includes(file.type.toLowerCase())) {
@@ -220,7 +284,7 @@ export default function BecomeMentorClient() {
 
   // Toggle roles
   const toggleRole = (role) => {
-    setFormError("");
+    clearFieldError("roles");
     setFormData((prev) => {
       const exists = prev.roles.includes(role);
       let newRoles;
@@ -236,7 +300,7 @@ export default function BecomeMentorClient() {
 
   // Toggle skills (max 8)
   const toggleSkill = (skillId) => {
-    setFormError("");
+    clearFieldError("skillIds");
     setFormData((prev) => {
       const current = prev.draft.skillIds;
       if (current.includes(skillId)) {
@@ -246,7 +310,7 @@ export default function BecomeMentorClient() {
         };
       }
       if (current.length >= 8) {
-        setFormError("You can choose a maximum of 8 primary skills.");
+        setFieldErrors((f) => ({ ...f, skillIds: "You can choose a maximum of 8 primary skills." }));
         return prev;
       }
       return {
@@ -259,6 +323,7 @@ export default function BecomeMentorClient() {
   // Project management (max 3)
   const addProject = () => {
     if (formData.draft.projects.length >= 3) return;
+    clearFieldError("projects");
     setFormData((prev) => ({
       ...prev,
       draft: {
@@ -269,6 +334,7 @@ export default function BecomeMentorClient() {
   };
 
   const updateProject = (index, field, value) => {
+    clearFieldError("projects");
     setFormData((prev) => {
       const list = [...prev.draft.projects];
       list[index] = { ...list[index], [field]: value };
@@ -280,6 +346,7 @@ export default function BecomeMentorClient() {
   };
 
   const removeProject = (index) => {
+    clearFieldError("projects");
     setFormData((prev) => ({
       ...prev,
       draft: {
@@ -289,95 +356,124 @@ export default function BecomeMentorClient() {
     }));
   };
 
-  // Step Validation
+  // Step 1 Validation
   const validateStep1 = () => {
-    setFormError("");
+    const errors = {};
+
     if (!formData.displayName.trim()) {
-      setFormError("Please enter your real full name.");
-      return false;
+      errors.displayName = "Add your full name.";
+    } else if (formData.displayName.trim().length < 2 || formData.displayName.trim().length > 60) {
+      errors.displayName = "Full name must be between 2 and 60 characters.";
+    } else if (/[<>]/.test(formData.displayName)) {
+      errors.displayName = "Full name cannot contain angle brackets (< or >).";
     }
+
     if (!formData.photoUrl) {
-      setFormError("Please upload a real professional photo of yourself.");
-      return false;
+      errors.photoUrl = "Upload a professional photo of yourself.";
     }
-    if (formData.draft.skillIds.length === 0) {
-      setFormError("Please select at least 1 primary skill.");
-      return false;
+
+    const whatsappErr = validateWhatsApp(formData.whatsapp, false);
+    if (whatsappErr) {
+      errors.whatsapp = whatsappErr;
     }
+
+    if (!Array.isArray(formData.roles) || formData.roles.length === 0) {
+      errors.roles = "Select at least one offering: Mentor, Contract Work, or both.";
+    }
+
+    if (!formData.draft.skillIds || formData.draft.skillIds.length === 0) {
+      errors.skillIds = "Choose 1 to 8 skills.";
+    } else if (formData.draft.skillIds.length > 8) {
+      errors.skillIds = "Choose at most 8 primary skills.";
+    }
+
     if (formData.draft.locationId === "other") {
-      if (!formData.draft.locationOther.country.trim() || !formData.draft.locationOther.city.trim()) {
-        setFormError("Please enter both your Country and City.");
-        return false;
+      if (!formData.draft.locationOther?.country?.trim() || !formData.draft.locationOther?.city?.trim()) {
+        errors.locationId = "Enter both your Country and City.";
       }
     }
+
+    const yrsCheck = parseYearsExperience(formData.draft.yearsExperience, false);
+    if (!yrsCheck.valid) {
+      errors.yearsExperience = yrsCheck.error || "Enter your years of experience (0-40).";
+    }
+
+    setFieldErrors((prev) => ({ ...prev, ...errors }));
+    const errorCount = Object.keys(errors).length;
+    if (errorCount > 0) {
+      setStepSummaryError(`Please fix ${errorCount} ${errorCount === 1 ? "field" : "fields"} in this step before continuing.`);
+      scrollToFirstError(errors);
+      return false;
+    }
+
+    setStepSummaryError("");
     return true;
   };
 
+  // Step 2 Validation
   const validateStep2 = () => {
-    setFormError("");
+    const errors = {};
+
     if (formData.roles.includes("mentor")) {
-      const h = formData.draft.mentor.headline.trim();
+      const h = formData.draft.mentor.headline?.trim() || "";
       if (!h) {
-        setFormError("Mentor Headline is required.");
-        return false;
+        errors["mentor.headline"] = "Headline is required.";
+      } else if (h.length > 70) {
+        errors["mentor.headline"] = `Headline is ${h.length} characters, the maximum is 70.`;
+      } else if (/<[^>]*>/g.test(h)) {
+        errors["mentor.headline"] = "Headline must be plain text without HTML.";
+      } else if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
+        errors["mentor.headline"] = "Headline cannot contain website links or URLs.";
       }
-      if (h.length > 70) {
-        setFormError(`Mentor Headline cannot exceed 70 characters (currently ${h.length}).`);
-        return false;
-      }
-      if (/<[^>]*>/g.test(h)) {
-        setFormError("Mentor Headline must be plain text without HTML.");
-        return false;
-      }
-      if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
-        setFormError("Mentor Headline cannot contain website links or URLs.");
-        return false;
-      }
+
       const words = countWords(formData.draft.mentor.summary);
       if (words < 80 || words > 300) {
-        setFormError(`Mentor Summary must be between 80 and 300 words (currently ${words} words).`);
-        return false;
+        errors["mentor.summary"] = `Mentor summary must be between 80 and 300 words (currently ${words} words).`;
       }
     }
 
     if (formData.roles.includes("hire")) {
-      const h = formData.draft.hire.headline.trim();
+      const h = formData.draft.hire.headline?.trim() || "";
       if (!h) {
-        setFormError("Hire Headline is required.");
-        return false;
+        errors["hire.headline"] = "Headline is required.";
+      } else if (h.length > 70) {
+        errors["hire.headline"] = `Headline is ${h.length} characters, the maximum is 70.`;
+      } else if (/<[^>]*>/g.test(h)) {
+        errors["hire.headline"] = "Headline must be plain text without HTML.";
+      } else if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
+        errors["hire.headline"] = "Headline cannot contain website links or URLs.";
       }
-      if (h.length > 70) {
-        setFormError(`Hire Headline cannot exceed 70 characters (currently ${h.length}).`);
-        return false;
-      }
-      if (/<[^>]*>/g.test(h)) {
-        setFormError("Hire Headline must be plain text without HTML.");
-        return false;
-      }
-      if (/https?:\/\/|www\.|\.(?:com|org|net|io|dev|app)\b/i.test(h)) {
-        setFormError("Hire Headline cannot contain website links or URLs.");
-        return false;
-      }
+
       const words = countWords(formData.draft.hire.summary);
       if (words < 80 || words > 300) {
-        setFormError(`Hire Summary must be between 80 and 300 words (currently ${words} words).`);
-        return false;
+        errors["hire.summary"] = `Hire summary must be between 80 and 300 words (currently ${words} words).`;
       }
     }
+
+    setFieldErrors((prev) => ({ ...prev, ...errors }));
+    const errorCount = Object.keys(errors).length;
+    if (errorCount > 0) {
+      setStepSummaryError(`Please fix ${errorCount} ${errorCount === 1 ? "field" : "fields"} in this step before continuing.`);
+      scrollToFirstError(errors);
+      return false;
+    }
+
+    setStepSummaryError("");
     return true;
   };
 
+  // Step 3 Validation
   const validateStep3 = () => {
-    setFormError("");
-    // Check projects
+    const errors = {};
+
     for (let i = 0; i < formData.draft.projects.length; i++) {
       const p = formData.draft.projects[i];
       if (!p.title.trim() || !p.description.trim()) {
-        setFormError(`Project #${i + 1} requires both a title and a one-line description.`);
-        return false;
+        errors.projects = `Project #${i + 1} requires both a title and description.`;
+        break;
       }
     }
-    // Check all 6 consents
+
     const consents = formData.consents;
     if (
       !consents.publicProfile ||
@@ -387,32 +483,56 @@ export default function BecomeMentorClient() {
       !consents.mayInterview ||
       !consents.receiveLeads
     ) {
-      setFormError("You must agree to all 6 declaration statements before submitting.");
+      errors.consents = "You must agree to all 6 declaration statements before submitting.";
+    }
+
+    setFieldErrors((prev) => ({ ...prev, ...errors }));
+    const errorCount = Object.keys(errors).length;
+    if (errorCount > 0) {
+      setStepSummaryError(`Please fix ${errorCount} ${errorCount === 1 ? "field" : "fields"} in this step before submitting.`);
+      scrollToFirstError(errors);
       return false;
     }
+
+    setStepSummaryError("");
     return true;
   };
 
   // Submit Application
   const handleSaveOrSubmit = async (isDraftSave = false) => {
     if (!isDraftSave) {
-      if (!validateStep1() || !validateStep2() || !validateStep3()) {
+      const s1 = validateStep1();
+      const s2 = validateStep2();
+      const s3 = validateStep3();
+      if (!s1 || !s2 || !s3) {
+        if (!s1) setStep(1);
+        else if (!s2) setStep(2);
+        else if (!s3) setStep(3);
         return;
       }
     }
 
     setSaving(true);
-    setFormError("");
+    setFieldErrors({});
+    setStepSummaryError("");
     setSuccessMessage("");
 
     try {
+      // Parse years to number on submit
+      const parsedYrs = parseYearsExperience(formData.draft.yearsExperience, isDraftSave);
+      const payload = {
+        ...formData,
+        draft: {
+          ...formData.draft,
+          yearsExperience: parsedYrs.valid ? parsedYrs.value : (Number(formData.draft.yearsExperience) || 0),
+        },
+        isDraftSave,
+      };
+
       const res = await fetch("/api/mentor/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          isDraftSave,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -421,13 +541,23 @@ export default function BecomeMentorClient() {
         setSuccessMessage(
           isDraftSave
             ? "Your draft has been saved successfully."
-            : "Your application has been submitted for review! OutlineDev admins will review your draft."
+            : "Your application has been submitted for review! OutlineDev admins will review your profile."
         );
       } else {
-        setFormError(data.error || "Failed to submit. Please review your fields.");
+        if (data.field) {
+          const mappedField = mapServerErrorToField(data.field);
+          setFieldErrors({ [mappedField]: data.error });
+          setStepSummaryError(data.error);
+          scrollToFirstError({ [mappedField]: data.error });
+          if (step1FieldKeys.includes(mappedField)) setStep(1);
+          else if (step2FieldKeys.includes(mappedField)) setStep(2);
+          else if (step3FieldKeys.includes(mappedField)) setStep(3);
+        } else {
+          setStepSummaryError(data.error || "Failed to submit. Please review your fields.");
+        }
       }
     } catch (err) {
-      setFormError("Network error. Please try again.");
+      setStepSummaryError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -525,23 +655,19 @@ export default function BecomeMentorClient() {
     );
   }
 
-  const filteredSkills = SKILLS.filter((s) => {
-    const q = skillSearch.toLowerCase().trim();
-    if (!q) return true;
-    return s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q);
-  });
+  const filteredSkills = SKILLS.filter((s) => s.name.toLowerCase().includes(skillSearch.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-emerald-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 w-full">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1">
         {/* Status Banner */}
         {applicationStatus && applicationStatus !== "draft" && (
-          <div className="mb-8 p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 border-slate-800">
+          <div className="mb-8 p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span
-                className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                className={`text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${
                   applicationStatus === "approved"
                     ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
                     : applicationStatus === "pending"
@@ -605,7 +731,7 @@ export default function BecomeMentorClient() {
           </p>
         </div>
 
-        {/* Step Indicator */}
+        {/* Step Indicator with Red Dot on Error */}
         <div className="flex items-center justify-center gap-3 mb-10">
           {[
             { num: 1, label: "Basics & Skills" },
@@ -620,7 +746,7 @@ export default function BecomeMentorClient() {
                 if (s.num === 2 && validateStep1()) setStep(2);
                 if (s.num === 3 && validateStep1() && validateStep2()) setStep(3);
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition relative ${
                 step === s.num
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                   : step > s.num
@@ -628,25 +754,32 @@ export default function BecomeMentorClient() {
                   : "bg-slate-900/40 text-slate-500 border border-slate-800/60"
               }`}
             >
-              <span
-                className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
-                  step === s.num ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-400"
-                }`}
-              >
-                {s.num}
+              <span className="relative flex items-center justify-center">
+                <span
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
+                    step === s.num ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-400"
+                  }`}
+                >
+                  {s.num}
+                </span>
+                {stepHasErrors(s.num) && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-slate-950 animate-pulse" />
+                )}
               </span>
               <span>{s.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Error & Success Alerts */}
-        {formError && (
+        {/* Step Summary Error Alert */}
+        {stepSummaryError && (
           <div className="mb-6 p-4 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-sm flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-            <span>{formError}</span>
+            <span>{stepSummaryError}</span>
           </div>
         )}
+
+        {/* Success Alert */}
         {successMessage && (
           <div className="mb-6 p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-200 text-sm flex items-start gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
@@ -667,11 +800,15 @@ export default function BecomeMentorClient() {
               </div>
 
               {/* Photo Upload */}
-              <div>
+              <div id="field-photoUrl" data-field="photoUrl">
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                   Real Professional Photo *
                 </label>
-                <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-950 rounded-xl border border-slate-800">
+                <div
+                  className={`flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-950 rounded-xl border transition ${
+                    fieldErrors.photoUrl ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                  }`}
+                >
                   <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-800 border-2 border-emerald-500/30 shrink-0">
                     {formData.photoUrl ? (
                       <img
@@ -706,12 +843,18 @@ export default function BecomeMentorClient() {
                       JPG, PNG, or WebP. Max 5MB. Automatic face centering will be applied.
                     </p>
                     {photoError && <p className="text-xs text-red-400 mt-1">{photoError}</p>}
+                    {fieldErrors.photoUrl && (
+                      <p className="text-xs text-red-400 mt-1.5 font-medium flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {fieldErrors.photoUrl}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Real Full Name */}
-              <div>
+              <div id="field-displayName" data-field="displayName">
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                   Real Full Name *
                 </label>
@@ -719,27 +862,81 @@ export default function BecomeMentorClient() {
                   type="text"
                   required
                   value={formData.displayName}
-                  onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, displayName: e.target.value });
+                    clearFieldError("displayName");
+                  }}
                   placeholder="e.g., Alex Johnson"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                  className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                    fieldErrors.displayName
+                      ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                      : "border-slate-700 focus:border-emerald-500"
+                  }`}
                 />
+                {fieldErrors.displayName && (
+                  <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.displayName}
+                  </p>
+                )}
+              </div>
+
+              {/* WhatsApp Number (Private) */}
+              <div id="field-whatsapp" data-field="whatsapp">
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                  WhatsApp number (with country code) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.whatsapp}
+                  onChange={(e) => {
+                    setFormData({ ...formData, whatsapp: e.target.value });
+                    clearFieldError("whatsapp");
+                  }}
+                  placeholder="e.g., +91 98765 43210 or +1 415 555 2671"
+                  className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                    fieldErrors.whatsapp
+                      ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                      : "border-slate-700 focus:border-emerald-500"
+                  }`}
+                />
+                {fieldErrors.whatsapp && (
+                  <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.whatsapp}
+                  </p>
+                )}
+                <p className="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
+                  <Lock className="w-3 h-3 text-slate-400 shrink-0" />
+                  <span>Private. Only OutlineDev uses this to contact you about requests. It is never shown on the website.</span>
+                </p>
+                <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span>OutlineDev may contact me by WhatsApp or email about requests</span>
+                </p>
               </div>
 
               {/* Location & Timezone Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div id="field-locationId" data-field="locationId">
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                     Primary Location *
                   </label>
                   <select
                     value={formData.draft.locationId}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         draft: { ...formData.draft, locationId: e.target.value },
-                      })
-                    }
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                      });
+                      clearFieldError("locationId");
+                    }}
+                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      fieldErrors.locationId
+                        ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                        : "border-slate-700 focus:border-emerald-500"
+                    }`}
                   >
                     <option value="online">Online / Remote (Global)</option>
                     {LOCATIONS.map((loc) => (
@@ -749,6 +946,12 @@ export default function BecomeMentorClient() {
                     ))}
                     <option value="other">Other (Specify below)</option>
                   </select>
+                  {fieldErrors.locationId && (
+                    <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {fieldErrors.locationId}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -778,15 +981,16 @@ export default function BecomeMentorClient() {
                     <input
                       type="text"
                       value={formData.draft.locationOther.country}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             locationOther: { ...formData.draft.locationOther, country: e.target.value },
                           },
-                        })
-                      }
+                        });
+                        clearFieldError("locationId");
+                      }}
                       placeholder="e.g., Canada"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
                     />
@@ -796,15 +1000,16 @@ export default function BecomeMentorClient() {
                     <input
                       type="text"
                       value={formData.draft.locationOther.city}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             locationOther: { ...formData.draft.locationOther, city: e.target.value },
                           },
-                        })
-                      }
+                        });
+                        clearFieldError("locationId");
+                      }}
                       placeholder="e.g., Toronto"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
                     />
@@ -814,23 +1019,35 @@ export default function BecomeMentorClient() {
 
               {/* Experience & Languages */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
+                <div id="field-yearsExperience" data-field="yearsExperience">
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                     Years of Professional Experience *
                   </label>
                   <input
-                    type="number"
-                    min="0"
-                    max="40"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="e.g. 5"
                     value={formData.draft.yearsExperience}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const clean = e.target.value.replace(/\D/g, "").slice(0, 2);
                       setFormData({
                         ...formData,
-                        draft: { ...formData.draft, yearsExperience: Number(e.target.value) },
-                      })
-                    }
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                        draft: { ...formData.draft, yearsExperience: clean },
+                      });
+                      clearFieldError("yearsExperience");
+                    }}
+                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      fieldErrors.yearsExperience
+                        ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                        : "border-slate-700 focus:border-emerald-500"
+                    }`}
                   />
+                  {fieldErrors.yearsExperience && (
+                    <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {fieldErrors.yearsExperience}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
@@ -855,16 +1072,14 @@ export default function BecomeMentorClient() {
               </div>
 
               {/* Primary Skills Selection */}
-              <div>
+              <div id="field-skillIds" data-field="skillIds">
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Core Technical Skills * (Max 8)
+                    Primary Technical Skills * (1 to 8 skills)
                   </label>
                   <span
-                    className={`text-xs font-bold px-2 py-0.5 rounded ${
-                      formData.draft.skillIds.length === 8
-                        ? "bg-amber-950 text-amber-300 border border-amber-800"
-                        : "bg-slate-800 text-slate-400"
+                    className={`text-xs ${
+                      formData.draft.skillIds.length > 8 ? "text-red-400 font-bold" : "text-slate-400"
                     }`}
                   >
                     {formData.draft.skillIds.length} / 8 selected
@@ -877,7 +1092,11 @@ export default function BecomeMentorClient() {
                   onChange={(e) => setSkillSearch(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white mb-3 focus:outline-none focus:border-emerald-500"
                 />
-                <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-xl border border-slate-800">
+                <div
+                  className={`flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-xl border transition ${
+                    fieldErrors.skillIds ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                  }`}
+                >
                   {filteredSkills.map((s) => {
                     const isSelected = formData.draft.skillIds.includes(s.id);
                     return (
@@ -897,6 +1116,12 @@ export default function BecomeMentorClient() {
                     );
                   })}
                 </div>
+                {fieldErrors.skillIds && (
+                  <p className="mt-1.5 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.skillIds}
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-end pt-4 border-t border-slate-800">
@@ -925,7 +1150,7 @@ export default function BecomeMentorClient() {
               </div>
 
               {/* Role Selectors */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div id="field-roles" data-field="roles" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div
                   onClick={() => toggleRole("mentor")}
                   className={`p-4 rounded-xl border cursor-pointer transition ${
@@ -984,6 +1209,12 @@ export default function BecomeMentorClient() {
                   </p>
                 </div>
               </div>
+              {fieldErrors.roles && (
+                <p className="text-xs text-red-400 font-medium flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  {fieldErrors.roles}
+                </p>
+              )}
 
               {/* MENTOR SECTION */}
               {formData.roles.includes("mentor") && (
@@ -996,14 +1227,14 @@ export default function BecomeMentorClient() {
                     <span className="text-xs text-slate-400">Headline max 70 chars • Summary 80-300 words</span>
                   </div>
 
-                  <div>
+                  <div id="field-mentor-headline" data-field="mentor.headline">
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs text-slate-300 font-semibold">
                         Mentor Headline * (Plain text, no URLs)
                       </label>
                       <span
                         className={`text-[11px] ${
-                          formData.draft.mentor.headline.length > 70 ? "text-red-400" : "text-slate-500"
+                          formData.draft.mentor.headline.length > 70 ? "text-red-400 font-bold" : "text-slate-500"
                         }`}
                       >
                         {formData.draft.mentor.headline.length} / 70
@@ -1013,21 +1244,32 @@ export default function BecomeMentorClient() {
                       type="text"
                       maxLength={70}
                       value={formData.draft.mentor.headline}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             mentor: { ...formData.draft.mentor, headline: e.target.value },
                           },
-                        })
-                      }
+                        });
+                        clearFieldError("mentor.headline");
+                      }}
                       placeholder="e.g., Senior Full-Stack Engineer & React Systems Coach"
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                        fieldErrors["mentor.headline"]
+                          ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                          : "border-slate-700 focus:border-emerald-500"
+                      }`}
                     />
+                    {fieldErrors["mentor.headline"] && (
+                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {fieldErrors["mentor.headline"]}
+                      </p>
+                    )}
                   </div>
 
-                  <div>
+                  <div id="field-mentor-summary" data-field="mentor.summary">
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs text-slate-300 font-semibold">
                         Mentorship Summary * (80 - 300 words)
@@ -1046,18 +1288,29 @@ export default function BecomeMentorClient() {
                     <textarea
                       rows={4}
                       value={formData.draft.mentor.summary}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             mentor: { ...formData.draft.mentor, summary: e.target.value },
                           },
-                        })
-                      }
+                        });
+                        clearFieldError("mentor.summary");
+                      }}
                       placeholder="Describe your teaching approach, background, how you guide learners through complex problems, and how 1-on-1 calls are conducted..."
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                        fieldErrors["mentor.summary"]
+                          ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                          : "border-slate-700 focus:border-emerald-500"
+                      }`}
                     />
+                    {fieldErrors["mentor.summary"] && (
+                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {fieldErrors["mentor.summary"]}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1104,25 +1357,25 @@ export default function BecomeMentorClient() {
                 </div>
               )}
 
-              {/* HIRE SECTION */}
+              {/* HIRE DEVELOPER SECTION */}
               {formData.roles.includes("hire") && (
                 <div className="p-5 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                     <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                       <Briefcase className="w-4 h-4" />
-                      <span>Hire Developer Details</span>
+                      <span>Contract Developer Details</span>
                     </span>
                     <span className="text-xs text-slate-400">Headline max 70 chars • Summary 80-300 words</span>
                   </div>
 
-                  <div>
+                  <div id="field-hire-headline" data-field="hire.headline">
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs text-slate-300 font-semibold">
-                        Hire Headline * (Plain text, no URLs)
+                        Contract Developer Headline * (Plain text, no URLs)
                       </label>
                       <span
                         className={`text-[11px] ${
-                          formData.draft.hire.headline.length > 70 ? "text-red-400" : "text-slate-500"
+                          formData.draft.hire.headline.length > 70 ? "text-red-400 font-bold" : "text-slate-500"
                         }`}
                       >
                         {formData.draft.hire.headline.length} / 70
@@ -1132,21 +1385,32 @@ export default function BecomeMentorClient() {
                       type="text"
                       maxLength={70}
                       value={formData.draft.hire.headline}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             hire: { ...formData.draft.hire, headline: e.target.value },
                           },
-                        })
-                      }
-                      placeholder="e.g., Contract Full-Stack Engineer: Next.js & Cloud Architecture"
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-cyan-500 focus:outline-none"
+                        });
+                        clearFieldError("hire.headline");
+                      }}
+                      placeholder="e.g., Staff Next.js Architect & Performance Specialist"
+                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                        fieldErrors["hire.headline"]
+                          ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                          : "border-slate-700 focus:border-cyan-500"
+                      }`}
                     />
+                    {fieldErrors["hire.headline"] && (
+                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {fieldErrors["hire.headline"]}
+                      </p>
+                    )}
                   </div>
 
-                  <div>
+                  <div id="field-hire-summary" data-field="hire.summary">
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs text-slate-300 font-semibold">
                         Hire Summary * (80 - 300 words)
@@ -1165,18 +1429,29 @@ export default function BecomeMentorClient() {
                     <textarea
                       rows={4}
                       value={formData.draft.hire.summary}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           draft: {
                             ...formData.draft,
                             hire: { ...formData.draft.hire, summary: e.target.value },
                           },
-                        })
-                      }
+                        });
+                        clearFieldError("hire.summary");
+                      }}
                       placeholder="Describe what client systems you build, performance and architecture standards, testing practices, and how you deliver software on time..."
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white text-sm focus:border-cyan-500 focus:outline-none"
+                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                        fieldErrors["hire.summary"]
+                          ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
+                          : "border-slate-700 focus:border-cyan-500"
+                      }`}
                     />
+                    {fieldErrors["hire.summary"] && (
+                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        {fieldErrors["hire.summary"]}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1200,7 +1475,8 @@ export default function BecomeMentorClient() {
                     </div>
                     <div>
                       <label className="block text-xs text-slate-300 mb-1">Availability</label>
-                      <select
+                      <input
+                        type="text"
                         value={formData.draft.hire.availability}
                         onChange={(e) =>
                           setFormData({
@@ -1211,12 +1487,9 @@ export default function BecomeMentorClient() {
                             },
                           })
                         }
+                        placeholder="Part-time (15-20 hrs/week), Full-time"
                         className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-cyan-500"
-                      >
-                        <option value="Part-time (10-20 hrs/week)">Part-time (10-20 hrs/week)</option>
-                        <option value="Full-time (30-40 hrs/week)">Full-time (30-40 hrs/week)</option>
-                        <option value="Ad-hoc / Hourly Consultation">Ad-hoc / Hourly Consultation</option>
-                      </select>
+                      />
                     </div>
                   </div>
                 </div>
@@ -1251,7 +1524,7 @@ export default function BecomeMentorClient() {
               <div className="border-b border-slate-800 pb-4">
                 <h2 className="text-xl font-bold text-white">Step 3: Proof of Work & Declarations</h2>
                 <p className="text-xs text-slate-400 mt-1">
-                  Add projects you've built, professional profiles, and mandatory platform consents.
+                  Add projects you&apos;ve built, professional profiles, and mandatory platform consents.
                 </p>
               </div>
 
@@ -1273,8 +1546,8 @@ export default function BecomeMentorClient() {
                         },
                       })
                     }
-                    placeholder="https://github.com/yourusername"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                    placeholder="https://github.com/username"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -1293,23 +1566,23 @@ export default function BecomeMentorClient() {
                         },
                       })
                     }
-                    placeholder="https://linkedin.com/in/yourusername"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              {/* Projects (Max 3) */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
+              {/* Key Projects */}
+              <div id="field-projects" data-field="projects">
+                <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                    Showcase Projects (Max 3)
+                    Key Projects (up to 3)
                   </label>
                   {formData.draft.projects.length < 3 && (
                     <button
                       type="button"
                       onClick={addProject}
-                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition flex items-center gap-1 border border-slate-700"
+                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-lg text-xs font-semibold transition flex items-center gap-1"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Add Project</span>
@@ -1318,23 +1591,27 @@ export default function BecomeMentorClient() {
                 </div>
 
                 {formData.draft.projects.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-800 text-center">
-                    No projects added yet. Click &quot;Add Project&quot; to showcase your code.
+                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    No projects added yet. Click &apos;Add Project&apos; to showcase client deliverables or open-source software.
                   </p>
                 ) : (
                   <div className="space-y-3">
                     {formData.draft.projects.map((proj, idx) => (
                       <div
                         key={idx}
-                        className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3 relative"
+                        className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3 relative"
                       >
-                        <button
-                          type="button"
-                          onClick={() => removeProject(idx)}
-                          className="absolute top-3 right-3 text-slate-500 hover:text-red-400 transition"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-400">Project #{idx + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeProject(idx)}
+                            className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>Remove</span>
+                          </button>
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <label className="block text-[11px] text-slate-400 mb-1">Project Title *</label>
@@ -1343,7 +1620,7 @@ export default function BecomeMentorClient() {
                               required
                               value={proj.title}
                               onChange={(e) => updateProject(idx, "title", e.target.value)}
-                              placeholder="e.g. Distributed Task Queue"
+                              placeholder="e.g., Enterprise E-Commerce Platform"
                               className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
                             />
                           </div>
@@ -1375,10 +1652,22 @@ export default function BecomeMentorClient() {
                     ))}
                   </div>
                 )}
+                {fieldErrors.projects && (
+                  <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.projects}
+                  </p>
+                )}
               </div>
 
               {/* Mandatory Consents */}
-              <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div
+                id="field-consents"
+                data-field="consents"
+                className={`p-5 rounded-xl bg-slate-950 border transition space-y-3 ${
+                  fieldErrors.consents ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                }`}
+              >
                 <div className="flex items-center gap-2 mb-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-400" />
                   <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -1422,17 +1711,25 @@ export default function BecomeMentorClient() {
                     <input
                       type="checkbox"
                       checked={Boolean(formData.consents[item.key])}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           consents: { ...formData.consents, [item.key]: e.target.checked },
-                        })
-                      }
+                        });
+                        clearFieldError("consents");
+                      }}
                       className="w-4 h-4 mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500"
                     />
                     <span>{item.text}</span>
                   </label>
                 ))}
+
+                {fieldErrors.consents && (
+                  <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.consents}
+                  </p>
+                )}
               </div>
 
               {/* Mandatory Notice Before Submit */}

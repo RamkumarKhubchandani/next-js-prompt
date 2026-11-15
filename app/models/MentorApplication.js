@@ -100,6 +100,12 @@ const mentorApplicationSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    // Top-level private WhatsApp number for OutlineDev contact only
+    whatsapp: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     // Dual role capabilities
     roles: {
       type: [String],

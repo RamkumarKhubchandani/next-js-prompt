@@ -23,6 +23,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/mentor-dashboard',
+        destination: '/expert-dashboard',
+        permanent: true,
+      },
+      {
         source: '/techblogs',
         destination: '/blogs',
         permanent: true,

@@ -31,6 +31,7 @@ function countWords(str) {
 
 export default function AdminMentorsPage() {
   const [applications, setApplications] = useState([]);
+  const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("pending"); // Default to pending as requested
   const [expandedId, setExpandedId] = useState(null);
@@ -49,6 +50,7 @@ export default function AdminMentorsPage() {
       const data = await res.json();
       if (res.ok) {
         setApplications(data.applications || []);
+        if (data.counts) setCounts(data.counts);
       } else {
         console.error(data.error);
         setApplications([]);
@@ -132,6 +134,7 @@ export default function AdminMentorsPage() {
         <div className="flex flex-wrap gap-2 mb-8 border-b border-slate-800 pb-4">
           {[
             { id: "pending", label: "Pending Review" },
+            { id: "draft", label: "Drafts" },
             { id: "all", label: "All Applicants" },
             { id: "approved", label: "Approved (Live)" },
             { id: "rejected", label: "Rejected" },
@@ -146,7 +149,18 @@ export default function AdminMentorsPage() {
                   : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
               }`}
             >
-              {tab.label}
+              <span>{tab.label}</span>
+              {typeof counts[tab.id] === 'number' && (
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    filter === tab.id
+                      ? "bg-slate-950/20 text-slate-950"
+                      : "bg-slate-800 text-slate-300"
+                  }`}
+                >
+                  {counts[tab.id]}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -162,8 +176,8 @@ export default function AdminMentorsPage() {
             <h3 className="text-base font-semibold text-slate-300">No applications in this category</h3>
             <p className="text-xs text-slate-500 mt-1">
               {filter === "pending"
-                ? "All submitted mentor and hire applications have been reviewed."
-                : "No expert profile records found for the selected filter."}
+                ? "All submitted mentor and hire applications have been reviewed. Draft applications can be found under Drafts or All Applicants."
+                : "No expert profile records found for the selected filter. Draft applications can be found under Drafts or All Applicants."}
             </p>
           </div>
         ) : (
@@ -216,6 +230,11 @@ export default function AdminMentorsPage() {
                         </div>
                         <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-3">
                           <span>{app.userId?.email || "No email"}</span>
+                          {app.whatsapp && (
+                            <span className="text-emerald-400 font-medium">
+                              💬 WhatsApp: {app.whatsapp} (Private)
+                            </span>
+                          )}
                           {app.phone && <span>• Phone: {app.phone}</span>}
                           <span>
                             • Applied: {new Date(app.createdAt).toLocaleDateString()}
