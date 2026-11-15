@@ -478,6 +478,41 @@ export function mapServerErrorToField(field) {
   return normalized;
 }
 
+export const ALLOWED_REQUEST_STATUSES = [
+  'pending',
+  'contacted',
+  'matched',
+  'completed',
+  'cancelled',
+  'sent',
+  'closed',
+];
+
+export function isValidObjectId(id) {
+  if (!id) return false;
+  return /^[0-9a-fA-F]{24}$/.test(String(id));
+}
+
+export function evaluateAdminAccess(session, adminEmailsEnv = process.env.ADMIN_EMAILS) {
+  if (!session || !session.user) {
+    return { status: 401, error: 'Unauthorized', authorized: false };
+  }
+  if (session.user.role === 'admin') {
+    return { status: 200, error: null, authorized: true };
+  }
+  const userEmail = (session.user.email || '').trim().toLowerCase();
+  if (userEmail && adminEmailsEnv) {
+    const adminEmails = adminEmailsEnv
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    if (adminEmails.includes(userEmail)) {
+      return { status: 200, error: null, authorized: true };
+    }
+  }
+  return { status: 403, error: 'Forbidden', authorized: false };
+}
+
 export function escapeHtml(str) {
   if (!str) return '';
   return String(str)

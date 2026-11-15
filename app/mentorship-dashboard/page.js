@@ -1,23 +1,41 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Phone, Mail, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 export default function MentorshipDashboard() {
+    const { data: session, status: authStatus } = useSession();
+    const router = useRouter();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
 
     useEffect(() => {
-        fetchRequests();
-    }, []);
+        if (authStatus === 'unauthenticated') {
+            router.replace('/login?callbackUrl=/mentorship-dashboard');
+            return;
+        }
+        if (authStatus === 'authenticated') {
+            fetchRequests();
+        }
+    }, [authStatus]);
 
     const fetchRequests = async () => {
         try {
             const response = await fetch('/api/mentorship/requests');
+            if (response.status === 401) {
+                router.replace('/login?callbackUrl=/mentorship-dashboard');
+                return;
+            }
+            if (response.status === 403) {
+                router.replace('/');
+                return;
+            }
             const data = await response.json();
             if (data.success) {
                 setRequests(data.requests);
@@ -36,6 +54,14 @@ export default function MentorshipDashboard() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, status })
             });
+            if (response.status === 401) {
+                router.replace('/login?callbackUrl=/mentorship-dashboard');
+                return;
+            }
+            if (response.status === 403) {
+                router.replace('/');
+                return;
+            }
             if (response.ok) {
                 fetchRequests(); // Refresh list
             }
@@ -43,6 +69,22 @@ export default function MentorshipDashboard() {
             console.error('Error updating status:', error);
         }
     };
+
+    if (authStatus === 'loading') {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-dark-900 flex flex-col justify-between">
+                <Header />
+                <div className="flex-1 flex items-center justify-center py-24">
+                    <div className="animate-spin w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full mx-auto"></div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (authStatus === 'unauthenticated') {
+        return null;
+    }
 
     const filteredRequests = requests.filter(r => {
         const matchesStatus = filter === 'all' || r.status === filter;

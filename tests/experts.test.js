@@ -22,6 +22,9 @@ import {
   rankExperts,
   hireSlugToSkillId,
   hasUrls,
+  ALLOWED_REQUEST_STATUSES,
+  isValidObjectId,
+  evaluateAdminAccess,
 } from '../app/lib/experts.js';
 import { DEFAULT_EXPERT } from '../app/lib/default-expert.js';
 import { safeJsonLd } from '../app/lib/schema-helpers.js';
@@ -910,5 +913,115 @@ describe('15. Expert Leads Access Isolation (/api/expert/leads)', () => {
     // Neither caller ever receives the other caller's leads
     assert.ok(!callerALeads.some((l) => l._id === 'lead3'));
     assert.ok(!callerBLeads.some((l) => l._id === 'lead1' || l._id === 'lead2'));
+  });
+});
+
+describe('16. Mentorship Requests Authorization & Guard (/api/mentorship/requests)', () => {
+  // Test handler simulation matching /api/mentorship/requests GET & PATCH implementation
+  async function simulateMentorshipRequestsGet(session, adminEmailsEnv) {
+    if (!session) {
+      return { status: 401, error: 'Unauthorized' };
+    }
+    const authResult = evaluateAdminAccess(session, adminEmailsEnv);
+    if (!authResult.authorized) {
+      return { status: 403, error: 'Forbidden' };
+    }
+    return { status: 200, success: true, requests: [] };
+  }
+
+  async function simulateMentorshipRequestsPatch(session, body, adminEmailsEnv) {
+    if (!session) {
+      return { status: 401, error: 'Unauthorized' };
+    }
+    const authResult = evaluateAdminAccess(session, adminEmailsEnv);
+    if (!authResult.authorized) {
+      return { status: 403, error: 'Forbidden' };
+    }
+    const { id, status } = body || {};
+    if (!status || !ALLOWED_REQUEST_STATUSES.includes(status)) {
+      return { status: 400, error: 'Invalid status' };
+    }
+    if (!isValidObjectId(id)) {
+      return { status: 400, error: 'Invalid id' };
+    }
+    return { status: 200, success: true };
+  }
+
+  test('non-admin session gets 403 from GET', async () => {
+    const nonAdminSession = {
+      user: { id: 'user123', email: 'regular@example.com', role: 'user' },
+    };
+    const res = await simulateMentorshipRequestsGet(nonAdminSession, 'admin@example.com');
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.error, 'Forbidden');
+  });
+
+  test('non-admin session gets 403 from PATCH', async () => {
+    const nonAdminSession = {
+      user: { id: 'user123', email: 'regular@example.com', role: 'user' },
+    };
+    const res = await simulateMentorshipRequestsPatch(
+      nonAdminSession,
+      { id: '507f1f77bcf86cd799439011', status: 'contacted' },
+      'admin@example.com'
+    );
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.error, 'Forbidden');
+  });
+
+  test('unauthenticated request (no session) gets 401 from GET and PATCH', async () => {
+    const getRes = await simulateMentorshipRequestsGet(null);
+    assert.strictEqual(getRes.status, 401);
+
+    const patchRes = await simulateMentorshipRequestsPatch(null, { id: '507f1f77bcf86cd799439011', status: 'contacted' });
+    assert.strictEqual(patchRes.status, 401);
+  });
+
+  test('admin session is allowed on GET', async () => {
+    const adminSessionRole = {
+      user: { id: 'admin1', email: 'boss@corp.com', role: 'admin' },
+    };
+    const resRole = await simulateMentorshipRequestsGet(adminSessionRole, '');
+    assert.strictEqual(resRole.status, 200);
+
+    const adminSessionEmail = {
+      user: { id: 'admin2', email: 'owner@outlinedev.com', role: 'user' },
+    };
+    const resEmail = await simulateMentorshipRequestsGet(adminSessionEmail, 'owner@outlinedev.com,other@admin.com');
+    assert.strictEqual(resEmail.status, 200);
+  });
+
+  test('admin session on PATCH validates status and id', async () => {
+    const adminSession = {
+      user: { id: 'admin1', email: 'boss@corp.com', role: 'admin' },
+    };
+
+    // Invalid status
+    const resInvalidStatus = await simulateMentorshipRequestsPatch(
+      adminSession,
+      { id: '507f1f77bcf86cd799439011', status: 'invalid_status' },
+      ''
+    );
+    assert.strictEqual(resInvalidStatus.status, 400);
+    assert.strictEqual(resInvalidStatus.error, 'Invalid status');
+
+    // Invalid ObjectId
+    const resInvalidId = await simulateMentorshipRequestsPatch(
+      adminSession,
+      { id: 'not-an-object-id', status: 'contacted' },
+      ''
+    );
+    assert.strictEqual(resInvalidId.status, 400);
+    assert.strictEqual(resInvalidId.error, 'Invalid id');
+
+    // Valid ObjectId and all allowed statuses
+    for (const validStatus of ALLOWED_REQUEST_STATUSES) {
+      const res = await simulateMentorshipRequestsPatch(
+        adminSession,
+        { id: '507f1f77bcf86cd799439011', status: validStatus },
+        ''
+      );
+      assert.strictEqual(res.status, 200);
+    }
   });
 });

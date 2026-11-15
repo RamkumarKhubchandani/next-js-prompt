@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/auth';
+import { requireAdmin, adminOnly } from '@/app/lib/requireAdmin';
 import connectDB from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 import OneToOneCall from '@/models/OneToOneCall';
 import HireInquiry from '@/models/HireInquiry';
+import { ALLOWED_REQUEST_STATUSES, isValidObjectId } from '@/app/lib/experts';
 
 export async function GET(request) {
     try {
@@ -12,6 +14,12 @@ export async function GET(request) {
         const session = await getServerSession(authOptions);
         if (!session) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const adminSession = await requireAdmin(session);
+        const forbidden = adminOnly(adminSession);
+        if (forbidden) {
+            return forbidden;
         }
 
         await connectDB();
@@ -145,7 +153,22 @@ export async function PATCH(request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { id, status } = await request.json();
+        const adminSession = await requireAdmin(session);
+        const forbidden = adminOnly(adminSession);
+        if (forbidden) {
+            return forbidden;
+        }
+
+        const body = await request.json().catch(() => ({}));
+        const { id, status } = body || {};
+
+        if (!status || !ALLOWED_REQUEST_STATUSES.includes(status)) {
+            return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+        }
+
+        if (!isValidObjectId(id)) {
+            return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
+        }
 
         await connectDB();
 
