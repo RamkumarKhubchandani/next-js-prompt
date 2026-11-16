@@ -63,6 +63,7 @@ export function Footer() {
           <div className="flex flex-col gap-6">
             <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Services</h3>
             <ul className="space-y-4">
+              <li><Link href="/full-stack-live-course" prefetch={false} className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Full Stack Live Course</Link></li>
               <li><Link href="/mentorship" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">1-on-1 Mentorship</Link></li>
               <li><Link href="/code-review" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Code Review</Link></li>
               <li><Link href="/mock-interviews" className="text-gray-400 hover:text-brand-primary hover:pl-2 transition-all duration-300 block text-sm">Mock Interviews</Link></li>
