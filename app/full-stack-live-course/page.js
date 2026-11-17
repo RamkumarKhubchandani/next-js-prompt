@@ -1092,7 +1092,7 @@ export default function FullStackLiveCoursePage() {
                 </tr>
                 <tr>
                   <td className="py-3.5 px-5 font-bold text-white">Code Review</td>
-                  <td className="py-3.5 px-5 text-emerald-300 font-semibold">1-on-1 GitHub PR review by Principal Engineer</td>
+                  <td className="py-3.5 px-5 text-emerald-300 font-semibold">Code review on your capstone project by Principal Engineer</td>
                   <td className="py-3.5 px-5 text-slate-400">None</td>
                   <td className="py-3.5 px-5 text-slate-400">None</td>
                   <td className="py-3.5 px-5">Automated tests or peer reviews</td>

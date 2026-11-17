@@ -434,7 +434,7 @@ export const COURSE_INDIA = {
             'Production deployment: hosting frontend on Vercel/Netlify, backend on a host with persistent disk storage for SQLite (e.g. Render/Railway/VPS)',
             'Setting up production environment variables and CORS headers for live domains',
             'Writing a professional README: architecture diagram, features, tech stack decisions, and setup instructions',
-            'Curating your GitHub profile to showcase real code commits, branches, and PR reviews',
+            'Curating your GitHub profile to showcase real code commits and branches',
             'Technical interview fundamentals: how to explain your architecture decisions, trade-offs (e.g. why SQLite over MongoDB), and live coding tips',
             'Next steps: self-directed learning roadmap (TypeScript, testing, performance, databases)',
           ],
