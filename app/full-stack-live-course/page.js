@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { safeJsonLd } from '@/app/lib/schema-helpers';
-import { COURSE_INDIA, isTodo, getUpcomingBatches } from '@/app/lib/course-india';
+import { COURSE_INDIA, isSet, isTodo, getUpcomingBatches } from '@/app/lib/course-india';
 import { COURSE_FAQS } from '@/app/lib/course-faq';
 import { REAL_REVIEWS, GOOGLE_RATING, formatAsOfDate } from '@/app/lib/reviews';
 import { VIDEOS } from '@/app/lib/videos';
@@ -138,7 +138,7 @@ export default function FullStackLiveCoursePage() {
         dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }}
       />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-24">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-32 space-y-24">
         {/* ========================================================================= */}
         {/* SECTION 1: HERO WITH FACTS BOX                                            */}
         {/* ========================================================================= */}
@@ -231,9 +231,9 @@ export default function FullStackLiveCoursePage() {
               </span>
               <p className="text-lg font-black text-white flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{COURSE_INDIA.refund}</span>
+                <span>Full refund</span>
               </p>
-              <p className="text-xs text-slate-400 mt-0.5">Satisfaction guaranteed</p>
+              <p className="text-xs text-slate-400 mt-0.5">{COURSE_INDIA.refundWindow}</p>
             </div>
 
             <div>
@@ -247,6 +247,19 @@ export default function FullStackLiveCoursePage() {
                 {COURSE_INDIA.instructor.title}
               </p>
             </div>
+
+            {isSet(COURSE_INDIA.sessionTimings) && (
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  Session Timings
+                </span>
+                <p className="text-sm font-bold text-white flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Morning or Evening</span>
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">10 AM–12 PM or 5–7 PM IST</p>
+              </div>
+            )}
           </div>
 
           {/* Quick CTA Actions */}
@@ -578,9 +591,91 @@ export default function FullStackLiveCoursePage() {
 
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
               <span className="text-xs font-mono font-bold text-emerald-400 block">04 • Final 15 Mins</span>
-              <h3 className="text-base font-bold text-white">Git Commit & PR Review</h3>
+              <h3 className="text-base font-bold text-white">Git Commit & Progress</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                You commit your working code to your GitHub repo, push the branch, and receive actionable code review feedback before the next session.
+                You commit your working code to your GitHub repo and push the branch. Code review on your capstone project (Day 14 and Day 19).
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* SECTION: INSIDE A LIVE CLASS                                              */}
+        {/* ========================================================================= */}
+        <section aria-labelledby="inside-live-class-heading" className="space-y-8">
+          <div className="space-y-2">
+            <h2 id="inside-live-class-heading" className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Inside a Live Class
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-3xl">
+              Real sessions from our live batches. Shown with the students&apos; permission.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <figure className="space-y-2">
+              <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <img
+                  src="/course-proof/live-class-1.webp"
+                  width={1310}
+                  height={492}
+                  loading="lazy"
+                  decoding="async"
+                  alt="Live full-stack class on a video call with students, led by Ramkumar Khubchandani"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <figcaption className="text-xs text-slate-400 text-center font-medium">
+                Live batch session
+              </figcaption>
+            </figure>
+
+            <figure className="space-y-2">
+              <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <img
+                  src="/course-proof/live-class-2.webp"
+                  width={1350}
+                  height={508}
+                  loading="lazy"
+                  decoding="async"
+                  alt="Mentor and students together in a live coding session"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <figcaption className="text-xs text-slate-400 text-center font-medium">
+                Students and mentor
+              </figcaption>
+            </figure>
+
+            <figure className="space-y-2">
+              <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <img
+                  src="/course-proof/live-class-screenshare.webp"
+                  width={1218}
+                  height={684}
+                  loading="lazy"
+                  decoding="async"
+                  alt="Mentor sharing his screen to explain code to a student during a live class"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <figcaption className="text-xs text-slate-400 text-center font-medium">
+                Screen-share code walkthrough
+              </figcaption>
+            </figure>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <div className="space-y-2">
+              <YouTubeFacade id="CBIWcozgDFM" title="Live session recording" />
+              <p className="text-xs text-slate-400 text-center font-medium">
+                Live session recording
+              </p>
+            </div>
+            <div className="space-y-2">
+              <YouTubeFacade id="cVMBc8hK3-8" title="Live session recording" />
+              <p className="text-xs text-slate-400 text-center font-medium">
+                Live session recording
               </p>
             </div>
           </div>
@@ -690,6 +785,35 @@ export default function FullStackLiveCoursePage() {
               </p>
             </div>
           </div>
+
+          {/* Direct Contact Block */}
+          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-bold text-white">Have questions before booking?</h3>
+              <p className="text-xs text-slate-400 mt-0.5">Reach out directly to discuss syllabus details, batch schedule, or prerequisites.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {isSet(COURSE_INDIA.whatsappNumber) && (
+                <a
+                  href="https://wa.me/918237320942?text=Hi%2C%20I%20want%20to%20join%20the%20Full%20Stack%20Live%20Course"
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition"
+                >
+                  <span>Chat on WhatsApp</span>
+                </a>
+              )}
+              {isSet(COURSE_INDIA.callNumber) && (
+                <a
+                  href={`tel:${COURSE_INDIA.callNumber}`}
+                  rel="noopener"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition"
+                >
+                  <span>Call us: {COURSE_INDIA.callNumberDisplay}</span>
+                </a>
+              )}
+            </div>
+          </div>
         </section>
 
         {/* ========================================================================= */}
@@ -698,7 +822,7 @@ export default function FullStackLiveCoursePage() {
         <section aria-labelledby="fee-refund-heading" className="space-y-8">
           <div className="space-y-2">
             <h2 id="fee-refund-heading" className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Course Fee & Full Refund Guarantee
+              Course Fee and Refund
             </h2>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-3xl">
               Transparent, all-inclusive pricing with zero hidden charges.
@@ -726,8 +850,32 @@ export default function FullStackLiveCoursePage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>1-on-1 code reviews on all your GitHub pull requests</span>
+                  <span>Code review on your capstone project (Day 14 and Day 19)</span>
                 </li>
+                {isSet(COURSE_INDIA.recordings) && (
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{COURSE_INDIA.recordings}</span>
+                  </li>
+                )}
+                {isSet(COURSE_INDIA.refundWindow) && (
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{COURSE_INDIA.refundWindow}</span>
+                  </li>
+                )}
+                {isSet(COURSE_INDIA.sessionTimings) && (
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{COURSE_INDIA.sessionTimings}</span>
+                  </li>
+                )}
+                {isSet(COURSE_INDIA.languageOfTeaching) && (
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Language of instruction: {COURSE_INDIA.languageOfTeaching}</span>
+                  </li>
+                )}
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Lifetime access to course repos, boilerplates, and notes</span>
@@ -745,7 +893,7 @@ export default function FullStackLiveCoursePage() {
                 <span>Full Refund Policy</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                We stand behind our teaching quality. If you attend the initial sessions and feel that the instruction style, technical depth, or cohort pace is not right for you, you can request a full refund.
+                Full refund until the end of Session 2. If you attend the initial sessions and feel that the instruction style, technical depth, or cohort pace is not right for you, you can request a full refund.
               </p>
               <p className="text-[11px] text-slate-500 leading-relaxed">
                 Refunds are processed back to your originating UPI account with zero hassle. We only want students who genuinely benefit from our live coaching.
@@ -834,7 +982,7 @@ export default function FullStackLiveCoursePage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800">
             <div>
               <h2 id="reviews-heading" className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Verified Student Feedback
+                Reviews from Google
               </h2>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">
                 Real reviews from developers and students coached by Ramkumar Khubchandani.
@@ -1125,6 +1273,49 @@ export default function FullStackLiveCoursePage() {
           <CourseEnquiryForm defaultBatch={nextBatch?.startDate} />
         </section>
       </main>
+
+      {/* Sticky Bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-3 shadow-2xl">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-bold">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Next Batch: {nextBatch?.formattedDate || 'Upcoming'}</span>
+            </span>
+            <span className="text-xs text-slate-300 font-semibold hidden md:inline">
+              {COURSE_INDIA.feeFormatted} ({COURSE_INDIA.feeNote}) • {COURSE_INDIA.refundWindow}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3 text-xs font-bold">
+            <a
+              href="#booking-form"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold transition shadow-md shadow-emerald-500/20"
+            >
+              Book Free Call
+            </a>
+            {isSet(COURSE_INDIA.whatsappNumber) && (
+              <a
+                href="https://wa.me/918237320942?text=Hi%2C%20I%20want%20to%20join%20the%20Full%20Stack%20Live%20Course"
+                target="_blank"
+                rel="noopener"
+                className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition"
+              >
+                Chat on WhatsApp
+              </a>
+            )}
+            {isSet(COURSE_INDIA.callNumber) && (
+              <a
+                href={`tel:${COURSE_INDIA.callNumber}`}
+                rel="noopener"
+                className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition"
+              >
+                Call us: {COURSE_INDIA.callNumberDisplay}
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>

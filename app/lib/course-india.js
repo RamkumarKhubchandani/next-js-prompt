@@ -7,16 +7,24 @@
 
 export const TODO_FROM_OWNER = 'TODO_FROM_OWNER';
 
+export function isSet(val) {
+  if (val === undefined || val === null) return false;
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (!trimmed || trimmed.includes('TODO')) return false;
+  }
+  return true;
+}
+
 export function isTodo(val) {
-  if (!val) return true;
-  return typeof val === 'string' && val.includes('TODO');
+  return !isSet(val);
 }
 
 export const COURSE_INDIA = {
   slug: 'full-stack-live-course',
   title: 'Full Stack Live Coding Course',
   metaTitle: 'Full Stack Live Coding Course | OutlineDev',
-  metaDescription: 'Live 40-hour full stack coding course covering HTML, CSS, JavaScript, React, Node.js, Express & SQLite. 20 practical sessions with 1-on-1 code reviews.',
+  metaDescription: 'Live 40-hour full stack coding course covering HTML, CSS, JavaScript, React, Node.js, Express & SQLite. 20 practical sessions with capstone code reviews.',
   canonical: 'https://www.outlinedev.com/full-stack-live-course',
   locale: 'en-IN',
   hours: 40,
@@ -28,13 +36,15 @@ export const COURSE_INDIA = {
   feeFormatted: '₹10,000',
   feeNote: 'No GST charged',
   refund: 'Full refund',
-  refundWindow: TODO_FROM_OWNER,
-  languageOfTeaching: TODO_FROM_OWNER,
-  sessionTimings: TODO_FROM_OWNER,
+  refundWindow: 'Full refund until the end of Session 2',
+  languageOfTeaching: 'English and Hindi',
+  sessionTimings: 'Flexible: morning 10:00 AM–12:00 PM or evening 5:00 PM–7:00 PM IST (choose a slot when you join)',
   seatsPerBatch: TODO_FROM_OWNER,
-  recordings: TODO_FROM_OWNER,
+  recordings: 'Yes. Recordings of the live sessions are shared with enrolled students.',
   certificate: 'Certificate of completion from OutlineDev',
-  whatsappNumber: TODO_FROM_OWNER,
+  whatsappNumber: '918237320942',
+  callNumber: '+917709330265',
+  callNumberDisplay: '+91 77093 30265',
   youtubeChannelUrl: TODO_FROM_OWNER,
   lastUpdated: '2026-11-16',
 
@@ -328,6 +338,7 @@ export const COURSE_INDIA = {
             'Performance optimization basics: React.memo, useCallback, and useMemo when appropriate',
             'Structuring the capstone project frontend: layout components, pages, services, and hooks',
             'Planning the capstone project architecture: Task & Booking Management Portal',
+            'Code review on your capstone project (Day 14 and Day 19)',
           ],
           exercise: 'Write custom hooks (useLocalStorage and useFetch) and wire up the capstone frontend structure.',
           outcome: 'Write modular, production-ready React code with custom hooks and organized architecture.',
@@ -410,6 +421,7 @@ export const COURSE_INDIA = {
             'Connecting React UI state with Express REST API and persistent SQLite database',
             'Handling optimistic UI updates vs server re-fetching',
             'Edge-case handling: expired tokens, database errors, loading skeletons, and form error feedback',
+            'Code review on your capstone project (Day 14 and Day 19)',
             'Code cleanup, removing console logs, and formatting with Prettier/ESLint',
           ],
           exercise: 'Complete end-to-end user flows in the capstone project (signup -> login -> create -> update -> delete).',

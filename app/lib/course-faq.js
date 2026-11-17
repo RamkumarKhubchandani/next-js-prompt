@@ -1,3 +1,5 @@
+import { COURSE_INDIA } from './course-india.js';
+
 /**
  * 20 Plain-language FAQs for the Full Stack Live Coding Course.
  * Honest, direct, no marketing hype, no unbacked claims.
@@ -27,7 +29,7 @@ export const COURSE_FAQS = [
   {
     id: 'recordings',
     question: 'Are class recordings provided?',
-    answer: 'Our pedagogical model is focused on real-time live attendance, live coding, and interactive screen sharing rather than passive video watching. While session recordings or catch-up materials may be provided where approved, your learning outcome depends primarily on actively participating in the live sessions and building the daily exercises.',
+    answer: COURSE_INDIA.recordings,
   },
   {
     id: 'how-joining-works',
@@ -37,7 +39,7 @@ export const COURSE_FAQS = [
   {
     id: 'refund-policy',
     question: 'What is the refund policy?',
-    answer: 'We offer a full refund policy. If you attend the initial sessions and determine that the teaching style or curriculum pace is not suitable for your learning needs, you can request a full refund with no friction. We believe in honest education: we only want students who genuinely benefit from the live coaching.',
+    answer: 'We offer a full refund until the end of Session 2. If you attend the initial sessions and determine that the teaching style or curriculum pace is not suitable for your learning needs, you can request a full refund with no friction. We believe in honest education: we only want students who genuinely benefit from the live coaching.',
   },
   {
     id: 'certificate',
@@ -97,11 +99,11 @@ export const COURSE_FAQS = [
   {
     id: 'class-format',
     question: 'Is this a 1-on-1 course or a group cohort?',
-    answer: 'This is a focused, small-group live cohort. The pilot batch is intentionally kept small to ensure every student receives individual attention, live screen sharing support, and direct code reviews on their pull requests. Sessions are conversational, interactive, and code-along.',
+    answer: 'This is a focused, small-group live cohort. The pilot batch is intentionally kept small to ensure every student receives individual attention, live screen sharing support, and code review on your capstone project (Day 14 and Day 19). Sessions are conversational, interactive, and code-along.',
   },
   {
     id: 'assignments-and-code-reviews',
     question: 'How are assignments and code reviews conducted?',
-    answer: 'Every assignment is committed to your personal GitHub repository. You submit assignments via GitHub pull requests. The instructor reviews your code structure, semantic naming, component decomposition, and error handling, providing actionable written and verbal feedback so you learn industry-grade development practices from the start.',
+    answer: 'Daily exercises are committed to your GitHub repository for practice and feedback. You receive dedicated code review on your capstone project (Day 14 and Day 19), where the instructor reviews your architecture, component decomposition, Express routes, and database integration directly on GitHub pull requests with actionable written and verbal feedback.',
   },
 ];

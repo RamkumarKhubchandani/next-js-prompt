@@ -21,7 +21,7 @@ export function LiveCoursePromo() {
 
           <p className="text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
             {COURSE_INDIA.sessions} ({COURSE_INDIA.hours} hours) taught directly by Principal Engineer Ramkumar Khubchandani.
-            Zero slide decks: build 3 production-grade portfolio apps, review code on GitHub pull requests, and master modern JavaScript, Node.js, Express, and React.
+            Zero slide decks: build 3 production-grade portfolio apps, receive capstone code reviews, and master modern JavaScript, Node.js, Express, and React.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -35,7 +35,7 @@ export function LiveCoursePromo() {
             </div>
             <div className="bg-slate-800/60 backdrop-blur rounded-xl p-4 border border-slate-700/60">
               <div className="text-2xl font-black text-amber-400">GitHub</div>
-              <div className="text-xs text-slate-400 mt-1">PR Code Reviews</div>
+              <div className="text-xs text-slate-400 mt-1">Capstone Review</div>
             </div>
             <div className="bg-slate-800/60 backdrop-blur rounded-xl p-4 border border-slate-700/60">
               <div className="text-2xl font-black text-white">₹{COURSE_INDIA.fee.toLocaleString('en-IN')}</div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Calendar, CheckCircle2, Loader2, Sparkles, AlertCircle } from 'lucide-react';
-import { COURSE_INDIA, isTodo, getUpcomingBatches } from '@/app/lib/course-india';
+import { COURSE_INDIA, isSet, getUpcomingBatches } from '@/app/lib/course-india';
 
 export default function CourseEnquiryForm({ defaultBatch = '' }) {
   const upcomingBatches = getUpcomingBatches();
@@ -80,8 +80,8 @@ export default function CourseEnquiryForm({ defaultBatch = '' }) {
     }
   };
 
-  // WhatsApp link is rendered ONLY if whatsappNumber is NOT TODO_FROM_OWNER
-  const hasValidWhatsapp = !isTodo(COURSE_INDIA.whatsappNumber) && Boolean(COURSE_INDIA.whatsappNumber);
+  const hasValidWhatsapp = isSet(COURSE_INDIA.whatsappNumber);
+  const hasValidCall = isSet(COURSE_INDIA.callNumber);
 
   return (
     <div id="booking-form" className="scroll-mt-28 p-6 sm:p-10 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl max-w-2xl mx-auto">
@@ -248,21 +248,27 @@ export default function CourseEnquiryForm({ defaultBatch = '' }) {
             )}
           </button>
 
-          {/* Conditional WhatsApp CTA: strictly hidden if whatsappNumber is TODO */}
-          {hasValidWhatsapp && (
-            <div className="text-center pt-2">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-semibold">
+            {hasValidWhatsapp && (
               <a
-                href={`https://wa.me/${COURSE_INDIA.whatsappNumber}?text=${encodeURIComponent(
-                  'Hi Ramkumar, I want to ask about the Full Stack Live Coding Course.'
-                )}`}
+                href="https://wa.me/918237320942?text=Hi%2C%20I%20want%20to%20join%20the%20Full%20Stack%20Live%20Course"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-xs text-emerald-400 hover:underline font-medium"
+                rel="noopener"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition"
               >
-                <span>Prefer WhatsApp? Message directly</span>
+                <span>Chat on WhatsApp</span>
               </a>
-            </div>
-          )}
+            )}
+            {hasValidCall && (
+              <a
+                href={`tel:${COURSE_INDIA.callNumber}`}
+                rel="noopener"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+              >
+                <span>Call us: {COURSE_INDIA.callNumberDisplay}</span>
+              </a>
+            )}
+          </div>
 
           <p className="text-[11px] text-slate-500 text-center leading-relaxed">
             Direct 1-on-1 call with Ramkumar Khubchandani. No payment taken today. No sales pressure.
