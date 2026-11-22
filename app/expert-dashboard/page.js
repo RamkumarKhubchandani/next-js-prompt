@@ -113,7 +113,7 @@ export default function ExpertDashboardPage() {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/become-mentor"
+              href="/join"
               className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-500/20"
             >
               <Edit3 className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function ExpertDashboardPage() {
               You haven&apos;t started an expert application yet. Register to offer 1-on-1 mentorship, get hired for contract projects, or both.
             </p>
             <Link
-              href="/become-mentor"
+              href="/join"
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition"
             >
               <span>Get Started</span>
@@ -244,7 +244,7 @@ export default function ExpertDashboardPage() {
                     <strong className="text-slate-300">Notice on Profile Edits:</strong> Edits to your profile are reviewed by admin before they go live. If your profile is already approved, your current live version stays published while your updates are reviewed.
                   </p>
                   <Link
-                    href="/become-mentor"
+                    href="/join"
                     className="shrink-0 text-emerald-400 hover:text-emerald-300 font-semibold underline"
                   >
                     Edit Profile
@@ -282,7 +282,7 @@ export default function ExpertDashboardPage() {
 
                 <div className="mt-4 pt-3 border-t border-slate-800">
                   <Link
-                    href="/become-mentor"
+                    href="/join"
                     className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1"
                   >
                     <span>Update number in profile</span>

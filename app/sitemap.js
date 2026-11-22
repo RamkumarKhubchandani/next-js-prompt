@@ -135,7 +135,7 @@ export default async function sitemap() {
     { url: "/mock-interviews", changeFrequency: "weekly", priority: 0.9 },
     { url: "/resume-audit", changeFrequency: "weekly", priority: 0.9 },
     { url: "/mentors", changeFrequency: "weekly", priority: 0.9 },
-    { url: "/become-mentor", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/join", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
     { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
     { url: "/reviews", changeFrequency: "weekly", priority: 0.8 },
