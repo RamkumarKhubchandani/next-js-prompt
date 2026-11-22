@@ -633,19 +633,19 @@ export default function JoinClient() {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-between">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col justify-between font-sans">
         <Header />
         <main className="max-w-xl mx-auto px-4 py-20 text-center">
           <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <GraduationCap className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold mb-3">Join as a Mentor or Developer</h1>
-          <p className="text-slate-400 mb-8">
+          <h1 className="text-3xl font-bold mb-3 text-slate-900 dark:text-white">Join as a Mentor or Developer</h1>
+          <p className="text-slate-600 dark:text-slate-400 mb-8">
             Create ONE verified expert profile to offer 1-on-1 mentorship, take on high-paying contract work, or both.
           </p>
           <button
             onClick={() => signIn("google")}
-            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition shadow-lg shadow-emerald-500/20"
+            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md shadow-emerald-600/20"
           >
             Sign in with Google to Apply
           </button>
@@ -658,28 +658,28 @@ export default function JoinClient() {
   const filteredSkills = SKILLS.filter((s) => s.name.toLowerCase().includes(skillSearch.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans">
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1">
         {/* Status Banner */}
         {applicationStatus && applicationStatus !== "draft" && (
-          <div className="mb-8 p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span
                 className={`text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${
                   applicationStatus === "approved"
-                    ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                    ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
                     : applicationStatus === "pending"
-                    ? "bg-amber-950 text-amber-300 border border-amber-800"
+                    ? "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
                     : applicationStatus === "hidden"
-                    ? "bg-slate-800 text-slate-400 border border-slate-700"
-                    : "bg-red-950 text-red-300 border border-red-800"
+                    ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-300 dark:border-slate-700"
+                    : "bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800"
                 }`}
               >
                 Status: {applicationStatus}
               </span>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {applicationStatus === "approved" &&
                   "Your published profile is live. Changes you save to your draft will be reviewed by admin."}
                 {applicationStatus === "pending" &&
@@ -693,7 +693,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={handleHideProfile}
-                  className="px-3 py-1.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-lg transition flex items-center gap-1.5"
                 >
                   <EyeOff className="w-3.5 h-3.5" />
                   <span>Hide my profile</span>
@@ -703,7 +703,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={handleUnhideProfile}
-                  className="px-3 py-1.5 text-xs text-emerald-300 hover:text-white bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 rounded-lg transition flex items-center gap-1.5"
+                  className="px-3 py-1.5 text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white bg-emerald-50 dark:bg-emerald-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-300 dark:border-emerald-800 rounded-lg transition flex items-center gap-1.5"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Make profile live</span>
@@ -712,7 +712,7 @@ export default function JoinClient() {
               <button
                 type="button"
                 onClick={handleDeleteProfile}
-                className="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 rounded-lg transition flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 border border-red-200 dark:border-red-800/40 rounded-lg transition flex items-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Request deletion</span>
@@ -723,10 +723,10 @@ export default function JoinClient() {
 
         {/* Title */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
             Join as a Mentor or Developer
           </h1>
-          <p className="text-slate-400 text-sm max-w-xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-xl mx-auto">
             One public profile. Mentor aspiring developers, get hired for client projects, or both.
           </p>
         </div>
@@ -750,8 +750,8 @@ export default function JoinClient() {
                 step === s.num
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                   : step > s.num
-                  ? "bg-slate-900 text-slate-300 border border-slate-800"
-                  : "bg-slate-900/40 text-slate-500 border border-slate-800/60"
+                  ? "bg-slate-900 text-slate-300 border border-slate-200 dark:border-slate-800"
+                  : "bg-slate-900/40 text-slate-500 border border-slate-200 dark:border-slate-800/60"
               }`}
             >
               <span className="relative flex items-center justify-center">
@@ -773,7 +773,7 @@ export default function JoinClient() {
 
         {/* Step Summary Error Alert */}
         {stepSummaryError && (
-          <div className="mb-6 p-4 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-sm flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-200 text-sm flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             <span>{stepSummaryError}</span>
           </div>
@@ -781,35 +781,35 @@ export default function JoinClient() {
 
         {/* Success Alert */}
         {successMessage && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-emerald-200 text-sm flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-sm flex items-start gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
             <span>{successMessage}</span>
           </div>
         )}
 
         {/* Form Container */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
           {/* STEP 1: BASICS */}
           {step === 1 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-800 pb-4">
-                <h2 className="text-xl font-bold text-white">Step 1: Authentic Identity & Core Skills</h2>
-                <p className="text-xs text-slate-400 mt-1">
+              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 1: Authentic Identity & Core Skills</h2>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   OutlineDev values authenticity. We require your real name, a clear professional photo, and verified skills.
                 </p>
               </div>
 
               {/* Photo Upload */}
               <div id="field-photoUrl" data-field="photoUrl">
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                   Real Professional Photo *
                 </label>
                 <div
-                  className={`flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-950 rounded-xl border transition ${
-                    fieldErrors.photoUrl ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                  className={`flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-200 dark:border-slate-800 transition ${
+                    fieldErrors.photoUrl ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                   }`}
                 >
-                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-800 border-2 border-emerald-500/30 shrink-0">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border-2 border-emerald-500/30 shrink-0">
                     {formData.photoUrl ? (
                       <img
                         src={formData.photoUrl}
@@ -828,7 +828,7 @@ export default function JoinClient() {
                     )}
                   </div>
                   <div className="flex-1 text-center sm:text-left">
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-lg text-xs font-semibold transition border border-emerald-500/30">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-xs font-semibold transition border border-emerald-300 dark:border-emerald-500/30">
                       <UploadCloud className="w-4 h-4" />
                       <span>{formData.photoUrl ? "Replace Photo" : "Upload Photo"}</span>
                       <input
@@ -842,9 +842,9 @@ export default function JoinClient() {
                     <p className="text-[11px] text-slate-500 mt-2">
                       JPG, PNG, or WebP. Max 5MB. Automatic face centering will be applied.
                     </p>
-                    {photoError && <p className="text-xs text-red-400 mt-1">{photoError}</p>}
+                    {photoError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{photoError}</p>}
                     {fieldErrors.photoUrl && (
-                      <p className="text-xs text-red-400 mt-1.5 font-medium flex items-center gap-1">
+                      <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {fieldErrors.photoUrl}
                       </p>
@@ -855,7 +855,7 @@ export default function JoinClient() {
 
               {/* Real Full Name */}
               <div id="field-displayName" data-field="displayName">
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                   Real Full Name *
                 </label>
                 <input
@@ -867,14 +867,14 @@ export default function JoinClient() {
                     clearFieldError("displayName");
                   }}
                   placeholder="e.g., Alex Johnson"
-                  className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                  className={`w-full px-4 py-2.5 bg-white dark:bg-slate-950 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                     fieldErrors.displayName
                       ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-700 focus:border-emerald-500"
+                      : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                   }`}
                 />
                 {fieldErrors.displayName && (
-                  <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                  <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     {fieldErrors.displayName}
                   </p>
@@ -883,7 +883,7 @@ export default function JoinClient() {
 
               {/* WhatsApp Number (Private) */}
               <div id="field-whatsapp" data-field="whatsapp">
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   WhatsApp number (with country code) *
                 </label>
                 <input
@@ -895,14 +895,14 @@ export default function JoinClient() {
                     clearFieldError("whatsapp");
                   }}
                   placeholder="e.g., +91 98765 43210 or +1 415 555 2671"
-                  className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                  className={`w-full px-4 py-2.5 bg-white dark:bg-slate-950 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                     fieldErrors.whatsapp
                       ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                      : "border-slate-700 focus:border-emerald-500"
+                      : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                   }`}
                 />
                 {fieldErrors.whatsapp && (
-                  <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                  <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     {fieldErrors.whatsapp}
                   </p>
@@ -920,7 +920,7 @@ export default function JoinClient() {
               {/* Location & Timezone Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div id="field-locationId" data-field="locationId">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     Primary Location *
                   </label>
                   <select
@@ -932,10 +932,10 @@ export default function JoinClient() {
                       });
                       clearFieldError("locationId");
                     }}
-                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                    className={`w-full px-4 py-2.5 bg-white dark:bg-slate-950 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                       fieldErrors.locationId
                         ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-700 focus:border-emerald-500"
+                        : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     }`}
                   >
                     <option value="online">Online / Remote (Global)</option>
@@ -947,7 +947,7 @@ export default function JoinClient() {
                     <option value="other">Other (Specify below)</option>
                   </select>
                   {fieldErrors.locationId && (
-                    <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {fieldErrors.locationId}
                     </p>
@@ -955,7 +955,7 @@ export default function JoinClient() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     Timezone
                   </label>
                   <input
@@ -968,14 +968,14 @@ export default function JoinClient() {
                       })
                     }
                     placeholder="e.g., America/New_York or Asia/Kolkata"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400 focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Location Other Details */}
               {formData.draft.locationId === "other" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-200 dark:border-slate-800">
                   <div>
                     <label className="block text-xs text-slate-400 mb-1">Country *</label>
                     <input
@@ -992,7 +992,7 @@ export default function JoinClient() {
                         clearFieldError("locationId");
                       }}
                       placeholder="e.g., Canada"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
                     />
                   </div>
                   <div>
@@ -1011,7 +1011,7 @@ export default function JoinClient() {
                         clearFieldError("locationId");
                       }}
                       placeholder="e.g., Toronto"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
                     />
                   </div>
                 </div>
@@ -1020,7 +1020,7 @@ export default function JoinClient() {
               {/* Experience & Languages */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div id="field-yearsExperience" data-field="yearsExperience">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     Years of Professional Experience *
                   </label>
                   <input
@@ -1036,21 +1036,21 @@ export default function JoinClient() {
                       });
                       clearFieldError("yearsExperience");
                     }}
-                    className={`w-full px-4 py-2.5 bg-slate-950 border rounded-xl text-white text-sm focus:outline-none transition ${
+                    className={`w-full px-4 py-2.5 bg-white dark:bg-slate-950 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                       fieldErrors.yearsExperience
                         ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-700 focus:border-emerald-500"
+                        : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     }`}
                   />
                   {fieldErrors.yearsExperience && (
-                    <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {fieldErrors.yearsExperience}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     Languages Spoken (comma separated)
                   </label>
                   <input
@@ -1066,7 +1066,7 @@ export default function JoinClient() {
                       })
                     }
                     placeholder="English, Spanish, Hindi"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400"
                   />
                 </div>
               </div>
@@ -1074,7 +1074,7 @@ export default function JoinClient() {
               {/* Primary Skills Selection */}
               <div id="field-skillIds" data-field="skillIds">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                     Primary Technical Skills * (1 to 8 skills)
                   </label>
                   <span
@@ -1090,11 +1090,11 @@ export default function JoinClient() {
                   placeholder="Filter skills (e.g. React, Next.js, Python, AWS)..."
                   value={skillSearch}
                   onChange={(e) => setSkillSearch(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white mb-3 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-white mb-3 focus:outline-none focus:border-emerald-500"
                 />
                 <div
                   className={`flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-xl border transition ${
-                    fieldErrors.skillIds ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                    fieldErrors.skillIds ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                   }`}
                 >
                   {filteredSkills.map((s) => {
@@ -1107,7 +1107,7 @@ export default function JoinClient() {
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 ${
                           isSelected
                             ? "bg-emerald-500 text-slate-950 font-semibold"
-                            : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+                            : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
                         }`}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -1117,20 +1117,20 @@ export default function JoinClient() {
                   })}
                 </div>
                 {fieldErrors.skillIds && (
-                  <p className="mt-1.5 text-xs text-red-400 font-medium flex items-center gap-1">
+                  <p className="mt-1.5 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     {fieldErrors.skillIds}
                   </p>
                 )}
               </div>
 
-              <div className="flex justify-end pt-4 border-t border-slate-800">
+              <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => {
                     if (validateStep1()) setStep(2);
                   }}
-                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition flex items-center gap-2"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-sm flex items-center gap-2"
                 >
                   <span>Continue to Step 2</span>
                   <ArrowRight className="w-4 h-4" />
@@ -1142,9 +1142,9 @@ export default function JoinClient() {
           {/* STEP 2: ROLES & OFFERINGS */}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-800 pb-4">
-                <h2 className="text-xl font-bold text-white">Step 2: Role Profiles & Offerings</h2>
-                <p className="text-xs text-slate-400 mt-1">
+              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 2: Role Profiles & Offerings</h2>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Choose whether you want to act as a Mentor, a Hire developer, or both. Each role carries its own headline and summary.
                 </p>
               </div>
@@ -1156,7 +1156,7 @@ export default function JoinClient() {
                   className={`p-4 rounded-xl border cursor-pointer transition ${
                     formData.roles.includes("mentor")
                       ? "bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
-                      : "bg-slate-950 border-slate-800 hover:border-slate-700"
+                      : "bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-700"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1166,7 +1166,7 @@ export default function JoinClient() {
                           formData.roles.includes("mentor") ? "text-emerald-400" : "text-slate-400"
                         }`}
                       />
-                      <span className="font-bold text-white text-sm">Mentor Profile</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">Mentor Profile</span>
                     </div>
                     <input
                       type="checkbox"
@@ -1185,7 +1185,7 @@ export default function JoinClient() {
                   className={`p-4 rounded-xl border cursor-pointer transition ${
                     formData.roles.includes("hire")
                       ? "bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/20"
-                      : "bg-slate-950 border-slate-800 hover:border-slate-700"
+                      : "bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-700"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1210,7 +1210,7 @@ export default function JoinClient() {
                 </div>
               </div>
               {fieldErrors.roles && (
-                <p className="text-xs text-red-400 font-medium flex items-center gap-1">
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {fieldErrors.roles}
                 </p>
@@ -1218,8 +1218,8 @@ export default function JoinClient() {
 
               {/* MENTOR SECTION */}
               {formData.roles.includes("mentor") && (
-                <div className="p-5 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-emerald-300 dark:border-emerald-500/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                     <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                       <GraduationCap className="w-4 h-4" />
                       <span>Mentor Profile Details</span>
@@ -1229,7 +1229,7 @@ export default function JoinClient() {
 
                   <div id="field-mentor-headline" data-field="mentor.headline">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs text-slate-300 font-semibold">
+                      <label className="block text-xs text-slate-700 dark:text-slate-300 font-semibold">
                         Mentor Headline * (Plain text, no URLs)
                       </label>
                       <span
@@ -1255,14 +1255,14 @@ export default function JoinClient() {
                         clearFieldError("mentor.headline");
                       }}
                       placeholder="e.g., Senior Full-Stack Engineer & React Systems Coach"
-                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                         fieldErrors["mentor.headline"]
                           ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                          : "border-slate-700 focus:border-emerald-500"
+                          : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       }`}
                     />
                     {fieldErrors["mentor.headline"] && (
-                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {fieldErrors["mentor.headline"]}
                       </p>
@@ -1271,7 +1271,7 @@ export default function JoinClient() {
 
                   <div id="field-mentor-summary" data-field="mentor.summary">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs text-slate-300 font-semibold">
+                      <label className="block text-xs text-slate-700 dark:text-slate-300 font-semibold">
                         Mentorship Summary * (80 - 300 words)
                       </label>
                       <span
@@ -1299,14 +1299,14 @@ export default function JoinClient() {
                         clearFieldError("mentor.summary");
                       }}
                       placeholder="Describe your teaching approach, background, how you guide learners through complex problems, and how 1-on-1 calls are conducted..."
-                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                         fieldErrors["mentor.summary"]
                           ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                          : "border-slate-700 focus:border-emerald-500"
+                          : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                       }`}
                     />
                     {fieldErrors["mentor.summary"] && (
-                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {fieldErrors["mentor.summary"]}
                       </p>
@@ -1359,8 +1359,8 @@ export default function JoinClient() {
 
               {/* HIRE DEVELOPER SECTION */}
               {formData.roles.includes("hire") && (
-                <div className="p-5 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-cyan-300 dark:border-cyan-500/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                     <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                       <Briefcase className="w-4 h-4" />
                       <span>Contract Developer Details</span>
@@ -1370,7 +1370,7 @@ export default function JoinClient() {
 
                   <div id="field-hire-headline" data-field="hire.headline">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs text-slate-300 font-semibold">
+                      <label className="block text-xs text-slate-700 dark:text-slate-300 font-semibold">
                         Contract Developer Headline * (Plain text, no URLs)
                       </label>
                       <span
@@ -1396,14 +1396,14 @@ export default function JoinClient() {
                         clearFieldError("hire.headline");
                       }}
                       placeholder="e.g., Staff Next.js Architect & Performance Specialist"
-                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                         fieldErrors["hire.headline"]
                           ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
                           : "border-slate-700 focus:border-cyan-500"
                       }`}
                     />
                     {fieldErrors["hire.headline"] && (
-                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {fieldErrors["hire.headline"]}
                       </p>
@@ -1412,7 +1412,7 @@ export default function JoinClient() {
 
                   <div id="field-hire-summary" data-field="hire.summary">
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs text-slate-300 font-semibold">
+                      <label className="block text-xs text-slate-700 dark:text-slate-300 font-semibold">
                         Hire Summary * (80 - 300 words)
                       </label>
                       <span
@@ -1440,14 +1440,14 @@ export default function JoinClient() {
                         clearFieldError("hire.summary");
                       }}
                       placeholder="Describe what client systems you build, performance and architecture standards, testing practices, and how you deliver software on time..."
-                      className={`w-full px-3.5 py-2.5 bg-slate-900 border rounded-xl text-white text-sm focus:outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
                         fieldErrors["hire.summary"]
                           ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
                           : "border-slate-700 focus:border-cyan-500"
                       }`}
                     />
                     {fieldErrors["hire.summary"] && (
-                      <p className="mt-1 text-xs text-red-400 font-medium flex items-center gap-1">
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {fieldErrors["hire.summary"]}
                       </p>
@@ -1495,7 +1495,7 @@ export default function JoinClient() {
                 </div>
               )}
 
-              <div className="flex justify-between pt-4 border-t border-slate-800">
+              <div className="flex justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
@@ -1509,7 +1509,7 @@ export default function JoinClient() {
                   onClick={() => {
                     if (validateStep2()) setStep(3);
                   }}
-                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded-xl transition flex items-center gap-2"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-sm flex items-center gap-2"
                 >
                   <span>Continue to Step 3</span>
                   <ArrowRight className="w-4 h-4" />
@@ -1521,9 +1521,9 @@ export default function JoinClient() {
           {/* STEP 3: PROJECTS, LINKS & CONSENTS */}
           {step === 3 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-800 pb-4">
-                <h2 className="text-xl font-bold text-white">Step 3: Proof of Work & Declarations</h2>
-                <p className="text-xs text-slate-400 mt-1">
+              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 3: Proof of Work & Declarations</h2>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Add projects you&apos;ve built, professional profiles, and mandatory platform consents.
                 </p>
               </div>
@@ -1531,7 +1531,7 @@ export default function JoinClient() {
               {/* Links */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     GitHub Profile URL
                   </label>
                   <input
@@ -1547,11 +1547,11 @@ export default function JoinClient() {
                       })
                     }
                     placeholder="https://github.com/username"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     LinkedIn Profile URL
                   </label>
                   <input
@@ -1567,7 +1567,7 @@ export default function JoinClient() {
                       })
                     }
                     placeholder="https://linkedin.com/in/username"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -1575,7 +1575,7 @@ export default function JoinClient() {
               {/* Key Projects */}
               <div id="field-projects" data-field="projects">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                     Key Projects (up to 3)
                   </label>
                   {formData.draft.projects.length < 3 && (
@@ -1591,7 +1591,7 @@ export default function JoinClient() {
                 </div>
 
                 {formData.draft.projects.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
                     No projects added yet. Click &apos;Add Project&apos; to showcase client deliverables or open-source software.
                   </p>
                 ) : (
@@ -1599,14 +1599,14 @@ export default function JoinClient() {
                     {formData.draft.projects.map((proj, idx) => (
                       <div
                         key={idx}
-                        className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3 relative"
+                        className="p-4 bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 relative"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-slate-400">Project #{idx + 1}</span>
                           <button
                             type="button"
                             onClick={() => removeProject(idx)}
-                            className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
+                            className="text-xs text-red-600 dark:text-red-400 hover:text-red-300 flex items-center gap-1"
                           >
                             <Trash2 className="w-3 h-3" />
                             <span>Remove</span>
@@ -1621,7 +1621,7 @@ export default function JoinClient() {
                               value={proj.title}
                               onChange={(e) => updateProject(idx, "title", e.target.value)}
                               placeholder="e.g., Enterprise E-Commerce Platform"
-                              className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                              className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
                             />
                           </div>
                           <div>
@@ -1631,7 +1631,7 @@ export default function JoinClient() {
                               value={proj.url}
                               onChange={(e) => updateProject(idx, "url", e.target.value)}
                               placeholder="https://..."
-                              className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                              className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
                             />
                           </div>
                         </div>
@@ -1645,7 +1645,7 @@ export default function JoinClient() {
                             value={proj.description}
                             onChange={(e) => updateProject(idx, "description", e.target.value)}
                             placeholder="Built with Redis, Node.js, and Docker to process 50k background events/min"
-                            className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:border-emerald-500"
+                            className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
                           />
                         </div>
                       </div>
@@ -1653,7 +1653,7 @@ export default function JoinClient() {
                   </div>
                 )}
                 {fieldErrors.projects && (
-                  <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
+                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     {fieldErrors.projects}
                   </p>
@@ -1665,7 +1665,7 @@ export default function JoinClient() {
                 id="field-consents"
                 data-field="consents"
                 className={`p-5 rounded-xl bg-slate-950 border transition space-y-3 ${
-                  fieldErrors.consents ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-800"
+                  fieldErrors.consents ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -1725,7 +1725,7 @@ export default function JoinClient() {
                 ))}
 
                 {fieldErrors.consents && (
-                  <p className="mt-2 text-xs text-red-400 font-medium flex items-center gap-1">
+                  <p className="mt-2 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     {fieldErrors.consents}
                   </p>
@@ -1741,7 +1741,7 @@ export default function JoinClient() {
               </div>
 
               {/* Controls */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
