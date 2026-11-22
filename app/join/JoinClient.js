@@ -31,7 +31,7 @@ import Link from "next/link";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { SKILLS, LOCATIONS } from "../lib/seo-data";
-import { validateWhatsApp, parseYearsExperience, mapServerErrorToField } from "../lib/experts";
+import { validateWhatsApp, parseYearsExperience, mapServerErrorToField, validateLocation, ALLOWED_OVERLAP_ZONES } from "../lib/experts";
 
 function countWords(str) {
   if (!str) return 0;
@@ -52,6 +52,7 @@ export default function JoinClient() {
   const [rejectionNote, setRejectionNote] = useState("");
   const [hasPublished, setHasPublished] = useState(false);
   const [skillSearch, setSkillSearch] = useState("");
+  const [locationSearch, setLocationSearch] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -77,6 +78,8 @@ export default function JoinClient() {
       },
       skillIds: [],
       locationId: "online",
+      locationIds: ["online"],
+      overlapZones: [],
       locationOther: { country: "", city: "" },
       timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
       yearsExperience: "", // Default value is empty string (not 0 or 4)
@@ -101,6 +104,7 @@ export default function JoinClient() {
     "photoUrl",
     "roles",
     "skillIds",
+    "locationIds",
     "locationId",
     "locationOther",
     "yearsExperience",
@@ -655,6 +659,76 @@ export default function JoinClient() {
     );
   }
 
+    function addLocation(id) {
+    const current = formData.draft.locationIds || (formData.draft.locationId ? [formData.draft.locationId] : []);
+    if (current.includes(id)) return;
+    if (current.length >= 5) return;
+    const next = [...current, id];
+    setFormData({
+      ...formData,
+      draft: {
+        ...formData.draft,
+        locationIds: next,
+        locationId: next[0],
+      },
+    });
+    clearFieldError("locationIds");
+    clearFieldError("locationId");
+  }
+
+  function removeLocation(id) {
+    const current = formData.draft.locationIds || [];
+    const next = current.filter((x) => x !== id);
+    setFormData({
+      ...formData,
+      draft: {
+        ...formData.draft,
+        locationIds: next,
+        locationId: next[0] || "online",
+      },
+    });
+    clearFieldError("locationIds");
+  }
+
+  function setPrimaryLocation(id) {
+    const current = formData.draft.locationIds || [];
+    const filtered = current.filter((x) => x !== id);
+    const next = [id, ...filtered];
+    setFormData({
+      ...formData,
+      draft: {
+        ...formData.draft,
+        locationIds: next,
+        locationId: next[0],
+      },
+    });
+    clearFieldError("locationIds");
+  }
+
+  function toggleOverlapZone(zone) {
+    const current = formData.draft.overlapZones || [];
+    const next = current.includes(zone)
+      ? current.filter((z) => z !== zone)
+      : [...current, zone];
+    setFormData({
+      ...formData,
+      draft: {
+        ...formData.draft,
+        overlapZones: next,
+      },
+    });
+  }
+
+  function resolveLocationLabel(id) {
+    if (id === 'online') return 'Online / Remote (Global)';
+    if (id === 'other') {
+      const otherStr = [formData.draft.locationOther?.city, formData.draft.locationOther?.country].filter(Boolean).join(', ');
+      return otherStr ? `Other: ${otherStr}` : 'Other (Custom)';
+    }
+    const match = LOCATIONS.find(l => l.id === id);
+    return match ? `${match.name} (${match.country})` : id;
+  }
+
   const filteredSkills = SKILLS.filter((s) => s.name.toLowerCase().includes(skillSearch.toLowerCase()));
 
   return (
@@ -917,105 +991,195 @@ export default function JoinClient() {
                 </p>
               </div>
 
-              {/* Location & Timezone Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div id="field-locationId" data-field="locationId">
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    Primary Location *
+              {/* Multi-Location & Timezone Section */}
+              <div id="field-locationIds" data-field="locationIds" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                    Service Locations * (1 to 5 places)
                   </label>
-                  <select
-                    value={formData.draft.locationId}
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        draft: { ...formData.draft, locationId: e.target.value },
-                      });
-                      clearFieldError("locationId");
-                    }}
-                    className={`w-full px-4 py-2.5 bg-white dark:bg-slate-950 border rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition placeholder-slate-400 ${
-                      fieldErrors.locationId
-                        ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/30"
-                        : "border-slate-300 dark:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                    }`}
-                  >
-                    <option value="online">Online / Remote (Global)</option>
-                    {LOCATIONS.map((loc) => (
-                      <option key={loc.id} value={loc.id}>
-                        {loc.name} ({loc.country})
-                      </option>
-                    ))}
-                    <option value="other">Other (Specify below)</option>
-                  </select>
-                  {fieldErrors.locationId && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                      {fieldErrors.locationId}
-                    </p>
-                  )}
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {(formData.draft.locationIds || []).length} / 5 selected
+                  </span>
                 </div>
 
-                <div>
+                {/* Selected Location Chips */}
+                <div className="flex flex-wrap gap-2">
+                  {(formData.draft.locationIds || []).map((id, index) => (
+                    <span
+                      key={id}
+                      onClick={() => {
+                        if (index > 0) setPrimaryLocation(id);
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition cursor-pointer ${
+                        index === 0
+                          ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-semibold shadow-sm"
+                          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+                      }`}
+                      title={index > 0 ? "Click to set as Primary" : "Primary location"}
+                    >
+                      {index === 0 && (
+                        <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
+                          Primary
+                        </span>
+                      )}
+                      <span>{resolveLocationLabel(id)}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeLocation(id);
+                        }}
+                        className="ml-1 text-slate-400 hover:text-red-500 rounded p-0.5"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+
+                {/* Search & Add Locations */}
+                {(formData.draft.locationIds || []).length < 5 && (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Search cities to add (e.g., Pune, London, Bangalore, New York)..."
+                        value={locationSearch}
+                        onChange={(e) => setLocationSearch(e.target.value)}
+                        className="flex-1 px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                      />
+                      {!(formData.draft.locationIds || []).includes("online") && (
+                        <button
+                          type="button"
+                          onClick={() => addLocation("online")}
+                          className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition shrink-0"
+                        >
+                          + Online / Any
+                        </button>
+                      )}
+                      {!(formData.draft.locationIds || []).includes("other") && (
+                        <button
+                          type="button"
+                          onClick={() => addLocation("other")}
+                          className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition shrink-0"
+                        >
+                          + Other City
+                        </button>
+                      )}
+                    </div>
+
+                    {locationSearch.trim() && (
+                      <div className="max-h-36 overflow-y-auto p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg flex flex-wrap gap-1.5 shadow-sm">
+                        {LOCATIONS.filter((l) =>
+                          l.name.toLowerCase().includes(locationSearch.toLowerCase()) ||
+                          l.country.toLowerCase().includes(locationSearch.toLowerCase())
+                        ).map((loc) => {
+                          const alreadySelected = (formData.draft.locationIds || []).includes(loc.id);
+                          return (
+                            <button
+                              key={loc.id}
+                              type="button"
+                              disabled={alreadySelected}
+                              onClick={() => {
+                                addLocation(loc.id);
+                                setLocationSearch("");
+                              }}
+                              className={`px-2.5 py-1 rounded text-xs transition ${
+                                alreadySelected
+                                  ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                                  : "bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700"
+                              }`}
+                            >
+                              + {loc.name} ({loc.country})
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Location Other Details */}
+                {(formData.draft.locationIds || []).includes("other") && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                    <div>
+                      <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other Country *</label>
+                      <input
+                        type="text"
+                        value={formData.draft.locationOther.country}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              locationOther: { ...formData.draft.locationOther, country: e.target.value },
+                            },
+                          });
+                          clearFieldError("locationIds");
+                        }}
+                        placeholder="e.g., Canada"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other City *</label>
+                      <input
+                        type="text"
+                        value={formData.draft.locationOther.city}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            draft: {
+                              ...formData.draft,
+                              locationOther: { ...formData.draft.locationOther, city: e.target.value },
+                            },
+                          });
+                          clearFieldError("locationIds");
+                        }}
+                        placeholder="e.g., Toronto"
+                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {fieldErrors.locationIds && (
+                  <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {fieldErrors.locationIds}
+                  </p>
+                )}
+
+                {/* Overlap Time Zones */}
+                <div className="pt-2">
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    Timezone
+                    Time zones I can work in
                   </label>
-                  <input
-                    type="text"
-                    value={formData.draft.timezone}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        draft: { ...formData.draft, timezone: e.target.value },
-                      })
-                    }
-                    placeholder="e.g., America/New_York or Asia/Kolkata"
-                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400 focus:outline-none"
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    {ALLOWED_OVERLAP_ZONES.map((zone) => {
+                      const checked = (formData.draft.overlapZones || []).includes(zone);
+                      return (
+                        <button
+                          key={zone}
+                          type="button"
+                          onClick={() => toggleOverlapZone(zone)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition flex items-center gap-1.5 ${
+                            checked
+                              ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-semibold"
+                              : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700"
+                          }`}
+                        >
+                          {checked && <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />}
+                          <span>{zone}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                    Pick the cities or time zones where you can take students or clients. Your profile will be shown on those pages.
+                  </p>
                 </div>
               </div>
-
-              {/* Location Other Details */}
-              {formData.draft.locationId === "other" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-200 dark:border-slate-800">
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">Country *</label>
-                    <input
-                      type="text"
-                      value={formData.draft.locationOther.country}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          draft: {
-                            ...formData.draft,
-                            locationOther: { ...formData.draft.locationOther, country: e.target.value },
-                          },
-                        });
-                        clearFieldError("locationId");
-                      }}
-                      placeholder="e.g., Canada"
-                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">City *</label>
-                    <input
-                      type="text"
-                      value={formData.draft.locationOther.city}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          draft: {
-                            ...formData.draft,
-                            locationOther: { ...formData.draft.locationOther, city: e.target.value },
-                          },
-                        });
-                        clearFieldError("locationId");
-                      }}
-                      placeholder="e.g., Toronto"
-                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                    />
-                  </div>
-                </div>
-              )}
 
               {/* Experience & Languages */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

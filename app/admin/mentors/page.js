@@ -437,7 +437,7 @@ export default function AdminMentorsPage() {
                             </div>
                             <div className="flex flex-wrap gap-4 pt-1 text-slate-400">
                               <span>
-                                Location: {resolveLocationName(draft.locationId, draft.locationOther)}
+                                Locations: {(draft.locationIds && draft.locationIds.length > 0 ? draft.locationIds : [draft.locationId || 'online']).map((locId, idx) => `${resolveLocationName(locId, draft.locationOther)}${idx === 0 ? ' (Primary)' : ''}`).join(', ')}{draft.overlapZones && draft.overlapZones.length > 0 ? ` • Zones: ${draft.overlapZones.join(', ')}` : ''}
                               </span>
                               <span>Timezone: {draft.timezone || "UTC"}</span>
                               <span>Experience: {draft.yearsExperience || app.yearsExperience || 0} years</span>
@@ -573,7 +573,7 @@ export default function AdminMentorsPage() {
                                   </div>
                                 </div>
                                 <div className="pt-1">
-                                  Location: {resolveLocationName(pub.locationId, pub.locationOther)} • Timezone: {pub.timezone}
+                                  Locations: {(pub.locationIds && pub.locationIds.length > 0 ? pub.locationIds : [pub.locationId || 'online']).map((locId, idx) => `${resolveLocationName(locId, pub.locationOther)}${idx === 0 ? ' (Primary)' : ''}`).join(', ')}{pub.overlapZones && pub.overlapZones.length > 0 ? ` • Zones: ${pub.overlapZones.join(', ')}` : ''} • Timezone: {pub.timezone || 'UTC'}
                                 </div>
                               </div>
                             </>

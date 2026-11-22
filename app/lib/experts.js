@@ -1,3 +1,19 @@
+export const ALLOWED_OVERLAP_ZONES = ['IST', 'GST', 'EU', 'US-EAST', 'US-WEST', 'APAC', 'AUS'];
+
+/**
+ * Returns location IDs for a profile, backward compatible with single locationId.
+ */
+export function getProfileLocationIds(pub) {
+  if (!pub) return ['online'];
+  if (Array.isArray(pub.locationIds) && pub.locationIds.length > 0) {
+    return pub.locationIds;
+  }
+  if (pub.locationId) {
+    return [pub.locationId];
+  }
+  return ['online'];
+}
+
 import { SKILLS, LOCATIONS } from './seo-data.js';
 import MentorApplication from '../models/MentorApplication.js';
 import DEFAULT_EXPERT from './default-expert.js';
@@ -50,19 +66,27 @@ export function toPublicProfile(doc) {
     .filter(Boolean);
 
   // Resolve location details
-  let resolvedLocation = { id: pub.locationId || 'online', name: 'Online', country: 'Global' };
-  if (pub.locationId === 'other') {
-    resolvedLocation = {
-      id: 'other',
-      name: pub.locationOther?.city || 'Local',
-      country: pub.locationOther?.country || 'International',
-    };
-  } else if (pub.locationId) {
-    const locMatch = LOCATIONS.find((l) => l.id === pub.locationId);
-    if (locMatch) {
-      resolvedLocation = { id: locMatch.id, name: locMatch.name, country: locMatch.country };
+  const profileLocationIds = getProfileLocationIds(pub);
+  const resolvedLocations = profileLocationIds.map((locId) => {
+    if (locId === 'other') {
+      return {
+        id: 'other',
+        name: pub.locationOther?.city || 'Local',
+        country: pub.locationOther?.country || 'International',
+      };
     }
-  }
+    if (locId === 'online') {
+      return { id: 'online', name: 'Online', country: 'Global' };
+    }
+    const locMatch = LOCATIONS.find((l) => l.id === locId);
+    if (locMatch) {
+      return { id: locMatch.id, name: locMatch.name, country: locMatch.country };
+    }
+    return { id: locId, name: locId, country: '' };
+  });
+
+  const resolvedLocation = resolvedLocations[0] || { id: 'online', name: 'Online', country: 'Global' };
+  const overlapZones = Array.isArray(pub.overlapZones) ? pub.overlapZones : [];
 
   return {
     slug: plain.slug || '',
@@ -75,6 +99,9 @@ export function toPublicProfile(doc) {
     skillIds,
     skills: resolvedSkills,
     location: resolvedLocation,
+    locations: resolvedLocations,
+    locationIds: profileLocationIds,
+    overlapZones,
     timezone: pub.timezone || '',
     yearsExperience: typeof pub.yearsExperience === 'number' ? pub.yearsExperience : 0,
     languages: Array.isArray(pub.languages) ? pub.languages : [],
@@ -243,18 +270,52 @@ export function validateSkillIds(skillIds) {
 /**
  * Validates Location: must exist in LOCATIONS or be 'other' with country + city.
  */
-export function validateLocation(locationId, locationOther) {
-  if (!locationId) return 'Please select a location.';
-  if (locationId === 'other') {
-    if (!locationOther?.country?.trim() || !locationOther?.city?.trim()) {
-      return 'For "Other" location, please specify both country and city.';
+export function validateLocation(locationInput, locationOther, extraLocationIds) {
+  let ids = [];
+  if (Array.isArray(locationInput)) {
+    ids = locationInput;
+  } else if (Array.isArray(extraLocationIds)) {
+    ids = extraLocationIds;
+  } else if (locationInput) {
+    ids = [locationInput];
+  }
+
+  if (ids.length === 0) {
+    return 'Please select a location.';
+  }
+
+  if (ids.length > 5) {
+    return 'A maximum of 5 locations can be selected.';
+  }
+
+  const seen = new Set();
+  for (const id of ids) {
+    if (seen.has(id)) {
+      return `Duplicate location selected: "${id}".`;
     }
-    return null;
+    seen.add(id);
   }
-  const validLoc = LOCATIONS.some((l) => l.id === locationId);
-  if (!validLoc) {
-    return `Invalid location selected: "${locationId}".`;
+
+  let otherCount = 0;
+  for (const id of ids) {
+    if (id === 'other') {
+      otherCount++;
+      if (otherCount > 1) {
+        return '"Other" location can only be added once.';
+      }
+      if (!locationOther?.country?.trim() || !locationOther?.city?.trim()) {
+        return 'For "Other" location, please specify both country and city.';
+      }
+    } else if (id === 'online') {
+      // Valid online location
+    } else {
+      const validLoc = LOCATIONS.some((l) => l.id === id);
+      if (!validLoc) {
+        return `Invalid location selected: "${id}".`;
+      }
+    }
   }
+
   return null;
 }
 

@@ -14,6 +14,7 @@ import {
   validateApplyRoles,
   validateApplyPhotoUrl,
   validateWhatsApp,
+  ALLOWED_OVERLAP_ZONES,
   parseYearsExperience,
   escapeHtml,
   hasUrls,
@@ -254,9 +255,12 @@ export async function POST(req) {
       const skillsErr = validateSkillIds(draft?.skillIds);
       if (skillsErr) return NextResponse.json({ error: skillsErr, field: 'skillIds' }, { status: 400 });
 
-      // Location validation
-      const locErr = validateLocation(draft?.locationId, draft?.locationOther);
-      if (locErr) return NextResponse.json({ error: locErr, field: 'locationId' }, { status: 400 });
+      // Location validation (1-5 locations, overlap zones)
+      const locIds = Array.isArray(draft?.locationIds) && draft.locationIds.length > 0
+        ? draft.locationIds
+        : (draft?.locationId ? [draft.locationId] : ['online']);
+      const locErr = validateLocation(locIds[0], draft?.locationOther, locIds);
+      if (locErr) return NextResponse.json({ error: locErr, field: 'locationIds' }, { status: 400 });
 
       // Years of experience validation (0-40)
       const yrsParsed = parseYearsExperience(draft?.yearsExperience, false);
@@ -305,6 +309,15 @@ export async function POST(req) {
       : [];
     const cleanAvailability = String(draft?.hire?.availability || 'Part-time (10-20 hrs/week)').trim().slice(0, 100);
     const cleanTimezone = String(draft?.timezone || 'UTC').trim().slice(0, 60);
+    const cleanLocationIds = (Array.isArray(draft?.locationIds) && draft.locationIds.length > 0
+      ? draft.locationIds
+      : [draft?.locationId || 'online']
+    ).slice(0, 5).map(l => String(l || '').trim()).filter(Boolean);
+
+    const cleanOverlapZones = Array.isArray(draft?.overlapZones)
+      ? draft.overlapZones.filter(z => ALLOWED_OVERLAP_ZONES.includes(z))
+      : [];
+
     const cleanLocationOther = {
       country: String(draft?.locationOther?.country || '').trim().slice(0, 60),
       city: String(draft?.locationOther?.city || '').trim().slice(0, 60),
@@ -330,7 +343,9 @@ export async function POST(req) {
         engagementTypes: cleanEngagementTypes,
       },
       skillIds: Array.isArray(draft?.skillIds) ? draft.skillIds : [],
-      locationId: draft?.locationId || 'online',
+      locationId: cleanLocationIds[0] || 'online',
+      locationIds: cleanLocationIds,
+      overlapZones: cleanOverlapZones,
       locationOther: cleanLocationOther,
       timezone: cleanTimezone,
       yearsExperience: draft?.yearsExperience !== undefined && draft?.yearsExperience !== '' ? (Number(draft?.yearsExperience) || 0) : 0,
