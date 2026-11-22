@@ -21,4 +21,18 @@ export const VIDEOS = [
     uploadDate: null,
     transcriptExcerpt: null,
   },
+  {
+    id: 'CBIWcozgDFM',
+    title: 'Live session recording',
+    skills: ['course'],
+    uploadDate: null,
+    transcriptExcerpt: null,
+  },
+  {
+    id: 'cVMBc8hK3-8',
+    title: 'Live session recording',
+    skills: ['course'],
+    uploadDate: null,
+    transcriptExcerpt: null,
+  },
 ];

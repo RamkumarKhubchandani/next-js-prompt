@@ -40,6 +40,8 @@ const profileContentSchema = new mongoose.Schema(
     hire: { type: hireContentSchema, default: () => ({}) },
     skillIds: { type: [String], default: [] },
     locationId: { type: String, default: 'online' },
+    locationIds: { type: [String], default: [] },
+    overlapZones: { type: [String], default: [] },
     locationOther: {
       country: { type: String, default: '' },
       city: { type: String, default: '' },
@@ -99,6 +101,12 @@ const mentorApplicationSchema = new mongoose.Schema(
     photoPublicId: {
       type: String,
       default: '',
+    },
+    // Top-level private WhatsApp number for OutlineDev contact only
+    whatsapp: {
+      type: String,
+      default: '',
+      trim: true,
     },
     // Dual role capabilities
     roles: {

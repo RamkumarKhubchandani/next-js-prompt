@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo";
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2, GraduationCap } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown, Loader2, GraduationCap, ShieldCheck } from "lucide-react";
 import { cn } from "../lib/utils";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useSession, signOut } from "next-auth/react";
@@ -18,7 +18,7 @@ const navigation = [
     { name: "Services", href: "/services" },
     { name: "Events", href: "/events", isNew: true },
     { name: "Blogs", href: "/blogs" },
-    { name: "Become Mentor", href: "/become-mentor" },
+    { name: "Become Mentor/Dev", href: "/join" },
 ];
 
 const hireLinks = [
@@ -45,6 +45,22 @@ export function Header({ showNav = true }) {
     const [connectConfig, setConnectConfig] = useState({ headline: '', subhead: '', defaultNotes: '', ctaLabel: '' });
     const menuRef = useRef(null);
     const [mounted, setMounted] = useState(false);
+    const [hasMentorApplication, setHasMentorApplication] = useState(false);
+
+    useEffect(() => {
+        if (session?.user) {
+            fetch('/api/mentor/apply')
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data?.application) {
+                        setHasMentorApplication(true);
+                    }
+                })
+                .catch(() => {});
+        } else {
+            setHasMentorApplication(false);
+        }
+    }, [session?.user]);
 
     useEffect(() => {
         setMounted(true);
@@ -82,6 +98,13 @@ export function Header({ showNav = true }) {
         setNavLoading(true);
         setUserMenuOpen(false);
         setMobileMenuOpen(false);
+    }
+
+    function isRouteActive(href) {
+        if (!pathname || !href) return false;
+        const cleanHref = String(href).split("?")[0].split("#")[0];
+        if (cleanHref === "/") return pathname === "/";
+        return pathname === cleanHref || pathname.startsWith(cleanHref + "/");
     }
 
     // Clear nav loading once the route changes to the expected destination.
@@ -150,14 +173,16 @@ export function Header({ showNav = true }) {
 
                     {/* Center Navigation - Visible on all standard desktop/laptop screens (xl+) */}
                     {showNav && (
-                        <nav className="hidden xl:flex min-w-0 justify-center items-center gap-x-2 2xl:gap-x-4">
+                        <nav className="hidden xl:flex min-w-0 justify-center items-center gap-x-3 2xl:gap-x-5">
                             {navigation.map((item) => {
                                 if (item.authOnly && !session) return null;
 
-                                // On dashboard, ONLY show "Become Mentor" in the center nav
-                                if (pathname === '/dashboard' && item.href !== '/become-mentor') {
+                                // On dashboard, ONLY show "Become Mentor/Dev" in the center nav
+                                if (pathname === '/dashboard' && item.href !== '/join') {
                                     return null;
                                 }
+
+                                const isActive = isRouteActive(item.href);
 
                                 return (
                                     <motion.div key={item.name} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
@@ -167,15 +192,20 @@ export function Header({ showNav = true }) {
                                                 if (String(item.href).startsWith("/#")) return;
                                                 startNavigate(item.href);
                                             }}
-                                            className={`relative text-xs 2xl:text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-1.5 ${item.badge || item.isNew ? "mr-5 2xl:mr-6" : ""}`}
+                                            className={cn(
+                                                "cursor-pointer text-xs 2xl:text-sm font-semibold leading-6 whitespace-nowrap flex items-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-sm",
+                                                isActive
+                                                    ? "text-brand-primary underline decoration-2 decoration-brand-primary underline-offset-8"
+                                                    : "text-dark-900 dark:text-light-100 hover:text-brand-primary hover:underline hover:decoration-2 hover:decoration-brand-primary hover:underline-offset-8"
+                                            )}
                                         >
-                                            {item.name}
+                                            <span>{item.name}</span>
                                             {item.badge ? (
-                                                <span className="absolute -top-1.5 -right-5 2xl:-right-6 z-20 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-amber-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm border border-red-400/50 leading-none">
+                                                <span className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-amber-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm border border-red-400/50 leading-none ml-1 self-center">
                                                     {item.badge}
                                                 </span>
                                             ) : item.isNew ? (
-                                                <span className="absolute -top-1.5 -right-5 2xl:-right-6 z-20 inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none">
+                                                <span className="inline-flex items-center justify-center rounded-full bg-brand-primary px-1.5 py-0.5 text-[9px] font-extrabold text-dark-900 shadow-sm border border-brand-primary/50 leading-none ml-1 self-center">
                                                     NEW
                                                 </span>
                                             ) : null}
@@ -184,11 +214,34 @@ export function Header({ showNav = true }) {
                                 );
                             })}
 
+                            {/* Top-level "My Expert Dashboard" ONLY when user has a MentorApplication */}
+                            {hasMentorApplication && (
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
+                                    <Link
+                                        href="/expert-dashboard"
+                                        onClick={() => startNavigate("/expert-dashboard")}
+                                        className={cn(
+                                            "cursor-pointer text-xs 2xl:text-sm font-semibold leading-6 whitespace-nowrap flex items-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-sm",
+                                            pathname === "/expert-dashboard"
+                                                ? "text-brand-primary underline decoration-2 decoration-brand-primary underline-offset-8"
+                                                : "text-dark-900 dark:text-light-100 hover:text-brand-primary hover:underline hover:decoration-2 hover:decoration-brand-primary hover:underline-offset-8"
+                                        )}
+                                    >
+                                        <span>My Expert Dashboard</span>
+                                    </Link>
+                                </motion.div>
+                            )}
+
                             {/* Hire Dropdown */}
                             <div className="relative group">
                                 <button
                                     type="button"
-                                    className="text-xs 2xl:text-sm font-semibold leading-6 text-dark-900 dark:text-light-100 hover:text-brand-primary transition-colors whitespace-nowrap flex items-center gap-1 py-1"
+                                    className={cn(
+                                        "cursor-pointer text-xs 2xl:text-sm font-semibold leading-6 whitespace-nowrap flex items-center gap-1 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-sm",
+                                        pathname?.startsWith('/hire')
+                                            ? "text-brand-primary underline decoration-2 decoration-brand-primary underline-offset-8"
+                                            : "text-dark-900 dark:text-light-100 hover:text-brand-primary hover:underline hover:decoration-2 hover:decoration-brand-primary hover:underline-offset-8"
+                                    )}
                                 >
                                     <span>Hire</span>
                                     <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
@@ -312,13 +365,23 @@ export function Header({ showNav = true }) {
                                                         )}
                                                     </Link>
                                                     <Link
-                                                        href="/become-mentor"
-                                                        onClick={() => startNavigate("/become-mentor")}
+                                                        href="/join"
+                                                        onClick={() => startNavigate("/join")}
                                                         className="flex items-center px-4 py-3 text-sm text-light-200 hover:bg-dark-700 hover:text-white transition-colors"
                                                     >
-                                                        <GraduationCap size={16} className="mr-3 text-purple-400" />
-                                                        Become Mentor
-                                                    </Link>
+                                                        <GraduationCap size={16} className="mr-3 text-purple-400" />Become Mentor/Dev</Link>
+                                                    {hasMentorApplication && (
+                                                        <Link
+                                                            href="/expert-dashboard"
+                                                            onClick={() => {
+                                                                setUserMenuOpen(false);
+                                                                startNavigate("/expert-dashboard");
+                                                            }}
+                                                            className="flex items-center px-4 py-3 text-sm text-emerald-400 hover:bg-dark-700 hover:text-emerald-300 transition-colors font-medium"
+                                                        >
+                                                            <ShieldCheck size={16} className="mr-3 text-emerald-400" />My Expert Dashboard</Link>
+                                                    )}
+                                                    
                                                     <Link
                                                         href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
                                                         onClick={() => setUserMenuOpen(false)}
@@ -432,6 +495,7 @@ export function Header({ showNav = true }) {
                                                     </button>
                                                     {showNav && navigation.map((item) => {
                                                         if (item.authOnly && !session) return null;
+                                                        const active = isRouteActive(item.href);
                                                         return (
                                                             <Link
                                                                 key={item.name}
@@ -443,9 +507,14 @@ export function Header({ showNav = true }) {
                                                                     }
                                                                     startNavigate(item.href);
                                                                 }}
-                                                                className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-light-100 hover:bg-dark-800 hover:text-brand-primary transition-colors"
+                                                                className={cn(
+                                                                    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-colors",
+                                                                    active
+                                                                        ? "text-brand-primary bg-dark-800"
+                                                                        : "text-light-100 hover:bg-dark-800 hover:text-brand-primary"
+                                                                )}
                                                             >
-                                                                {item.name}
+                                                                <span>{item.name}</span>
                                                                 {item.badge ? (
                                                                     <span className="ml-2 inline-flex items-center rounded-md bg-red-500/20 px-2 py-0.5 text-xs font-bold text-orange-400 ring-1 ring-inset ring-orange-500/30">
                                                                         {item.badge}
@@ -458,6 +527,23 @@ export function Header({ showNav = true }) {
                                                             </Link>
                                                         );
                                                     })}
+                                                    {showNav && hasMentorApplication && (
+                                                        <Link
+                                                            href="/expert-dashboard"
+                                                            onClick={() => {
+                                                                setMobileMenuOpen(false);
+                                                                startNavigate("/expert-dashboard");
+                                                            }}
+                                                            className={cn(
+                                                                "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-colors",
+                                                                pathname === "/expert-dashboard"
+                                                                    ? "text-brand-primary bg-dark-800"
+                                                                    : "text-emerald-400 hover:bg-dark-800 hover:text-emerald-300"
+                                                            )}
+                                                        >
+                                                            My Expert Dashboard
+                                                        </Link>
+                                                    )}
 
                                                     {/* Mobile Hire Group */}
                                                     <div className="py-2 border-t border-dark-700/60 my-2">
@@ -507,6 +593,17 @@ export function Header({ showNav = true }) {
                                                                     <Loader2 size={18} className="ml-auto animate-spin text-light-300" />
                                                                 )}
                                                             </Link>
+                                                            {hasMentorApplication && (
+                                                                <Link
+                                                                    href="/expert-dashboard"
+                                                                    onClick={() => {
+                                                                        setMobileMenuOpen(false);
+                                                                        startNavigate("/expert-dashboard");
+                                                                    }}
+                                                                    className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-emerald-400 hover:bg-dark-800 hover:text-emerald-300"
+                                                                >
+                                                                    <ShieldCheck size={20} className="mr-3 text-emerald-400" />My Expert Dashboard</Link>
+                                                            )}
                                                             <Link
                                                                 href={session.user.username ? `/u/${session.user.username}` : '/dashboard/settings'}
                                                                 onClick={() => setMobileMenuOpen(false)}

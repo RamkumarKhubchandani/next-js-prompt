@@ -1,3 +1,19 @@
+export const ALLOWED_OVERLAP_ZONES = ['IST', 'GST', 'EU', 'US-EAST', 'US-WEST', 'APAC', 'AUS'];
+
+/**
+ * Returns location IDs for a profile, backward compatible with single locationId.
+ */
+export function getProfileLocationIds(pub) {
+  if (!pub) return ['online'];
+  if (Array.isArray(pub.locationIds) && pub.locationIds.length > 0) {
+    return pub.locationIds;
+  }
+  if (pub.locationId) {
+    return [pub.locationId];
+  }
+  return ['online'];
+}
+
 import { SKILLS, LOCATIONS } from './seo-data.js';
 import MentorApplication from '../models/MentorApplication.js';
 import DEFAULT_EXPERT from './default-expert.js';
@@ -50,19 +66,27 @@ export function toPublicProfile(doc) {
     .filter(Boolean);
 
   // Resolve location details
-  let resolvedLocation = { id: pub.locationId || 'online', name: 'Online', country: 'Global' };
-  if (pub.locationId === 'other') {
-    resolvedLocation = {
-      id: 'other',
-      name: pub.locationOther?.city || 'Local',
-      country: pub.locationOther?.country || 'International',
-    };
-  } else if (pub.locationId) {
-    const locMatch = LOCATIONS.find((l) => l.id === pub.locationId);
-    if (locMatch) {
-      resolvedLocation = { id: locMatch.id, name: locMatch.name, country: locMatch.country };
+  const profileLocationIds = getProfileLocationIds(pub);
+  const resolvedLocations = profileLocationIds.map((locId) => {
+    if (locId === 'other') {
+      return {
+        id: 'other',
+        name: pub.locationOther?.city || 'Local',
+        country: pub.locationOther?.country || 'International',
+      };
     }
-  }
+    if (locId === 'online') {
+      return { id: 'online', name: 'Online', country: 'Global' };
+    }
+    const locMatch = LOCATIONS.find((l) => l.id === locId);
+    if (locMatch) {
+      return { id: locMatch.id, name: locMatch.name, country: locMatch.country };
+    }
+    return { id: locId, name: locId, country: '' };
+  });
+
+  const resolvedLocation = resolvedLocations[0] || { id: 'online', name: 'Online', country: 'Global' };
+  const overlapZones = Array.isArray(pub.overlapZones) ? pub.overlapZones : [];
 
   return {
     slug: plain.slug || '',
@@ -75,6 +99,9 @@ export function toPublicProfile(doc) {
     skillIds,
     skills: resolvedSkills,
     location: resolvedLocation,
+    locations: resolvedLocations,
+    locationIds: profileLocationIds,
+    overlapZones,
     timezone: pub.timezone || '',
     yearsExperience: typeof pub.yearsExperience === 'number' ? pub.yearsExperience : 0,
     languages: Array.isArray(pub.languages) ? pub.languages : [],
@@ -243,18 +270,52 @@ export function validateSkillIds(skillIds) {
 /**
  * Validates Location: must exist in LOCATIONS or be 'other' with country + city.
  */
-export function validateLocation(locationId, locationOther) {
-  if (!locationId) return 'Please select a location.';
-  if (locationId === 'other') {
-    if (!locationOther?.country?.trim() || !locationOther?.city?.trim()) {
-      return 'For "Other" location, please specify both country and city.';
+export function validateLocation(locationInput, locationOther, extraLocationIds) {
+  let ids = [];
+  if (Array.isArray(locationInput)) {
+    ids = locationInput;
+  } else if (Array.isArray(extraLocationIds)) {
+    ids = extraLocationIds;
+  } else if (locationInput) {
+    ids = [locationInput];
+  }
+
+  if (ids.length === 0) {
+    return 'Please select a location.';
+  }
+
+  if (ids.length > 5) {
+    return 'A maximum of 5 locations can be selected.';
+  }
+
+  const seen = new Set();
+  for (const id of ids) {
+    if (seen.has(id)) {
+      return `Duplicate location selected: "${id}".`;
     }
-    return null;
+    seen.add(id);
   }
-  const validLoc = LOCATIONS.some((l) => l.id === locationId);
-  if (!validLoc) {
-    return `Invalid location selected: "${locationId}".`;
+
+  let otherCount = 0;
+  for (const id of ids) {
+    if (id === 'other') {
+      otherCount++;
+      if (otherCount > 1) {
+        return '"Other" location can only be added once.';
+      }
+      if (!locationOther?.country?.trim() || !locationOther?.city?.trim()) {
+        return 'For "Other" location, please specify both country and city.';
+      }
+    } else if (id === 'online') {
+      // Valid online location
+    } else {
+      const validLoc = LOCATIONS.some((l) => l.id === id);
+      if (!validLoc) {
+        return `Invalid location selected: "${id}".`;
+      }
+    }
   }
+
   return null;
 }
 
@@ -415,8 +476,104 @@ export function validateApplyPhotoUrl(photoUrl, isDraftSave = false, cloudName =
 }
 
 /**
- * HTML-escape helper to prevent XSS in email templates and HTML renderings.
+ * Expert application & leads helpers.
  */
+/**
+ * Validates WhatsApp number.
+ * Format: E.164-like: optional +, 8-15 digits.
+ * When isDraftSave is true, skip required check (still validate if present).
+ */
+export function validateWhatsApp(value, isDraftSave = false) {
+  const trimmed = value ? String(value).trim() : '';
+  if (!trimmed) {
+    if (isDraftSave) return null;
+    return 'Enter a valid WhatsApp number with country code.';
+  }
+  const normalized = trimmed.replace(/[\s\-()]/g, '');
+  if (!/^\+?[0-9]{8,15}$/.test(normalized)) {
+    return 'Enter a valid WhatsApp number with country code (8-15 digits).';
+  }
+  return null;
+}
+
+/**
+ * Parses and validates years of professional experience.
+ * Strips non-digits, max 2 digits. Valid range 0-40.
+ */
+export function parseYearsExperience(value, isDraftSave = false) {
+  if (value === '' || value === null || value === undefined) {
+    if (isDraftSave) return { valid: true, value: 0, error: null };
+    return { valid: false, value: 0, error: 'Enter your years of experience (0-40).' };
+  }
+  const cleanStr = String(value).replace(/\D/g, '').slice(0, 2);
+  if (!cleanStr) {
+    if (isDraftSave) return { valid: true, value: 0, error: null };
+    return { valid: false, value: 0, error: 'Enter your years of experience (0-40).' };
+  }
+  const num = parseInt(cleanStr, 10);
+  if (isNaN(num) || num < 0 || num > 40) {
+    return { valid: false, value: num, error: 'Years of experience must be between 0 and 40.' };
+  }
+  return { valid: true, value: num, error: null };
+}
+
+/**
+ * Maps server-side error path/field to client form field keys.
+ */
+export function mapServerErrorToField(field) {
+  if (!field) return null;
+  const normalized = String(field).trim();
+  if (normalized.includes('mentor.headline')) return 'mentor.headline';
+  if (normalized.includes('mentor.summary')) return 'mentor.summary';
+  if (normalized.includes('hire.headline')) return 'hire.headline';
+  if (normalized.includes('hire.summary')) return 'hire.summary';
+  if (normalized.includes('skill')) return 'skillIds';
+  if (normalized.includes('location')) return 'locationId';
+  if (normalized.includes('yearsExperience')) return 'yearsExperience';
+  if (normalized.includes('photo')) return 'photoUrl';
+  if (normalized.includes('displayName') || normalized.includes('name')) return 'displayName';
+  if (normalized.includes('whatsapp')) return 'whatsapp';
+  if (normalized.includes('role')) return 'roles';
+  if (normalized.includes('project')) return 'projects';
+  if (normalized.includes('consent')) return 'consents';
+  return normalized;
+}
+
+export const ALLOWED_REQUEST_STATUSES = [
+  'pending',
+  'contacted',
+  'matched',
+  'completed',
+  'cancelled',
+  'sent',
+  'closed',
+];
+
+export function isValidObjectId(id) {
+  if (!id) return false;
+  return /^[0-9a-fA-F]{24}$/.test(String(id));
+}
+
+export function evaluateAdminAccess(session, adminEmailsEnv = process.env.ADMIN_EMAILS) {
+  if (!session || !session.user) {
+    return { status: 401, error: 'Unauthorized', authorized: false };
+  }
+  if (session.user.role === 'admin') {
+    return { status: 200, error: null, authorized: true };
+  }
+  const userEmail = (session.user.email || '').trim().toLowerCase();
+  if (userEmail && adminEmailsEnv) {
+    const adminEmails = adminEmailsEnv
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    if (adminEmails.includes(userEmail)) {
+      return { status: 200, error: null, authorized: true };
+    }
+  }
+  return { status: 403, error: 'Forbidden', authorized: false };
+}
+
 export function escapeHtml(str) {
   if (!str) return '';
   return String(str)

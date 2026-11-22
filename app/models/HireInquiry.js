@@ -26,7 +26,7 @@ const HireInquirySchema = new mongoose.Schema(
     sentAt: { type: Date, default: null },
     status: {
       type: String,
-      enum: ['pending', 'sent', 'closed'],
+      enum: ['pending', 'contacted', 'sent', 'matched', 'closed', 'completed', 'cancelled'],
       default: 'pending',
       index: true,
     },

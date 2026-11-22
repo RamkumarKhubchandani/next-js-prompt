@@ -135,7 +135,7 @@ export default async function sitemap() {
     { url: "/mock-interviews", changeFrequency: "weekly", priority: 0.9 },
     { url: "/resume-audit", changeFrequency: "weekly", priority: 0.9 },
     { url: "/mentors", changeFrequency: "weekly", priority: 0.9 },
-    { url: "/become-mentor", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/join", changeFrequency: "weekly", priority: 0.9 },
     { url: "/events", changeFrequency: "daily", priority: 0.9 },
     { url: "/challenges", changeFrequency: "weekly", priority: 0.8 },
     { url: "/reviews", changeFrequency: "weekly", priority: 0.8 },
@@ -146,6 +146,7 @@ export default async function sitemap() {
     { url: "/developer-toolkit-2026", changeFrequency: "weekly", priority: 0.9 },
     { url: "/coding-classes-for-beginners", changeFrequency: "weekly", priority: 0.9 },
     { url: "/bca-mca-training-jamnagar", changeFrequency: "weekly", priority: 0.9 },
+    { url: "/full-stack-live-course", changeFrequency: "weekly", priority: 0.9 },
     { url: "/hire/react-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/nextjs-developer", changeFrequency: "weekly", priority: 0.8 },
     { url: "/hire/full-stack-developer", changeFrequency: "weekly", priority: 0.8 },
@@ -164,6 +165,8 @@ export default async function sitemap() {
       lastModified = HOME_LAST_MODIFIED;
     } else if (route.url === "/reviews") {
       lastModified = "2026-11-12";
+    } else if (route.url === "/full-stack-live-course") {
+      lastModified = "2026-11-16";
     } else if (route.url.startsWith("/hire/")) {
       lastModified = HIRE_PAGES_LAST_MODIFIED;
     }

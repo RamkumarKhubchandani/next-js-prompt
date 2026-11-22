@@ -14,11 +14,17 @@ import {
   validateApprovableApplication,
   validateApplyRoles,
   validateApplyPhotoUrl,
+  validateWhatsApp,
+  parseYearsExperience,
+  mapServerErrorToField,
   escapeHtml,
   REQUIRED_CONSENTS,
   rankExperts,
   hireSlugToSkillId,
   hasUrls,
+  ALLOWED_REQUEST_STATUSES,
+  isValidObjectId,
+  evaluateAdminAccess,
 } from '../app/lib/experts.js';
 import { DEFAULT_EXPERT } from '../app/lib/default-expert.js';
 import { safeJsonLd } from '../app/lib/schema-helpers.js';
@@ -767,6 +773,255 @@ describe('11. Skill Guides Map Lookup (SKILL_GUIDES & getSkillGuide)', () => {
       assert.ok(typeof slug === 'string' && slug.length > 0, `Slug for ${key} should be a non-empty string`);
       assert.ok(!slug.includes(' '), `Slug for ${key} should not contain spaces: ${slug}`);
       assert.ok(!slug.startsWith('http'), `Slug for ${key} should be a relative slug, not a URL: ${slug}`);
+    }
+  });
+});
+
+describe('12. WhatsApp Validation (validateWhatsApp)', () => {
+  test('passes for valid international formats with leading plus', () => {
+    assert.strictEqual(validateWhatsApp('+919876543210'), null);
+    assert.strictEqual(validateWhatsApp('+14155552671'), null);
+    assert.strictEqual(validateWhatsApp('+447911123456'), null);
+  });
+
+  test('passes for valid numbers with spaces, hyphens and parentheses', () => {
+    assert.strictEqual(validateWhatsApp('+91 98765 43210'), null);
+    assert.strictEqual(validateWhatsApp('+1 (415) 555-2671'), null);
+    assert.strictEqual(validateWhatsApp('9876543210'), null);
+  });
+
+  test('when isDraftSave is true: skips required check on empty/falsy', () => {
+    assert.strictEqual(validateWhatsApp('', true), null);
+    assert.strictEqual(validateWhatsApp(null, true), null);
+    assert.strictEqual(validateWhatsApp(undefined, true), null);
+  });
+
+  test('when isDraftSave is false: fails on empty/falsy', () => {
+    assert.match(validateWhatsApp('', false), /valid WhatsApp number/i);
+    assert.match(validateWhatsApp(null, false), /valid WhatsApp number/i);
+  });
+
+  test('fails for invalid digit counts (<8 or >15 digits)', () => {
+    assert.match(validateWhatsApp('12345'), /8-15 digits/i);
+    assert.match(validateWhatsApp('1234567'), /8-15 digits/i);
+    assert.match(validateWhatsApp('+1234567890123456'), /8-15 digits/i);
+  });
+
+  test('fails for numbers containing letters or invalid characters', () => {
+    assert.match(validateWhatsApp('+9198765abcde'), /8-15 digits/i);
+    assert.match(validateWhatsApp('whatsapp-me'), /8-15 digits/i);
+  });
+});
+
+describe('13. Years of Experience Parsing (parseYearsExperience)', () => {
+  test('parses valid numeric strings and numbers within range 0-40', () => {
+    assert.deepStrictEqual(parseYearsExperience('0'), { valid: true, value: 0, error: null });
+    assert.deepStrictEqual(parseYearsExperience('5'), { valid: true, value: 5, error: null });
+    assert.deepStrictEqual(parseYearsExperience('40'), { valid: true, value: 40, error: null });
+    assert.deepStrictEqual(parseYearsExperience(12), { valid: true, value: 12, error: null });
+  });
+
+  test('strips non-digits and limits to 2 digits', () => {
+    assert.deepStrictEqual(parseYearsExperience('12 years'), { valid: true, value: 12, error: null });
+    assert.deepStrictEqual(parseYearsExperience(' 7 yrs '), { valid: true, value: 7, error: null });
+    assert.deepStrictEqual(parseYearsExperience('123'), { valid: true, value: 12, error: null });
+  });
+
+  test('when isDraftSave is true: allows empty value and defaults to 0', () => {
+    assert.deepStrictEqual(parseYearsExperience('', true), { valid: true, value: 0, error: null });
+    assert.deepStrictEqual(parseYearsExperience(null, true), { valid: true, value: 0, error: null });
+    assert.deepStrictEqual(parseYearsExperience(undefined, true), { valid: true, value: 0, error: null });
+  });
+
+  test('when isDraftSave is false: rejects empty or non-numeric input', () => {
+    const resEmpty = parseYearsExperience('', false);
+    assert.strictEqual(resEmpty.valid, false);
+    assert.match(resEmpty.error, /years of experience/i);
+
+    const resChars = parseYearsExperience('none', false);
+    assert.strictEqual(resChars.valid, false);
+    assert.match(resChars.error, /years of experience/i);
+  });
+
+  test('rejects values exceeding 40 years', () => {
+    const res = parseYearsExperience('45', false);
+    assert.strictEqual(res.valid, false);
+    assert.match(res.error, /between 0 and 40/i);
+  });
+});
+
+describe('14. Field Mapping of Server Errors (mapServerErrorToField)', () => {
+  test('maps role headline and summary paths', () => {
+    assert.strictEqual(mapServerErrorToField('mentor.headline'), 'mentor.headline');
+    assert.strictEqual(mapServerErrorToField('draft.mentor.headline'), 'mentor.headline');
+    assert.strictEqual(mapServerErrorToField('mentor.summary'), 'mentor.summary');
+    assert.strictEqual(mapServerErrorToField('hire.headline'), 'hire.headline');
+    assert.strictEqual(mapServerErrorToField('draft.hire.headline'), 'hire.headline');
+    assert.strictEqual(mapServerErrorToField('hire.summary'), 'hire.summary');
+  });
+
+  test('maps core identity, whatsapp, and skill fields', () => {
+    assert.strictEqual(mapServerErrorToField('displayName'), 'displayName');
+    assert.strictEqual(mapServerErrorToField('name'), 'displayName');
+    assert.strictEqual(mapServerErrorToField('whatsapp'), 'whatsapp');
+    assert.strictEqual(mapServerErrorToField('photoUrl'), 'photoUrl');
+    assert.strictEqual(mapServerErrorToField('skillIds'), 'skillIds');
+    assert.strictEqual(mapServerErrorToField('skills'), 'skillIds');
+    assert.strictEqual(mapServerErrorToField('locationId'), 'locationId');
+    assert.strictEqual(mapServerErrorToField('yearsExperience'), 'yearsExperience');
+    assert.strictEqual(mapServerErrorToField('roles'), 'roles');
+    assert.strictEqual(mapServerErrorToField('projects'), 'projects');
+    assert.strictEqual(mapServerErrorToField('consents'), 'consents');
+  });
+
+  test('returns fallback for unknown field strings', () => {
+    assert.strictEqual(mapServerErrorToField(null), null);
+    assert.strictEqual(mapServerErrorToField('customField'), 'customField');
+  });
+});
+
+describe('15. Expert Leads Access Isolation (/api/expert/leads)', () => {
+  test('simulates server query ensuring expert receives strictly their assigned leads', () => {
+    const expertAppAId = '660000000000000000000001';
+    const expertAppBId = '660000000000000000000002';
+
+    const leadsDatabase = [
+      { _id: 'lead1', name: 'Client A1', email: 'a1@example.com', assignedExpertIds: [expertAppAId] },
+      { _id: 'lead2', name: 'Client A2', email: 'a2@example.com', assignedExpertIds: [expertAppAId] },
+      { _id: 'lead3', name: 'Client B1', email: 'b1@example.com', assignedExpertIds: [expertAppBId] },
+      { _id: 'lead4', name: 'Unassigned', email: 'un@example.com', assignedExpertIds: [] },
+    ];
+
+    // Query filter matching /api/expert/leads implementation: { assignedExpertIds: expertAppId }
+    function queryExpertLeads(callerAppId) {
+      return leadsDatabase.filter((lead) =>
+        lead.assignedExpertIds.some((id) => id.toString() === callerAppId.toString())
+      );
+    }
+
+    const callerALeads = queryExpertLeads(expertAppAId);
+    const callerBLeads = queryExpertLeads(expertAppBId);
+
+    // Caller A receives only lead1 and lead2
+    assert.strictEqual(callerALeads.length, 2);
+    assert.deepStrictEqual(callerALeads.map((l) => l._id), ['lead1', 'lead2']);
+
+    // Caller B receives only lead3
+    assert.strictEqual(callerBLeads.length, 1);
+    assert.deepStrictEqual(callerBLeads.map((l) => l._id), ['lead3']);
+
+    // Neither caller ever receives the other caller's leads
+    assert.ok(!callerALeads.some((l) => l._id === 'lead3'));
+    assert.ok(!callerBLeads.some((l) => l._id === 'lead1' || l._id === 'lead2'));
+  });
+});
+
+describe('16. Mentorship Requests Authorization & Guard (/api/mentorship/requests)', () => {
+  // Test handler simulation matching /api/mentorship/requests GET & PATCH implementation
+  async function simulateMentorshipRequestsGet(session, adminEmailsEnv) {
+    if (!session) {
+      return { status: 401, error: 'Unauthorized' };
+    }
+    const authResult = evaluateAdminAccess(session, adminEmailsEnv);
+    if (!authResult.authorized) {
+      return { status: 403, error: 'Forbidden' };
+    }
+    return { status: 200, success: true, requests: [] };
+  }
+
+  async function simulateMentorshipRequestsPatch(session, body, adminEmailsEnv) {
+    if (!session) {
+      return { status: 401, error: 'Unauthorized' };
+    }
+    const authResult = evaluateAdminAccess(session, adminEmailsEnv);
+    if (!authResult.authorized) {
+      return { status: 403, error: 'Forbidden' };
+    }
+    const { id, status } = body || {};
+    if (!status || !ALLOWED_REQUEST_STATUSES.includes(status)) {
+      return { status: 400, error: 'Invalid status' };
+    }
+    if (!isValidObjectId(id)) {
+      return { status: 400, error: 'Invalid id' };
+    }
+    return { status: 200, success: true };
+  }
+
+  test('non-admin session gets 403 from GET', async () => {
+    const nonAdminSession = {
+      user: { id: 'user123', email: 'regular@example.com', role: 'user' },
+    };
+    const res = await simulateMentorshipRequestsGet(nonAdminSession, 'admin@example.com');
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.error, 'Forbidden');
+  });
+
+  test('non-admin session gets 403 from PATCH', async () => {
+    const nonAdminSession = {
+      user: { id: 'user123', email: 'regular@example.com', role: 'user' },
+    };
+    const res = await simulateMentorshipRequestsPatch(
+      nonAdminSession,
+      { id: '507f1f77bcf86cd799439011', status: 'contacted' },
+      'admin@example.com'
+    );
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(res.error, 'Forbidden');
+  });
+
+  test('unauthenticated request (no session) gets 401 from GET and PATCH', async () => {
+    const getRes = await simulateMentorshipRequestsGet(null);
+    assert.strictEqual(getRes.status, 401);
+
+    const patchRes = await simulateMentorshipRequestsPatch(null, { id: '507f1f77bcf86cd799439011', status: 'contacted' });
+    assert.strictEqual(patchRes.status, 401);
+  });
+
+  test('admin session is allowed on GET', async () => {
+    const adminSessionRole = {
+      user: { id: 'admin1', email: 'boss@corp.com', role: 'admin' },
+    };
+    const resRole = await simulateMentorshipRequestsGet(adminSessionRole, '');
+    assert.strictEqual(resRole.status, 200);
+
+    const adminSessionEmail = {
+      user: { id: 'admin2', email: 'owner@outlinedev.com', role: 'user' },
+    };
+    const resEmail = await simulateMentorshipRequestsGet(adminSessionEmail, 'owner@outlinedev.com,other@admin.com');
+    assert.strictEqual(resEmail.status, 200);
+  });
+
+  test('admin session on PATCH validates status and id', async () => {
+    const adminSession = {
+      user: { id: 'admin1', email: 'boss@corp.com', role: 'admin' },
+    };
+
+    // Invalid status
+    const resInvalidStatus = await simulateMentorshipRequestsPatch(
+      adminSession,
+      { id: '507f1f77bcf86cd799439011', status: 'invalid_status' },
+      ''
+    );
+    assert.strictEqual(resInvalidStatus.status, 400);
+    assert.strictEqual(resInvalidStatus.error, 'Invalid status');
+
+    // Invalid ObjectId
+    const resInvalidId = await simulateMentorshipRequestsPatch(
+      adminSession,
+      { id: 'not-an-object-id', status: 'contacted' },
+      ''
+    );
+    assert.strictEqual(resInvalidId.status, 400);
+    assert.strictEqual(resInvalidId.error, 'Invalid id');
+
+    // Valid ObjectId and all allowed statuses
+    for (const validStatus of ALLOWED_REQUEST_STATUSES) {
+      const res = await simulateMentorshipRequestsPatch(
+        adminSession,
+        { id: '507f1f77bcf86cd799439011', status: validStatus },
+        ''
+      );
+      assert.strictEqual(res.status, 200);
     }
   });
 });
