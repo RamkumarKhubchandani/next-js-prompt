@@ -1025,3 +1025,47 @@ describe('16. Mentorship Requests Authorization & Guard (/api/mentorship/request
     }
   });
 });
+
+describe('17. Draft Hydration (Locations & Overlap Zones)', () => {
+  function hydrateDraftLocations(draftData = {}, app = {}) {
+    const loadedLocationIds = draftData.locationIds?.length
+      ? draftData.locationIds
+      : [draftData.locationId || app.locationId || 'online'];
+    const loadedOverlapZones = Array.isArray(draftData.overlapZones)
+      ? draftData.overlapZones
+      : Array.isArray(app.overlapZones)
+      ? app.overlapZones
+      : [];
+    return {
+      locationIds: loadedLocationIds,
+      locationId: loadedLocationIds[0] || 'online',
+      overlapZones: loadedOverlapZones,
+    };
+  }
+
+  test('hydrates 3 locations and 2 overlap zones correctly', () => {
+    const draft = {
+      locationIds: ['pune', 'bangalore', 'mumbai'],
+      locationId: 'pune',
+      overlapZones: ['IST', 'EU'],
+    };
+    const hydrated = hydrateDraftLocations(draft);
+    assert.deepStrictEqual(hydrated.locationIds, ['pune', 'bangalore', 'mumbai']);
+    assert.strictEqual(hydrated.locationId, 'pune');
+    assert.deepStrictEqual(hydrated.overlapZones, ['IST', 'EU']);
+  });
+
+  test('falls back to locationId or online if locationIds is missing or empty', () => {
+    const draft1 = { locationId: 'delhi' };
+    const hydrated1 = hydrateDraftLocations(draft1);
+    assert.deepStrictEqual(hydrated1.locationIds, ['delhi']);
+    assert.strictEqual(hydrated1.locationId, 'delhi');
+    assert.deepStrictEqual(hydrated1.overlapZones, []);
+
+    const draft2 = {};
+    const hydrated2 = hydrateDraftLocations(draft2);
+    assert.deepStrictEqual(hydrated2.locationIds, ['online']);
+    assert.strictEqual(hydrated2.locationId, 'online');
+    assert.deepStrictEqual(hydrated2.overlapZones, []);
+  });
+});

@@ -174,6 +174,12 @@ export default function JoinClient() {
                 : app.yearsExperience !== undefined && app.yearsExperience !== null
                 ? String(app.yearsExperience)
                 : "";
+            const loadedLocationIds = draftData.locationIds?.length
+              ? draftData.locationIds
+              : [draftData.locationId || app.locationId || "online"];
+            const loadedOverlapZones = Array.isArray(draftData.overlapZones)
+              ? draftData.overlapZones
+              : (Array.isArray(app.overlapZones) ? app.overlapZones : []);
 
             setFormData({
               displayName: app.displayName || session.user?.name || "",
@@ -203,7 +209,9 @@ export default function JoinClient() {
                     : ["Hourly Contractor", "Fixed-Price Projects"],
                 },
                 skillIds: draftData.skillIds?.length ? draftData.skillIds : app.skills || [],
-                locationId: draftData.locationId || "online",
+                locationId: loadedLocationIds[0] || "online",
+                locationIds: loadedLocationIds,
+                overlapZones: loadedOverlapZones,
                 locationOther: draftData.locationOther || { country: app.country || "", city: app.city || "" },
                 timezone: draftData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
                 yearsExperience: loadedYears,
