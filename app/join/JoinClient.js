@@ -38,7 +38,7 @@ function countWords(str) {
   return str.trim().split(/\s+/).filter(Boolean).length;
 }
 
-export default function BecomeMentorClient() {
+export default function JoinClient() {
   const { data: session, status: authStatus } = useSession();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -639,7 +639,7 @@ export default function BecomeMentorClient() {
           <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <GraduationCap className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold mb-3">Join OutlineDev as an Expert</h1>
+          <h1 className="text-3xl font-bold mb-3">Join as a Mentor or Developer</h1>
           <p className="text-slate-400 mb-8">
             Create ONE verified expert profile to offer 1-on-1 mentorship, take on high-paying contract work, or both.
           </p>
@@ -724,7 +724,7 @@ export default function BecomeMentorClient() {
         {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">
-            Expert Profile Registration
+            Join as a Mentor or Developer
           </h1>
           <p className="text-slate-400 text-sm max-w-xl mx-auto">
             One public profile. Mentor aspiring developers, get hired for client projects, or both.
