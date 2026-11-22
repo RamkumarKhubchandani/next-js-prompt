@@ -637,7 +637,7 @@ export default function JoinClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
       </div>
     );
@@ -746,7 +746,7 @@ export default function JoinClient() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1">
         {/* Status Banner */}
         {applicationStatus && applicationStatus !== "draft" && (
-          <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span
                 className={`text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${
@@ -830,22 +830,24 @@ export default function JoinClient() {
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition relative ${
                 step === s.num
-                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  ? "bg-emerald-600 text-white border border-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30"
                   : step > s.num
-                  ? "bg-slate-900 text-slate-300 border border-slate-200 dark:border-slate-800"
-                  : "bg-slate-900/40 text-slate-500 border border-slate-200 dark:border-slate-800/60"
+                  ? "bg-slate-200 text-slate-700 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800"
+                  : "bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-900/40 dark:text-slate-500 dark:border-slate-800/60"
               }`}
             >
               <span className="relative flex items-center justify-center">
                 <span
                   className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${
-                    step === s.num ? "bg-emerald-500 text-slate-950 font-bold" : "bg-slate-800 text-slate-400"
+                    step === s.num
+                      ? "bg-white text-emerald-700 dark:bg-emerald-500 dark:text-slate-950 font-bold"
+                      : "bg-slate-300 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
                   }`}
                 >
                   {s.num}
                 </span>
                 {stepHasErrors(s.num) && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-slate-950 animate-pulse" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-950 animate-pulse" />
                 )}
               </span>
               <span>{s.label}</span>
@@ -870,11 +872,11 @@ export default function JoinClient() {
         )}
 
         {/* Form Container */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm">
           {/* STEP 1: BASICS */}
           {step === 1 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 1: Authentic Identity & Core Skills</h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   OutlineDev values authenticity. We require your real name, a clear professional photo, and verified skills.
@@ -887,7 +889,7 @@ export default function JoinClient() {
                   Real Professional Photo *
                 </label>
                 <div
-                  className={`flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-200 dark:border-slate-800 transition ${
+                  className={`flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 transition ${
                     fieldErrors.photoUrl ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                   }`}
                 >
@@ -1262,10 +1264,10 @@ export default function JoinClient() {
                   placeholder="Filter skills (e.g. React, Next.js, Python, AWS)..."
                   value={skillSearch}
                   onChange={(e) => setSkillSearch(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-white mb-3 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-xs text-slate-900 dark:text-white mb-3 focus:outline-none focus:border-emerald-500 placeholder-slate-400"
                 />
                 <div
-                  className={`flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-xl border transition ${
+                  className={`flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border transition ${
                     fieldErrors.skillIds ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                   }`}
                 >
@@ -1278,8 +1280,8 @@ export default function JoinClient() {
                         onClick={() => toggleSkill(s.id)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 ${
                           isSelected
-                            ? "bg-emerald-500 text-slate-950 font-semibold"
-                            : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+                            ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 font-semibold"
+                            : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
                         }`}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5" />}
@@ -1314,7 +1316,7 @@ export default function JoinClient() {
           {/* STEP 2: ROLES & OFFERINGS */}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 2: Role Profiles & Offerings</h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Choose whether you want to act as a Mentor, a Hire developer, or both. Each role carries its own headline and summary.
@@ -1327,8 +1329,8 @@ export default function JoinClient() {
                   onClick={() => toggleRole("mentor")}
                   className={`p-4 rounded-xl border cursor-pointer transition ${
                     formData.roles.includes("mentor")
-                      ? "bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
-                      : "bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-700"
+                      ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/20"
+                      : "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -1344,10 +1346,10 @@ export default function JoinClient() {
                       type="checkbox"
                       checked={formData.roles.includes("mentor")}
                       onChange={() => {}}
-                      className="w-4 h-4 text-emerald-500 rounded bg-slate-900 border-slate-700"
+                      className="w-4 h-4 text-emerald-600 rounded bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                     />
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     Host 1-on-1 coaching, conduct code reviews, mock interviews, and career mentoring.
                   </p>
                 </div>
@@ -1356,27 +1358,27 @@ export default function JoinClient() {
                   onClick={() => toggleRole("hire")}
                   className={`p-4 rounded-xl border cursor-pointer transition ${
                     formData.roles.includes("hire")
-                      ? "bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/20"
-                      : "bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-700"
+                      ? "bg-cyan-50 dark:bg-cyan-950/40 border-cyan-500/60 shadow-lg shadow-cyan-950/20"
+                      : "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Briefcase
                         className={`w-5 h-5 ${
-                          formData.roles.includes("hire") ? "text-cyan-400" : "text-slate-400"
+                          formData.roles.includes("hire") ? "text-cyan-500 dark:text-cyan-400" : "text-slate-400"
                         }`}
                       />
-                      <span className="font-bold text-white text-sm">Hire Developer Profile</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">Hire Developer Profile</span>
                     </div>
                     <input
                       type="checkbox"
                       checked={formData.roles.includes("hire")}
                       onChange={() => {}}
-                      className="w-4 h-4 text-cyan-500 rounded bg-slate-900 border-slate-700"
+                      className="w-4 h-4 text-cyan-600 rounded bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700"
                     />
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     Get booked for full-stack engineering contracts, feature delivery, and team augmentation.
                   </p>
                 </div>
@@ -1487,7 +1489,7 @@ export default function JoinClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Hourly Mentorship Rate ($/hr)</label>
+                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Hourly Mentorship Rate ($/hr)</label>
                       <input
                         type="number"
                         min="0"
@@ -1501,11 +1503,11 @@ export default function JoinClient() {
                             },
                           })
                         }
-                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-emerald-500"
+                        className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-emerald-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Mentorship Formats</label>
+                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Mentorship Formats</label>
                       <input
                         type="text"
                         value={formData.draft.mentor.formats.join(", ")}
@@ -1522,7 +1524,7 @@ export default function JoinClient() {
                           })
                         }
                         placeholder="1-on-1 Calls, Code Reviews, Chat"
-                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-emerald-500"
+                        className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-emerald-500"
                       />
                     </div>
                   </div>
@@ -1628,7 +1630,7 @@ export default function JoinClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Contract Rate ($/hr)</label>
+                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Contract Rate ($/hr)</label>
                       <input
                         type="number"
                         min="0"
@@ -1642,11 +1644,11 @@ export default function JoinClient() {
                             },
                           })
                         }
-                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-cyan-500"
+                        className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-cyan-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Availability</label>
+                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Availability</label>
                       <input
                         type="text"
                         value={formData.draft.hire.availability}
@@ -1660,7 +1662,7 @@ export default function JoinClient() {
                           })
                         }
                         placeholder="Part-time (15-20 hrs/week), Full-time"
-                        className="w-full px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm focus:border-cyan-500"
+                        className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-cyan-500"
                       />
                     </div>
                   </div>
@@ -1671,7 +1673,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-2"
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Step 1</span>
@@ -1693,7 +1695,7 @@ export default function JoinClient() {
           {/* STEP 3: PROJECTS, LINKS & CONSENTS */}
           {step === 3 && (
             <div className="space-y-6">
-              <div className="border-b border-slate-200 dark:border-slate-200 dark:border-slate-800 pb-4">
+              <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Step 3: Proof of Work & Declarations</h2>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   Add projects you&apos;ve built, professional profiles, and mandatory platform consents.
@@ -1763,7 +1765,7 @@ export default function JoinClient() {
                 </div>
 
                 {formData.draft.projects.length === 0 ? (
-                  <p className="text-xs text-slate-500 italic p-3 bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800">
                     No projects added yet. Click &apos;Add Project&apos; to showcase client deliverables or open-source software.
                   </p>
                 ) : (
@@ -1771,7 +1773,7 @@ export default function JoinClient() {
                     {formData.draft.projects.map((proj, idx) => (
                       <div
                         key={idx}
-                        className="p-4 bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 relative"
+                        className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 relative"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-slate-400">Project #{idx + 1}</span>
@@ -1836,13 +1838,13 @@ export default function JoinClient() {
               <div
                 id="field-consents"
                 data-field="consents"
-                className={`p-5 rounded-xl bg-slate-950 border transition space-y-3 ${
+                className={`p-5 rounded-xl bg-slate-50 dark:bg-slate-950 border transition space-y-3 ${
                   fieldErrors.consents ? "border-red-500 ring-1 ring-red-500/30" : "border-slate-200 dark:border-slate-800"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  <ShieldCheck className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+                  <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                     Mandatory Consents & Declarations *
                   </span>
                 </div>
@@ -1878,7 +1880,7 @@ export default function JoinClient() {
                 ].map((item) => (
                   <label
                     key={item.key}
-                    className="flex items-start gap-3 text-xs text-slate-300 cursor-pointer select-none p-2 rounded-lg hover:bg-slate-900 transition"
+                    className="flex items-start gap-3 text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition"
                   >
                     <input
                       type="checkbox"
@@ -1890,7 +1892,7 @@ export default function JoinClient() {
                         });
                         clearFieldError("consents");
                       }}
-                      className="w-4 h-4 mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500"
+                      className="w-4 h-4 mt-0.5 rounded text-emerald-600 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 focus:ring-emerald-500"
                     />
                     <span>{item.text}</span>
                   </label>
@@ -1905,7 +1907,7 @@ export default function JoinClient() {
               </div>
 
               {/* Mandatory Notice Before Submit */}
-              <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/60 text-amber-200 text-xs leading-relaxed">
+              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-200 text-xs leading-relaxed">
                 <p className="font-semibold mb-1">Important Notice:</p>
                 <p>
                   &quot;We may contact you for a short interview before approval. Approval is not guaranteed and listing does not guarantee leads.&quot;
@@ -1917,7 +1919,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Step 2</span>
@@ -1928,7 +1930,7 @@ export default function JoinClient() {
                     type="button"
                     disabled={saving}
                     onClick={() => handleSaveOrSubmit(true)}
-                    className="flex-1 sm:flex-initial px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 border border-slate-700"
+                    className="flex-1 sm:flex-initial px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save Draft</span>
@@ -1938,7 +1940,7 @@ export default function JoinClient() {
                     type="button"
                     disabled={saving}
                     onClick={() => handleSaveOrSubmit(false)}
-                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 dark:shadow-emerald-500/20"
                   >
                     {saving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
