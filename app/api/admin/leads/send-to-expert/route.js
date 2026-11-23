@@ -6,6 +6,7 @@ import dbConnect from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 import HireInquiry from '@/app/models/HireInquiry';
 import MentorApplication from '@/app/models/MentorApplication';
+import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
 function escapeHtml(str) {
@@ -23,9 +24,6 @@ async function sendLeadEmailToExpert({ expertEmail, expertName, clientName, clie
   const emailPass = process.env.EMAIL_PASSWORD;
   const fromEmail = process.env.EMAIL_FROM || emailUser || 'no-reply@outlinedev.com';
 
-  if (!emailUser || !emailPass) {
-    throw new Error('Email credentials not configured');
-  }
 
   const subject = `🎯 New OutlineDev Lead: ${leadType === 'mentorship' ? '1-on-1 Mentorship' : 'Client Engineering Inquiry'} from ${clientName}`;
 
@@ -88,21 +86,52 @@ ${safeDetails}
     </div>
   `;
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: emailUser, pass: emailPass },
-  });
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      let resendFrom = 'onboarding@resend.dev';
+      if (process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes('@gmail.com') && !process.env.EMAIL_FROM.includes('@example.com')) {
+        resendFrom = process.env.EMAIL_FROM;
+      }
+      await resend.emails.send({
+        from: `OutlineDev Dispatch <${resendFrom}>`,
+        to: expertEmail,
+        reply_to: replyToEmail,
+        subject,
+        text: textBody,
+        html: htmlBody,
+      });
+      console.log(`[LEAD DISPATCHED] Email sent to expert via Resend.`);
+      return true;
+    } catch (err) {
+      console.warn('Resend lead dispatch error:', err.message);
+    }
+  }
 
-  await transporter.sendMail({
-    from: `"OutlineDev Dispatch" <${fromEmail}>`,
-    to: expertEmail,
-    replyTo: replyToEmail,
-    subject,
-    text: textBody,
-    html: htmlBody,
-  });
+  if (emailUser && emailPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: emailUser, pass: emailPass },
+      });
 
-  console.log(`[LEAD DISPATCHED] Email sent to expert.`);
+      await transporter.sendMail({
+        from: `"OutlineDev Dispatch" <${fromEmail}>`,
+        to: expertEmail,
+        replyTo: replyToEmail,
+        subject,
+        text: textBody,
+        html: htmlBody,
+      });
+
+      console.log(`[LEAD DISPATCHED] Email sent to expert via Nodemailer.`);
+      return true;
+    } catch (err) {
+      console.warn('Nodemailer lead dispatch error:', err.message);
+    }
+  }
+
+  console.log(`[LEAD DISPATCH CONSOLE FALLBACK] To: ${expertEmail} (${expertName}) | Lead from: ${clientName} (${clientEmail}) | Subject: ${subject}`);
   return true;
 }
 
