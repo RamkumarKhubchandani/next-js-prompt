@@ -4,7 +4,7 @@ import { authOptions } from '@/app/lib/auth';
 import { requireAdmin, adminOnly } from '@/app/lib/requireAdmin';
 import dbConnect from '@/app/lib/mongodb';
 import MentorApplication from '@/app/models/MentorApplication';
-import { generateUniqueSlug, validateApprovableApplication, escapeHtml } from '@/app/lib/experts';
+import { generateUniqueSlug, validateApprovableApplication, escapeHtml, revalidateExpertSkillTags } from '@/app/lib/experts';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
@@ -109,18 +109,9 @@ export async function POST(req) {
 
       await application.save();
 
-      // Revalidate cache tag for only this person's skills
+      // Revalidate cache tag for this person's skills
       const approvedSkillIds = application.published?.skillIds || [];
-      for (const skillId of approvedSkillIds) {
-        try {
-          const nextCache = await import('next/cache');
-          if (nextCache && typeof nextCache.revalidateTag === 'function') {
-            nextCache.revalidateTag(`experts:skill:${skillId}`);
-          }
-        } catch (tagErr) {
-          console.warn(`revalidateTag failed for experts:skill:${skillId}:`, tagErr?.message || tagErr);
-        }
-      }
+      await revalidateExpertSkillTags(approvedSkillIds);
 
       if (applicantEmail) {
         const safeApplicantName = escapeHtml(applicantName);
@@ -166,6 +157,9 @@ export async function POST(req) {
 
       await application.save();
 
+      const rejectSkillIds = [...(application.published?.skillIds || []), ...(application.draft?.skillIds || [])];
+      await revalidateExpertSkillTags(rejectSkillIds);
+
       if (applicantEmail) {
         const safeApplicantName = escapeHtml(applicantName);
         const safeNote = escapeHtml(note || application.adminNotes || '');
@@ -205,6 +199,9 @@ export async function POST(req) {
       if (note) application.adminNotes = note;
       await application.save();
 
+      const hideSkillIds = [...(application.published?.skillIds || []), ...(application.draft?.skillIds || [])];
+      await revalidateExpertSkillTags(hideSkillIds);
+
       if (applicantEmail && note) {
         const safeApplicantName = escapeHtml(applicantName);
         const safeNote = escapeHtml(note);
@@ -236,12 +233,16 @@ export async function POST(req) {
       application.status = 'approved';
       application.hiddenByAdmin = false;
       await application.save();
+      const unhideSkillIds = [...(application.published?.skillIds || []), ...(application.draft?.skillIds || [])];
+      await revalidateExpertSkillTags(unhideSkillIds);
       return NextResponse.json({ success: true, application });
     }
 
     if (action === 'markInterviewed' || action === 'setInterviewed') {
       application.interviewedAt = new Date();
       await application.save();
+      const interviewedSkillIds = [...(application.published?.skillIds || []), ...(application.draft?.skillIds || [])];
+      await revalidateExpertSkillTags(interviewedSkillIds);
       return NextResponse.json({ success: true, application });
     }
 

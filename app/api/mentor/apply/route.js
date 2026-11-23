@@ -19,6 +19,7 @@ import {
   escapeHtml,
   hasUrls,
   REQUIRED_CONSENTS,
+  revalidateExpertSkillTags,
 } from '@/app/lib/experts';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
@@ -100,6 +101,8 @@ export async function POST(req) {
       if (!existingApp) return NextResponse.json({ error: 'Not found' }, { status: 404 });
       existingApp.status = 'hidden';
       await existingApp.save();
+      const hideSkills = [...(existingApp.published?.skillIds || []), ...(existingApp.draft?.skillIds || [])];
+      await revalidateExpertSkillTags(hideSkills);
       return NextResponse.json({ success: true, status: 'hidden' });
     }
 
@@ -115,6 +118,8 @@ export async function POST(req) {
       if (existingApp.published) {
         existingApp.status = 'approved';
         await existingApp.save();
+        const unhideSkills = [...(existingApp.published?.skillIds || []), ...(existingApp.draft?.skillIds || [])];
+        await revalidateExpertSkillTags(unhideSkills);
         return NextResponse.json({ success: true, status: 'approved' });
       }
       return NextResponse.json({ error: 'Cannot unhide without an approved published profile' }, { status: 400 });
@@ -402,6 +407,9 @@ export async function POST(req) {
       updateDoc,
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
+
+    const appSkills = [...(application.published?.skillIds || []), ...(cleanDraft.skillIds || [])];
+    await revalidateExpertSkillTags(appSkills);
 
     // On a new submission (status: pending, not drafts), email the owner
     if (!isDraftSave) {

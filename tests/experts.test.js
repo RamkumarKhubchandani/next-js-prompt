@@ -340,6 +340,7 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
     roles: ['mentor', 'hire'],
     skillIds: ['react'],
     location: { id: 'jamnagar', name: 'Jamnagar', country: 'India' },
+    locationIds: ['jamnagar'],
     interviewedByOutlineDev: true,
     mentor: { headline: 'Mentor In City', summary: 'Summary in city' },
     hire: { headline: 'Hire In City', summary: 'Summary in city' },
@@ -351,6 +352,7 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
     roles: ['mentor', 'hire'],
     skillIds: ['react'],
     location: { id: 'bangalore', name: 'Bangalore', country: 'India' },
+    locationIds: ['bangalore'],
     interviewedByOutlineDev: false,
     mentor: { headline: 'Mentor In Country', summary: 'Summary in country' },
     hire: { headline: 'Hire In Country', summary: 'Summary in country' },
@@ -362,12 +364,13 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
     roles: ['mentor', 'hire'],
     skillIds: ['react'],
     location: { id: 'london', name: 'London', country: 'United Kingdom' },
+    locationIds: ['london'],
     interviewedByOutlineDev: false,
     mentor: { headline: 'Mentor Anywhere', summary: 'Summary anywhere' },
     hire: { headline: 'Hire Anywhere', summary: 'Summary anywhere' },
   };
 
-  test('(1) same skill + same city takes first priority', () => {
+  test('(1) same skill + same city takes first priority among community candidates', () => {
     const candidates = [expertAnywhere, expertCountry, expertCity];
     const results = rankExperts({
       candidates,
@@ -376,13 +379,15 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
       intent: 'mentor',
     });
 
-    assert.strictEqual(results[0].slug, 'city-expert');
-    assert.strictEqual(results[1].slug, 'country-expert');
-    assert.strictEqual(results[2].slug, 'global-expert');
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
+    assert.strictEqual(results[2].slug, 'country-expert');
+    assert.strictEqual(results[3].slug, 'global-expert');
   });
 
   test('(2) same skill + same country takes second priority when no city match', () => {
-    // Search in Delhi (India), city expert in Jamnagar (India) matches country
+    // Search in Delhi (India), expert in Bangalore (India) matches country
     const candidates = [expertAnywhere, expertCountry];
     const results = rankExperts({
       candidates,
@@ -391,26 +396,70 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
       intent: 'mentor',
     });
 
-    assert.strictEqual(results[0].slug, 'country-expert');
-    assert.strictEqual(results[1].slug, 'global-expert');
+    assert.strictEqual(results.length, 3);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'country-expert');
+    assert.strictEqual(results[2].slug, 'global-expert');
   });
 
-  test('(3) same skill anywhere takes third priority', () => {
-    // Search in Paris, no India matches
-    const candidates = [expertAnywhere, expertCountry];
+  test('(3) multi-location candidate matches if target matches any of their locationIds', () => {
+    const multiLocExpert = {
+      slug: 'multi-loc-expert',
+      displayName: 'Multi Loc Expert',
+      roles: ['mentor'],
+      skillIds: ['react'],
+      locationIds: ['delhi', 'jamnagar'],
+      mentor: { headline: 'Multi Loc Mentor', summary: 'Summary' },
+    };
+    const candidates = [expertAnywhere, multiLocExpert];
     const results = rankExperts({
       candidates,
       targetSkillId: 'react',
-      targetLocationId: 'paris',
+      targetLocationId: 'jamnagar',
       intent: 'mentor',
     });
 
-    // expertAnywhere and expertCountry both fall into "anywhere" bucket
-    assert.strictEqual(results.some((r) => r.slug === 'global-expert'), true);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'multi-loc-expert');
   });
 
-  test('(4) always falls back to default profile for site owner from default-expert.js', () => {
-    // Empty candidates list
+  test('(4) online-only candidate falls into any-location bucket (bucket 3)', () => {
+    const onlineExpert = {
+      slug: 'online-expert',
+      displayName: 'Online Expert',
+      roles: ['mentor'],
+      skillIds: ['react'],
+      locationIds: ['online'],
+      mentor: { headline: 'Online Mentor', summary: 'Summary' },
+    };
+    const candidates = [onlineExpert];
+    const results = rankExperts({
+      candidates,
+      targetSkillId: 'react',
+      targetLocationId: 'jamnagar',
+      intent: 'mentor',
+    });
+
+    assert.strictEqual(results.length, 2);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'online-expert');
+  });
+
+  test('(5) skips buckets 1 and 2 when no target location is given', () => {
+    const candidates = [expertAnywhere, expertCountry, expertCity];
+    const results = rankExperts({
+      candidates,
+      targetSkillId: 'react',
+      targetLocationId: null,
+      intent: 'mentor',
+    });
+
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
+  });
+
+  test('(6) ranking with 0 candidates returns default expert FIRST (1 card total)', () => {
     const results = rankExperts({
       candidates: [],
       targetSkillId: 'react',
@@ -423,17 +472,65 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
     assert.strictEqual(results[0].displayName, 'Ramkumar Khubchandani');
   });
 
-  test('caps results at maximum of 3 cards', () => {
-    const extraCandidate = {
-      slug: 'extra-expert',
-      displayName: 'Extra Expert',
-      roles: ['mentor'],
-      skillIds: ['react'],
-      location: { id: 'online', name: 'Online', country: 'Global' },
-      mentor: { headline: 'Extra Mentor', summary: 'Extra summary' },
-    };
+  test('(7) ranking with 1 candidate returns default first + 1 community (2 cards total)', () => {
+    const results = rankExperts({
+      candidates: [expertCity],
+      targetSkillId: 'react',
+      targetLocationId: 'jamnagar',
+      intent: 'mentor',
+    });
 
-    const candidates = [expertCity, expertCountry, expertAnywhere, extraCandidate];
+    assert.strictEqual(results.length, 2);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
+  });
+
+  test('(8) ranking with 3 candidates returns default first + 3 community (4 cards total)', () => {
+    const results = rankExperts({
+      candidates: [expertCity, expertCountry, expertAnywhere],
+      targetSkillId: 'react',
+      targetLocationId: 'jamnagar',
+      intent: 'mentor',
+    });
+
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
+    assert.strictEqual(results[2].slug, 'country-expert');
+    assert.strictEqual(results[3].slug, 'global-expert');
+  });
+
+  test('(9) ranking with 6 candidates caps at maximum of 4 cards (default first + top 3 community)', () => {
+    const candidates = [
+      expertCity,
+      expertCountry,
+      expertAnywhere,
+      {
+        slug: 'extra-1',
+        displayName: 'Extra 1',
+        roles: ['mentor'],
+        skillIds: ['react'],
+        locationIds: ['online'],
+        mentor: { headline: 'Extra 1', summary: 'Summary' },
+      },
+      {
+        slug: 'extra-2',
+        displayName: 'Extra 2',
+        roles: ['mentor'],
+        skillIds: ['react'],
+        locationIds: ['online'],
+        mentor: { headline: 'Extra 2', summary: 'Summary' },
+      },
+      {
+        slug: 'extra-3',
+        displayName: 'Extra 3',
+        roles: ['mentor'],
+        skillIds: ['react'],
+        locationIds: ['online'],
+        mentor: { headline: 'Extra 3', summary: 'Summary' },
+      },
+    ];
+
     const results = rankExperts({
       candidates,
       targetSkillId: 'react',
@@ -441,14 +538,15 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
       intent: 'mentor',
     });
 
-    assert.strictEqual(results.length, 3);
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
   });
 
-  test('filters by intent: mentor intent excludes hire-only experts', () => {
+  test('(10) filters by role intent: mentor intent excludes hire-only experts', () => {
     const hireOnly = {
       slug: 'hire-only-dev',
       displayName: 'Hire Only Dev',
-      roles: ['hire'], // NO mentor role
+      roles: ['hire'],
       skillIds: ['react'],
       hire: { headline: 'Hire Only', summary: 'Hire summary' },
     };
@@ -460,9 +558,72 @@ describe('4. Matching Fallbacks (Deterministic Order & Fallback Chain)', () => {
       intent: 'mentor',
     });
 
-    // hireOnly is excluded from mentor intent, so only default expert is returned
     assert.strictEqual(results.some((r) => r.slug === 'hire-only-dev'), false);
+    assert.strictEqual(results.length, 1);
     assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+  });
+
+  test('(11) fills remaining slots with other approved profiles of same role when <3 match skill', () => {
+    const pythonDev1 = {
+      slug: 'py-dev-1',
+      displayName: 'Py Dev 1',
+      roles: ['mentor'],
+      skillIds: ['python'],
+      interviewedByOutlineDev: true,
+      mentor: { headline: 'Python Dev 1', summary: 'Summary' },
+    };
+    const pythonDev2 = {
+      slug: 'py-dev-2',
+      displayName: 'Py Dev 2',
+      roles: ['mentor'],
+      skillIds: ['python'],
+      interviewedByOutlineDev: false,
+      mentor: { headline: 'Python Dev 2', summary: 'Summary' },
+    };
+    const pythonDev3 = {
+      slug: 'py-dev-3',
+      displayName: 'Py Dev 3',
+      roles: ['mentor'],
+      skillIds: ['python'],
+      interviewedByOutlineDev: false,
+      mentor: { headline: 'Python Dev 3', summary: 'Summary' },
+    };
+
+    const results = rankExperts({
+      candidates: [expertCity],
+      fallbackCandidates: [pythonDev1, pythonDev2, pythonDev3],
+      targetSkillId: 'react',
+      targetLocationId: 'jamnagar',
+      intent: 'mentor',
+    });
+
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
+    assert.strictEqual(results[2].slug, 'py-dev-1');
+    assert.strictEqual(results[3].slug, 'py-dev-2');
+  });
+
+  test('(12) dedupes candidates by slug and never duplicates default expert', () => {
+    const duplicateCandidate = { ...expertCity };
+    const defaultAsCandidate = {
+      slug: DEFAULT_EXPERT.slug,
+      displayName: DEFAULT_EXPERT.displayName,
+      roles: ['mentor'],
+      skillIds: ['react'],
+      mentor: { headline: 'Default', summary: 'Summary' },
+    };
+
+    const results = rankExperts({
+      candidates: [expertCity, duplicateCandidate, defaultAsCandidate],
+      targetSkillId: 'react',
+      targetLocationId: 'jamnagar',
+      intent: 'mentor',
+    });
+
+    assert.strictEqual(results.length, 2);
+    assert.strictEqual(results[0].slug, DEFAULT_EXPERT.slug);
+    assert.strictEqual(results[1].slug, 'city-expert');
   });
 });
 

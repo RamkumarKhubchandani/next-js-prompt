@@ -1,3 +1,7 @@
+import { SKILLS, LOCATIONS } from './seo-data.js';
+import MentorApplication from '../models/MentorApplication.js';
+import DEFAULT_EXPERT from './default-expert.js';
+
 export const ALLOWED_OVERLAP_ZONES = ['IST', 'GST', 'EU', 'US-EAST', 'US-WEST', 'APAC', 'AUS'];
 
 /**
@@ -6,17 +10,16 @@ export const ALLOWED_OVERLAP_ZONES = ['IST', 'GST', 'EU', 'US-EAST', 'US-WEST', 
 export function getProfileLocationIds(pub) {
   if (!pub) return ['online'];
   if (Array.isArray(pub.locationIds) && pub.locationIds.length > 0) {
-    return pub.locationIds;
+    return pub.locationIds.filter(Boolean);
   }
   if (pub.locationId) {
     return [pub.locationId];
   }
+  if (pub.location?.id) {
+    return [pub.location.id];
+  }
   return ['online'];
 }
-
-import { SKILLS, LOCATIONS } from './seo-data.js';
-import MentorApplication from '../models/MentorApplication.js';
-import DEFAULT_EXPERT from './default-expert.js';
 
 export const HIRE_SLUG_TO_SKILL_ID = {
   'full-stack': 'fullstack',
@@ -585,16 +588,40 @@ export function escapeHtml(str) {
 }
 
 /**
- * Deterministically ranks candidates according to the 4 matching priority rules:
- * (1) same skill + same city
- * (2) same skill + same country
- * (3) same skill anywhere
- * (4) always the default profile for the site owner from app/lib/default-expert.js
- *
- * Returns up to 3 cards.
+ * Revalidates cache tags for a set of skill IDs.
+ */
+export async function revalidateExpertSkillTags(skillIds = []) {
+  if (!Array.isArray(skillIds) || skillIds.length === 0) return;
+  try {
+    const nextCache = await import('next/cache');
+    if (nextCache && typeof nextCache.revalidateTag === 'function') {
+      const uniqueSkills = [...new Set(skillIds.filter(Boolean))];
+      for (const skillId of uniqueSkills) {
+        nextCache.revalidateTag(`experts:skill:${skillId}`);
+      }
+    }
+  } catch (tagErr) {
+    console.warn('revalidateExpertSkillTags warning:', tagErr?.message || tagErr);
+  }
+}
+
+/**
+ * Deterministically ranks candidates:
+ * (1) Result = default expert FIRST, then up to 3 community profiles (max 4 cards).
+ *     The default must never be dropped by the cap.
+ * (2) Buckets for community profiles matching skill:
+ *     bucket1 = any candidate location id equals the target id or has the same city name;
+ *     bucket2 = same country as any of their locations;
+ *     bucket3 = same skill anywhere (online-only goes here).
+ *     Inside each bucket: interviewedByOutlineDev first, then displayName, then slug.
+ * (3) If fewer than 3 community profiles match the skill, fill with other approved
+ *     profiles with the same role (any skill, interviewed first), dedupe by slug.
+ *     If still fewer than 3, show fewer. NEVER create fake profiles.
+ * (4) No target location -> skip buckets 1 and 2.
  */
 export function rankExperts({
   candidates = [],
+  fallbackCandidates = [],
   targetSkillId,
   targetLocationId,
   intent = 'mentor',
@@ -611,40 +638,78 @@ export function rankExperts({
     } else if (targetLocationId === 'online' || targetLocationId === 'remote') {
       targetCity = 'online';
       targetCountry = 'global';
+    } else {
+      targetCity = String(targetLocationId).toLowerCase();
     }
   }
-
-  // Filter candidates who have target skill, support this intent, and have role details
-  const eligible = candidates.filter((c) => {
-    if (!c) return false;
-    const roles = Array.isArray(c.roles) ? c.roles : [];
-    if (!roles.includes(intent)) return false;
-    const skillIds = Array.isArray(c.skillIds) ? c.skillIds : [];
-    if (!skillIds.includes(targetSkillId)) return false;
-    if (intent === 'mentor' && !c.mentor) return false;
-    if (intent === 'hire' && !c.hire) return false;
-    return true;
-  });
-
-  const bucket1 = []; // same city
-  const bucket2 = []; // same country
-  const bucket3 = []; // same skill anywhere
 
   const isPhysicalTarget =
     targetCity &&
     targetCity !== 'online' &&
     targetCity !== 'remote' &&
+    targetCountry &&
     targetCountry !== 'global' &&
     targetCountry !== 'local';
 
-  for (const c of eligible) {
-    const candCity = c.location?.name?.toLowerCase() || '';
-    const candCountry = c.location?.country?.toLowerCase() || '';
-    const candLocId = c.location?.id || '';
+  // Filter candidates who support target role and have required role details
+  const allPool = [...candidates, ...(fallbackCandidates || [])];
+  const eligibleForRole = allPool.filter((c) => {
+    if (!c) return false;
+    if (c.status === 'hidden' || c.status === 'rejected') return false;
+    if (defaultExpert?.slug && c.slug === defaultExpert.slug) return false;
+    const roles = Array.isArray(c.roles) ? c.roles : [];
+    if (!roles.includes(intent)) return false;
+    if (intent === 'mentor' && (!c.mentor || (!c.mentor.headline && !c.mentor.summary))) return false;
+    if (intent === 'hire' && (!c.hire || (!c.hire.headline && !c.hire.summary))) return false;
+    return true;
+  });
 
-    if (isPhysicalTarget && (candLocId === targetLocationId || (candCity && candCity === targetCity))) {
+  // Split into candidates matching target skill vs other skills
+  const skillMatches = eligibleForRole.filter((c) => {
+    const skillIds = Array.isArray(c.skillIds) ? c.skillIds : [];
+    return skillIds.includes(targetSkillId);
+  });
+
+  const otherSkillCandidates = eligibleForRole.filter((c) => {
+    const skillIds = Array.isArray(c.skillIds) ? c.skillIds : [];
+    return !skillIds.includes(targetSkillId);
+  });
+
+  const bucket1 = []; // target locationId or same city
+  const bucket2 = []; // same country
+  const bucket3 = []; // same skill anywhere (or all if no target location)
+
+  for (const c of skillMatches) {
+    if (!targetLocationId || !isPhysicalTarget) {
+      bucket3.push(c);
+      continue;
+    }
+
+    const candLocIds = getProfileLocationIds(c);
+    const candCities = [];
+    const candCountries = [];
+
+    if (Array.isArray(c.locations)) {
+      for (const loc of c.locations) {
+        if (loc.name) candCities.push(loc.name.toLowerCase());
+        if (loc.country) candCountries.push(loc.country.toLowerCase());
+      }
+    }
+    if (c.location) {
+      if (c.location.name) candCities.push(c.location.name.toLowerCase());
+      if (c.location.country) candCountries.push(c.location.country.toLowerCase());
+    }
+    for (const lid of candLocIds) {
+      const lObj = LOCATIONS.find((l) => l.id === lid);
+      if (lObj) {
+        if (lObj.name) candCities.push(lObj.name.toLowerCase());
+        if (lObj.country) candCountries.push(lObj.country.toLowerCase());
+      }
+    }
+
+    if (candLocIds.includes(targetLocationId) || (targetCity && candCities.includes(targetCity))) {
       bucket1.push(c);
-    } else if (isPhysicalTarget && candCountry && candCountry === targetCountry) {
+    } else if (targetCountry && candCountries.includes(targetCountry)) {
       bucket2.push(c);
     } else {
       bucket3.push(c);
@@ -653,16 +718,13 @@ export function rankExperts({
 
   // Deterministic tie-breaking sort inside each bucket
   const deterministicSort = (a, b) => {
-    // 1. Interviewed badge first
     const aInterviewed = Boolean(a.interviewedByOutlineDev || a.interviewedAt);
     const bInterviewed = Boolean(b.interviewedByOutlineDev || b.interviewedAt);
     if (aInterviewed !== bInterviewed) {
       return aInterviewed ? -1 : 1;
     }
-    // 2. Alphabetical display name
     const nameDiff = (a.displayName || '').localeCompare(b.displayName || '');
     if (nameDiff !== 0) return nameDiff;
-    // 3. Stable slug tiebreak
     return (a.slug || '').localeCompare(b.slug || '');
   };
 
@@ -670,25 +732,44 @@ export function rankExperts({
   bucket2.sort(deterministicSort);
   bucket3.sort(deterministicSort);
 
-  // Combine buckets 1-3 with deduplication
-  const combined = [];
+  // Up to 3 community profiles
+  const selectedCommunity = [];
   const seenSlugs = new Set();
+  if (defaultExpert?.slug) {
+    seenSlugs.add(defaultExpert.slug);
+  }
 
   for (const c of [...bucket1, ...bucket2, ...bucket3]) {
     if (c.slug && !seenSlugs.has(c.slug)) {
       seenSlugs.add(c.slug);
-      combined.push(c);
+      selectedCommunity.push(c);
+      if (selectedCommunity.length === 3) break;
     }
   }
 
-  // Fallback (4): always append default profile for site owner from app/lib/default-expert.js
-  if (defaultExpert && defaultExpert.slug && !seenSlugs.has(defaultExpert.slug)) {
-    combined.push(defaultExpert);
-    seenSlugs.add(defaultExpert.slug);
+  // If fewer than 3 community profiles match the skill, fill remaining slots with
+  // other approved profiles with the same role (any skill, interviewed first)
+  if (selectedCommunity.length < 3) {
+    otherSkillCandidates.sort(deterministicSort);
+    for (const c of otherSkillCandidates) {
+      if (selectedCommunity.length >= 3) break;
+      if (c.slug && !seenSlugs.has(c.slug)) {
+        seenSlugs.add(c.slug);
+        selectedCommunity.push(c);
+      }
+    }
   }
 
-  // Cap at 3 cards
-  return combined.slice(0, 3);
+  // Result: default expert FIRST, then up to 3 community profiles. Max 4 cards.
+  const result = [];
+  if (defaultExpert && defaultExpert.slug) {
+    result.push(defaultExpert);
+  }
+  for (const c of selectedCommunity) {
+    result.push(c);
+  }
+
+  return result;
 }
 
 /**
@@ -715,10 +796,25 @@ export async function getExpertsFor({ skillId, locationId, intent = 'mentor' }) 
         'published.skillIds': skillId,
       }).lean();
 
+      let fallbackDocs = [];
+      if (docs.length < 3) {
+        const matchingIds = docs.map((d) => d._id);
+        fallbackDocs = await MentorApplication.find({
+          status: { $nin: ['hidden', 'rejected'] },
+          published: { $ne: null },
+          roles: intent,
+          _id: { $nin: matchingIds },
+        })
+          .limit(6)
+          .lean();
+      }
+
       const publicCandidates = docs.map(toPublicProfile).filter(Boolean);
+      const publicFallback = fallbackDocs.map(toPublicProfile).filter(Boolean);
 
       return rankExperts({
         candidates: publicCandidates,
+        fallbackCandidates: publicFallback,
         targetSkillId: skillId,
         targetLocationId: locationId,
         intent,
@@ -735,6 +831,11 @@ export async function getExpertsFor({ skillId, locationId, intent = 'mentor' }) 
       });
     }
   };
+
+  // In development (NODE_ENV !== 'production') skip unstable_cache
+  if (process.env.NODE_ENV !== 'production') {
+    return await queryAndRank();
+  }
 
   // Attempt Next.js unstable_cache if available in this runtime
   try {
