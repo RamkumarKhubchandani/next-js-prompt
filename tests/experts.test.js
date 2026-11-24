@@ -1230,3 +1230,99 @@ describe('17. Draft Hydration (Locations & Overlap Zones)', () => {
     assert.deepStrictEqual(hydrated2.overlapZones, []);
   });
 });
+
+
+describe('18. Lead Dispatch to Expert (/api/admin/leads/send-to-expert)', () => {
+  async function simulateSendLeadEmailToExpert({ expertName, leadId, nodeEnv, providersSucceeded }) {
+    if (providersSucceeded) {
+      return true;
+    }
+    if (nodeEnv === 'production') {
+      throw new Error('Email delivery failed');
+    }
+    return { loggedFallback: true, expertName, leadId };
+  }
+
+  async function simulateSendToExpertRoute({ lead, experts, nodeEnv, providersSucceeded }) {
+    const sentExpertIds = [];
+    for (const expert of experts) {
+      try {
+        await simulateSendLeadEmailToExpert({
+          expertName: expert.displayName,
+          leadId: lead._id,
+          nodeEnv,
+          providersSucceeded,
+        });
+        sentExpertIds.push(expert._id);
+      } catch (err) {
+        // Dispatch error caught per expert
+      }
+    }
+
+    if (sentExpertIds.length === 0) {
+      return {
+        status: 500,
+        body: { error: 'Failed to dispatch email to any selected expert. Lead status not updated.' },
+        lead,
+      };
+    }
+
+    lead.assignedExpertIds = sentExpertIds;
+    lead.sentAt = new Date();
+    lead.status = 'sent';
+    return {
+      status: 200,
+      body: { success: true, sentCount: sentExpertIds.length },
+      lead,
+    };
+  }
+
+  test('production + no providers rejects and does not mark the lead as sent', async () => {
+    const lead = {
+      _id: 'lead_test_001',
+      status: 'pending',
+      sentAt: null,
+      assignedExpertIds: [],
+    };
+    const experts = [{ _id: 'expert_abc', displayName: 'Aarav Sharma' }];
+
+    const res = await simulateSendToExpertRoute({
+      lead,
+      experts,
+      nodeEnv: 'production',
+      providersSucceeded: false,
+    });
+
+    assert.strictEqual(res.status, 500);
+    assert.strictEqual(
+      res.body.error,
+      'Failed to dispatch email to any selected expert. Lead status not updated.'
+    );
+    assert.strictEqual(lead.status, 'pending');
+    assert.strictEqual(lead.sentAt, null);
+    assert.deepStrictEqual(lead.assignedExpertIds, []);
+  });
+
+  test('non-production (development/test) uses console fallback and marks lead as sent', async () => {
+    const lead = {
+      _id: 'lead_test_002',
+      status: 'pending',
+      sentAt: null,
+      assignedExpertIds: [],
+    };
+    const experts = [{ _id: 'expert_xyz', displayName: 'Priya Patel' }];
+
+    const res = await simulateSendToExpertRoute({
+      lead,
+      experts,
+      nodeEnv: 'development',
+      providersSucceeded: false,
+    });
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.body.success, true);
+    assert.strictEqual(lead.status, 'sent');
+    assert.ok(lead.sentAt instanceof Date);
+    assert.deepStrictEqual(lead.assignedExpertIds, ['expert_xyz']);
+  });
+});

@@ -19,7 +19,7 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-async function sendLeadEmailToExpert({ expertEmail, expertName, clientName, clientEmail, clientPhone, leadType, details, replyToEmail }) {
+async function sendLeadEmailToExpert({ expertEmail, expertName, clientName, clientEmail, clientPhone, leadType, details, replyToEmail, leadId }) {
   const emailUser = process.env.EMAIL_USER;
   const emailPass = process.env.EMAIL_PASSWORD;
   const fromEmail = process.env.EMAIL_FROM || emailUser || 'no-reply@outlinedev.com';
@@ -131,7 +131,11 @@ ${safeDetails}
     }
   }
 
-  console.log(`[LEAD DISPATCH CONSOLE FALLBACK] To: ${expertEmail} (${expertName}) | Lead from: ${clientName} (${clientEmail}) | Subject: ${subject}`);
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Email delivery failed');
+  }
+
+  console.log(`[LEAD DISPATCH CONSOLE FALLBACK] Expert: ${expertName} | Lead ID: ${leadId || 'unknown'}`);
   return true;
 }
 
@@ -233,6 +237,7 @@ export async function POST(req) {
           leadType,
           details: detailsText,
           replyToEmail: clientEmail, // Expert replies directly to client
+          leadId,
         });
 
         sentExpertIds.push(expert._id.toString());
