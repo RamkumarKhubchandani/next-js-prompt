@@ -41,6 +41,13 @@ function countWords(str) {
 export default function JoinClient() {
   const { data: session, status: authStatus } = useSession();
   const [step, setStep] = useState(1);
+
+  const goToStep = (newStep) => {
+    setStep(newStep);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -831,9 +838,9 @@ export default function JoinClient() {
               key={s.num}
               type="button"
               onClick={() => {
-                if (s.num === 1) setStep(1);
-                if (s.num === 2 && validateStep1()) setStep(2);
-                if (s.num === 3 && validateStep1() && validateStep2()) setStep(3);
+                if (s.num === 1) goToStep(1);
+                if (s.num === 2 && validateStep1()) goToStep(2);
+                if (s.num === 3 && validateStep1() && validateStep2()) goToStep(3);
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition relative ${
                 step === s.num
@@ -1333,7 +1340,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (validateStep1()) setStep(2);
+                    if (validateStep1()) goToStep(2);
                   }}
                   className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-sm flex items-center gap-2"
                 >
@@ -1703,7 +1710,7 @@ export default function JoinClient() {
               <div className="flex justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={() => goToStep(1)}
                   className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -1712,7 +1719,7 @@ export default function JoinClient() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (validateStep2()) setStep(3);
+                    if (validateStep2()) goToStep(3);
                   }}
                   className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-sm flex items-center gap-2"
                 >
@@ -1949,7 +1956,7 @@ export default function JoinClient() {
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
-                  onClick={() => setStep(2)}
+                  onClick={() => goToStep(2)}
                   className="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
