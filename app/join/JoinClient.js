@@ -41,13 +41,67 @@ function countWords(str) {
 export default function JoinClient() {
   const { data: session, status: authStatus } = useSession();
   const [step, setStep] = useState(1);
+  const scrollToTop = () => {
+    if (typeof window === "undefined") return;
+
+    // Temporarily turn off smooth scrolling on root so snap to top is immediate
+    try {
+      document.documentElement.style.scrollBehavior = "auto";
+      document.body.style.scrollBehavior = "auto";
+    } catch (e) {}
+
+    const snap = () => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      } catch (e) {
+        window.scrollTo(0, 0);
+      }
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    };
+
+    snap();
+    requestAnimationFrame(snap);
+
+    setTimeout(() => {
+      snap();
+      try {
+        document.documentElement.style.scrollBehavior = "";
+        document.body.style.scrollBehavior = "";
+      } catch (e) {}
+    }, 60);
+
+    setTimeout(snap, 150);
+  };
 
   const goToStep = (newStep) => {
-    setStep(newStep);
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof document !== "undefined" && document.activeElement) {
+      try {
+        document.activeElement.blur();
+      } catch (e) {}
     }
+    scrollToTop();
+    setStep(newStep);
   };
+
+  // Turn off browser scroll-anchoring on document root while on Join page
+  useEffect(() => {
+    try {
+      document.documentElement.style.overflowAnchor = "none";
+      document.body.style.overflowAnchor = "none";
+    } catch (e) {}
+    return () => {
+      try {
+        document.documentElement.style.overflowAnchor = "";
+        document.body.style.overflowAnchor = "";
+      } catch (e) {}
+    };
+  }, []);
+
+  // Snap to top whenever step changes
+  useEffect(() => {
+    scrollToTop();
+  }, [step]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -754,10 +808,10 @@ export default function JoinClient() {
   const filteredSkills = SKILLS.filter((s) => s.name.toLowerCase().includes(skillSearch.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans" style={{ overflowAnchor: "none" }}>
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1" style={{ overflowAnchor: "none" }}>
         {/* Status Banner */}
         {applicationStatus && applicationStatus !== "draft" && (
           <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

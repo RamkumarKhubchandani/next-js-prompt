@@ -5,8 +5,10 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-anchor: none;
   }
   body {
+    overflow-anchor: none;
     @apply bg-light-100 text-dark-900 dark:bg-dark-900 dark:text-light-100;
   }
 }
