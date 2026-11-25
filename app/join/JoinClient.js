@@ -667,48 +667,55 @@ export default function JoinClient() {
     );
   }
 
-    function addLocation(id) {
-    const current = formData.draft.locationIds || (formData.draft.locationId ? [formData.draft.locationId] : []);
-    if (current.includes(id)) return;
-    if (current.length >= 5) return;
-    const next = [...current, id];
-    setFormData({
-      ...formData,
-      draft: {
-        ...formData.draft,
-        locationIds: next,
-        locationId: next[0],
-      },
+  function addLocation(id) {
+    setFormData((prev) => {
+      const current = prev.draft.locationIds || (prev.draft.locationId ? [prev.draft.locationId] : []);
+      if (current.includes(id) || current.length >= 5) return prev;
+      const next = [...current, id];
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          locationIds: next,
+          locationId: next[0],
+        },
+      };
     });
     clearFieldError("locationIds");
     clearFieldError("locationId");
   }
 
   function removeLocation(id) {
-    const current = formData.draft.locationIds || [];
-    const next = current.filter((x) => x !== id);
-    setFormData({
-      ...formData,
-      draft: {
-        ...formData.draft,
-        locationIds: next,
-        locationId: next[0] || "online",
-      },
+    setFormData((prev) => {
+      const current = prev.draft.locationIds || [];
+      const next = current.filter((x) => x !== id);
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          locationIds: next,
+          locationId: next[0] || "online",
+          ...(id === "other" ? { locationOther: { country: "", city: "" } } : {}),
+        },
+      };
     });
     clearFieldError("locationIds");
+    clearFieldError("locationId");
   }
 
   function setPrimaryLocation(id) {
-    const current = formData.draft.locationIds || [];
-    const filtered = current.filter((x) => x !== id);
-    const next = [id, ...filtered];
-    setFormData({
-      ...formData,
-      draft: {
-        ...formData.draft,
-        locationIds: next,
-        locationId: next[0],
-      },
+    setFormData((prev) => {
+      const current = prev.draft.locationIds || [];
+      const filtered = current.filter((x) => x !== id);
+      const next = [id, ...filtered];
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          locationIds: next,
+          locationId: next[0],
+        },
+      };
     });
     clearFieldError("locationIds");
   }
@@ -1048,9 +1055,11 @@ export default function JoinClient() {
                           e.stopPropagation();
                           removeLocation(id);
                         }}
-                        className="ml-1 text-slate-400 hover:text-red-500 rounded p-0.5"
+                        className="ml-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded p-1 transition"
+                        title="Remove location"
+                        aria-label={`Remove ${resolveLocationLabel(id)}`}
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </span>
                   ))}
@@ -1120,44 +1129,57 @@ export default function JoinClient() {
 
                 {/* Location Other Details */}
                 {(formData.draft.locationIds || []).includes("other") && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-                    <div>
-                      <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other Country *</label>
-                      <input
-                        type="text"
-                        value={formData.draft.locationOther.country}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            draft: {
-                              ...formData.draft,
-                              locationOther: { ...formData.draft.locationOther, country: e.target.value },
-                            },
-                          });
-                          clearFieldError("locationIds");
-                        }}
-                        placeholder="e.g., Canada"
-                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                      />
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Custom Location Details</span>
+                      <button
+                        type="button"
+                        onClick={() => removeLocation("other")}
+                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium inline-flex items-center gap-1 hover:underline"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Remove custom location
+                      </button>
                     </div>
-                    <div>
-                      <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other City *</label>
-                      <input
-                        type="text"
-                        value={formData.draft.locationOther.city}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            draft: {
-                              ...formData.draft,
-                              locationOther: { ...formData.draft.locationOther, city: e.target.value },
-                            },
-                          });
-                          clearFieldError("locationIds");
-                        }}
-                        placeholder="e.g., Toronto"
-                        className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other Country *</label>
+                        <input
+                          type="text"
+                          value={formData.draft.locationOther.country}
+                          onChange={(e) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              draft: {
+                                ...prev.draft,
+                                locationOther: { ...prev.draft.locationOther, country: e.target.value },
+                              },
+                            }));
+                            clearFieldError("locationIds");
+                          }}
+                          placeholder="e.g., Canada"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other City *</label>
+                        <input
+                          type="text"
+                          value={formData.draft.locationOther.city}
+                          onChange={(e) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              draft: {
+                                ...prev.draft,
+                                locationOther: { ...prev.draft.locationOther, city: e.target.value },
+                              },
+                            }));
+                            clearFieldError("locationIds");
+                          }}
+                          placeholder="e.g., Toronto"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
