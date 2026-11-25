@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+// Map any shifted Date constructor (e.g. ShiftedDate) to Mongoose's Date schema type
+if (typeof Date !== 'undefined' && Date.name && !mongoose.Schema.Types[Date.name]) {
+  mongoose.Schema.Types[Date.name] = mongoose.Schema.Types.Date;
+}
+
 const projectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
