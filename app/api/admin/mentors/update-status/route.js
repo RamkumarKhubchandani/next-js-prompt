@@ -104,7 +104,7 @@ export async function POST(req) {
       application.reviewedAt = new Date();
 
       if (!application.slug) {
-        application.slug = await generateUniqueSlug(application.displayName, application._id);
+        application.slug = await generateUniqueSlug(application.displayName, application._id, MentorApplication);
       }
 
       await application.save();

@@ -1,5 +1,4 @@
 import { SKILLS, LOCATIONS } from './seo-data.js';
-import MentorApplication from '../models/MentorApplication.js';
 import DEFAULT_EXPERT from './default-expert.js';
 
 export const ALLOWED_OVERLAP_ZONES = ['IST', 'GST', 'EU', 'US-EAST', 'US-WEST', 'APAC', 'AUS'];
@@ -164,18 +163,23 @@ export function formatSlug(displayName) {
  * Generates an immutable, unique slug in firstname-lastname format.
  * Adds -2, -3 etc. on clash.
  */
-export async function generateUniqueSlug(displayName, currentDocId = null, model = MentorApplication) {
+export async function generateUniqueSlug(displayName, currentDocId = null, model = null) {
   const baseSlug = formatSlug(displayName);
   let candidate = baseSlug;
   let counter = 1;
+  let activeModel = model;
+  if (!activeModel && typeof window === 'undefined') {
+    const mod = await import('../models/MentorApplication.js');
+    activeModel = mod.default || mod;
+  }
 
   while (true) {
     const query = { slug: candidate };
     if (currentDocId) {
       query._id = { $ne: currentDocId };
     }
-    const existing = model && typeof model.findOne === 'function'
-      ? await model.findOne(query).select('_id').lean()
+    const existing = activeModel && typeof activeModel.findOne === 'function'
+      ? await activeModel.findOne(query).select('_id').lean()
       : null;
 
     if (!existing) {
@@ -788,6 +792,9 @@ export async function getExpertsFor({ skillId, locationId, intent = 'mentor' }) 
       const dbConnectModule = await import('./mongodb.js');
       const dbConnect = dbConnectModule.default || dbConnectModule;
       await dbConnect();
+
+      const modelModule = await import('../models/MentorApplication.js');
+      const MentorApplication = modelModule.default || modelModule;
 
       const docs = await MentorApplication.find({
         status: { $nin: ['hidden', 'rejected'] },
