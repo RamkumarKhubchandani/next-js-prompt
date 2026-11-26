@@ -91,7 +91,10 @@ export default function JoinClient() {
   const [rejectionNote, setRejectionNote] = useState("");
   const [hasPublished, setHasPublished] = useState(false);
   const [skillSearch, setSkillSearch] = useState("");
-  const [locationSearch, setLocationSearch] = useState("");
+  const [offersOnline, setOffersOnline] = useState(true);
+  const [homeLocationSearch, setHomeLocationSearch] = useState("");
+  const [supportLocationSearch, setSupportLocationSearch] = useState("");
+  const [isChangingHomeLocation, setIsChangingHomeLocation] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -116,8 +119,8 @@ export default function JoinClient() {
         engagementTypes: ["Hourly Contractor", "Fixed-Price Projects"],
       },
       skillIds: [],
-      locationId: "online",
-      locationIds: ["online"],
+      locationId: "pune",
+      locationIds: ["pune", "online"],
       overlapZones: [],
       locationOther: { country: "", city: "" },
       timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
@@ -216,9 +219,20 @@ export default function JoinClient() {
                 : app.yearsExperience !== undefined && app.yearsExperience !== null
                 ? String(app.yearsExperience)
                 : "";
-            const loadedLocationIds = draftData.locationIds?.length
+            const rawLoadedLocationIds = draftData.locationIds?.length
               ? draftData.locationIds
-              : [draftData.locationId || app.locationId || "online"];
+              : [draftData.locationId || app.locationId || "pune"];
+            const hasOnline = rawLoadedLocationIds.includes("online");
+            setOffersOnline(hasOnline);
+
+            let loadedLocationIds = [...rawLoadedLocationIds];
+            if (loadedLocationIds[0] === "online" && loadedLocationIds.length > 1) {
+              const physicalIndex = loadedLocationIds.findIndex((x) => x !== "online");
+              if (physicalIndex > -1) {
+                const physical = loadedLocationIds.splice(physicalIndex, 1)[0];
+                loadedLocationIds.unshift(physical);
+              }
+            }
             const loadedOverlapZones = Array.isArray(draftData.overlapZones)
               ? draftData.overlapZones
               : (Array.isArray(app.overlapZones) ? app.overlapZones : []);
@@ -443,9 +457,9 @@ export default function JoinClient() {
       errors.skillIds = "Choose at most 8 primary skills.";
     }
 
-    if (formData.draft.locationId === "other") {
+    if (formData.draft.locationId === "other" || (formData.draft.locationIds || []).includes("other")) {
       if (!formData.draft.locationOther?.country?.trim() || !formData.draft.locationOther?.city?.trim()) {
-        errors.locationId = "Enter both your Country and City.";
+        errors.locationIds = "For custom location, enter both your Country and City.";
       }
     }
 
@@ -711,33 +725,79 @@ export default function JoinClient() {
     );
   }
 
-  function addLocation(id) {
+  function setHomeLocation(id) {
     setFormData((prev) => {
-      const current = prev.draft.locationIds || (prev.draft.locationId ? [prev.draft.locationId] : []);
-      if (current.includes(id) || current.length >= 5) return prev;
-
-      // If current has only ["online"] and adding a physical or custom city, set that physical city as Primary and keep "online" as service scope
-      let next;
-      if (current.length === 1 && current[0] === "online" && id !== "online") {
-        next = [id, "online"];
-      } else {
-        next = [...current, id];
-      }
+      const existingSupport = (prev.draft.locationIds || []).filter(
+        (x) => x !== id && x !== "online" && x !== prev.draft.locationId
+      );
+      const nextIds = [
+        id,
+        ...(offersOnline ? ["online"] : []),
+        ...existingSupport,
+      ].slice(0, 5);
 
       return {
         ...prev,
         draft: {
           ...prev.draft,
-          locationIds: next,
-          locationId: next[0],
+          locationId: id,
+          locationIds: nextIds,
+          ...(id !== "other" && prev.draft.locationId === "other" && !existingSupport.includes("other")
+            ? { locationOther: { country: "", city: "" } }
+            : {}),
         },
       };
     });
+    setIsChangingHomeLocation(false);
+    setHomeLocationSearch("");
     clearFieldError("locationIds");
     clearFieldError("locationId");
   }
 
-  function removeLocation(id) {
+  function toggleOnlineSupport() {
+    const nextOffersOnline = !offersOnline;
+    setOffersOnline(nextOffersOnline);
+    setFormData((prev) => {
+      const homeId = prev.draft.locationId;
+      const supportIds = (prev.draft.locationIds || []).filter(
+        (x) => x !== "online" && x !== homeId
+      );
+      const nextIds = [
+        homeId || (nextOffersOnline ? "online" : ""),
+        ...(nextOffersOnline && homeId && homeId !== "online" ? ["online"] : []),
+        ...supportIds,
+      ].filter(Boolean).slice(0, 5);
+
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          locationId: homeId || (nextOffersOnline ? "online" : supportIds[0] || "online"),
+          locationIds: nextIds.length > 0 ? nextIds : ["online"],
+        },
+      };
+    });
+    clearFieldError("locationIds");
+  }
+
+  function addSupportLocation(id) {
+    setFormData((prev) => {
+      const current = prev.draft.locationIds || [];
+      if (current.includes(id) || current.length >= 5) return prev;
+      const next = [...current, id];
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          locationIds: next,
+        },
+      };
+    });
+    setSupportLocationSearch("");
+    clearFieldError("locationIds");
+  }
+
+  function removeSupportLocation(id) {
     setFormData((prev) => {
       const current = prev.draft.locationIds || [];
       const next = current.filter((x) => x !== id);
@@ -748,25 +808,9 @@ export default function JoinClient() {
           ...prev.draft,
           locationIds: fallback,
           locationId: fallback[0] || "online",
-          ...(id === "other" ? { locationOther: { country: "", city: "" } } : {}),
-        },
-      };
-    });
-    clearFieldError("locationIds");
-    clearFieldError("locationId");
-  }
-
-  function setPrimaryLocation(id) {
-    setFormData((prev) => {
-      const current = prev.draft.locationIds || [];
-      const filtered = current.filter((x) => x !== id);
-      const next = [id, ...filtered];
-      return {
-        ...prev,
-        draft: {
-          ...prev.draft,
-          locationIds: next,
-          locationId: next[0],
+          ...(id === "other" && prev.draft.locationId !== "other"
+            ? { locationOther: { country: "", city: "" } }
+            : {}),
         },
       };
     });
@@ -1070,229 +1114,340 @@ export default function JoinClient() {
                 </p>
               </div>
 
-              {/* Multi-Location & Timezone Section */}
-              <div id="field-locationIds" data-field="locationIds" className="space-y-4">
+              {/* Multi-Location & Service Availability Section */}
+              <div id="field-locationIds" data-field="locationIds" className="space-y-6">
                 <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Location & Service Scope * (1 to 5 places)
+                      Location & Service Availability *
                     </label>
                     <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
-                      {(formData.draft.locationIds || []).length} / 5 selected
+                      {(formData.draft.locationIds || []).length} / 5 places active
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Tell us where you currently stay (your home base) and any other cities or remote scope you service.
+                    Your physical home base is separated from your service delivery scope.
                   </p>
                 </div>
 
-                {/* 1. Primary Location Box (Where you stay right now) */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-50/80 to-teal-50/40 dark:from-emerald-950/40 dark:to-slate-900 border border-emerald-300 dark:border-emerald-700/60 shadow-sm space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                {/* 1. PRIMARY LOCATION (WHERE YOU LIVE) */}
+                <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-sm">
-                        Primary Location
-                      </span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">
-                        Where you stay right now (Home Base) *
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
-                      Anchors your timezone & local discovery
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                         <MapPin className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-slate-900 dark:text-white">
-                          {resolveLocationLabel((formData.draft.locationIds || [])[0] || formData.draft.locationId || "online")}
-                        </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                          Primary base city shown on your profile
-                        </div>
+                        <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                          1. Primary Location (Where you stay right now) *
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Your physical home base city. Shown on your public profile and sets your primary timezone.
+                        </p>
                       </div>
                     </div>
-
-                    <span className="text-[11px] text-slate-500 italic">
-                      {(formData.draft.locationIds || []).length > 1
-                        ? "Click any other chip below to change Primary"
-                        : "Search or add below to set your city"}
-                    </span>
                   </div>
-                </div>
 
-                {/* 2. All Selected Location Chips */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      All Selected Locations (Click any chip to set as Primary)
-                    </label>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {(formData.draft.locationIds || []).map((id, index) => (
-                      <span
-                        key={id}
-                        onClick={() => {
-                          if (index > 0) setPrimaryLocation(id);
-                        }}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition cursor-pointer ${
-                          index === 0
-                            ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-bold shadow-sm ring-1 ring-emerald-500/30"
-                            : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
-                        }`}
-                        title={index > 0 ? "Click to set as Primary (where you stay)" : "Primary base location"}
+                  {/* Current Home Base display */}
+                  {formData.draft.locationId && formData.draft.locationId !== "online" && !isChangingHomeLocation ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-700/60">
+                      <div className="flex items-center gap-3">
+                        <span className="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-sm shrink-0">
+                          Home Base
+                        </span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">
+                          {resolveLocationLabel(formData.draft.locationId)}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsChangingHomeLocation(true)}
+                        className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 hover:underline px-2 py-1 rounded self-start sm:self-auto"
                       >
-                        {index === 0 ? (
-                          <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                            Primary
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            #{index + 1}
-                          </span>
-                        )}
-                        <span>{resolveLocationLabel(id)}</span>
-                        {(formData.draft.locationIds || []).length > 1 && (
+                        Change Home City
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 pt-1">
+                      {formData.draft.locationId && formData.draft.locationId !== "online" && (
+                        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
+                          <span>Select a new home base:</span>
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeLocation(id);
-                            }}
-                            className="ml-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded p-1 transition"
-                            title="Remove location"
-                            aria-label={`Remove ${resolveLocationLabel(id)}`}
+                            onClick={() => setIsChangingHomeLocation(false)}
+                            className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            Keep current ({resolveLocationLabel(formData.draft.locationId)})
                           </button>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Search & Add Locations */}
-                {(formData.draft.locationIds || []).length < 5 && (
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Search cities to add (e.g., Pune, London, Bangalore, New York)..."
-                        value={locationSearch}
-                        onChange={(e) => setLocationSearch(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
-                      />
-                      {!(formData.draft.locationIds || []).includes("online") && (
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Search your city (e.g., Pune, Bangalore, London, New York)..."
+                          value={homeLocationSearch}
+                          onChange={(e) => setHomeLocationSearch(e.target.value)}
+                          className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                        />
                         <button
                           type="button"
-                          onClick={() => addLocation("online")}
-                          className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition shrink-0"
+                          onClick={() => setHomeLocation("other")}
+                          className={`px-3 py-2 text-xs font-semibold rounded-xl border transition shrink-0 ${
+                            formData.draft.locationId === "other"
+                              ? "bg-emerald-600 text-white border-emerald-600"
+                              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700"
+                          }`}
                         >
-                          + Online / Any
+                          + Other City (Custom)
                         </button>
-                      )}
-                      {!(formData.draft.locationIds || []).includes("other") && (
-                        <button
-                          type="button"
-                          onClick={() => addLocation("other")}
-                          className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition shrink-0"
-                        >
-                          + Other City
-                        </button>
-                      )}
-                    </div>
+                      </div>
 
-                    {locationSearch.trim() && (
-                      <div className="max-h-36 overflow-y-auto p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg flex flex-wrap gap-1.5 shadow-sm">
-                        {LOCATIONS.filter((l) =>
-                          l.name.toLowerCase().includes(locationSearch.toLowerCase()) ||
-                          l.country.toLowerCase().includes(locationSearch.toLowerCase())
-                        ).map((loc) => {
-                          const alreadySelected = (formData.draft.locationIds || []).includes(loc.id);
-                          return (
+                      {/* Filtered Search Results */}
+                      {homeLocationSearch.trim() && (
+                        <div className="max-h-36 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-wrap gap-1.5 shadow-inner">
+                          {LOCATIONS.filter(
+                            (l) =>
+                              l.id !== "online" &&
+                              l.id !== "remote" &&
+                              l.id !== "near-me" &&
+                              (l.name.toLowerCase().includes(homeLocationSearch.toLowerCase()) ||
+                                l.country.toLowerCase().includes(homeLocationSearch.toLowerCase()))
+                          ).map((loc) => (
                             <button
                               key={loc.id}
                               type="button"
-                              disabled={alreadySelected}
-                              onClick={() => {
-                                addLocation(loc.id);
-                                setLocationSearch("");
-                              }}
-                              className={`px-2.5 py-1 rounded text-xs transition ${
-                                alreadySelected
-                                  ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-                                  : "bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700"
+                              onClick={() => setHomeLocation(loc.id)}
+                              className="px-2.5 py-1 rounded-lg text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-emerald-600 hover:text-white border border-slate-200 dark:border-slate-700 transition"
+                            >
+                              {loc.name} ({loc.country})
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Quick Tech Hub Pills */}
+                      <div>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1.5 font-medium">
+                          Popular Tech Hubs (1-click select):
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            { id: "pune", label: "Pune" },
+                            { id: "bangalore", label: "Bangalore" },
+                            { id: "hyderabad", label: "Hyderabad" },
+                            { id: "mumbai", label: "Mumbai" },
+                            { id: "delhi", label: "Delhi / NCR" },
+                            { id: "noida", label: "Noida" },
+                            { id: "gurgaon", label: "Gurgaon" },
+                            { id: "london", label: "London" },
+                            { id: "new-york", label: "New York" },
+                            { id: "san-francisco", label: "San Francisco" },
+                            { id: "austin", label: "Austin" },
+                            { id: "seattle", label: "Seattle" },
+                            { id: "toronto", label: "Toronto" },
+                            { id: "singapore", label: "Singapore" },
+                            { id: "berlin", label: "Berlin" },
+                            { id: "dubai", label: "Dubai" },
+                          ].map((city) => (
+                            <button
+                              key={city.id}
+                              type="button"
+                              onClick={() => setHomeLocation(city.id)}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition ${
+                                formData.draft.locationId === city.id
+                                  ? "bg-emerald-600 text-white border-emerald-600 font-bold shadow-sm"
+                                  : "bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800"
                               }`}
+                            >
+                              {city.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Custom Location details if 'other' is chosen as home */}
+                  {(formData.draft.locationId === "other" || (formData.draft.locationIds || []).includes("other")) && (
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          Custom Home City & Country
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setHomeLocation("pune")}
+                          className="text-xs text-red-600 dark:text-red-400 hover:underline"
+                        >
+                          Clear custom city
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Country *</label>
+                          <input
+                            type="text"
+                            value={formData.draft.locationOther.country}
+                            onChange={(e) => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  locationOther: { ...prev.draft.locationOther, country: e.target.value },
+                                },
+                              }));
+                              clearFieldError("locationIds");
+                            }}
+                            placeholder="e.g., India or Canada"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">City *</label>
+                          <input
+                            type="text"
+                            value={formData.draft.locationOther.city}
+                            onChange={(e) => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  locationOther: { ...prev.draft.locationOther, city: e.target.value },
+                                },
+                              }));
+                              clearFieldError("locationIds");
+                            }}
+                            placeholder="e.g., Jamnagar or Toronto"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. ONLINE / REMOTE WORK (DEFAULT ENABLED) */}
+                <div
+                  onClick={toggleOnlineSupport}
+                  className={`p-4 rounded-2xl border cursor-pointer transition flex items-start sm:items-center justify-between gap-4 ${
+                    offersOnline
+                      ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-700/60 shadow-sm"
+                      : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                  }`}
+                >
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                        offersOnline
+                          ? "bg-emerald-600 text-white shadow-sm"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                      }`}
+                    >
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          2. Online / Remote Support (Global)
+                        </span>
+                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-300">
+                          Enabled
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                        Available for 1-on-1 video calls, async code reviews, and remote contract projects worldwide.
+                      </p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={offersOnline}
+                    onChange={() => {}}
+                    className="w-4 h-4 text-emerald-600 rounded bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shrink-0 mt-1 sm:mt-0"
+                  />
+                </div>
+
+                {/* 3. ADDITIONAL IN-PERSON SUPPORT CITIES (OPTIONAL) */}
+                <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                        3. In-Person / Additional Support Cities (Optional, up to 3 more)
+                      </h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        Other cities where you can travel or provide in-person consulting, meetings, or training.
+                      </p>
+                    </div>
+                    <span className="text-xs text-slate-400">
+                      {(formData.draft.locationIds || []).filter(
+                        (id) => id !== formData.draft.locationId && id !== "online"
+                      ).length} / 3 cities
+                    </span>
+                  </div>
+
+                  {/* Support City Chips */}
+                  <div className="flex flex-wrap gap-2">
+                    {(formData.draft.locationIds || [])
+                      .filter((id) => id !== formData.draft.locationId && id !== "online")
+                      .map((id) => (
+                        <span
+                          key={id}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 shadow-sm"
+                        >
+                          <span>{resolveLocationLabel(id)}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeSupportLocation(id)}
+                            className="text-slate-400 hover:text-red-500 p-0.5 rounded transition"
+                            title={`Remove ${resolveLocationLabel(id)}`}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </span>
+                      ))}
+                    {(formData.draft.locationIds || []).filter(
+                      (id) => id !== formData.draft.locationId && id !== "online"
+                    ).length === 0 && (
+                      <span className="text-xs text-slate-400 italic">No additional in-person cities added (optional).</span>
+                    )}
+                  </div>
+
+                  {/* Add Support City Search */}
+                  {(formData.draft.locationIds || []).length < 5 && (
+                    <div className="space-y-2 pt-1">
+                      <input
+                        type="text"
+                        placeholder="Search and add a support city (e.g., Mumbai, Bangalore, London)..."
+                        value={supportLocationSearch}
+                        onChange={(e) => setSupportLocationSearch(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                      />
+                      {supportLocationSearch.trim() && (
+                        <div className="max-h-32 overflow-y-auto p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg flex flex-wrap gap-1.5 shadow-sm">
+                          {LOCATIONS.filter(
+                            (l) =>
+                              l.id !== "online" &&
+                              l.id !== "remote" &&
+                              l.id !== "near-me" &&
+                              l.id !== formData.draft.locationId &&
+                              !(formData.draft.locationIds || []).includes(l.id) &&
+                              (l.name.toLowerCase().includes(supportLocationSearch.toLowerCase()) ||
+                                l.country.toLowerCase().includes(supportLocationSearch.toLowerCase()))
+                          ).map((loc) => (
+                            <button
+                              key={loc.id}
+                              type="button"
+                              onClick={() => addSupportLocation(loc.id)}
+                              className="px-2.5 py-1 rounded text-xs bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 border border-slate-200 dark:border-slate-700 transition"
                             >
                               + {loc.name} ({loc.country})
                             </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Location Other Details */}
-                {(formData.draft.locationIds || []).includes("other") && (
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Custom Location Details</span>
-                      <button
-                        type="button"
-                        onClick={() => removeLocation("other")}
-                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium inline-flex items-center gap-1 hover:underline"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Remove custom location
-                      </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other Country *</label>
-                        <input
-                          type="text"
-                          value={formData.draft.locationOther.country}
-                          onChange={(e) => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              draft: {
-                                ...prev.draft,
-                                locationOther: { ...prev.draft.locationOther, country: e.target.value },
-                              },
-                            }));
-                            clearFieldError("locationIds");
-                          }}
-                          placeholder="e.g., Canada"
-                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">Other City *</label>
-                        <input
-                          type="text"
-                          value={formData.draft.locationOther.city}
-                          onChange={(e) => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              draft: {
-                                ...prev.draft,
-                                locationOther: { ...prev.draft.locationOther, city: e.target.value },
-                              },
-                            }));
-                            clearFieldError("locationIds");
-                          }}
-                          placeholder="e.g., Toronto"
-                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-xs focus:border-emerald-500 placeholder-slate-400"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {fieldErrors.locationIds && (
                   <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
