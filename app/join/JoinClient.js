@@ -119,8 +119,8 @@ export default function JoinClient() {
         engagementTypes: ["Hourly Contractor", "Fixed-Price Projects"],
       },
       skillIds: [],
-      locationId: "pune",
-      locationIds: ["pune", "online"],
+      locationId: "",
+      locationIds: ["online"],
       overlapZones: [],
       locationOther: { country: "", city: "" },
       timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
@@ -221,7 +221,7 @@ export default function JoinClient() {
                 : "";
             const rawLoadedLocationIds = draftData.locationIds?.length
               ? draftData.locationIds
-              : [draftData.locationId || app.locationId || "pune"];
+              : (draftData.locationId || app.locationId ? [draftData.locationId || app.locationId] : ["online"]);
             const hasOnline = rawLoadedLocationIds.includes("online");
             setOffersOnline(hasOnline);
 
@@ -265,7 +265,7 @@ export default function JoinClient() {
                     : ["Hourly Contractor", "Fixed-Price Projects"],
                 },
                 skillIds: draftData.skillIds?.length ? draftData.skillIds : app.skills || [],
-                locationId: loadedLocationIds[0] || "online",
+                locationId: loadedLocationIds[0] !== "online" ? loadedLocationIds[0] : (loadedLocationIds.find((x) => x !== "online") || ""),
                 locationIds: loadedLocationIds,
                 overlapZones: loadedOverlapZones,
                 locationOther: draftData.locationOther || { country: app.country || "", city: app.city || "" },
@@ -457,7 +457,9 @@ export default function JoinClient() {
       errors.skillIds = "Choose at most 8 primary skills.";
     }
 
-    if (formData.draft.locationId === "other" || (formData.draft.locationIds || []).includes("other")) {
+    if (!formData.draft.locationId || formData.draft.locationId === "online") {
+      errors.locationIds = "Please search or select the primary city where you currently live.";
+    } else if (formData.draft.locationId === "other" || (formData.draft.locationIds || []).includes("other")) {
       if (!formData.draft.locationOther?.country?.trim() || !formData.draft.locationOther?.city?.trim()) {
         errors.locationIds = "For custom location, enter both your Country and City.";
       }
@@ -1276,7 +1278,18 @@ export default function JoinClient() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => setHomeLocation("pune")}
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              draft: {
+                                ...prev.draft,
+                                locationId: "",
+                                locationIds: (prev.draft.locationIds || []).filter((x) => x !== "other"),
+                                locationOther: { country: "", city: "" },
+                              },
+                            }));
+                            setIsChangingHomeLocation(true);
+                          }}
                           className="text-xs text-red-600 dark:text-red-400 hover:underline"
                         >
                           Clear custom city
@@ -1375,7 +1388,7 @@ export default function JoinClient() {
                         3. In-Person / Additional Support Cities (Optional, up to 3 more)
                       </h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        Other cities where you can travel or provide in-person consulting, meetings, or training.
+                        Other cities where you can travel or provide in-person consulting, meetings, or training (e.g. for project work or if the client sponsors travel).
                       </p>
                     </div>
                     <span className="text-xs text-slate-400">
