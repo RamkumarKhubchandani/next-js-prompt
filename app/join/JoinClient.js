@@ -247,7 +247,9 @@ export default function JoinClient() {
                 mentor: {
                   headline: draftData.mentor?.headline || app.mentorHeadline || "",
                   summary: draftData.mentor?.summary || app.mentorBio || app.bio || "",
-                  rate: draftData.mentor?.rate || app.hourlyRate || 45,
+                  rate: draftData.mentor?.rate !== undefined && draftData.mentor?.rate !== null
+                    ? draftData.mentor.rate
+                    : (app.hourlyRate !== undefined && app.hourlyRate !== null ? app.hourlyRate : 45),
                   topics: draftData.mentor?.topics?.length
                     ? draftData.mentor.topics
                     : ["System Design", "Code Reviews", "Interview Prep"],
@@ -258,7 +260,9 @@ export default function JoinClient() {
                 hire: {
                   headline: draftData.hire?.headline || app.hireHeadline || "",
                   summary: draftData.hire?.summary || app.hireBio || app.bio || "",
-                  rate: draftData.hire?.rate || app.hourlyRate || 55,
+                  rate: draftData.hire?.rate !== undefined && draftData.hire?.rate !== null
+                    ? draftData.hire.rate
+                    : (app.hourlyRate !== undefined && app.hourlyRate !== null ? app.hourlyRate : 55),
                   availability: draftData.hire?.availability || app.availability || "Part-time (10-20 hrs/week)",
                   engagementTypes: draftData.hire?.engagementTypes?.length
                     ? draftData.hire.engagementTypes
@@ -592,11 +596,28 @@ export default function JoinClient() {
     try {
       // Parse years to number on submit
       const parsedYrs = parseYearsExperience(formData.draft.yearsExperience, isDraftSave);
+      const parsedMentorRate =
+        formData.draft.mentor?.rate === "" || formData.draft.mentor?.rate === undefined
+          ? 0
+          : Number(formData.draft.mentor?.rate);
+      const parsedHireRate =
+        formData.draft.hire?.rate === "" || formData.draft.hire?.rate === undefined
+          ? 0
+          : Number(formData.draft.hire?.rate);
+
       const payload = {
         ...formData,
         draft: {
           ...formData.draft,
           yearsExperience: parsedYrs.valid ? parsedYrs.value : (Number(formData.draft.yearsExperience) || 0),
+          mentor: {
+            ...formData.draft.mentor,
+            rate: isNaN(parsedMentorRate) ? 0 : Math.max(0, parsedMentorRate),
+          },
+          hire: {
+            ...formData.draft.hire,
+            rate: isNaN(parsedHireRate) ? 0 : Math.max(0, parsedHireRate),
+          },
         },
         isDraftSave,
       };
@@ -1841,20 +1862,28 @@ export default function JoinClient() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Hourly Mentorship Rate ($/hr)</label>
+                      <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                        Hourly Mentorship Rate ($/hr)
+                        <span className="text-[11px] text-slate-400 font-normal ml-1.5">(Enter 0 for free community mentorship)</span>
+                      </label>
                       <input
                         type="number"
                         min="0"
-                        value={formData.draft.mentor.rate}
-                        onChange={(e) =>
+                        placeholder="e.g. 45"
+                        value={formData.draft.mentor.rate ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
                           setFormData({
                             ...formData,
                             draft: {
                               ...formData.draft,
-                              mentor: { ...formData.draft.mentor, rate: Number(e.target.value) },
+                              mentor: {
+                                ...formData.draft.mentor,
+                                rate: val === "" ? "" : Math.max(0, Number(val)),
+                              },
                             },
-                          })
-                        }
+                          });
+                        }}
                         className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-emerald-500"
                       />
                     </div>
@@ -1986,16 +2015,21 @@ export default function JoinClient() {
                       <input
                         type="number"
                         min="0"
-                        value={formData.draft.hire.rate}
-                        onChange={(e) =>
+                        placeholder="e.g. 55"
+                        value={formData.draft.hire.rate ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
                           setFormData({
                             ...formData,
                             draft: {
                               ...formData.draft,
-                              hire: { ...formData.draft.hire, rate: Number(e.target.value) },
+                              hire: {
+                                ...formData.draft.hire,
+                                rate: val === "" ? "" : Math.max(0, Number(val)),
+                              },
                             },
-                          })
-                        }
+                          });
+                        }}
                         className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-cyan-500"
                       />
                     </div>
