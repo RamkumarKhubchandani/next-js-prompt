@@ -26,6 +26,7 @@ import {
   Save,
   Lock,
   Phone,
+  MapPin,
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "../components/Header";
@@ -714,7 +715,15 @@ export default function JoinClient() {
     setFormData((prev) => {
       const current = prev.draft.locationIds || (prev.draft.locationId ? [prev.draft.locationId] : []);
       if (current.includes(id) || current.length >= 5) return prev;
-      const next = [...current, id];
+
+      // If current has only ["online"] and adding a physical or custom city, set that physical city as Primary and keep "online" as service scope
+      let next;
+      if (current.length === 1 && current[0] === "online" && id !== "online") {
+        next = [id, "online"];
+      } else {
+        next = [...current, id];
+      }
+
       return {
         ...prev,
         draft: {
@@ -732,12 +741,13 @@ export default function JoinClient() {
     setFormData((prev) => {
       const current = prev.draft.locationIds || [];
       const next = current.filter((x) => x !== id);
+      const fallback = next.length > 0 ? next : ["online"];
       return {
         ...prev,
         draft: {
           ...prev.draft,
-          locationIds: next,
-          locationId: next[0] || "online",
+          locationIds: fallback,
+          locationId: fallback[0] || "online",
           ...(id === "other" ? { locationOther: { country: "", city: "" } } : {}),
         },
       };
@@ -1062,50 +1072,107 @@ export default function JoinClient() {
 
               {/* Multi-Location & Timezone Section */}
               <div id="field-locationIds" data-field="locationIds" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    Service Locations * (1 to 5 places)
-                  </label>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    {(formData.draft.locationIds || []).length} / 5 selected
-                  </span>
+                <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      Location & Service Scope * (1 to 5 places)
+                    </label>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      {(formData.draft.locationIds || []).length} / 5 selected
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Tell us where you currently stay (your home base) and any other cities or remote scope you service.
+                  </p>
                 </div>
 
-                {/* Selected Location Chips */}
-                <div className="flex flex-wrap gap-2">
-                  {(formData.draft.locationIds || []).map((id, index) => (
-                    <span
-                      key={id}
-                      onClick={() => {
-                        if (index > 0) setPrimaryLocation(id);
-                      }}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition cursor-pointer ${
-                        index === 0
-                          ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-semibold shadow-sm"
-                          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
-                      }`}
-                      title={index > 0 ? "Click to set as Primary" : "Primary location"}
-                    >
-                      {index === 0 && (
-                        <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                          Primary
-                        </span>
-                      )}
-                      <span>{resolveLocationLabel(id)}</span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeLocation(id);
-                        }}
-                        className="ml-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded p-1 transition"
-                        title="Remove location"
-                        aria-label={`Remove ${resolveLocationLabel(id)}`}
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                {/* 1. Primary Location Box (Where you stay right now) */}
+                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-50/80 to-teal-50/40 dark:from-emerald-950/40 dark:to-slate-900 border border-emerald-300 dark:border-emerald-700/60 shadow-sm space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-sm">
+                        Primary Location
+                      </span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">
+                        Where you stay right now (Home Base) *
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+                      Anchors your timezone & local discovery
                     </span>
-                  ))}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-lg border border-emerald-200 dark:border-emerald-800/80">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
+                        <MapPin className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 dark:text-white">
+                          {resolveLocationLabel((formData.draft.locationIds || [])[0] || formData.draft.locationId || "online")}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Primary base city shown on your profile
+                        </div>
+                      </div>
+                    </div>
+
+                    <span className="text-[11px] text-slate-500 italic">
+                      {(formData.draft.locationIds || []).length > 1
+                        ? "Click any other chip below to change Primary"
+                        : "Search or add below to set your city"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. All Selected Location Chips */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                      All Selected Locations (Click any chip to set as Primary)
+                    </label>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(formData.draft.locationIds || []).map((id, index) => (
+                      <span
+                        key={id}
+                        onClick={() => {
+                          if (index > 0) setPrimaryLocation(id);
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition cursor-pointer ${
+                          index === 0
+                            ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 font-bold shadow-sm ring-1 ring-emerald-500/30"
+                            : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+                        }`}
+                        title={index > 0 ? "Click to set as Primary (where you stay)" : "Primary base location"}
+                      >
+                        {index === 0 ? (
+                          <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
+                            Primary
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            #{index + 1}
+                          </span>
+                        )}
+                        <span>{resolveLocationLabel(id)}</span>
+                        {(formData.draft.locationIds || []).length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeLocation(id);
+                            }}
+                            className="ml-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded p-1 transition"
+                            title="Remove location"
+                            aria-label={`Remove ${resolveLocationLabel(id)}`}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Search & Add Locations */}
