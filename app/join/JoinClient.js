@@ -43,35 +43,11 @@ export default function JoinClient() {
   const [step, setStep] = useState(1);
   const scrollToTop = () => {
     if (typeof window === "undefined") return;
-
-    // Temporarily turn off smooth scrolling on root so snap to top is immediate
     try {
-      document.documentElement.style.scrollBehavior = "auto";
-      document.body.style.scrollBehavior = "auto";
+      window.scrollTo(0, 0);
     } catch (e) {}
-
-    const snap = () => {
-      try {
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      } catch (e) {
-        window.scrollTo(0, 0);
-      }
-      if (document.documentElement) document.documentElement.scrollTop = 0;
-      if (document.body) document.body.scrollTop = 0;
-    };
-
-    snap();
-    requestAnimationFrame(snap);
-
-    setTimeout(() => {
-      snap();
-      try {
-        document.documentElement.style.scrollBehavior = "";
-        document.body.style.scrollBehavior = "";
-      } catch (e) {}
-    }, 60);
-
-    setTimeout(snap, 150);
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
   };
 
   const goToStep = (newStep) => {
@@ -80,8 +56,8 @@ export default function JoinClient() {
         document.activeElement.blur();
       } catch (e) {}
     }
-    scrollToTop();
     setStep(newStep);
+    scrollToTop();
   };
 
   // Turn off browser scroll-anchoring on document root while on Join page
@@ -98,10 +74,11 @@ export default function JoinClient() {
     };
   }, []);
 
-  // Snap to top whenever step changes
+  // Snap instantly to top whenever step changes
   useEffect(() => {
     scrollToTop();
   }, [step]);
+  const [languagesInput, setLanguagesInput] = useState("English");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -188,15 +165,18 @@ export default function JoinClient() {
     if (keys.length === 0) return;
     const firstKey = keys[0];
     const elementId = `field-${firstKey.replace(/\./g, "-")}`;
-    setTimeout(() => {
-      const el = document.getElementById(elementId) || document.querySelector(`[data-field="${firstKey}"]`);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        if (typeof el.focus === "function") {
+    const el =
+      document.getElementById(elementId) ||
+      (firstKey === "locationId" ? document.getElementById("field-locationIds") : null) ||
+      document.querySelector(`[data-field="${firstKey}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: "auto", block: "nearest" });
+      if (typeof el.focus === "function") {
+        try {
           el.focus();
-        }
+        } catch (e) {}
       }
-    }, 60);
+    }
   };
 
   const clearFieldError = (fieldName) => {
@@ -276,7 +256,7 @@ export default function JoinClient() {
                 locationOther: draftData.locationOther || { country: app.country || "", city: app.city || "" },
                 timezone: draftData.timezone || (typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC"),
                 yearsExperience: loadedYears,
-                languages: draftData.languages?.length ? draftData.languages : ["English"],
+                languages: draftData.languages?.length ? draftData.languages : (app.languages?.length ? app.languages : ["English"]),
                 links: {
                   github: draftData.links?.github || app.github || "",
                   linkedin: draftData.links?.linkedin || app.linkedin || "",
@@ -292,6 +272,8 @@ export default function JoinClient() {
                 receiveLeads: Boolean(app.consents?.receiveLeads),
               },
             });
+            const loadedLangs = draftData.languages?.length ? draftData.languages : (app.languages?.length ? app.languages : ["English"]);
+            setLanguagesInput(loadedLangs.join(", "));
           } else {
             // New user defaults
             setFormData((prev) => ({
@@ -1321,19 +1303,62 @@ export default function JoinClient() {
                   </label>
                   <input
                     type="text"
-                    value={formData.draft.languages.join(", ")}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
+                    value={languagesInput}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setLanguagesInput(val);
+                      const parsed = val.split(",").map((s) => s.trim()).filter(Boolean);
+                      setFormData((prev) => ({
+                        ...prev,
                         draft: {
-                          ...formData.draft,
-                          languages: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                          ...prev.draft,
+                          languages: parsed.length ? parsed : ["English"],
                         },
-                      })
-                    }
+                      }));
+                    }}
+                    onBlur={() => {
+                      const parsed = languagesInput.split(",").map((s) => s.trim()).filter(Boolean);
+                      const normalized = parsed.length ? parsed : ["English"];
+                      setLanguagesInput(normalized.join(", "));
+                      setFormData((prev) => ({
+                        ...prev,
+                        draft: {
+                          ...prev.draft,
+                          languages: normalized,
+                        },
+                      }));
+                    }}
                     placeholder="English, Spanish, Hindi"
                     className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-sm focus:border-emerald-500 placeholder-slate-400"
                   />
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    <span className="text-[11px] text-slate-500">Quick add:</span>
+                    {["Hindi", "Spanish", "French", "German", "Gujarati", "Bengali", "Telugu", "Tamil", "Marathi", "Kannada", "Arabic", "Portuguese"].map((lang) => {
+                      const currentList = formData.draft.languages || [];
+                      const hasLang = currentList.some((l) => l.toLowerCase() === lang.toLowerCase());
+                      if (hasLang) return null;
+                      return (
+                        <button
+                          key={lang}
+                          type="button"
+                          onClick={() => {
+                            const next = [...currentList, lang];
+                            setLanguagesInput(next.join(", "));
+                            setFormData((prev) => ({
+                              ...prev,
+                              draft: {
+                                ...prev.draft,
+                                languages: next,
+                              },
+                            }));
+                          }}
+                          className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition"
+                        >
+                          + {lang}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
