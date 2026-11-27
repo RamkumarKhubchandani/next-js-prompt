@@ -96,6 +96,7 @@ export default function JoinClient() {
   const [languagesInput, setLanguagesInput] = useState("English");
   const [formatsInput, setFormatsInput] = useState("1-on-1 Video Calls, Async Code Reviews");
   const [customTopicInput, setCustomTopicInput] = useState("");
+  const [hasCourseDetails, setHasCourseDetails] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -126,6 +127,12 @@ export default function JoinClient() {
         rate: 45,
         topics: ["System Design", "Code Reviews", "Interview Prep"],
         formats: ["1-on-1 Video Calls", "Async Code Reviews"],
+        courseDetails: {
+          title: "",
+          audience: "",
+          curriculum: "",
+          syllabusUrl: "",
+        },
       },
       hire: {
         headline: "",
@@ -272,6 +279,12 @@ export default function JoinClient() {
                   formats: draftData.mentor?.formats?.length
                     ? draftData.mentor.formats
                     : ["1-on-1 Video Calls", "Async Code Reviews"],
+                  courseDetails: draftData.mentor?.courseDetails || app.mentor?.courseDetails || {
+                    title: "",
+                    audience: "",
+                    curriculum: "",
+                    syllabusUrl: "",
+                  },
                 },
                 hire: {
                   headline: draftData.hire?.headline || app.hireHeadline || "",
@@ -313,6 +326,9 @@ export default function JoinClient() {
               ? draftData.mentor.formats
               : (app.mentor?.formats?.length ? app.mentor.formats : ["1-on-1 Video Calls", "Async Code Reviews"]);
             setFormatsInput(loadedFormats.join(", "));
+            if (draftData.mentor?.courseDetails?.title || app.mentor?.courseDetails?.title) {
+              setHasCourseDetails(true);
+            }
           } else {
             // New user defaults
             setFormData((prev) => ({
@@ -674,6 +690,15 @@ export default function JoinClient() {
             ...formData.draft.mentor,
             rate: isNaN(parsedMentorRate) ? 0 : Math.max(0, parsedMentorRate),
             formats: parsedFormats.length > 0 ? parsedFormats : (formData.draft.mentor?.formats || []),
+            courseDetails:
+              hasCourseDetails && formData.draft.mentor?.courseDetails?.title?.trim()
+                ? {
+                    title: formData.draft.mentor.courseDetails.title.trim(),
+                    audience: (formData.draft.mentor.courseDetails.audience || "").trim(),
+                    curriculum: (formData.draft.mentor.courseDetails.curriculum || "").trim(),
+                    syllabusUrl: (formData.draft.mentor.courseDetails.syllabusUrl || "").trim(),
+                  }
+                : null,
           },
           hire: {
             ...formData.draft.hire,
@@ -2003,6 +2028,163 @@ export default function JoinClient() {
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Optional Structured Course / Curriculum Details */}
+                  <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 space-y-3">
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={hasCourseDetails}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setHasCourseDetails(checked);
+                          if (!checked) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              draft: {
+                                ...prev.draft,
+                                mentor: {
+                                  ...prev.draft.mentor,
+                                  courseDetails: {
+                                    title: "",
+                                    audience: "",
+                                    curriculum: "",
+                                    syllabusUrl: "",
+                                  },
+                                },
+                              },
+                            }));
+                          }
+                        }}
+                        className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700"
+                      />
+                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <BookOpen className="w-4 h-4 text-emerald-500" />
+                        <span>I offer a structured course or multi-week curriculum (Optional)</span>
+                      </span>
+                    </label>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 pl-6.5">
+                      Check this if you run a structured cohort, bootcamp, or pre-planned syllabus for learners.
+                    </p>
+
+                    {hasCourseDetails && (
+                      <div className="pt-2 space-y-3 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                              Course / Curriculum Title *
+                            </label>
+                            <span className="text-[11px] text-slate-400">
+                              {(formData.draft.mentor?.courseDetails?.title || "").length} / 100
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            maxLength={100}
+                            placeholder="e.g., Full-Stack System Design & Production Architecture"
+                            value={formData.draft.mentor?.courseDetails?.title || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  mentor: {
+                                    ...prev.draft.mentor,
+                                    courseDetails: {
+                                      ...prev.draft.mentor.courseDetails,
+                                      title: e.target.value,
+                                    },
+                                  },
+                                },
+                              }))
+                            }
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Target Audience & Prerequisites
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Mid-level engineers targeting senior roles; requires React and Node.js basics"
+                            value={formData.draft.mentor?.courseDetails?.audience || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  mentor: {
+                                    ...prev.draft.mentor,
+                                    courseDetails: {
+                                      ...prev.draft.mentor.courseDetails,
+                                      audience: e.target.value,
+                                    },
+                                  },
+                                },
+                              }))
+                            }
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Syllabus / Module Breakdown
+                          </label>
+                          <textarea
+                            rows={3}
+                            placeholder="Module 1: Architecture & Server Components&#10;Module 2: Caching, Redis & High Scale DBs&#10;Module 3: Microservices & Capstone Project"
+                            value={formData.draft.mentor?.courseDetails?.curriculum || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  mentor: {
+                                    ...prev.draft.mentor,
+                                    courseDetails: {
+                                      ...prev.draft.mentor.courseDetails,
+                                      curriculum: e.target.value,
+                                    },
+                                  },
+                                },
+                              }))
+                            }
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Syllabus / Course Preview Link (Optional)
+                          </label>
+                          <input
+                            type="url"
+                            placeholder="https://notion.so/... or https://github.com/..."
+                            value={formData.draft.mentor?.courseDetails?.syllabusUrl || ""}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                draft: {
+                                  ...prev.draft,
+                                  mentor: {
+                                    ...prev.draft.mentor,
+                                    courseDetails: {
+                                      ...prev.draft.mentor.courseDetails,
+                                      syllabusUrl: e.target.value,
+                                    },
+                                  },
+                                },
+                              }))
+                            }
+                            className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
