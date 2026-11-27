@@ -956,7 +956,7 @@ export default function JoinClient() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between font-sans" style={{ overflowAnchor: "none" }}>
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full flex-1" style={{ overflowAnchor: "none" }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 sm:pt-40 pb-20 w-full flex-1" style={{ overflowAnchor: "none" }}>
         {/* Status Banner */}
         {applicationStatus && applicationStatus !== "draft" && (
           <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
