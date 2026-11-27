@@ -126,6 +126,14 @@ export function toPublicProfile(doc) {
             rate: typeof pub.mentor.rate === 'number' ? pub.mentor.rate : 0,
             topics: Array.isArray(pub.mentor.topics) ? pub.mentor.topics : [],
             formats: Array.isArray(pub.mentor.formats) ? pub.mentor.formats : [],
+            courseDetails: pub.mentor.courseDetails?.title
+              ? {
+                  title: pub.mentor.courseDetails.title || '',
+                  audience: pub.mentor.courseDetails.audience || '',
+                  curriculum: pub.mentor.courseDetails.curriculum || '',
+                  syllabusUrl: pub.mentor.courseDetails.syllabusUrl || '',
+                }
+              : null,
           }
         : null,
     hire:

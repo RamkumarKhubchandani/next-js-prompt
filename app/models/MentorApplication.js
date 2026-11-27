@@ -14,6 +14,16 @@ const projectSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const courseDetailsSchema = new mongoose.Schema(
+  {
+    title: { type: String, default: '' },
+    audience: { type: String, default: '' },
+    curriculum: { type: String, default: '' },
+    syllabusUrl: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
 const mentorContentSchema = new mongoose.Schema(
   {
     headline: { type: String, default: '' },
@@ -21,6 +31,7 @@ const mentorContentSchema = new mongoose.Schema(
     rate: { type: Number, default: 0 },
     topics: { type: [String], default: [] },
     formats: { type: [String], default: [] },
+    courseDetails: { type: courseDetailsSchema, default: null },
   },
   { _id: false }
 );

@@ -328,6 +328,15 @@ export async function POST(req) {
       city: String(draft?.locationOther?.city || '').trim().slice(0, 60),
     };
 
+    const cleanCourseDetails = draft?.mentor?.courseDetails?.title?.trim()
+      ? {
+          title: String(draft.mentor.courseDetails.title).trim().slice(0, 100),
+          audience: String(draft.mentor.courseDetails.audience || '').trim().slice(0, 500),
+          curriculum: String(draft.mentor.courseDetails.curriculum || '').trim().slice(0, 3000),
+          syllabusUrl: String(draft.mentor.courseDetails.syllabusUrl || '').trim().slice(0, 300),
+        }
+      : null;
+
     // Sanitize draft payload
     const cleanDraft = {
       displayName: cleanName || existingApp?.draft?.displayName || existingApp?.displayName || '',
@@ -339,6 +348,7 @@ export async function POST(req) {
         rate: Number(draft?.mentor?.rate) || 0,
         topics: cleanTopics,
         formats: cleanFormats,
+        courseDetails: cleanCourseDetails,
       },
       hire: {
         headline: draft?.hire?.headline ? String(draft.hire.headline).trim() : '',
