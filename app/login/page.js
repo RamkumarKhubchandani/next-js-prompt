@@ -19,9 +19,11 @@ export default function LoginPage() {
     // Redirect if already logged in
     useEffect(() => {
         if (status === 'authenticated') {
-            router.replace('/dashboard');
+            const urlParams = new URLSearchParams(window.location.search);
+            const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
+            window.location.href = callbackUrl;
         }
-    }, [status, router]);
+    }, [status]);
 
     // Don't render the form if checking session or already authenticated (avoids flicker)
     if (status === 'loading' || status === 'authenticated') {
@@ -51,7 +53,7 @@ export default function LoginPage() {
 
             const urlParams = new URLSearchParams(window.location.search);
             const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
-            router.replace(callbackUrl);
+            window.location.href = callbackUrl;
         } catch (error) {
             setError('An unexpected error occurred.');
         } finally {
