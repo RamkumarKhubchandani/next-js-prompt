@@ -192,6 +192,13 @@ export default async function HireDeveloperPage({ params }) {
                     </div>
                 </header>
 
+                {/* Available Freelance Engineers & Consultants (Top-Level Section) */}
+                <MatchedExpertsSection
+                    skillId={hireSlugToSkillId(slug)}
+                    locationId="online"
+                    intent="hire"
+                />
+
                 {/* Proof Strip (Social Proof & Reviews) */}
                 <ProofStrip skillId={hireSlugToSkillId(slug)} />
 
@@ -410,13 +417,6 @@ export default async function HireDeveloperPage({ params }) {
                             })}
                     </div>
                 </section>
-
-                {/* Matched Experts (behind EXPERTS_MATCHING_ENABLED flag) */}
-                <MatchedExpertsSection
-                    skillId={hireSlugToSkillId(slug)}
-                    locationId="online"
-                    intent="hire"
-                />
 
                 {/* Persistent Contact & Inquiry Section */}
                 <section id="inquiry-form" className="pt-12 scroll-mt-24">
