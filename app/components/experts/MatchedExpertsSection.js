@@ -170,6 +170,8 @@ export default async function MatchedExpertsSection({
                 <div className="relative z-10 pt-2">
                   <Link
                     href={`/experts/${expert.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     prefetch={false}
                     className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs font-bold bg-slate-900 text-white hover:bg-emerald-600 dark:bg-slate-800 dark:text-white dark:hover:bg-emerald-500 dark:hover:text-slate-950 transition-all duration-200 shadow-xs group-hover:shadow-md"
                   >
