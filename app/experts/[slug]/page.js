@@ -19,6 +19,7 @@ import {
   Globe,
   Award,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -359,6 +360,54 @@ export default async function ExpertProfilePage({ params }) {
                   </div>
                 )}
               </div>
+
+              {/* Structured Course / Curriculum Details */}
+              {profile.mentor.courseDetails?.title && (
+                <div className="p-5 rounded-2xl bg-slate-950 border border-emerald-500/20 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-4 h-4 text-emerald-400" />
+                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                        Featured Course & Curriculum
+                      </span>
+                    </div>
+                    {profile.mentor.courseDetails.syllabusUrl && (
+                      <a
+                        href={profile.mentor.courseDetails.syllabusUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition"
+                      >
+                        <span>View Full Syllabus</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-bold text-white">
+                      {profile.mentor.courseDetails.title}
+                    </h3>
+                    {profile.mentor.courseDetails.audience && (
+                      <p className="text-xs text-slate-400 mt-1">
+                        <strong className="text-slate-300">Audience: </strong>
+                        {profile.mentor.courseDetails.audience}
+                      </p>
+                    )}
+                  </div>
+
+                  {profile.mentor.courseDetails.curriculum && (
+                    <div className="pt-1">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
+                        Curriculum Highlights
+                      </span>
+                      <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 whitespace-pre-wrap leading-relaxed font-mono">
+                        {profile.mentor.courseDetails.curriculum}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </section>
           )}
 
