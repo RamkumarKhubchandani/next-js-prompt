@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Settings, Trophy, BookOpen, Mic, Layers, Wand2 } from 'lucide-react';
+import { Settings, Trophy, BookOpen, Mic, Layers, Wand2, Sparkles } from 'lucide-react';
 import { PremiumAction } from '../components/dashboard/PremiumAction';
 import dynamic from 'next/dynamic';
 
@@ -118,6 +118,7 @@ export default function DashboardPage() {
     const [learningPath, setLearningPath] = useState('none');
     const [progressData, setProgressData] = useState(null);
     const [showDevCard, setShowDevCard] = useState(false);
+    const [hasExpertProfile, setHasExpertProfile] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -125,9 +126,21 @@ export default function DashboardPage() {
             if (!session?.user?.email) return;
 
             try {
-                const res = await fetch('/api/user/progress');
-                if (res.ok) {
-                    data = await res.json();
+                // Parallel fetch of progress and expert application status
+                const [progressRes, mentorRes] = await Promise.all([
+                    fetch('/api/user/progress'),
+                    fetch('/api/mentor/apply').catch(() => null)
+                ]);
+
+                if (mentorRes && mentorRes.ok) {
+                    const mentorData = await mentorRes.json();
+                    if (mentorData?.application && mentorData.application.status !== 'rejected') {
+                        setHasExpertProfile(true);
+                    }
+                }
+
+                if (progressRes.ok) {
+                    data = await progressRes.json();
 
                     setStats({
                         xp: data.xp || 0,
@@ -218,6 +231,16 @@ export default function DashboardPage() {
                             <StatsBar stats={stats} loading={loading} />
 
                             <div className="h-8 w-px bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+
+                            {hasExpertProfile && (
+                                <Link
+                                    href="/expert-dashboard"
+                                    className="px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 shadow-xs hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition"
+                                >
+                                    <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                    <span>Expert Dashboard →</span>
+                                </Link>
+                            )}
 
                             <Link href="/dashboard/settings">
                                 <button className="p-2 rounded-full bg-white dark:bg-dark-800 text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-dark-700 transition-colors shadow-sm">

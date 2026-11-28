@@ -21,6 +21,7 @@ import {
   Lock,
   Loader2,
   Sparkles,
+  LayoutDashboard,
 } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -113,6 +114,13 @@ export default function ExpertDashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-slate-300 dark:border-slate-700 shadow-sm"
+            >
+              <LayoutDashboard className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Learner Dashboard →</span>
+            </Link>
             <Link
               href="/join"
               className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm"

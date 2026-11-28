@@ -20,8 +20,25 @@ export default function LoginPage() {
     useEffect(() => {
         if (status === 'authenticated') {
             const urlParams = new URLSearchParams(window.location.search);
-            const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
-            window.location.href = callbackUrl;
+            const explicitCallbackUrl = urlParams.get('callbackUrl');
+
+            const routeUser = async () => {
+                let targetUrl = explicitCallbackUrl || '/dashboard';
+                if (!explicitCallbackUrl || explicitCallbackUrl === '/dashboard') {
+                    try {
+                        const checkRes = await fetch('/api/mentor/apply');
+                        if (checkRes.ok) {
+                            const checkData = await checkRes.json();
+                            if (checkData?.application && checkData.application.status !== 'rejected') {
+                                targetUrl = '/expert-dashboard';
+                            }
+                        }
+                    } catch (_) {}
+                }
+                window.location.href = targetUrl;
+            };
+
+            routeUser();
         }
     }, [status]);
 
@@ -52,8 +69,21 @@ export default function LoginPage() {
             }
 
             const urlParams = new URLSearchParams(window.location.search);
-            const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
-            window.location.href = callbackUrl;
+            const explicitCallbackUrl = urlParams.get('callbackUrl');
+
+            let targetUrl = explicitCallbackUrl || '/dashboard';
+            if (!explicitCallbackUrl || explicitCallbackUrl === '/dashboard') {
+                try {
+                    const checkRes = await fetch('/api/mentor/apply');
+                    if (checkRes.ok) {
+                        const checkData = await checkRes.json();
+                        if (checkData?.application && checkData.application.status !== 'rejected') {
+                            targetUrl = '/expert-dashboard';
+                        }
+                    }
+                } catch (_) {}
+            }
+            window.location.href = targetUrl;
         } catch (error) {
             setError('An unexpected error occurred.');
         } finally {
