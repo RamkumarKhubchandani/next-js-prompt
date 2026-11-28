@@ -6,6 +6,7 @@ import dbConnect from '@/app/lib/mongodb';
 import MentorshipRequest from '@/models/MentorshipRequest';
 import HireInquiry from '@/app/models/HireInquiry';
 import MentorApplication from '@/app/models/MentorApplication';
+import User from '@/app/models/User';
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
@@ -93,7 +94,7 @@ ${safeDetails}
       if (process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes('@gmail.com') && !process.env.EMAIL_FROM.includes('@example.com')) {
         resendFrom = process.env.EMAIL_FROM;
       }
-      await resend.emails.send({
+      const resendRes = await resend.emails.send({
         from: `OutlineDev Dispatch <${resendFrom}>`,
         to: expertEmail,
         reply_to: replyToEmail,
@@ -101,8 +102,12 @@ ${safeDetails}
         text: textBody,
         html: htmlBody,
       });
-      console.log(`[LEAD DISPATCHED] Email sent to expert via Resend.`);
-      return true;
+      if (resendRes?.error) {
+        console.warn('Resend lead dispatch returned error:', resendRes.error);
+      } else {
+        console.log(`[LEAD DISPATCH] Email sent to expert via Resend. ID: ${resendRes?.data?.id || 'ok'}`);
+        return true;
+      }
     } catch (err) {
       console.warn('Resend lead dispatch error:', err.message);
     }
@@ -220,10 +225,17 @@ export async function POST(req) {
     // 3. Dispatch Email to Each Expert (Never reveal expert email to client)
     const sentExpertIds = [];
     for (const expert of experts) {
-      const expertEmail = expert.userId?.email;
+      let expertEmail = expert.userId?.email || expert.contactEmail || expert.draft?.contactEmail;
+      if (!expertEmail && expert.userId) {
+        try {
+          const u = await User.findById(expert.userId).select('email name').lean();
+          if (u?.email) expertEmail = u.email;
+        } catch (_) {}
+      }
       const expertName = expert.displayName || expert.userId?.name || 'Developer';
 
       if (!expertEmail) {
+        console.warn(`[LEAD DISPATCH WARNING] No email found for expert ${expert._id}`);
         continue;
       }
 
