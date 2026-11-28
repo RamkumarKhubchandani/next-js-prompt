@@ -118,6 +118,7 @@ export function toPublicProfile(doc) {
           url: p.url || '',
         }))
       : [],
+    offlineSupport: Boolean(pub.offlineSupport || pub.mentor?.offlineSupport),
     mentor:
       roles.includes('mentor') && pub.mentor
         ? {
@@ -126,6 +127,7 @@ export function toPublicProfile(doc) {
             rate: typeof pub.mentor.rate === 'number' ? pub.mentor.rate : 0,
             topics: Array.isArray(pub.mentor.topics) ? pub.mentor.topics : [],
             formats: Array.isArray(pub.mentor.formats) ? pub.mentor.formats : [],
+            offlineSupport: Boolean(pub.mentor.offlineSupport || pub.offlineSupport),
             courseDetails: pub.mentor.courseDetails?.title
               ? {
                   title: pub.mentor.courseDetails.title || '',

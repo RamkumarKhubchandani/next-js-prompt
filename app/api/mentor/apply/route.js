@@ -337,6 +337,8 @@ export async function POST(req) {
         }
       : null;
 
+    const cleanOfflineSupport = Boolean(draft?.offlineSupport || draft?.mentor?.offlineSupport);
+
     // Sanitize draft payload
     const cleanDraft = {
       displayName: cleanName || existingApp?.draft?.displayName || existingApp?.displayName || '',
@@ -349,6 +351,7 @@ export async function POST(req) {
         topics: cleanTopics,
         formats: cleanFormats,
         courseDetails: cleanCourseDetails,
+        offlineSupport: cleanOfflineSupport,
       },
       hire: {
         headline: draft?.hire?.headline ? String(draft.hire.headline).trim() : '',
@@ -365,6 +368,7 @@ export async function POST(req) {
       timezone: cleanTimezone,
       yearsExperience: draft?.yearsExperience !== undefined && draft?.yearsExperience !== '' ? (Number(draft?.yearsExperience) || 0) : 0,
       languages: cleanLanguages,
+      offlineSupport: cleanOfflineSupport,
       links: {
         github: draft?.links?.github ? String(draft.links.github).trim() : '',
         linkedin: draft?.links?.linkedin ? String(draft.links.linkedin).trim() : '',

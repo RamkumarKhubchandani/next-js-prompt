@@ -32,6 +32,7 @@ const mentorContentSchema = new mongoose.Schema(
     topics: { type: [String], default: [] },
     formats: { type: [String], default: [] },
     courseDetails: { type: courseDetailsSchema, default: null },
+    offlineSupport: { type: Boolean, default: false },
   },
   { _id: false }
 );
@@ -70,6 +71,7 @@ const profileContentSchema = new mongoose.Schema(
       linkedin: { type: String, default: '' },
     },
     projects: { type: [projectSchema], default: [] },
+    offlineSupport: { type: Boolean, default: false },
   },
   { _id: false }
 );

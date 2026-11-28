@@ -28,6 +28,7 @@ import {
   Phone,
   MapPin,
   BookOpen,
+  Home,
 } from "lucide-react";
 import Link from "next/link";
 import { Header } from "../components/Header";
@@ -133,6 +134,7 @@ export default function JoinClient() {
           curriculum: "",
           syllabusUrl: "",
         },
+        offlineSupport: false,
       },
       hire: {
         headline: "",
@@ -144,6 +146,7 @@ export default function JoinClient() {
       skillIds: [],
       locationId: "",
       locationIds: ["online"],
+      offlineSupport: false,
       overlapZones: [],
       locationOther: { country: "", city: "" },
       timezone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
@@ -285,6 +288,7 @@ export default function JoinClient() {
                     curriculum: "",
                     syllabusUrl: "",
                   },
+                  offlineSupport: Boolean(draftData.mentor?.offlineSupport ?? draftData.offlineSupport ?? app.offlineSupport),
                 },
                 hire: {
                   headline: draftData.hire?.headline || app.hireHeadline || "",
@@ -310,6 +314,7 @@ export default function JoinClient() {
                   linkedin: draftData.links?.linkedin || app.linkedin || "",
                 },
                 projects: Array.isArray(draftData.projects) ? draftData.projects : [],
+                offlineSupport: Boolean(draftData.offlineSupport ?? draftData.mentor?.offlineSupport ?? app.offlineSupport),
               },
               consents: {
                 publicProfile: Boolean(app.consents?.publicProfile),
@@ -1446,6 +1451,62 @@ export default function JoinClient() {
                   )}
                 </div>
 
+                {/* IN-PERSON / HOME TUTORING TOGGLE */}
+                <div
+                  onClick={() => {
+                    const next = !formData.draft.offlineSupport;
+                    setFormData((prev) => ({
+                      ...prev,
+                      draft: {
+                        ...prev.draft,
+                        offlineSupport: next,
+                        mentor: {
+                          ...prev.draft.mentor,
+                          offlineSupport: next,
+                        },
+                      },
+                    }));
+                  }}
+                  className={`p-4 rounded-2xl border cursor-pointer transition flex items-start sm:items-center justify-between gap-4 ${
+                    formData.draft.offlineSupport
+                      ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-700/60 shadow-sm"
+                      : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                  }`}
+                >
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                        formData.draft.offlineSupport
+                          ? "bg-emerald-600 text-white shadow-sm"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                      }`}
+                    >
+                      <Home className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          In-Person / Home Tutoring (Offline Support)
+                        </span>
+                        {formData.draft.offlineSupport && (
+                          <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-300">
+                            Enabled
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                        Available for offline / in-person visits or home tutoring for learners and clients located near your city.
+                      </p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(formData.draft.offlineSupport)}
+                    onChange={() => {}}
+                    className="w-4 h-4 text-emerald-600 rounded bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 shrink-0 mt-1 sm:mt-0"
+                  />
+                </div>
+
                 {/* 2. ONLINE / REMOTE WORK (DEFAULT ENABLED) */}
                 <div
                   onClick={toggleOnlineSupport}
@@ -2238,6 +2299,51 @@ export default function JoinClient() {
                         placeholder="1-on-1 Calls, Code Reviews, Live Q&A"
                         className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:border-emerald-500"
                       />
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {[
+                          "1-on-1 Video Calls",
+                          "Async Code Reviews",
+                          "In-Person / Home Tutoring (Nearby)",
+                        ].map((fmt) => {
+                          const isAlreadySelected = (formData.draft.mentor?.formats || []).includes(fmt);
+                          return (
+                            <button
+                              key={fmt}
+                              type="button"
+                              onClick={() => {
+                                const current = formData.draft.mentor?.formats || [];
+                                let next;
+                                if (current.includes(fmt)) {
+                                  next = current.filter((x) => x !== fmt);
+                                } else {
+                                  next = [...current, fmt];
+                                }
+                                const isOffline = fmt.includes("In-Person") || fmt.includes("Home");
+                                setFormatsInput(next.join(", "));
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  draft: {
+                                    ...prev.draft,
+                                    ...(isOffline ? { offlineSupport: !isAlreadySelected } : {}),
+                                    mentor: {
+                                      ...prev.draft.mentor,
+                                      formats: next,
+                                      ...(isOffline ? { offlineSupport: !isAlreadySelected } : {}),
+                                    },
+                                  },
+                                }));
+                              }}
+                              className={`text-[11px] font-medium px-2 py-0.5 rounded-lg border transition ${
+                                isAlreadySelected
+                                  ? "bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800 font-bold"
+                                  : "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 hover:border-emerald-400"
+                              }`}
+                            >
+                              {isAlreadySelected ? `✓ ${fmt}` : `+ ${fmt}`}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
