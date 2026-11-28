@@ -167,7 +167,7 @@ export default async function ExpertProfilePage({ params }) {
         {/* 2-COLUMN MODERN CONSULTANT LAYOUT */}
         <div className="lg:grid lg:grid-cols-12 gap-8 items-start">
           {/* LEFT SIDEBAR: STICKY BIO, BOOKING & SKILLS CARD */}
-          <aside className="lg:col-span-5 xl:col-span-4 space-y-6 lg:sticky lg:top-28">
+          <aside className="lg:col-span-5 xl:col-span-4 space-y-6 lg:sticky lg:top-36">
             {/* Identity & Booking Card */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-sm dark:shadow-xl relative overflow-hidden space-y-6">
               <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
