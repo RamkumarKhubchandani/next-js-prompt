@@ -181,35 +181,9 @@ export default async function ExpertProfilePage({ params }) {
 
         {/* 2-COLUMN MODERN CONSULTANT LAYOUT */}
         <div className="lg:grid lg:grid-cols-12 gap-8 items-start">
-          {/* LEFT SIDEBAR: TOP TECHNICAL SKILLS & STICKY BIO/BOOKING CARDS */}
+          {/* LEFT SIDEBAR: STICKY BIO, SKILLS & BOOKING CARDS */}
           <aside className="lg:col-span-5 xl:col-span-4 space-y-6 lg:sticky lg:top-36">
-            {/* 1. TOP OF LEFT SIDEBAR: VERIFIED TECHNICAL SKILLS CARD */}
-            {profile.skills?.length > 0 && (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-sm dark:shadow-xl space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                  <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-wide flex items-center gap-2.5">
-                    <Code2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span>Technical Skills ({profile.skills.length})</span>
-                  </span>
-                  <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
-                    Verified
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2.5">
-                  {profile.skills.map((s) => (
-                    <span
-                      key={s.id}
-                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm sm:text-base font-bold bg-emerald-50 text-emerald-950 border border-emerald-200 dark:bg-slate-950 dark:text-emerald-300 dark:border-slate-800 shadow-2xs hover:border-emerald-400 transition"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                      {s.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 2. IDENTITY & BOOKING CARD */}
+            {/* 1. IDENTITY, VERIFIED SKILLS & BOOKING CARD */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-sm dark:shadow-xl relative overflow-hidden space-y-6">
               <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -252,6 +226,32 @@ export default async function ExpertProfilePage({ params }) {
                   </div>
                 )}
               </div>
+
+              {/* TECHNICAL SKILLS: PLACED DIRECTLY AFTER PHOTO & IDENTITY */}
+              {profile.skills?.length > 0 && (
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-wide flex items-center gap-2">
+                      <Code2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>Technical Skills ({profile.skills.length})</span>
+                    </span>
+                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                      Verified
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.skills.map((s) => (
+                      <span
+                        key={s.id}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-50 text-emerald-950 border border-emerald-200 dark:bg-slate-950 dark:text-emerald-300 dark:border-slate-800 shadow-2xs hover:border-emerald-400 transition"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        {s.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Direct Booking & Inquire Buttons */}
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3">
