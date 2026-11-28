@@ -8,7 +8,7 @@ import { generateUniqueSlug, validateApprovableApplication, escapeHtml, revalida
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
-const ALLOWED_ACTIONS = ['approve', 'reject', 'hide', 'unhide', 'markInterviewed', 'setInterviewed'];
+const ALLOWED_ACTIONS = ['approve', 'reject', 'hide', 'unhide', 'markInterviewed', 'setInterviewed', 'delete'];
 
 async function sendApplicantNotification({ to, subject, html, text }) {
   const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'no-reply@outlinedev.com';
@@ -244,6 +244,16 @@ export async function POST(req) {
       const interviewedSkillIds = [...(application.published?.skillIds || []), ...(application.draft?.skillIds || [])];
       await revalidateExpertSkillTags(interviewedSkillIds);
       return NextResponse.json({ success: true, application });
+    }
+
+    if (action === 'delete') {
+      const deleteSkillIds = [
+        ...(application.published?.skillIds || []),
+        ...(application.draft?.skillIds || []),
+      ];
+      await MentorApplication.findByIdAndDelete(id);
+      await revalidateExpertSkillTags(deleteSkillIds);
+      return NextResponse.json({ success: true, message: 'Expert profile deleted permanently' });
     }
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 });

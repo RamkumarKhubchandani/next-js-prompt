@@ -1,10 +1,14 @@
 import { safeJsonLd } from '@/app/lib/schema-helpers';
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/lib/auth";
+import { requireAdmin } from "@/app/lib/requireAdmin";
 import dbConnect from "@/app/lib/mongodb";
 import MentorApplication from "@/app/models/MentorApplication";
 import { toPublicProfile } from "@/app/lib/experts";
 import { Header } from "@/app/components/Header";
 import { Footer } from "@/app/components/Footer";
+import AdminProfileControls from "./AdminProfileControls";
 import {
   ShieldCheck,
   MapPin,
@@ -134,6 +138,9 @@ export default async function ExpertProfilePage({ params }) {
 
   const hasOfflineSupport = Boolean(profile.offlineSupport || profile.mentor?.offlineSupport);
 
+  const session = await getServerSession(authOptions);
+  const adminSession = session ? await requireAdmin(session) : null;
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-brand-primary selection:text-slate-950 font-sans">
       {/* Inject Person Schema */}
@@ -145,6 +152,15 @@ export default async function ExpertProfilePage({ params }) {
       <Header />
 
       <main className="pt-36 sm:pt-40 pb-24 max-w-6xl mx-auto px-4 sm:px-6 w-full space-y-8">
+        {/* ADMIN MANAGEMENT BAR (ADMINS ONLY) */}
+        {adminSession && (
+          <AdminProfileControls
+            applicationId={doc._id.toString()}
+            displayName={profile.displayName}
+            slug={profile.slug}
+          />
+        )}
+
         {/* TOP BREADCRUMB & DIRECTORY NAVIGATION */}
         <div className="flex items-center justify-between text-sm sm:text-base text-slate-600 dark:text-slate-400">
           <Link

@@ -20,6 +20,7 @@ import {
   ChevronUp,
   Loader2,
   AlertTriangle,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { SKILLS, LOCATIONS } from "@/app/lib/seo-data";
@@ -334,6 +335,22 @@ export default function AdminMentorsPage() {
                           <span>Hide</span>
                         </button>
                       )}
+
+                      {/* Delete Profile Button */}
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => {
+                          if (window.confirm(`Are you sure you want to permanently delete the expert profile for "${app.displayName}"? This action cannot be undone.`)) {
+                            handleAction(app._id, "delete");
+                          }
+                        }}
+                        className="px-3 py-1.5 bg-red-950/60 hover:bg-red-800 text-red-300 hover:text-white border border-red-800/60 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                        title="Permanently delete this expert profile"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
 
                       {/* Toggle Details Accordion */}
                       <button
